@@ -28,6 +28,7 @@ export function merge(a, b) {
  * 1. Environment varaible ROC_CONFIG
  * 2. A path that has been set using {@link setApplicationConfig}
  * 3. Default by trying to read "roc.config.js" in the current working directory
+ * 4. Return a empty object
  *
  * @returns {object} The application configuration object
  */
@@ -39,7 +40,12 @@ export function getApplicationConfig() {
         ));
     }
 
-    return require(process.env.ROC_CONFIG || applicationConfigPath || path.join(process.cwd(), 'roc.config.js'));
+    // Try to read the application configuration, if we fail we return a empty object
+    try {
+        return require(process.env.ROC_CONFIG || applicationConfigPath || path.join(process.cwd(), 'roc.config.js'));
+    } catch (error) {
+        return {};
+    }
 }
 
 /**
