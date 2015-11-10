@@ -22,7 +22,7 @@ const config = getFinalConfig();
 
 ```
 
-Extend default configuration with custom configuration and use in your application:
+Extend default configuration with custom configuration and use it:
 ```js
 import { getFinalConfig } from 'roc-config';
 
