@@ -1,6 +1,7 @@
 import 'source-map-support/register';
 
 import path from 'path';
+import fs from 'fs';
 import colors from 'colors/safe';
 import deepExtend from 'deep-extend';
 
@@ -25,11 +26,13 @@ export function merge(a, b) {
  * file.
  *
  * Reads configuration files in this manner:
- * 1. Environment varaible ROC_CONFIG
+ * 1. Environment variable ROC_CONFIG
  * 2. A path that has been set using {@link setApplicationConfig}
  * 3. Default by trying to read "roc.config.js" in the current working directory
+ * 4. Return a empty object
  *
  * @returns {object} The application configuration object
+ * @throws {Error} When an invalid path override is specified
  */
 export function getApplicationConfig() {
     if (applicationConfigPath && process.env.ROC_CONFIG) {
@@ -39,7 +42,19 @@ export function getApplicationConfig() {
         ));
     }
 
-    return require(process.env.ROC_CONFIG || applicationConfigPath || path.join(process.cwd(), 'roc.config.js'));
+    const configPath = process.env.ROC_CONFIG || applicationConfigPath;
+
+    // path explicitly overriden. throw exception if override is invalid file
+    if (configPath && !fs.statSync(configPath).isFile()) {
+        throw new Error(`Configuration path points to unaccessable file: ${configPath}`);
+    }
+
+    // return correct project configuration with fallback to empty object
+    try {
+        return require(configPath || path.join(process.cwd(), 'roc.config.js'));
+    } catch (error) {
+        return {};
+    }
 }
 
 /**
