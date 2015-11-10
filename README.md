@@ -14,7 +14,7 @@ To generate documentation please run `npm run docs`.
 
 ## Examples
 
-Use default configuration:
+Use configuration:
 ```js
 import { getFinalConfig } from 'roc-config';
 
@@ -22,7 +22,7 @@ const config = getFinalConfig();
 
 ```
 
-Extend default configuration with custom configuration and use it:
+Extend configuration with custom configuration and use it:
 ```js
 import { getFinalConfig } from 'roc-config';
 
