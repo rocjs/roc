@@ -1,0 +1,17 @@
+{
+    "extends": "vgno",
+
+    "parser": "babel-eslint",
+
+    "env": {
+        "es6": true
+    },
+
+    "ecmaFeatures": {
+        "modules": true
+    },
+
+    "rules": {
+        "no-console": 0
+    }
+}
