@@ -102,10 +102,10 @@ export function setTemporaryConfig(configObject) {
  *
  * Important to remember to call this whenever either the application or the temporary configuration has changed.
  *
- * @param {!object} config - a default configuration object
+ * @param {!object} [config] - a default configuration object
  * @returns {object} The final configuration object
  */
-export function getFinalConfig(config) {
+export function getFinalConfig(config = {}) {
     return deepExtend({}, config, getApplicationConfig(), getTemporaryConfig());
 }
 
