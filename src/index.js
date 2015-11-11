@@ -104,7 +104,7 @@ export function getTemporaryConfig() {
         onceTemp = false;
         console.log(colors.red('You have configured a temporary configuration object but the environment ' +
             'variable ROC_CONFIG_OBJECT is set and that will be used instead. The object that will be used is ' +
-            JSON.stringify(process.env.ROC_CONFIG_OBJECT)
+            process.env.ROC_CONFIG_OBJECT
         ));
     }
 
