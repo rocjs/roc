@@ -8,7 +8,7 @@ import deepExtend from 'deep-extend';
 let onceApp = true;
 let onceTemp = true;
 
-let applicationConfigPath;
+let applicationConfigPath = '';
 let temporaryConfig = {};
 
 /**
@@ -49,12 +49,8 @@ export function getApplicationConfig() {
     const configPath = process.env.ROC_CONFIG || applicationConfigPath;
 
     // path explicitly overriden. throw exception if override is invalid file
-    try {
-        if (configPath && !fs.statSync(configPath).isFile()) {
-            throw new Error(`Configuration path points to unaccessable file: ${configPath}`);
-        }
-    } catch (error) {
-        // We do not care about this case
+    if (configPath && !fs.statSync(configPath).isFile()) {
+        throw new Error(`Configuration path points to unaccessable file: ${configPath}`);
     }
 
     // return correct project configuration with fallback to empty object
