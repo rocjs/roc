@@ -5,6 +5,9 @@ import fs from 'fs';
 import colors from 'colors/safe';
 import deepExtend from 'deep-extend';
 
+let onceApp = true;
+let onceTemp = true;
+
 let applicationConfigPath;
 let temporaryConfig = {};
 
@@ -35,7 +38,8 @@ export function merge(a, b) {
  * @throws {Error} When an invalid path override is specified
  */
 export function getApplicationConfig() {
-    if (applicationConfigPath && process.env.ROC_CONFIG) {
+    if (applicationConfigPath && process.env.ROC_CONFIG && onceApp) {
+        onceApp = false;
         console.log(colors.red('You have configured a location for the application configuration file but the ' +
             'environment variable ROC_CONFIG is set and that will be used instead. The path that will be used is ' +
             process.env.ROC_CONFIG
@@ -45,8 +49,12 @@ export function getApplicationConfig() {
     const configPath = process.env.ROC_CONFIG || applicationConfigPath;
 
     // path explicitly overriden. throw exception if override is invalid file
-    if (configPath && !fs.statSync(configPath).isFile()) {
-        throw new Error(`Configuration path points to unaccessable file: ${configPath}`);
+    try {
+        if (configPath && !fs.statSync(configPath).isFile()) {
+            throw new Error(`Configuration path points to unaccessable file: ${configPath}`);
+        }
+    } catch (error) {
+        // We do not care about this case
     }
 
     // return correct project configuration with fallback to empty object
@@ -55,6 +63,16 @@ export function getApplicationConfig() {
     } catch (error) {
         return {};
     }
+}
+
+/**
+ * Gets the application configuration path
+ *
+ * @returns {string} Returns either the value for the environment variable ROC_CONFIG or the internal
+ * applicationConfigPath
+ */
+export function getApplicationConfigPath() {
+    return process.env.ROC_CONFIG || applicationConfigPath;
 }
 
 /**
@@ -82,14 +100,19 @@ export function setApplicationConfig(configPath) {
  * @returns {object} The application configuration object
  */
 export function getTemporaryConfig() {
-    if (temporaryConfig && process.env.ROC_CONFIG_OBJECT) {
+    if (Object.keys(temporaryConfig).length > 0 && process.env.ROC_CONFIG_OBJECT && onceTemp) {
+        onceTemp = false;
         console.log(colors.red('You have configured a temporary configuration object but the environment ' +
-            'variable ROC_CONFIG_OBJECT is set and that will be used instead. The path that will be used is ' +
-            process.env.ROC_CONFIG_OBJECT
+            'variable ROC_CONFIG_OBJECT is set and that will be used instead. The object that will be used is ' +
+            JSON.stringify(process.env.ROC_CONFIG_OBJECT)
         ));
     }
 
-    return process.env.ROC_CONFIG_OBJECT || temporaryConfig;
+    if (process.env.ROC_CONFIG_OBJECT) {
+        return JSON.parse(process.env.ROC_CONFIG_OBJECT);
+    }
+
+    return temporaryConfig;
 }
 
 /**
