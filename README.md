@@ -12,6 +12,10 @@ Once imported to your project the configuration and all its internal states will
 
 To generate documentation please run `npm run docs`.
 
+## Application Configuration Format
+
+For _roc-config_ to understand a `roc.config.js` file in a project it needs to export a object with a `config` key.
+
 ## Examples
 
 Use configuration:
