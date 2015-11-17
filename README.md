@@ -4,7 +4,10 @@ Configuration manager for the Roc ecosystem.
 
 ## Notes
 
-Important to note is that the this project will look for two environment variables; `ROC_CONFIG` and `ROC_CONFIG_OBJECT`. If either of them are found they will be used over what has been set during runtime. Please read the documentation to understand how this works in more detail. However if there is a conflict, where both an environment variable is set and something manually, there will a a clear warning given to the user.
+Important to note that this project will look for two environment variables; `ROC_CONFIG` and `ROC_CONFIG_OBJECT`.  
+If either of them are found they will be used instead of what has been set during runtime. Please read the documentation to understand how this works in more detail.  
+
+If there is a conflict where both an environment variable is set and something overriden manually, there will a a clear warning given to the user.
 
 Once imported to your project the configuration and all its internal states will persist throughout the process lifetime.
 
@@ -14,7 +17,7 @@ To generate documentation please run `npm run docs`.
 
 ## Application Configuration Format
 
-For _roc-config_ to understand a `roc.config.js` file in a project it needs to export a object with a `config` key.
+For _roc-config_ to understand a `roc.config.js` file in a project this needs to export an object with a `config` key.
 
 ## Examples
 
