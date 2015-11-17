@@ -4,7 +4,7 @@ import path from 'path';
 import fs from 'fs';
 import colors from 'colors/safe';
 import deepExtend from 'deep-extend';
-import _ from 'lodash';
+import { isObject, isFunction, isRegExp } from 'lodash';
 
 let onceApp = true;
 let onceTemp = true;
@@ -167,7 +167,7 @@ export function validate(config, metaConfig) {
         const validator = metaConfig.validation[validateKey];
 
         // process validation nodes recursively
-        if (_.isObject(validator) && _.isObject(configValue)) {
+        if (isObject(validator) && isObject(configValue)) {
             validate(configValue, {
                 validation: {
                     ...validator
@@ -180,11 +180,11 @@ export function validate(config, metaConfig) {
 }
 
 function assertValid(value, validateKey, validator) {
-    if (_.isFunction(validator)) {
+    if (isFunction(validator)) {
         if (validator(value) === false) {
             throwError(validateKey);
         }
-    } else if (_.isRegExp(validator)) {
+    } else if (isRegExp(validator)) {
         if (value.toString().match(validator) === null) {
             throwError(validateKey);
         }

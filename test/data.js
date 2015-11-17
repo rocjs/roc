@@ -58,6 +58,17 @@ export const nestedValidMetaConfig = {
     }
 };
 
+export const nestedEvaluateMetaConfig = {
+    validation: {
+        layer1: {
+            port: (value) => typeof value === 'number',
+            layer2: {
+                path: (value) => typeof value === 'string'
+            }
+        }
+    }
+};
+
 export const flatRegexInvalidMetaConfig = {
     validation: {
         port: /1/,

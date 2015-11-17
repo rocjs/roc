@@ -42,6 +42,10 @@ describe('roc-config', () => {
             validate(testData.nestedConfig, testData.nestedValidMetaConfig);
         });
 
+        it('must not throw if nested and connected validate functions evaluate to true given expected inputs', () => {
+            validate(testData.nestedConfig, testData.nestedEvaluateMetaConfig);
+        });
+
         it('must not throw if all connected regexes match', () => {
             validate(testData.flatConfig, testData.flatRegexValidMetaConfig);
         });
