@@ -4,6 +4,7 @@ import path from 'path';
 import fs from 'fs';
 import colors from 'colors/safe';
 import deepExtend from 'deep-extend';
+import { isObject, isFunction, isRegExp } from 'lodash';
 
 let onceApp = true;
 let onceTemp = true;
@@ -153,9 +154,48 @@ export function getFinalConfig(config = {}) {
  * @throws {Error} throws error if the configuration is invalid
  */
 export function validate(config, metaConfig) {
-    /* eslint-disable */
-    metaConfig;
-    /* eslint-enable */
+    // if no meta configuration or validation is provided it is valid
+    if (!metaConfig || !metaConfig.validation) {
+        return;
+    }
+
+    // validation fields to process one by one
+    const validateKeys = Object.keys(metaConfig.validation);
+
+    for (const validateKey of validateKeys) {
+        const configValue = config[validateKey];
+        const validator = metaConfig.validation[validateKey];
+
+        // process validation nodes recursively
+        if (isObject(validator) && isObject(configValue)) {
+            validate(configValue, {
+                validation: {
+                    ...validator
+                }
+            });
+        } else {
+            assertValid(configValue, validateKey, validator);
+        }
+    }
+}
+
+function assertValid(value, validateKey, validator) {
+    if (isFunction(validator)) {
+        if (validator(value) === false) {
+            throwError(validateKey);
+        }
+    } else if (isRegExp(validator)) {
+        if (value.toString().match(validator) === null) {
+            throwError(validateKey);
+        }
+    } else {
+        // all other cases imply config<->valdation structure mistmatch
+        throw new Error('Structure of configuration does not align with validation.');
+    }
+}
+
+function throwError(field) {
+    throw new Error(`Configuration validation failed for field ${field}`);
 }
 
 /**
