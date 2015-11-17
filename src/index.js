@@ -9,7 +9,7 @@ let onceApp = true;
 let onceTemp = true;
 
 let applicationConfigPath = '';
-let temporaryConfig = {};
+let appendedConfig = {};
 
 /**
  * Merges two configuration objects
@@ -30,7 +30,7 @@ export function merge(a, b) {
  *
  * Reads configuration files in this manner:
  * 1. Environment variable ROC_CONFIG
- * 2. A path that has been set using {@link setApplicationConfig}
+ * 2. A path that has been set using {@link setApplicationConfigPath}
  * 3. Default by trying to read "roc.config.js" in the current working directory
  * 4. Return a empty object
  *
@@ -78,27 +78,27 @@ export function getApplicationConfigPath() {
  *
  * @param {!object} configPath - path to the configuration file
  */
-export function setApplicationConfig(configPath) {
+export function setApplicationConfigPath(configPath) {
     if (configPath) {
         applicationConfigPath = configPath;
     }
 }
 
 /**
- * Gets the temporary configuration object
+ * Gets the appended configuration object
  *
  * Will give a warning if ROC_CONFIG_OBJECT has been set since that will then be used over anything else provided.
  *
  * Reads configuration objects in this manner:
  * 1. Environment varaible ROC_CONFIG_OBJECT
- * 2. A object that has been set using {@link setTemporaryConfig}
+ * 2. A object that has been set using {@link appendConfig}
  *
  * @returns {object} The application configuration object
  */
-export function getTemporaryConfig() {
-    if (Object.keys(temporaryConfig).length > 0 && process.env.ROC_CONFIG_OBJECT && onceTemp) {
+export function getAppendedConfig() {
+    if (Object.keys(appendedConfig).length > 0 && process.env.ROC_CONFIG_OBJECT && onceTemp) {
         onceTemp = false;
-        console.log(colors.red('You have configured a temporary configuration object but the environment ' +
+        console.log(colors.red('You have appended to the configuration object but the environment ' +
             'variable ROC_CONFIG_OBJECT is set and that will be used instead. The object that will be used is ' +
             process.env.ROC_CONFIG_OBJECT
         ));
@@ -108,39 +108,39 @@ export function getTemporaryConfig() {
         return JSON.parse(process.env.ROC_CONFIG_OBJECT);
     }
 
-    return temporaryConfig;
+    return appendedConfig;
 }
 
 /**
- * Sets a temporary configuration object
+ * Appends to configuration object
  *
  * Will merge the already existing configuration object meaning that this function can be called multiple times and
  * the configuration will be a merge of all the calls.
  *
- * Used in {@link getTemporaryConfig}
+ * Used in {@link getAppendedConfig}
  *
- * @param {!object} configObject - a temporary configuration object
+ * @param {!object} configObject - a configuration object
  */
-export function setTemporaryConfig(configObject) {
-    temporaryConfig = merge(temporaryConfig, configObject);
+export function appendConfig(configObject) {
+    appendedConfig = merge(appendedConfig, configObject);
 }
 
 /**
  * Gets the final configuration object
  *
- * Will merge the provided configuration object with the application configuration and the temporary configuration
+ * Will merge the provided configuration object with the application configuration and the appended configuration
  * object.
  *
- * This means that the temporary configuration has the highest priority, then application configuration and last the
+ * This means that the appended configuration has the highest priority, then application configuration and last the
  * provided one (the default).
  *
- * Important to remember to call this whenever either the application or the temporary configuration has changed.
+ * Important to remember to call this whenever either the application or the appended configuration has changed.
  *
  * @param {!object} [config] - a default configuration object
  * @returns {object} The final configuration object
  */
 export function getFinalConfig(config = {}) {
-    return deepExtend({}, config, getApplicationConfig(), getTemporaryConfig());
+    return deepExtend({}, config, getApplicationConfig(), getAppendedConfig());
 }
 
 /**
