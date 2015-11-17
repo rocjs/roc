@@ -55,7 +55,7 @@ export function getApplicationConfig() {
 
     // return correct project configuration with fallback to empty object
     try {
-        return require(configPath || path.join(process.cwd(), 'roc.config.js')).config;
+        return require(configPath || path.join(process.cwd(), 'roc.config.js')).config || {};
     } catch (error) {
         return {};
     }
