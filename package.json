@@ -1,6 +1,6 @@
 {
   "name": "roc-config",
-  "version": "1.0.0",
+  "version": "0.0.1-alpha1",
   "description": "Configuration manager for the Roc ecosystem",
   "main": "lib/index.js",
   "scripts": {
@@ -14,13 +14,13 @@
   },
   "repository": {
     "type": "git",
-    "url": "git@github.schibsted.io:vg/roc-config.git"
+    "url": "git@github.com:vgno/roc-config.git"
   },
   "keywords": [
     "roc"
   ],
   "author": "VG",
-  "license": "UNLICENSED",
+  "license": "MIT",
   "devDependencies": {
     "babel": "~5.8.21",
     "babel-eslint": "~4.1.5",
