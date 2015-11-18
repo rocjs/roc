@@ -4,7 +4,9 @@ import path from 'path';
 import fs from 'fs';
 import colors from 'colors/safe';
 import deepExtend from 'deep-extend';
-import { isObject, isFunction, isRegExp } from 'lodash';
+import { isObject } from 'lodash';
+
+import { assert } from './helpers';
 
 let onceApp = true;
 let onceTemp = true;
@@ -147,8 +149,6 @@ export function getFinalConfig(config = {}) {
 /**
  * Validates the provided configuration object
  *
- * @todo Implement
- *
  * @param {object} config - the configuration object to validate
  * @param {object} metaConfig - the meta configuration object that has information about how to validate
  * @throws {Error} throws error if the configuration is invalid
@@ -180,17 +180,8 @@ export function validate(config, metaConfig) {
 }
 
 function assertValid(value, validateKey, validator) {
-    if (isFunction(validator)) {
-        if (validator(value) === false) {
-            throwError(validateKey);
-        }
-    } else if (isRegExp(validator)) {
-        if (value.toString().match(validator) === null) {
-            throwError(validateKey);
-        }
-    } else {
-        // all other cases imply config<->valdation structure mistmatch
-        throw new Error('Structure of configuration does not align with validation.');
+    if (!assert(value, validator)) {
+        throwError(validateKey);
     }
 }
 
