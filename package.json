@@ -1,17 +1,17 @@
 {
   "name": "roc-config",
-  "version": "1.0.0-alpha1",
+  "version": "1.0.0-alpha4",
   "description": "Configuration manager for the Roc ecosystem",
   "main": "lib/index.js",
   "scripts": {
     "build": "babel src --out-dir lib --source-maps",
-    "clean": "rimraf lib",
+    "clean": "rimraf lib docs",
     "lint": "eslint .",
     "mocha": "mocha --compilers js:babel-core/register",
     "test": "npm run lint && npm run mocha",
     "check": "ncu",
     "docs": "esdoc -c esdoc.json",
-    "prepublish": "npm test && npm run clean && npm run build"
+    "prepublish": "npm test && npm run clean && npm run build && npm run docs"
   },
   "repository": {
     "type": "git",
@@ -38,6 +38,7 @@
   "dependencies": {
     "colors": "~1.1.2",
     "deep-extend": "~0.4.0",
+    "lodash": "~3.10.1",
     "source-map-support": "~0.3.3"
   }
 }
