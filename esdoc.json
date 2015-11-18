@@ -1,8 +1,9 @@
 {
     "source": "./src",
     "destination": "./docs",
-    "plugins": [
-        {
+    "plugins": [{
+            "name": "esdoc-es7-plugin"
+        }, {
             "name": "esdoc-importpath-plugin",
             "option": {
                 "replaces": [
