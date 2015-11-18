@@ -1,6 +1,6 @@
 {
   "name": "roc-config",
-  "version": "1.0.0-alpha3",
+  "version": "1.0.0-alpha4",
   "description": "Configuration manager for the Roc ecosystem",
   "main": "lib/index.js",
   "scripts": {
