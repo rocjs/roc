@@ -11,16 +11,12 @@
     "test": "npm run lint && npm run mocha",
     "check": "ncu",
     "docs": "esdoc -c esdoc.json",
-    "prepublish": "npm test && npm run clean && npm run build"
+    "prepublish": "npm test && npm run clean && npm run build && npm run docs"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/vgno/roc-config.git"
   },
-  "files": [
-    "lib",
-    "validatiors"
-  ],
   "keywords": [
     "roc"
   ],
