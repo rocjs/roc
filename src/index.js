@@ -11,8 +11,11 @@ import { assert } from './helpers';
 let onceApp = true;
 let onceTemp = true;
 
-let applicationConfigPath = '';
-let appendedConfig = {};
+/* Using global varaibles here to make sure that we can access the values set from different projects.
+ * This guarantees that the varaibles will live outside the require cache, something that we need for stability.
+ */
+global.rocApplicationConfigPath = global.rocApplicationConfigPath || '';
+global.rocAppendedConfig = global.rocAppendedConfig || {};
 
 /**
  * Merges two configuration objects
@@ -41,7 +44,7 @@ export function merge(a, b) {
  * @throws {Error} When an invalid path override is specified
  */
 export function getRawApplicationConfig() {
-    if (applicationConfigPath && process.env.ROC_CONFIG && onceApp) {
+    if (global.rocApplicationConfigPath && process.env.ROC_CONFIG && onceApp) {
         onceApp = false;
         console.log(colors.red('You have configured a location for the application configuration file but the ' +
             'environment variable ROC_CONFIG is set and that will be used instead. The path that will be used is ' +
@@ -49,7 +52,7 @@ export function getRawApplicationConfig() {
         ));
     }
 
-    const configPath = process.env.ROC_CONFIG || applicationConfigPath;
+    const configPath = process.env.ROC_CONFIG || global.rocApplicationConfigPath;
 
     // path explicitly overriden. throw exception if override is invalid file
     if (configPath && !fs.statSync(configPath).isFile()) {
@@ -91,7 +94,7 @@ export function getApplicationConfig() {
  * applicationConfigPath
  */
 export function getApplicationConfigPath() {
-    return process.env.ROC_CONFIG || applicationConfigPath;
+    return process.env.ROC_CONFIG || global.rocApplicationConfigPath;
 }
 
 /**
@@ -103,7 +106,7 @@ export function getApplicationConfigPath() {
  */
 export function setApplicationConfigPath(configPath) {
     if (configPath) {
-        applicationConfigPath = configPath;
+        global.rocApplicationConfigPath = configPath;
     }
 }
 
@@ -119,7 +122,7 @@ export function setApplicationConfigPath(configPath) {
  * @returns {object} The application configuration object
  */
 export function getAppendedConfig() {
-    if (Object.keys(appendedConfig).length > 0 && process.env.ROC_CONFIG_OBJECT && onceTemp) {
+    if (Object.keys(global.rocAppendedConfig).length > 0 && process.env.ROC_CONFIG_OBJECT && onceTemp) {
         onceTemp = false;
         console.log(colors.red('You have appended to the configuration object but the environment ' +
             'variable ROC_CONFIG_OBJECT is set and that will be used instead. The object that will be used is ' +
@@ -131,7 +134,7 @@ export function getAppendedConfig() {
         return JSON.parse(process.env.ROC_CONFIG_OBJECT);
     }
 
-    return appendedConfig;
+    return global.rocAppendedConfig;
 }
 
 /**
@@ -145,7 +148,7 @@ export function getAppendedConfig() {
  * @param {!object} configObject - a configuration object
  */
 export function appendConfig(configObject) {
-    appendedConfig = merge(appendedConfig, configObject);
+    global.rocAppendedConfig = merge(global.rocAppendedConfig, configObject);
 }
 
 /**
