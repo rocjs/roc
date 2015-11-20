@@ -7,7 +7,7 @@
     "build": "babel src --out-dir lib --source-maps",
     "clean": "rimraf lib docs",
     "lint": "eslint .",
-    "mocha": "mocha --compilers js:babel-core/register",
+    "mocha": "mocha --compilers js:babel/register",
     "test": "npm run lint && npm run mocha",
     "check": "ncu",
     "docs": "esdoc -c esdoc.json",
