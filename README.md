@@ -7,7 +7,7 @@ Configuration manager for the Roc ecosystem.
 This project will look for two environment variables; `ROC_CONFIG` and `ROC_CONFIG_OBJECT`.  
 If `ROC_CONFIG_OBJECT` is found those will be used **instead** of what has been appended during runtime elsewhere.
 
-If there is a conflict where both an environment variables is set and something is appended manually, there will a a clear warning given to the user.
+If there is a conflict where both an environment variable is set and something is appended manually, there will a a clear warning given to the user.
 
 Once imported to your project **the configuration and all its internal states** will persist throughout the process lifetime.
 
@@ -24,7 +24,7 @@ If a configuration file path is provided by environment `ROC_CONFIG` it will loa
 
 ## Application Configuration Format
 
-For _roc-config_ to understand a `roc.config.js` file in the root of a project or provided with `ROC_CONFIG` it needs to export an object with a `config` key. This example should give a basic idea. Configurations will vary amongst Roc extensions, but they must always expose the `config` key at the time that it is called.
+For _roc-config_ to understand a `roc.config.js` provided by the CLI or `ROC_CONFIG` it needs to export an object with a `config` key. This example should give a basic idea. Configurations will vary amongst Roc extensions, but they must always expose the `config` key at the time that it is called.
 
 ```js
 module.exports = {
