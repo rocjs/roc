@@ -2,24 +2,51 @@
 
 Configuration manager for the Roc ecosystem.
 
-## Notes
+## Important
 
-Important to note that this project will look for two environment variables; `ROC_CONFIG` and `ROC_CONFIG_OBJECT`.  
-If either of them are found they will be used instead of what has been set during runtime. Please read the documentation to understand how this works in more detail.  
+This project will look for two environment variables; `ROC_CONFIG` and `ROC_CONFIG_OBJECT`.  
+If `ROC_CONFIG_OBJECT` is found those will be used **instead** of what has been appended during runtime elsewhere.
 
-If there is a conflict where both an environment variable is set and something overriden manually, there will a a clear warning given to the user.
+If there is a conflict where both an environment variable is set and something is appended manually, there will a a clear warning given to the user.
 
-Once imported to your project the configuration and all its internal states will persist throughout the process lifetime.
+Once imported to your project **the configuration and all its internal states** will persist throughout the process lifetime.
 
 ## Documentation
 
 To generate documentation please run `npm run docs`.
 
+## Configuration source priority
+Configurations provided by environment `ROC_CONFIG_OBJECT` have highest priority amongst appends. This **overwrites all other appended properties without merge**.
+
+If a configuration file path is provided by environment `ROC_CONFIG` it will load this instead of a configuration file within the project, without merging the two. Note that it _is_ subject to programmatic appends, it just loads from a different file.
+
+`getFinalConfig()` will merge any appended programmatic configuration (or environment object) into configurations loaded from file and then finally merge this into it's own optional configuration parameter.
+
 ## Application Configuration Format
 
-For _roc-config_ to understand a `roc.config.js` file in a project this needs to export an object with a `config` key.
+For _roc-config_ to understand a `roc.config.js` provided by the CLI or `ROC_CONFIG` it needs to export an object with a `config` key. This example should give a basic idea. Configurations will vary amongst Roc extensions, but they must always expose the `config` key at the time that it is called.
 
-## Examples
+```js
+module.exports = {
+    config: {
+        port: 8080,
+        serve: 'files',
+        build: {
+            entry: {
+                client: 'client.js',
+                server: 'server.js'
+            }
+        },
+        dev: {
+            open: true
+        }
+    }
+};
+```
+
+This example works with `roc-web`
+
+## API Examples
 
 Use configuration:
 ```js
