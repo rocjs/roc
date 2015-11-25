@@ -44,6 +44,8 @@ module.exports = {
 };
 ```
 
+This example works with `roc-web`
+
 ## API Examples
 
 Use configuration:
