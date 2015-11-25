@@ -1,4 +1,6 @@
 # roc-config
+![stability alpha](https://img.shields.io/badge/stability-alpha-red.svg)
+[![roc](https://img.shields.io/npm/v/roc-config.svg)](https://www.npmjs.com/package/roc-config)
 
 Configuration manager for the Roc ecosystem.
 
