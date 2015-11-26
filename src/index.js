@@ -4,7 +4,7 @@ import path from 'path';
 import fs from 'fs';
 import colors from 'colors/safe';
 import deepExtend from 'deep-extend';
-import { isObject } from 'lodash';
+import { isPlainObject } from 'lodash';
 
 import { assert } from './helpers';
 
@@ -190,7 +190,7 @@ export function validate(config, metaConfig) {
         const validator = metaConfig.validation[validateKey];
 
         // process validation nodes recursively
-        if (isObject(validator) && isObject(configValue)) {
+        if (isPlainObject(validator) && isPlainObject(configValue)) {
             validate(configValue, {
                 validation: {
                     ...validator
