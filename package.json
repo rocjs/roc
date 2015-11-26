@@ -5,10 +5,12 @@
   "main": "lib/index.js",
   "scripts": {
     "build": "babel src --out-dir lib --source-maps",
+    "build:watch": "npm run build -- --watch",
     "clean": "rimraf lib docs",
     "lint": "eslint .",
-    "mocha": "mocha --compilers js:babel/register",
-    "test": "npm run lint && npm run mocha",
+    "test:unit": "mocha --compilers js:babel/register",
+    "test:unit:watch": "npm run test:unit -- --watch",
+    "test": "npm run lint && npm run test:unit",
     "check": "ncu",
     "docs": "esdoc -c esdoc.json",
     "prepublish": "npm test && npm run clean && npm run build && npm run docs"

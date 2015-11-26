@@ -1,6 +1,11 @@
 import 'source-map-support/register';
 
-import { isArray as lodashIsArray, isString as lodashIsString, isBoolean as lodashIsBoolean } from 'lodash';
+import {
+  isArray as lodashIsArray,
+  isString as lodashIsString,
+  isBoolean as lodashIsBoolean,
+  isPlainObject as lodashIsPlainObject
+} from 'lodash';
 import { assert } from './helpers';
 
 /**
@@ -16,6 +21,27 @@ export function isArray(validator) {
         }
 
         return isArrayOrSingle(validator)(input);
+    };
+}
+
+/**
+ * Validates an object using a validator.
+ *
+ * @param {function|RegExp} validator - The validator to use on the elements in the object
+ * @return {function} Returns a function that takes a value and that returns true or false if valid or not
+ */
+export function isObject(validator) {
+    return (input) => {
+        if (!lodashIsPlainObject(input)) {
+            return false;
+        }
+
+        if (!validator) {
+            return true;
+        }
+
+        return Object.keys(input).map((key) => validator(input[key]))
+            .reduce((a, b) => a && b);
     };
 }
 
@@ -78,4 +104,22 @@ export function isInteger(value) {
  */
 export function isPath(value) {
     return isString(value);
+}
+
+/**
+ * Validates against a list of validators
+ *
+ * @param {...function} validators - Validators to validate against
+ * @return {function} Returns a function that takes a value and that returns true or false if valid or not
+ */
+export function oneOf(...validators) {
+    return (input) => {
+        for (const validator of validators) {
+            if (validator(input)) {
+                return true;
+            }
+        }
+
+        return false;
+    };
 }
