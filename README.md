@@ -1,6 +1,8 @@
 # roc-config
 ![stability alpha](https://img.shields.io/badge/stability-alpha-red.svg)
 [![roc](https://img.shields.io/npm/v/roc-config.svg)](https://www.npmjs.com/package/roc-config)
+[![Code Climate](https://codeclimate.com/github/vgno/roc-config/badges/gpa.svg)](https://codeclimate.com/github/vgno/roc-config)
+[![Issue Count](https://codeclimate.com/github/vgno/roc-config/badges/issue_count.svg)](https://codeclimate.com/github/vgno/roc-config)
 
 Configuration manager for the Roc ecosystem.
 

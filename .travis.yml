@@ -1,0 +1,17 @@
+language: node_js
+node_js:
+    - stable
+deploy:
+    provider: npm
+    email: arsovik@gmail.com
+    api_key:
+        secure: KF70aEUUnfXFAtQJzef9oGXyAK4ZLB6Wschw8d6GvomAAo/e3D1fXDAXPHUlzN9exxQzNejN2e2uRLKlsE7QpsKtScl6hAbDKKQc1nM8VFndzo+qKVoaLxK4bYC3jHMLXUyhWTkJD36fNFEvNwBa9eByNIW2izaqJfssJPXJdWX2y/mQgrfUnW9XLmOOEXn1oUMg6h3C6cjaBpWXy+edqz8GMpk8JzQdugCk+MNycnMyb4fkOBlfeRvS469vAL7CSkE4M/Z+B352ruMYOXimCAh6hTynTnr4DnRCfpq9fmw55WQruZFTXcXg4pcmy/PHaFK+4ATy/lSxWk9xIWCBZNUTXRCFPswxNyakNJPzttl629I7ZP2RbnG0yoBT94CGTbwGCgjbLE2TbOUACaATzP4dk4Rqu19Eptr9rD5dD8d3jisgszle9NsnZLL7ckNhprCzwZ9iNBdAO/zVMwHESS8ld1ZgqyVQLW7GbEAdDdDhsgUDa0Ufkv9hqvvbKwGNzWsvDyl82cId38mjOk117LsuokL4NhKXw8GQgSu+AUmQQ3eJP1lndCHZvAYhkduiIBdZBSAXUeN90vvqeXQowndp/upALyFEmfsMx4q4bF9yhKiJxrk+/hyJBpTz82JevJe3yjKQ3h+5ML+c63C9vc5CtV8ZoyEEOA2s0WjZ2O0=
+    on:
+        tags: true
+addons:
+    code_climate:
+        repo_token:
+            secure: TNT2R+Mg0H+TJ5NMs6oiGgOqcPeqqE2a6r29U+LSbegRjiXrMCbVLjcNQUxoXy0CYrm77tToi7BXqazWRoKv5jSyPk2qAE0RUUwMYetMGKqIA+XIg/ZFaApvXkbBXRr0/CBfLdwnEYlxaVYHh4eN7qWNuPc6rTb5Yh+EBSnwh/Hs1hKTVrYf+kQhA+udDE2CApcK0dHgAV8j18lW57NFhz2J5Bn3g9DUdryaMFQkgQGy60qfJnWdrKnphRLJtAxDIzrHBarjWsbJkofeUfrzPzkt1DeDj/3qtJZLFiOhltNBa+HEnEUsqOC3dSxC/hDpxGLGC02zkqMeKgNp4XuwVCwJQ3VR4JUQ3II96PUJIBKrjAMD8YI6NPLRxO8pFzyHbqIc0WJRU3d+9FKLTjQ7BuzuJapoCd0yzq/9V5daHSe/9+iGw69jE2Atl1vBk4HQC24aPOGqnzwcbc3u66HNG14BcF0mDFZXWsAxXHpkMKWDR0PDxo4oZBP9dYtO0sVu4GBjVDkqmxNyamQi7M0wSpLWZCqRWyHqJs8pS4hl5aTQWgKW51+8CnH4EPhGzhFepWrUdXTYD8Zf9UIKv4m97G+kEncOW9X8OuNo6bgQ09siMS/P6GOiM/ZqDAJGqQTbcW5Ot363zOQAY64okvvvJKO+ucMddRz5iRMTMhXFi2k=
+after_script:
+    - codeclimate-test-reporter < coverage/lcov.info
+    - cat coverage/lcov.info | node_modules/.bin/coveralls

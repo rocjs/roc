@@ -1,0 +1,10 @@
+instrumentation:
+    root: src
+    excludes: []
+    include-all-sources: false
+reporting:
+    print: summary
+    reports:
+        - html
+        - lcov
+    dir: coverage
