@@ -7,5 +7,4 @@ engines:
 ratings:
   paths:
   - "**.js"
-  - "**.jsx"
 exclude_paths: []

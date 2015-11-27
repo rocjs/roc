@@ -2,3 +2,4 @@ src
 test
 .*
 esdoc.json
+coverage
