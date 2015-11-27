@@ -1,8 +1,13 @@
 # roc-config
+Configuration manager for the Roc ecosystem.
+
 ![stability alpha](https://img.shields.io/badge/stability-alpha-red.svg)
 [![roc](https://img.shields.io/npm/v/roc-config.svg)](https://www.npmjs.com/package/roc-config)
-
-Configuration manager for the Roc ecosystem.
+[![Build Status](https://travis-ci.org/vgno/roc-config.svg)](https://travis-ci.org/vgno/roc-config)
+[![Coverage Status](https://coveralls.io/repos/vgno/roc-config/badge.svg?branch=master&service=github)](https://coveralls.io/github/vgno/roc-config?branch=master)
+[![Code Climate](https://codeclimate.com/github/vgno/roc-config/badges/gpa.svg)](https://codeclimate.com/github/vgno/roc-config)
+[![Issue Count](https://codeclimate.com/github/vgno/roc-config/badges/issue_count.svg)](https://codeclimate.com/github/vgno/roc-config)
+[![Dependency Status](https://david-dm.org/vgno/roc-config.svg)](https://david-dm.org/vgno/roc-config)
 
 ## Important
 

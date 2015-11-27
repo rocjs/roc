@@ -6,11 +6,12 @@
   "scripts": {
     "build": "babel src --out-dir lib --source-maps",
     "build:watch": "npm run build -- --watch",
-    "clean": "rimraf lib docs",
+    "clean": "rimraf lib docs coverage",
     "lint": "eslint .",
-    "test:unit": "mocha --compilers js:babel/register",
+    "test": "npm run lint && npm run test:coverage",
+    "test:coverage": "babel-node node_modules/isparta/bin/isparta cover _mocha",
+    "test:unit": "mocha --compilers js:babel/register test/",
     "test:unit:watch": "npm run test:unit -- --watch",
-    "test": "npm run lint && npm run test:unit",
     "check": "ncu",
     "docs": "esdoc -c esdoc.json",
     "prepublish": "npm test && npm run clean && npm run build && npm run docs"
@@ -35,6 +36,9 @@
     "eslint-config-vgno": "~5.0.0",
     "mocha": "~2.3.4",
     "npm-check-updates": "~2.3.0",
+    "isparta": "~3.5.3",
+    "codeclimate-test-reporter": "~0.1.1",
+    "coveralls": "~2.11.4",
     "rimraf": "~2.4.3"
   },
   "dependencies": {
