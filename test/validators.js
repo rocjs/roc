@@ -15,7 +15,7 @@ describe('roc-config', () => {
             it('must validate array as false', () => {
                 const testData = [];
                 validators.isObject()(testData)
-                    .should.equal(false);
+                    .should.equal('Was not an object!');
             });
 
             it('must validate complex object as true', () => {
@@ -39,7 +39,7 @@ describe('roc-config', () => {
                 validators.oneOf(
                     validators.isObject()
                 )(anInt)
-                    .should.equal(false);
+                    .should.equal('Was not any of the possible types:\n\nWas not an object!');
             });
 
             it('must handle 2 validator', () => {
@@ -55,7 +55,18 @@ describe('roc-config', () => {
                     validators.isArray(),
                     validators.isObject()
                 )(anInt)
-                    .should.equal(false);
+                    .should.equal('Was not any of the possible types:\n\nWas not an array!\nWas not an object!');
+            });
+        });
+
+        describe('require', () => {
+            it('must invalidate empty value', () => {
+                validators.required(validators.isString)('')
+                    .should.equal('A value was required but none was given!');
+                validators.required(validators.isObject())({})
+                    .should.equal('A value was required but none was given!');
+                validators.required(validators.isArray())([])
+                    .should.equal('A value was required but none was given!');
             });
         });
     });
