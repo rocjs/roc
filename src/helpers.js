@@ -9,11 +9,15 @@ import { isFunction, isRegExp } from 'lodash';
  * @param {function|RegExp} validator - A validator
  * @return {boolean} Returns if valid or not
  */
-export function assert(value, validator) {
+export function isValid(value, validator) {
     if (isFunction(validator)) {
         return validator(value);
     } else if (isRegExp(validator)) {
-        return validator.test(value.toString());
+        if (!validator.test(value.toString())) {
+            return 'Did not match the regexp: ' + validator;
+        }
+
+        return true;
     }
 
     throw new Error('Structure of configuration does not align with validation.');

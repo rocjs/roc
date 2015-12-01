@@ -6,7 +6,7 @@ import {
   isBoolean as lodashIsBoolean,
   isPlainObject as lodashIsPlainObject
 } from 'lodash';
-import { assert } from './helpers';
+import { isValid } from './helpers';
 
 /**
  * Validates an array using a validator.
@@ -17,7 +17,7 @@ import { assert } from './helpers';
 export function isArray(validator) {
     return (input) => {
         if (!lodashIsArray(input)) {
-            return false;
+            return 'Was not an array!';
         }
 
         return isArrayOrSingle(validator)(input);
@@ -33,7 +33,7 @@ export function isArray(validator) {
 export function isObject(validator) {
     return (input) => {
         if (!lodashIsPlainObject(input)) {
-            return false;
+            return 'Was not an object!';
         }
 
         if (!validator) {
@@ -41,7 +41,7 @@ export function isObject(validator) {
         }
 
         return Object.keys(input).map((key) => validator(input[key]))
-            .reduce((a, b) => a && b);
+            .reduce((a, b) => a && b, true);
     };
 }
 
@@ -57,8 +57,9 @@ export function isArrayOrSingle(validator) {
     return (input) => {
         const array = [].concat(input);
         for (const value of array) {
-            if (!assert(value, validator)) {
-                return false;
+            const result = isValid(value, validator);
+            if (result !== true) {
+                return result;
             }
         }
 
@@ -73,7 +74,11 @@ export function isArrayOrSingle(validator) {
  * @return {boolean} Returns if valid or not
  */
 export function isString(value) {
-    return lodashIsString(value);
+    if (!lodashIsString(value)) {
+        return 'Was not a string!';
+    }
+
+    return true;
 }
 
 /**
@@ -83,7 +88,11 @@ export function isString(value) {
  * @return {boolean} Returns if valid or not
  */
 export function isBoolean(value) {
-    return lodashIsBoolean(value);
+    if (!lodashIsBoolean(value)) {
+        return 'Was not a boolean!';
+    }
+
+    return true;
 }
 
 /**
@@ -93,7 +102,11 @@ export function isBoolean(value) {
  * @return {boolean} Returns if valid or not
  */
 export function isInteger(value) {
-    return Number.isInteger(value);
+    if (!Number.isInteger(value)) {
+        return 'Was not an integer!';
+    }
+
+    return true;
 }
 
 /**
@@ -103,7 +116,11 @@ export function isInteger(value) {
  * @return {boolean} Returns if valid or not
  */
 export function isPath(value) {
-    return isString(value);
+    if (!isString(value)) {
+        return 'Was not a path!';
+    }
+
+    return true;
 }
 
 /**
@@ -114,12 +131,36 @@ export function isPath(value) {
  */
 export function oneOf(...validators) {
     return (input) => {
+        const invalid = [];
         for (const validator of validators) {
-            if (validator(input)) {
+            const result = validator(input);
+            if (result === true) {
                 return true;
             }
+            invalid.push(result);
         }
 
-        return false;
+        return 'Was not any of the possible types:\n' +
+            invalid.reduce((prev, next) => prev + '\n' + next, '');
+    };
+}
+
+/**
+ * Marks that the value is required
+ *
+ * @param {function} validator - Validator to validate against
+ * @return {function} Returns a function that takes a value and that returns true or false if valid or not
+ */
+export function required(validator) {
+    return (input) => {
+        if (
+            !input && input !== false ||
+            (lodashIsArray(input) || lodashIsString(input)) && input.length === 0 ||
+            lodashIsPlainObject(input) && Object.keys(input).length === 0
+        ) {
+            return 'A value was required but none was given!';
+        }
+
+        return validator(input);
     };
 }

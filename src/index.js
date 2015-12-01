@@ -6,7 +6,7 @@ import colors from 'colors/safe';
 import deepExtend from 'deep-extend';
 import { isPlainObject } from 'lodash';
 
-import { assert } from './helpers';
+import { isValid } from './helpers';
 
 let onceApp = true;
 let onceTemp = true;
@@ -174,9 +174,27 @@ export function getFinalConfig(config = {}) {
  *
  * @param {object} config - the configuration object to validate
  * @param {object} metaConfig - the meta configuration object that has information about how to validate
- * @throws {Error} throws error if the configuration is invalid
+ * @emits {process.exit} if the config was invalid it will print the reason and terminate with status 1
  */
 export function validate(config, metaConfig) {
+    try {
+        validateMightThrow(config, metaConfig);
+    } catch (err) {
+        /* eslint-disable no-process-exit, no-console */
+        console.log(err.message);
+        process.exit(1);
+        /* eslint-enable */
+    }
+}
+
+/**
+ * Validates the provided configuration object
+ *
+ * @param {object} config - the configuration object to validate
+ * @param {object} metaConfig - the meta configuration object that has information about how to validate
+ * @throws {Error} throws error if the configuration is invalid
+ */
+export function validateMightThrow(config, metaConfig) {
     // if no meta configuration or validation is provided it is valid
     if (!metaConfig || !metaConfig.validation) {
         return;
@@ -191,7 +209,7 @@ export function validate(config, metaConfig) {
 
         // process validation nodes recursively
         if (isPlainObject(validator) && isPlainObject(configValue)) {
-            validate(configValue, {
+            validateMightThrow(configValue, {
                 validation: {
                     ...validator
                 }
@@ -203,13 +221,19 @@ export function validate(config, metaConfig) {
 }
 
 function assertValid(value, validateKey, validator) {
-    if (!assert(value, validator)) {
-        throwError(validateKey);
+    const result = isValid(value, validator);
+    if (result !== true) {
+        throwError(validateKey, result, value);
     }
 }
 
-function throwError(field) {
-    throw new Error(`Configuration validation failed for field ${field}`);
+function throwError(field, message, value) {
+    message = message && message + '\n';
+    throw new Error(
+        `Configuration validation failed for field ${colors.bold(field)}.\n` +
+        `Received: ${value}\n` +
+        `${message || ''}`
+    );
 }
 
 /**
