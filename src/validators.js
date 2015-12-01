@@ -6,7 +6,7 @@ import {
   isBoolean as lodashIsBoolean,
   isPlainObject as lodashIsPlainObject
 } from 'lodash';
-import { assert } from './helpers';
+import { isValid } from './helpers';
 
 /**
  * Validates an array using a validator.
@@ -57,7 +57,7 @@ export function isArrayOrSingle(validator) {
     return (input) => {
         const array = [].concat(input);
         for (const value of array) {
-            const result = assert(value, validator);
+            const result = isValid(value, validator);
             if (result !== true) {
                 return result;
             }

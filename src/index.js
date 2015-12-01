@@ -6,7 +6,7 @@ import colors from 'colors/safe';
 import deepExtend from 'deep-extend';
 import { isPlainObject } from 'lodash';
 
-import { assert } from './helpers';
+import { isValid } from './helpers';
 
 let onceApp = true;
 let onceTemp = true;
@@ -221,7 +221,7 @@ export function validateMightThrow(config, metaConfig) {
 }
 
 function assertValid(value, validateKey, validator) {
-    const result = assert(value, validator);
+    const result = isValid(value, validator);
     if (result !== true) {
         throwError(validateKey, result, value);
     }
