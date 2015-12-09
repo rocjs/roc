@@ -4,9 +4,12 @@ import path from 'path';
 import fs from 'fs';
 import colors from 'colors/safe';
 import deepExtend from 'deep-extend';
-import { isPlainObject } from 'lodash';
+import { isPlainObject, escape } from 'lodash';
 
 import { isValid } from './helpers';
+import buildDocumentationObject from './documentation/build-documentation-object';
+import generateTable from './documentation/generate-table';
+import { pad } from './documentation/helpers';
 
 let onceApp = true;
 let onceTemp = true;
@@ -237,14 +240,144 @@ function throwError(field, message, value) {
 }
 
 /**
- * Generates documentation for the provided configuration object
- *
- * @todo Implement
+ * Generates markdown documentation for the provided configuration object
  *
  * @param {object} config - the configuration object to generate documentation for
  * @param {object} metaConfig - the meta configuration object that has information about the configuration object
- * @returns {object} Some configuration documentation
+ * @param {string[]} [filter=[]] - the groups that should be includes, by default all will be used
+ * @returns {object} A markdown string
  */
-export function documentation(config, metaConfig) {
-    return console.log('Does nothing yet.', config, metaConfig);
+export function generateMarkdownDocumentation(config, metaConfig, filter = []) {
+    const documentationObject = buildDocumentationObject(
+        config, metaConfig.groups, metaConfig.descriptions, metaConfig.validation, filter
+    );
+
+    const header = {
+        name: {
+            name: 'Name'
+        },
+        description: {
+            name: 'Description',
+            renderer: (input) => escape(input)
+        },
+        path: {
+            name: 'Path'
+        },
+        cli: {
+            name: 'CLI Flag'
+        },
+        defaultValue: {
+            name: 'Default',
+            renderer: (input) => input && `\`${input}\``
+        },
+        type: {
+            name: 'Type',
+            renderer: (input) => input && `\`${input}\``
+        },
+        required: {
+            name: 'Required',
+            renderer: (input) => {
+                if (input === true) {
+                    return 'Yes';
+                }
+                return 'No';
+            }
+        }
+    };
+
+    const groupTitleWrapper = (name, level) => pad(level + 1, '#') + ' ' + name.charAt(0).toUpperCase() + name.slice(1);
+
+    return console.log(generateTable(documentationObject, header, {
+        groupTitleWrapper
+    }));
+}
+
+/**
+ * Generates plain text documentation for the provided configuration object
+ *
+ * @param {object} config - the configuration object to generate documentation for
+ * @param {object} metaConfig - the meta configuration object that has information about the configuration object
+ * @param {string[]} [filter=[]] - the groups that should be includes, by default all will be used
+ * @returns {object} A string
+ */
+export function generateTextDocumentation(config, metaConfig, filter = []) {
+    const documentationObject = buildDocumentationObject(
+        config, metaConfig.groups, metaConfig.descriptions, metaConfig.validation, filter
+    );
+
+    const header = {
+        description: {
+            name: 'Description',
+            renderer: (input) => input.substr(0, 100) + '…'
+        },
+        path: {
+            name: 'Path'
+        },
+        defaultValue: {
+            name: 'Default',
+            renderer: (input) => {
+                if (!input) {
+                    return colors.yellow('No default value');
+                }
+                return input;
+            }
+        },
+        cli: {
+            name: 'CLI Flag'
+        },
+        required: {
+            name: 'Required',
+            renderer: (input) => {
+                if (input === true) {
+                    return colors.green('Yes');
+                }
+                return colors.red('No');
+            }
+        }
+    };
+
+    return console.log(generateTable(documentationObject, header));
+}
+
+/**
+ * Generates plain text documentation for the provided configuration object
+ *
+ * Prints the documentation directly to the console.log
+ *
+ * @param {object} config - the configuration object to generate documentation for
+ * @param {object} metaConfig - the meta configuration object that has information about the configuration object
+ * @param {string[]} [filter=[]] - the groups that should be includes, by default all will be used
+ */
+export function generateCliDocumentation(config, metaConfig, filter = []) {
+    const documentationObject = buildDocumentationObject(
+        config, metaConfig.groups, metaConfig.descriptions, metaConfig.validation, filter
+    );
+
+    const header = {
+        cli: {
+            name: 'CLI Flag'
+        },
+        description: {
+            name: 'Description',
+            padding: false
+        },
+        defaultValue: {
+            name: 'Default',
+            renderer: (input) => {
+                if (!input) {
+                    return colors.yellow('No default value');
+                }
+                return colors.cyan(input);
+            }
+        }
+    };
+
+    console.log(generateTable(documentationObject, header, {
+        compact: true,
+        titleWrapper: (name) => name + ':',
+        cellDivider: '',
+        rowWrapper: (input) => `${input}`,
+        header: false,
+        groupTitleWrapper: (input) => input + ':'
+    }));
 }

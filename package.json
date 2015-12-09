@@ -45,6 +45,7 @@
     "colors": "~1.1.2",
     "deep-extend": "~0.4.0",
     "lodash": "~3.10.1",
-    "source-map-support": "~0.3.3"
+    "source-map-support": "~0.3.3",
+    "strip-ansi": "~3.0.0"
   }
 }

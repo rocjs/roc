@@ -4,7 +4,8 @@ import {
   isArray as lodashIsArray,
   isString as lodashIsString,
   isBoolean as lodashIsBoolean,
-  isPlainObject as lodashIsPlainObject
+  isPlainObject as lodashIsPlainObject,
+  isFunction
 } from 'lodash';
 import { isValid } from './helpers';
 
@@ -15,7 +16,11 @@ import { isValid } from './helpers';
  * @return {function} Returns a function that takes a value and that returns true or false if valid or not
  */
 export function isArray(validator) {
-    return (input) => {
+    return (input, info = false) => {
+        if (info) {
+            return infoObject(validator, (wrap) => (`[ ${wrap} ]`));
+        }
+
         if (!lodashIsArray(input)) {
             return 'Was not an array!';
         }
@@ -31,7 +36,11 @@ export function isArray(validator) {
  * @return {function} Returns a function that takes a value and that returns true or false if valid or not
  */
 export function isObject(validator) {
-    return (input) => {
+    return (input, info = false) => {
+        if (info) {
+            return infoObject(validator, (wrap) => `{ ${wrap} }`);
+        }
+
         if (!lodashIsPlainObject(input)) {
             return 'Was not an object!';
         }
@@ -40,7 +49,7 @@ export function isObject(validator) {
             return true;
         }
 
-        return Object.keys(input).map((key) => validator(input[key]))
+        return Object.keys(input).map((key) => isValid(input[key], validator))
             .reduce((a, b) => a && b, true);
     };
 }
@@ -54,7 +63,11 @@ export function isObject(validator) {
  * @return {function} Returns a function that takes a value and that returns true or false if valid or not
  */
 export function isArrayOrSingle(validator) {
-    return (input) => {
+    return (input, info = false) => {
+        if (info) {
+            return infoObject(validator, (wrap) => (`${wrap} / [ ${wrap} ]`));
+        }
+
         const array = [].concat(input);
         for (const value of array) {
             const result = isValid(value, validator);
@@ -73,7 +86,11 @@ export function isArrayOrSingle(validator) {
  * @param {object} value - Something to validate
  * @return {boolean} Returns if valid or not
  */
-export function isString(value) {
+export function isString(value, info = false) {
+    if (info) {
+        return infoObject('String');
+    }
+
     if (!lodashIsString(value)) {
         return 'Was not a string!';
     }
@@ -87,7 +104,11 @@ export function isString(value) {
  * @param {object} value - Something to validate
  * @return {boolean} Returns if valid or not
  */
-export function isBoolean(value) {
+export function isBoolean(value, info = false) {
+    if (info) {
+        return infoObject('Boolean');
+    }
+
     if (!lodashIsBoolean(value)) {
         return 'Was not a boolean!';
     }
@@ -101,7 +122,11 @@ export function isBoolean(value) {
  * @param {object} value - Something to validate
  * @return {boolean} Returns if valid or not
  */
-export function isInteger(value) {
+export function isInteger(value, info = false) {
+    if (info) {
+        return infoObject('Integer');
+    }
+
     if (!Number.isInteger(value)) {
         return 'Was not an integer!';
     }
@@ -115,9 +140,13 @@ export function isInteger(value) {
  * @param {object} value - Something to validate
  * @return {boolean} Returns if valid or not
  */
-export function isPath(value) {
+export function isPath(value, info = false) {
+    if (info) {
+        return infoObject('Filepath');
+    }
+
     if (!isString(value)) {
-        return 'Was not a path!';
+        return 'Was not a filepath!';
     }
 
     return true;
@@ -130,10 +159,18 @@ export function isPath(value) {
  * @return {function} Returns a function that takes a value and that returns true or false if valid or not
  */
 export function oneOf(...validators) {
-    return (input) => {
+    return (input, info = false) => {
+        if (info) {
+            let types = [];
+            for (const validator of validators) {
+                types.push(infoObject(validator).type);
+            }
+            return infoObject(types.join(' / '));
+        }
+
         const invalid = [];
         for (const validator of validators) {
-            const result = validator(input);
+            const result = isValid(input, validator);
             if (result === true) {
                 return true;
             }
@@ -152,7 +189,11 @@ export function oneOf(...validators) {
  * @return {function} Returns a function that takes a value and that returns true or false if valid or not
  */
 export function required(validator) {
-    return (input) => {
+    return (input, info = false) => {
+        if (info) {
+            return infoObject(validator, null, true);
+        }
+
         if (
             !input && input !== false ||
             (lodashIsArray(input) || lodashIsString(input)) && input.length === 0 ||
@@ -162,5 +203,14 @@ export function required(validator) {
         }
 
         return validator(input);
+    };
+}
+
+function infoObject(validator, wrapper, req = false) {
+    const info = isFunction(validator) ? validator(null, true).type : validator.toString();
+    const type = wrapper ? wrapper(info) : info;
+    return {
+        type,
+        required: req
     };
 }
