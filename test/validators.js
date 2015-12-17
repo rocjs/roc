@@ -1,5 +1,5 @@
 import chai from 'chai';
-import * as validators from '../src/validators';
+import * as validators from '../src/validation/validators';
 
 chai.should();
 

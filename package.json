@@ -42,9 +42,12 @@
     "rimraf": "~2.4.3"
   },
   "dependencies": {
+    "chalk": "~1.1.1",
     "colors": "~1.1.2",
     "deep-extend": "~0.4.0",
     "lodash": "~3.10.1",
+    "minimist": "~1.2.0",
+    "resolve": "~1.1.6",
     "source-map-support": "~0.3.3",
     "strip-ansi": "~3.0.0"
   }

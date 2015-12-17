@@ -5,8 +5,9 @@ import {
   isString as lodashIsString,
   isBoolean as lodashIsBoolean,
   isPlainObject as lodashIsPlainObject,
-  isFunction
+  isFunction as lodashIsFunction
 } from 'lodash';
+
 import { isValid } from './helpers';
 
 /**
@@ -207,7 +208,7 @@ export function required(validator) {
 }
 
 function infoObject(validator, wrapper, req = false) {
-    const info = isFunction(validator) ? validator(null, true).type : validator.toString();
+    const info = lodashIsFunction(validator) ? validator(null, true).type : validator.toString();
     const type = wrapper ? wrapper(info) : info;
     return {
         type,

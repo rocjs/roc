@@ -1,5 +1,6 @@
 import chai from 'chai';
-import { merge, appendConfig, getAppendedConfig, validateMightThrow } from '../src';
+import { merge } from '../src';
+import { validateMightThrow } from '../src/validation';
 import * as testData from './data';
 
 chai.should();
@@ -8,19 +9,6 @@ describe('roc-config', () => {
     describe('merge', () => {
         it('must merge correctly', () => {
             merge({a: 1, b: 2}, {c: 3}).should.deep.equal({
-                a: 1,
-                b: 2,
-                c: 3
-            });
-        });
-    });
-
-    describe('appendConfig', () => {
-        it('must merge correctly', () => {
-            appendConfig({a: 1, b: 2});
-            appendConfig({c: 3});
-
-            getAppendedConfig().should.deep.equal({
                 a: 1,
                 b: 2,
                 c: 3

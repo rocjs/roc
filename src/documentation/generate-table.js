@@ -1,5 +1,5 @@
 import deepExtend from 'deep-extend';
-import { isUndefined, isString } from 'lodash';
+import { isUndefined } from 'lodash';
 import stripAnsi from 'strip-ansi';
 
 import { pad, addPadding } from './helpers';
@@ -44,7 +44,7 @@ export default function generateTable(initalDocumentationObject, header, setting
         ).join(settings.cellDivider));
     };
 
-    const printTableHead = (name, description, level) => {
+    const printTableHead = (name, description, level = 0) => {
         const rows = [];
         rows.push(settings.groupTitleWrapper(name, level));
 
@@ -63,13 +63,15 @@ export default function generateTable(initalDocumentationObject, header, setting
         return rows;
     };
 
-    const recursiveHelper = (documentationObject) => {
+    const recursiveHelper = (documentationObject = []) => {
         const spacing = settings.compact ? [] : [''];
 
         return documentationObject.map((group) => {
             let rows = [];
-            if (group.level === 0 || !settings.compact) {
-                rows = rows.concat(printTableHead(group.name, group.description, group.level));
+            const level = group.level || 0;
+
+            if (level === 0 || !settings.compact) {
+                rows = rows.concat(printTableHead(group.name, group.description, level));
             }
 
             rows = rows.concat(group.objects.map((element) =>
@@ -77,7 +79,7 @@ export default function generateTable(initalDocumentationObject, header, setting
 
             rows = rows.concat(recursiveHelper(group.children));
 
-            if (group.level === 0 && settings.compact) {
+            if (level === 0 && settings.compact) {
                 rows.push('');
             }
 
@@ -97,13 +99,13 @@ function createLengthObject(initalElements, header, initalLengths, isHeader = fa
         return newLength > currentLength ? newLength : currentLength;
     };
 
-    const recursiveHelper = (elements, lengths = {}) => {
+    const recursiveHelper = (elements = [], lengths = {}) => {
         let newLengths = { ...lengths };
         elements.forEach((element) => {
             element.objects.forEach((object) => {
                 Object.keys(header).forEach((key) => {
                     const { value, renderer } = getValueAndRenderer(isHeader, header[key], object[key]);
-                    if (isString(value)) {
+                    if (value) {
                         newLengths[key] = getLength(getObjectLength(value, renderer), newLengths[key]);
                     }
                 });

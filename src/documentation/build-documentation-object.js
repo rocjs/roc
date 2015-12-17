@@ -1,25 +1,13 @@
-import { isPlainObject, isString, isFunction } from 'lodash';
+import { isPlainObject, isFunction } from 'lodash';
 
 import { toCliFlag } from './helpers';
 
-export default function buildDocumentationObject(
-    initalObject, initalGroups, initalDescriptions, initalValidations, initalFilter = []
-) {
+export default function buildDocumentationObject(initalObject, meta, initalFilter = []) {
     const allObjects = (object, callback) => {
         return Object.keys(object).map(callback).filter((value) => value !== undefined);
     };
 
-    const getDefaultValue = (object) => {
-        if (Array.isArray(object) && !object.length ||
-            isString(object) && !object ||
-            isPlainObject(object) && Object.keys(object).length === 0) {
-            return null;
-        }
-
-        return JSON.stringify(object);
-    };
-
-    const manageGroup = (object, name, group = {}, description, validation, parents, level) => {
+    const manageGroup = (object, name, group = {}, description = {}, validation = {}, parents, level) => {
         const groupDescription = isPlainObject(group) ? undefined : group;
         return {
             name,
@@ -30,8 +18,9 @@ export default function buildDocumentationObject(
         };
     };
 
-    const manageLeaf = (object, name, description, validation = () => ({type: 'Unknown'}), parents) => {
-        const { type, required } = isFunction(validation) ?
+    const manageLeaf = (object, name, description,
+        validation = (input, info) => info ? {type: 'Unknown'} : input, parents) => {
+        const { type = 'Unknown', required } = isFunction(validation) ?
             validation(null, true) :
             ({type: validation.toString(), req: false });
 
@@ -42,7 +31,8 @@ export default function buildDocumentationObject(
             required,
             path: parents.join('.'),
             cli: toCliFlag(parents),
-            defaultValue: getDefaultValue(object)
+            defaultValue: object,
+            validator: validation
         };
     };
 
@@ -62,5 +52,5 @@ export default function buildDocumentationObject(
         });
     }
 
-    return recursiveHelper(initalObject, initalGroups, initalDescriptions, initalValidations, initalFilter);
+    return recursiveHelper(initalObject, meta.groups, meta.descriptions, meta.validations, initalFilter);
 }
