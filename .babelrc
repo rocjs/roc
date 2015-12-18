@@ -1,4 +1,9 @@
 {
     "stage": 0,
-    "loose": "all"
+    "loose": "all",
+    "env": {
+        "test": {
+            "plugins": ["babel-plugin-rewire"]
+        }
+    }
 }

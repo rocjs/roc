@@ -6,10 +6,74 @@ import { isPlainObject, isBoolean, isString, set, difference } from 'lodash';
 import resolve from 'resolve';
 
 import { merge } from '../configuration';
-import { getApplicationConfig } from '../configuration/helpers';
 import buildDocumentationObject from '../documentation/build-documentation-object';
 import generateTable from '../documentation/generate-table';
 import { getDefaultValue } from '../documentation/helpers';
+
+/**
+ * Builds a configuration object.
+ *
+ * @param {boolean} debug - If debug mode should be enabled, logs some extra information.
+ * @param {object} config - The base configuration.
+ * @param {object} meta - The base meta configuration.
+ * @param {object} newConfig - The new configuration to base the merge on.
+ * @param {object} newMeta - The new meta configuration to base the merge on.
+ * @param {string} [directory=process.cwd()] - The directory to resolve relative paths from.
+ * @param {boolean} [validate=true] - If the newConfig and the newMeta structure should be validated.
+ * @returns {object} The result of with the built configurations.
+ * @property {extensionConfig} foo this is description.
+ * @property {config} bar this is description.
+ * @property {meta} baz this is description.
+ */
+export function buildCompleteConfig(
+    debug, config = {}, meta = {}, newConfig = {}, newMeta = {}, directory = process.cwd(), validate = true) {
+    let finalConfig = { ...config };
+    let finalMeta = { ...meta };
+
+    let usedExtensions = [];
+    const mergeExtension = (extensionName) => {
+        const { baseConfig, metaConfig } = getExtension(extensionName, directory);
+
+        if (baseConfig && metaConfig) {
+            usedExtensions.push(extensionName);
+            finalConfig = merge(finalConfig, baseConfig);
+            finalMeta = merge(finalMeta, metaConfig);
+        }
+    };
+
+    // If extensions are defined we will use them to merge the configurations
+    if (newConfig.extensions && newConfig.extensions.length) {
+        newConfig.extensions.forEach(mergeExtension);
+    } else {
+        const projectPackageJson = require(path.join(directory, 'package.json'));
+        [
+            ...Object.keys(projectPackageJson.dependencies || {}),
+            ...Object.keys(projectPackageJson.devDependencies || {})
+        ]
+        .filter(dependecy => /^roc(-.+)/.test(dependecy))
+        .forEach(mergeExtension);
+    }
+
+    if (usedExtensions.length && debug) {
+        console.log('The following Roc extensions will be used:', usedExtensions, '\n');
+    }
+
+    // Check for a mismatch between application configuration and extensions.
+    if (validate) {
+        if (Object.keys(newConfig).length) {
+            validateConfigurationStructure(finalConfig, newConfig);
+        }
+        if (Object.keys(newMeta).length) {
+            validateConfigurationStructure(finalMeta, newMeta);
+        }
+    }
+
+    return {
+        extensionConfig: finalConfig,
+        config: merge(finalConfig, newConfig),
+        meta: merge(finalMeta, newMeta)
+    };
+}
 
 function getExtension(extensionName, directory) {
     try {
@@ -24,52 +88,7 @@ function getExtension(extensionName, directory) {
             chalk.underline('npm install --save ' + extensionName)
         , '\n');
         return {};
-    }}
-
-// This needs to be exported! Could be useful to use in extensons to return thier configuration!
-export function buildCompleteConfig(debug, config = {}, meta = {}, applicationConfigPath, directory = process.cwd()) {
-    let finalConfig = config;
-    let finalMeta = meta;
-
-    const applicationConfig = getApplicationConfig(applicationConfigPath);
-
-    let usedExtensions = [];
-    const mergeExtension = (extensionName) => {
-        // TODO Verify what happens when we try to get an extensions that isn't installed.
-        const { baseConfig, metaConfig } = getExtension(extensionName, directory);
-
-        if (baseConfig && metaConfig) {
-            usedExtensions.push(extensionName);
-            finalConfig = merge(finalConfig, baseConfig);
-            finalMeta = merge(finalMeta, metaConfig);
-        }
-    };
-
-    // If extensions are defined we will use them to merge the configurations
-    if (applicationConfig.extensions && applicationConfig.extensions.length) {
-        applicationConfig.extensions.forEach(mergeExtension);
-    } else {
-        const projectPackageJson = require(path.join(directory, 'package.json'));
-        [
-            ...Object.keys(projectPackageJson.dependencies || {}),
-            ...Object.keys(projectPackageJson.devDependencies || {})
-        ]
-        .filter(dependecy => /^roc(-.+)/.test(dependecy))
-        .forEach(mergeExtension);
     }
-
-    if (usedExtensions.length && debug) {
-        console.log('Will use the following Roc Extensions', usedExtensions, '\n');
-    }
-
-    // Check for a mismatch between applicaiton configuration and extensions.
-    validateConfigurationStructure(finalConfig, applicationConfig);
-
-    return {
-        extensionConfig: finalConfig,
-        config: merge(finalConfig, applicationConfig),
-        meta: finalMeta
-    };
 }
 
 function validateConfigurationStructure(config, applicationConfig) {
@@ -186,15 +205,13 @@ export function generateCommandDocumentation({ settings }, { commands, settings:
     }
 
     rows.push('Options:');
+    rows.push('');
 
     // Generate the options table
     const filter = (commands[command].settings === true) ? [] : commands[command].settings;
     const documentationObject = buildDocumentationObject(settings, meta, filter);
     const header = {
-        // TODO Change cli to true and make it work, same for the rest
-        cli: {
-            name: 'CLI Flag'
-        },
+        cli: true,
         description: {
             name: 'Description',
             padding: false
@@ -204,6 +221,10 @@ export function generateCommandDocumentation({ settings }, { commands, settings:
             renderer: (input) => {
                 input = getDefaultValue(input);
 
+                if (input === undefined) {
+                    return '';
+                }
+
                 if (!input) {
                     return chalk.yellow('No default value');
                 }
@@ -212,6 +233,28 @@ export function generateCommandDocumentation({ settings }, { commands, settings:
             }
         }
     };
+
+    documentationObject.push({
+        name: 'Additional options',
+        objects: [{
+            cli: '-h, --help',
+            description: 'Output usage information.'
+        }, {
+            cli: '-v, --version',
+            description: 'Output version number.'
+        }, {
+            cli: '-d, --debug',
+            description: 'Enable debug mode.'
+        }, {
+            cli: '-c, --config',
+            description: `Path to configuration file, will default to ${chalk.bold('roc.config.js')} in current ` +
+                `working directory.`
+        }, {
+            cli: '-D, --directory',
+            description: 'Path to working directory, will default to the current working directory. Can be either ' +
+                'absolute or relative.'
+        }]
+    });
 
     rows.push(generateTable(documentationObject, header, {
         compact: true,

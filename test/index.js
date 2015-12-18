@@ -1,5 +1,5 @@
 import chai from 'chai';
-import { merge } from '../src';
+import { merge } from '../src/configuration';
 import { validateMightThrow } from '../src/validation';
 import * as testData from './data';
 

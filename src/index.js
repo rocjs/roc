@@ -13,3 +13,5 @@ export { generateMarkdownDocumentation, generateTextDocumentation } from './docu
 export { runCli } from './cli';
 
 export { validate } from './validation';
+
+export { execute } from './cli/execute';

@@ -85,7 +85,8 @@ export function isArrayOrSingle(validator) {
  * Validates an string.
  *
  * @param {object} value - Something to validate
- * @return {boolean} Returns if valid or not
+ * @param {boolean} info - If type information should be returned
+ * @return {infoObject|boolean} Type information or if it is valid
  */
 export function isString(value, info = false) {
     if (info) {
@@ -103,7 +104,8 @@ export function isString(value, info = false) {
  * Validates an string.
  *
  * @param {object} value - Something to validate
- * @return {boolean} Returns if valid or not
+ * @param {boolean} info - If type information should be returned
+ * @return {infoObject|boolean} Type information or if it is valid
  */
 export function isBoolean(value, info = false) {
     if (info) {
@@ -121,7 +123,8 @@ export function isBoolean(value, info = false) {
  * Validates an string.
  *
  * @param {object} value - Something to validate
- * @return {boolean} Returns if valid or not
+ * @param {boolean} info - If type information should be returned
+ * @return {infoObject|boolean} Type information or if it is valid
  */
 export function isInteger(value, info = false) {
     if (info) {
@@ -139,7 +142,8 @@ export function isInteger(value, info = false) {
  * Validates an string.
  *
  * @param {object} value - Something to validate
- * @return {boolean} Returns if valid or not
+ * @param {boolean} info - If type information should be returned
+ * @return {infoObject|boolean} Type information or if it is valid
  */
 export function isPath(value, info = false) {
     if (info) {
