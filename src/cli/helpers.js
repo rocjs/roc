@@ -4,6 +4,7 @@ import path from 'path';
 import chalk from 'chalk';
 import { isPlainObject, isBoolean, isString, set, difference } from 'lodash';
 import resolve from 'resolve';
+import leven from 'leven';
 
 import { merge } from '../configuration';
 import buildDocumentationObject from '../documentation/build-documentation-object';
@@ -61,10 +62,10 @@ export function buildCompleteConfig(
     // Check for a mismatch between application configuration and extensions.
     if (validate) {
         if (Object.keys(newConfig).length) {
-            validateConfigurationStructure(finalConfig, newConfig);
+            console.log(validateConfigurationStructure(finalConfig, newConfig));
         }
         if (Object.keys(newMeta).length) {
-            validateConfigurationStructure(finalMeta, newMeta);
+            console.log(validateConfigurationStructure(finalMeta, newMeta));
         }
     }
 
@@ -106,17 +107,51 @@ function validateConfigurationStructure(config, applicationConfig) {
 
         return allKeys;
     };
-
-    const diff = difference(getKeys(applicationConfig), getKeys(config));
+    const info = [];
+    const keys = getKeys(config);
+    const diff = difference(getKeys(applicationConfig), keys);
     if (diff.length > 0) {
-        // TODO Do not do console.log here!
-        console.log(
-            chalk.bgRed('There was a mismatch in the application configuration structure, '
-                + 'make sure this is correct. The following will be ignored:') + ' ' +
-            diff.join(', ') +
-            '\n'
-        );
+        info.push(chalk.bgRed('Configuration problem') +
+            ' There was a mismatch in the application configuration structure, make sure this is correct.\n');
+        info.push(getSuggestions(diff, keys));
+        info.push('');
     }
+    // }
+    return info.join('\n');
+}
+
+function getSuggestions(current, possible, command = false) {
+    const info = [];
+
+    current.forEach((currentKey) => {
+        let shortest = 0;
+        let closest;
+
+        for (let key of possible) {
+            let distance = leven(currentKey, key);
+
+            if (distance <= 0 || distance > 4) {
+                continue;
+            }
+
+            if (shortest && distance >= shortest) {
+                continue;
+            }
+
+            closest = key;
+            shortest = distance;
+        }
+
+        const extra = command ? '--' : '';
+        if (closest) {
+            info.push('Did not understand ' + chalk.underline(extra + currentKey) +
+                ' - Did you mean ' + chalk.underline(extra + closest));
+        } else {
+            info.push('Did not understand ' + chalk.underline(extra + currentKey));
+        }
+    });
+
+    return info.join('\n');
 }
 
 export function generateCommandsDocumentation({ commands }, { commands: commandsMeta }) {
@@ -365,16 +400,22 @@ function getConvertor(value, name) {
 
 export function parseArguments(args, mappings) {
     const config = {};
+    const info = [];
 
     Object.keys(args).forEach((key) => {
         if (mappings[key]) {
             const value = convert(args[key], mappings[key]);
             set(config, mappings[key].path, value);
         } else {
-            // TODO Do not do console.log here
-            console.log('I did not understand: ', key);
+            // We did not find a match
+            info.push(getSuggestions([key], Object.keys(mappings), true));
         }
     });
+
+    if (info.length > 0) {
+        console.log(chalk.bgRed('CLI problem') + ' Some commands was not understood.\n');
+        console.log(info.join('\n') + '\n');
+    }
 
     return config;
 }
