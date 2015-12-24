@@ -1,5 +1,5 @@
 import chai from 'chai';
-import { merge } from '../src/configuration';
+import { merge, appendConfig, getConfig } from '../src/configuration';
 import { validateMightThrow } from '../src/validation';
 import * as testData from './data';
 
@@ -13,6 +13,14 @@ describe('roc-config', () => {
                 b: 2,
                 c: 3
             });
+        });
+    });
+
+    describe('getConfig', () => {
+        it('must return correct data', () => {
+            const testConfig = { a: 1 };
+            appendConfig(testConfig);
+            getConfig().should.deep.equal(testConfig);
         });
     });
 
