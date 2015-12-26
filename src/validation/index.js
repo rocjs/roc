@@ -17,6 +17,7 @@ export function validate(config, metaConfig) {
         validateMightThrow(config, metaConfig);
     } catch (err) {
         /* eslint-disable no-process-exit, no-console */
+        console.log(chalk.bgRed('Validation problem') + ' Configuration was not valid.\n');
         console.log(err.message);
         process.exit(1);
         /* eslint-enable */
@@ -32,21 +33,21 @@ export function validate(config, metaConfig) {
  */
 export function validateMightThrow(config, metaConfig) {
     // if no meta configuration or validation is provided it is valid
-    if (!metaConfig || !metaConfig.validation) {
+    if (!metaConfig || !metaConfig.validations) {
         return;
     }
 
     // validation fields to process one by one
-    const validateKeys = Object.keys(metaConfig.validation);
+    const validateKeys = Object.keys(metaConfig.validations);
 
     for (const validateKey of validateKeys) {
         const configValue = config[validateKey];
-        const validator = metaConfig.validation[validateKey];
+        const validator = metaConfig.validations[validateKey];
 
         // process validation nodes recursively
         if (isPlainObject(validator) && isPlainObject(configValue)) {
             validateMightThrow(configValue, {
-                validation: {
+                validations: {
                     ...validator
                 }
             });
@@ -65,9 +66,10 @@ function assertValid(value, validateKey, validator) {
 
 function throwError(field, message, value) {
     message = message && message + '\n';
+    const val = value ? `Received: ${value} - ` : '';
     throw new Error(
-        `Configuration validation failed for field ${chalk.bold(field)}.\n` +
-        `Received: ${value}\n` +
+        `Validation failed for field ${chalk.underline(field)} - ` +
+        val +
         `${message || ''}`
     );
 }

@@ -1,4 +1,4 @@
-// Test data covering basic config and metadata validation combinations
+// Test data covering basic config and metadata validations combinations
 export const flatConfig = {
     port: 80,
     path: 'test'
@@ -14,21 +14,21 @@ export const nestedConfig = {
 };
 
 export const flatInvalidMetaConfig = {
-    validation: {
+    validations: {
         port: () => false,
         path: () => true
     }
 };
 
 export const flatValidMetaConfig = {
-    validation: {
+    validations: {
         port: () => true,
         path: () => true
     }
 };
 
 export const flatMismatchMetaConfig = {
-    validation: {
+    validations: {
         thisiswrong: {
             port: () => true,
             path: () => true
@@ -37,7 +37,7 @@ export const flatMismatchMetaConfig = {
 };
 
 export const nestedInvalidMetaConfig = {
-    validation: {
+    validations: {
         layer1: {
             port: () => false,
             layer2: {
@@ -48,7 +48,7 @@ export const nestedInvalidMetaConfig = {
 };
 
 export const nestedValidMetaConfig = {
-    validation: {
+    validations: {
         layer1: {
             port: () => true,
             layer2: {
@@ -59,7 +59,7 @@ export const nestedValidMetaConfig = {
 };
 
 export const nestedEvaluateMetaConfig = {
-    validation: {
+    validations: {
         layer1: {
             port: (value) => typeof value === 'number',
             layer2: {
@@ -70,21 +70,21 @@ export const nestedEvaluateMetaConfig = {
 };
 
 export const flatRegexInvalidMetaConfig = {
-    validation: {
+    validations: {
         port: /1/,
         path: /\d+/
     }
 };
 
 export const flatRegexValidMetaConfig = {
-    validation: {
+    validations: {
         port: /\d+/,
         path: /\w+/
     }
 };
 
 export const nestedRegexInvalidMetaConfig = {
-    validation: {
+    validations: {
         layer1: {
             port: /1/,
             layer2: {
@@ -95,7 +95,7 @@ export const nestedRegexInvalidMetaConfig = {
 };
 
 export const nestedRegexValidMetaConfig = {
-    validation: {
+    validations: {
         layer1: {
             port: /\d+/,
             layer2: {
