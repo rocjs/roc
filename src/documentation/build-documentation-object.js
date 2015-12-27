@@ -1,3 +1,5 @@
+import 'source-map-support/register';
+
 import { isPlainObject, isFunction } from 'lodash';
 
 import { toCliFlag } from './helpers';

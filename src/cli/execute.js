@@ -1,3 +1,5 @@
+import 'source-map-support/register';
+
 import { spawn } from 'child_process';
 
 /**

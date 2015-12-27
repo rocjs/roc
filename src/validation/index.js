@@ -10,11 +10,18 @@ import { isValid } from './helpers';
  *
  * @param {object} config - the configuration object to validate
  * @param {object} metaConfig - the meta configuration object that has information about how to validate
+ * @param {array|boolean} toValidate - What groups on settings that should be validated.
  * @emits {process.exit} if the config was invalid it will print the reason and terminate with status 1
  */
-export function validate(config, metaConfig) {
+export function validate(config, metaConfig, toValidate = true) {
     try {
-        validateMightThrow(config, metaConfig);
+        if (toValidate === true) {
+            validateMightThrow(config, metaConfig);
+        } else {
+            toValidate.forEach((group) => {
+                validateMightThrow(config[group], metaConfig[group]);
+            });
+        }
     } catch (err) {
         /* eslint-disable no-process-exit, no-console */
         console.log(chalk.bgRed('Validation problem') + ' Configuration was not valid.\n');
