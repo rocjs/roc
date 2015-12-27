@@ -16,7 +16,8 @@ import {
     generateCommandDocumentation,
     parseOptions,
     getMappings,
-    parseArguments
+    parseArguments,
+    getSuggestions
 } from './helpers';
 
 export function runCli(info = {version: 'Unknown', name: 'Unknown'}, initalConfig, initalMeta, args = process.argv) {
@@ -52,13 +53,14 @@ export function runCli(info = {version: 'Unknown', name: 'Unknown'}, initalConfi
 
     // If the command does not exist show error
     if (!extensionConfig.commands || !extensionConfig.commands[command]) {
-        return console.log(chalk.red('Invalid command: ' + chalk.bold(command) + '\n'));
+        console.log(chalk.bgRed('Invalid command'), '\n');
+        return console.log(getSuggestions([command], Object.keys(extensionConfig.commands)), '\n');
     }
 
     // Show command help information if requested
     if (help || h) {
         // TODO extensionConfig vs configObject
-        return console.log(generateCommandDocumentation(extensionConfig, metaObject, command));
+        return console.log(generateCommandDocumentation(extensionConfig, metaObject, command, info.name));
     }
 
     const parsedOptions = parseOptions(command, metaObject.commands, options);
