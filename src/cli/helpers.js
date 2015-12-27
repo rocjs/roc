@@ -5,6 +5,8 @@ import chalk from 'chalk';
 import { isPlainObject, isBoolean, isString, set, difference } from 'lodash';
 import resolve from 'resolve';
 import leven from 'leven';
+import trimNewlines from 'trim-newlines';
+import redent from 'redent';
 
 import { merge } from '../configuration';
 import buildDocumentationObject from '../documentation/build-documentation-object';
@@ -236,7 +238,7 @@ export function generateCommandDocumentation({ settings }, { commands, settings:
     rows.push('');
 
     if (commands[command] && commands[command].help) {
-        rows.push(commands[command].help);
+        rows.push(redent(trimNewlines(commands[command].help)));
         rows.push('');
     }
 
