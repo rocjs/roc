@@ -1,3 +1,5 @@
+import 'source-map-support/register';
+
 import deepExtend from 'deep-extend';
 import { isUndefined } from 'lodash';
 import stripAnsi from 'strip-ansi';

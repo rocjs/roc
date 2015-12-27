@@ -1,3 +1,5 @@
+import 'source-map-support/register';
+
 import stripAnsi from 'strip-ansi';
 import { isPlainObject, isString } from 'lodash';
 

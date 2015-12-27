@@ -72,10 +72,10 @@ export function runCli(info = {version: 'Unknown', name: 'Unknown'}, initalConfi
         configObject = merge(configObject, {
             settings: configuration
         });
-    }
 
-    // Validate configuration
-    validate(configObject.settings, metaObject.settings);
+        // Validate configuration
+        validate(configObject.settings, metaObject.settings, metaObject.commands[command].settings);
+    }
 
     // Set the configuration object
     appendConfig(configObject);
