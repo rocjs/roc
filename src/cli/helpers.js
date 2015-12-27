@@ -5,6 +5,8 @@ import chalk from 'chalk';
 import { isPlainObject, isBoolean, isString, set, difference } from 'lodash';
 import resolve from 'resolve';
 import leven from 'leven';
+import trimNewlines from 'trim-newlines';
+import redent from 'redent';
 
 import { merge } from '../configuration';
 import buildDocumentationObject from '../documentation/build-documentation-object';
@@ -120,7 +122,7 @@ function validateConfigurationStructure(config, applicationConfig) {
     return info.join('\n');
 }
 
-function getSuggestions(current, possible, command = false) {
+export function getSuggestions(current, possible, command = false) {
     const info = [];
 
     current.forEach((currentKey) => {
@@ -210,7 +212,7 @@ export function generateCommandsDocumentation({ commands }, { commands: commands
     });
 }
 
-function getCommandOptionsAsString(command) {
+function getCommandOptionsAsString(command = {}) {
     let options = '';
     (command.options || []).forEach((option) => {
         options += option.required ? `<${option.name}> ` : `[${option.name}] `;
@@ -227,24 +229,30 @@ function getCommandOptionsAsString(command) {
  * @param {object} config - the configuration object to generate documentation for
  * @param {object} metaConfig - the meta configuration object that has information about the configuration object
  * @param {string} command - the current command to show information about
+ * @param {string} name - the current command line program
  * @returns {string} The documentation as a string.
  */
-export function generateCommandDocumentation({ settings }, { commands, settings: meta }, command) {
+export function generateCommandDocumentation({ settings }, { commands, settings: meta }, command, name) {
     const rows = [];
-    rows.push('Usage: roc ' + command + ' ' + getCommandOptionsAsString(commands[command]));
+    rows.push('Usage: ' + name + ' ' + command + ' ' + getCommandOptionsAsString(commands[command]));
     rows.push('');
 
-    // Only continue if the command accepts settings
-    if (commands[command] && !commands[command].settings) {
-        return rows.join('\n');
+    if (commands[command] && commands[command].help) {
+        rows.push(redent(trimNewlines(commands[command].help)));
+        rows.push('');
     }
 
-    rows.push('Options:');
-    rows.push('');
+    let documentationObject = [];
 
     // Generate the options table
-    const filter = (commands[command].settings === true) ? [] : commands[command].settings;
-    const documentationObject = buildDocumentationObject(settings, meta, filter);
+    if (commands[command] && commands[command].settings) {
+        rows.push('Options:');
+        rows.push('');
+
+        const filter = (!commands[command].settings === true) ? [] : commands[command].settings;
+        documentationObject = buildDocumentationObject(settings, meta, filter);
+    }
+
     const header = {
         cli: true,
         description: {
@@ -270,7 +278,7 @@ export function generateCommandDocumentation({ settings }, { commands, settings:
     };
 
     documentationObject.push({
-        name: 'Additional options',
+        name: 'CLI options',
         objects: [{
             cli: '-h, --help',
             description: 'Output usage information.'
@@ -293,7 +301,7 @@ export function generateCommandDocumentation({ settings }, { commands, settings:
 
     rows.push(generateTable(documentationObject, header, {
         compact: true,
-        titleWrapper: (name) => name + ':',
+        titleWrapper: (input) => input + ':',
         cellDivider: '',
         rowWrapper: (input) => `${input}`,
         header: false,
