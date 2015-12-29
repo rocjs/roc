@@ -249,7 +249,8 @@ export function generateCommandDocumentation({ settings }, { commands, settings:
         rows.push('Options:');
         rows.push('');
 
-        const filter = (!commands[command].settings === true) ? [] : commands[command].settings;
+        const filter = commands[command].settings === true ? [] : commands[command].settings;
+
         documentationObject = buildDocumentationObject(settings, meta, filter);
     }
 
