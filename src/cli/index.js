@@ -88,5 +88,11 @@ export function runCli(info = {version: 'Unknown', name: 'Unknown'}, initalConfi
     }
 
     // Run the command
-    return configObject.commands[command](debugEnabled, configObject, metaObject, extensionConfig, parsedOptions);
+    return configObject.commands[command]({
+        debug: debugEnabled,
+        configObject,
+        metaObject,
+        extensionConfig,
+        parsedOptions
+    });
 }
