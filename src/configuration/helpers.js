@@ -45,7 +45,13 @@ export function getApplicationConfig(applicationConfigPath, directory = process.
     // Return correct project configuration with fallback to empty object
     const appConfigPath = configPath || getAbsolutePath('roc.config.js', directory);
     try {
-        return require(appConfigPath);
+        const config = require(appConfigPath);
+
+        if (Object.keys(config).length === 0) {
+            console.log(chalk.yellow('The configuration file at ' + chalk.bold(appConfigPath) + ' was empty.'));
+        }
+
+        return config;
     } catch (error) {
         console.log(chalk.yellow('Could not read the configuration file at ' + chalk.bold(appConfigPath)));
         return {};
