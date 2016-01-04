@@ -12,6 +12,7 @@ import { merge } from '../configuration';
 import buildDocumentationObject from '../documentation/build-documentation-object';
 import generateTable from '../documentation/generate-table';
 import { getDefaultValue } from '../documentation/helpers';
+import { fileExists } from '../helpers';
 
 /**
  * Builds a configuration object.
@@ -24,12 +25,13 @@ import { getDefaultValue } from '../documentation/helpers';
  * @param {string} [directory=process.cwd()] - The directory to resolve relative paths from.
  * @param {boolean} [validate=true] - If the newConfig and the newMeta structure should be validated.
  * @returns {object} The result of with the built configurations.
- * @property {extensionConfig} foo this is description.
- * @property {config} bar this is description.
- * @property {meta} baz this is description.
+ * @property {extensionConfig} The extensions merged configurations
+ * @property {config} The final configuration, with application configuration.
+ * @property {meta} The merged meta configuration.
  */
 export function buildCompleteConfig(
-    debug, config = {}, meta = {}, newConfig = {}, newMeta = {}, directory = process.cwd(), validate = true) {
+    debug, config = {}, meta = {}, newConfig = {}, newMeta = {}, directory = process.cwd(), validate = true
+) {
     let finalConfig = { ...config };
     let finalMeta = { ...meta };
 
@@ -44,30 +46,32 @@ export function buildCompleteConfig(
         }
     };
 
-    // If extensions are defined we will use them to merge the configurations
-    if (newConfig.extensions && newConfig.extensions.length) {
-        newConfig.extensions.forEach(mergeExtension);
-    } else {
-        const projectPackageJson = require(path.join(directory, 'package.json'));
-        [
-            ...Object.keys(projectPackageJson.dependencies || {}),
-            ...Object.keys(projectPackageJson.devDependencies || {})
-        ]
-        .filter(dependecy => /^roc(-.+)/.test(dependecy))
-        .forEach(mergeExtension);
-    }
-
-    if (usedExtensions.length && debug) {
-        console.log('The following Roc extensions will be used:', usedExtensions, '\n');
-    }
-
-    // Check for a mismatch between application configuration and extensions.
-    if (validate) {
-        if (Object.keys(newConfig).length) {
-            console.log(validateConfigurationStructure(finalConfig, newConfig));
+    if (fileExists('package.json')) {
+        // If extensions are defined we will use them to merge the configurations
+        if (newConfig.extensions && newConfig.extensions.length) {
+            newConfig.extensions.forEach(mergeExtension);
+        } else {
+            const projectPackageJson = require(path.join(directory, 'package.json'));
+            [
+                ...Object.keys(projectPackageJson.dependencies || {}),
+                ...Object.keys(projectPackageJson.devDependencies || {})
+            ]
+            .filter(dependecy => /^roc(-.+)/.test(dependecy))
+            .forEach(mergeExtension);
         }
-        if (Object.keys(newMeta).length) {
-            console.log(validateConfigurationStructure(finalMeta, newMeta));
+
+        if (usedExtensions.length && debug) {
+            console.log('The following Roc extensions will be used:', usedExtensions, '\n');
+        }
+
+        // Check for a mismatch between application configuration and extensions.
+        if (validate) {
+            if (Object.keys(newConfig).length) {
+                console.log(validateConfigurationStructure(finalConfig, newConfig));
+            }
+            if (Object.keys(newMeta).length) {
+                console.log(validateConfigurationStructure(finalMeta, newMeta));
+            }
         }
     }
 

@@ -16,4 +16,4 @@ export { validate } from './validation';
 
 export { execute } from './cli/execute';
 
-export { getAbsolutePath } from './helpers';
+export { getAbsolutePath, fileExists } from './helpers';
