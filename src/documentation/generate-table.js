@@ -20,7 +20,7 @@ export default function generateTable(initalDocumentationObject, header, setting
     const headerLengths = createLengthObject(header, header, {}, true);
     const lengths = createLengthObject(initalDocumentationObject, header, headerLengths);
 
-    const printTableCell = (key, element, renderer = (input) => input, fill = false) => {
+    const printTableCell = (key, element, renderer = (input) => input || '', fill = false) => {
         if (fill) {
             return settings.cellWrapper(pad(lengths[key], '-'));
         }

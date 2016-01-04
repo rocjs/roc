@@ -4,7 +4,7 @@ import { isPlainObject, isFunction } from 'lodash';
 
 import { toCliFlag } from './helpers';
 
-export default function buildDocumentationObject(initalObject, meta, initalFilter = []) {
+export default function buildDocumentationObject(initalObject, meta = {}, initalFilter = []) {
     const allObjects = (object, callback) => {
         return Object.keys(object).map(callback).filter((value) => value !== undefined);
     };
