@@ -41,7 +41,7 @@ export function runCli(info = {version: 'Unknown', name: 'Unknown'}, initalConfi
     const directoryPath = getAbsolutePath(directory || D);
 
     // Build the complete config object
-    const applicationConfig = getApplicationConfig(applicationConfigPath);
+    const applicationConfig = getApplicationConfig(applicationConfigPath, directoryPath, debugEnabled);
     let { extensionConfig, config: configObject, meta: metaObject } =
         buildCompleteConfig(debugEnabled, initalConfig, initalMeta, applicationConfig, undefined, directoryPath);
 
