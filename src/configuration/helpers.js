@@ -23,10 +23,11 @@ let onceApp = true;
  * @param {string} applicationConfigPath - Path to application configuration file. Can be either relative or absolute.
  * @param {string} [directory=process.cwd()] - The directory to resolve realative paths to. By default will use the
  *     current working directory.
+ * @param {boolean} [debug=false] - If extra information should be printed.
  * @returns {object} The application configuration object.
  * @throws {Error} When an invalid path override is specified.
  */
-export function getApplicationConfig(applicationConfigPath, directory = process.cwd()) {
+export function getApplicationConfig(applicationConfigPath, directory = process.cwd(), debug = false) {
     const configPath = getAbsolutePath(process.env.ROC_CONFIG_PATH || applicationConfigPath, directory);
 
     if (onceApp && applicationConfigPath && process.env.ROC_CONFIG_PATH) {
@@ -53,7 +54,9 @@ export function getApplicationConfig(applicationConfigPath, directory = process.
 
         return config;
     } catch (error) {
-        console.log(chalk.yellow('Could not read the configuration file at ' + chalk.bold(appConfigPath)));
+        if (debug) {
+            console.log(chalk.yellow('Could not read the configuration file at ' + chalk.bold(appConfigPath)));
+        }
         return {};
     }
 }
