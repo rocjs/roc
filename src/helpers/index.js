@@ -1,6 +1,7 @@
 import 'source-map-support/register';
 
 import path from 'path';
+import fs from 'fs';
 
 /**
 * Makes a path absolute if not already is that.
@@ -15,5 +16,14 @@ export function getAbsolutePath(filepath, directory = process.cwd()) {
         return path.isAbsolute(filepath) ?
             filepath :
             path.join(directory, filepath);
+    }
+}
+
+export function fileExists(filepath) {
+    filepath = getAbsolutePath(filepath);
+    try {
+        return fs.statSync(filepath).isFile();
+    } catch (error) {
+        return false;
     }
 }
