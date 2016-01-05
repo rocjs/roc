@@ -39,9 +39,9 @@ export function buildCompleteConfig(
 
     let usedExtensions = [];
     const mergeExtension = (extensionName) => {
-        const { baseConfig, metaConfig } = getExtension(extensionName, directory);
+        const { baseConfig, metaConfig = {} } = getExtension(extensionName, directory);
 
-        if (baseConfig && metaConfig) {
+        if (baseConfig) {
             usedExtensions.push(extensionName);
             finalConfig = merge(finalConfig, baseConfig);
             finalMeta = merge(finalMeta, metaConfig);
