@@ -14,6 +14,7 @@ import generateTable from '../documentation/generate-table';
 import { getDefaultValue } from '../documentation/helpers';
 import { fileExists } from '../helpers';
 import { throwError } from '../validation';
+import { isValid } from '../validation/helpers';
 
 /**
  * Builds a configuration object.
@@ -329,7 +330,7 @@ export function parseOptions(command, meta, options) {
             }
 
             if (value && option.validation) {
-                const validationResult = option.validation(value);
+                const validationResult = isValid(value, option.validation);
                 if (validationResult !== true) {
                     try {
                         throwError(option.name, validationResult, value, 'option');
