@@ -13,8 +13,8 @@ import { isValid } from './index.js';
 /**
  * Validates an array using a validator.
  *
- * @param {function|RegExp} validator - The validator to use on the elements in the array
- * @return {function} Returns a function that takes a value and that returns true or false if valid or not
+ * @param {function|RegExp} validator - The validator to use on the elements in the array.
+ * @return {function} - A function that takes a value and that returns true or false if valid or not.
  */
 export function isArray(validator) {
     return (input, info) => {
@@ -34,7 +34,7 @@ export function isArray(validator) {
  * Validates an object using a validator.
  *
  * @param {function|RegExp} validator - The validator to use on the elements in the object
- * @return {function} Returns a function that takes a value and that returns true or false if valid or not
+ * @return {function} - A function that takes a value and that returns true or false if valid or not.
  */
 export function isObject(validator) {
     return (input, info) => {
@@ -60,8 +60,8 @@ export function isObject(validator) {
  *
  * Allows that a single value is given.
  *
- * @param {function|RegExp} validator - The validator to use on the elements in the array
- * @return {function} Returns a function that takes a value and that returns true or false if valid or not
+ * @param {function|RegExp} validator - The validator to use on the elements in the array.
+ * @return {function} - A function that takes a value and that returns true or false if valid or not.
  */
 export function isArrayOrSingle(validator) {
     return (input, info) => {
@@ -84,9 +84,9 @@ export function isArrayOrSingle(validator) {
 /**
  * Validates an string.
  *
- * @param {object} value - Something to validate
- * @param {boolean} info - If type information should be returned
- * @return {infoObject|boolean} Type information or if it is valid
+ * @param {object} value - Something to validate.
+ * @param {boolean} info - If type information should be returned.
+ * @return {infoObject|boolean} - Type information or if it is valid.
  */
 export function isString(value, info) {
     if (info) {
@@ -103,9 +103,9 @@ export function isString(value, info) {
 /**
  * Validates an string.
  *
- * @param {object} value - Something to validate
- * @param {boolean} info - If type information should be returned
- * @return {infoObject|boolean} Type information or if it is valid
+ * @param {object} value - Something to validate.
+ * @param {boolean} info - If type information should be returned.
+ * @return {infoObject|boolean} - Type information or if it is valid.
  */
 export function isBoolean(value, info) {
     if (info) {
@@ -122,9 +122,9 @@ export function isBoolean(value, info) {
 /**
  * Validates an string.
  *
- * @param {object} value - Something to validate
- * @param {boolean} info - If type information should be returned
- * @return {infoObject|boolean} Type information or if it is valid
+ * @param {object} value - Something to validate.
+ * @param {boolean} info - If type information should be returned.
+ * @return {infoObject|boolean} - Type information or if it is valid.
  */
 export function isInteger(value, info) {
     if (info) {
@@ -141,9 +141,9 @@ export function isInteger(value, info) {
 /**
  * Validates an string.
  *
- * @param {object} value - Something to validate
- * @param {boolean} info - If type information should be returned
- * @return {infoObject|boolean} Type information or if it is valid
+ * @param {object} value - Something to validate.
+ * @param {boolean} info - If type information should be returned.
+ * @return {infoObject|boolean} - Type information or if it is valid.
  */
 export function isPath(value, info) {
     if (info) {
@@ -158,10 +158,10 @@ export function isPath(value, info) {
 }
 
 /**
- * Validates against a list of validators
+ * Validates against a list of validators.
  *
- * @param {...function} validators - Validators to validate against
- * @return {function} Returns a function that takes a value and that returns true or false if valid or not
+ * @param {...function} validators - Validators to validate against.
+ * @return {function} - A function that takes a value and that returns true or false if valid or not.
  */
 export function oneOf(...validators) {
     return (input, info) => {
@@ -191,7 +191,7 @@ export function oneOf(...validators) {
  * Marks that the value is required
  *
  * @param {function} validator - Validator to validate against
- * @return {function} Returns a function that takes a value and that returns true or false if valid or not
+ * @return {function} - A function that takes a value and that returns true or false if valid or not.
  */
 export function required(validator) {
     return (input, info) => {

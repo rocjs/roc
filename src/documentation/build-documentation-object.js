@@ -4,6 +4,15 @@ import { isPlainObject, isFunction } from 'lodash';
 
 import { toCliFlag } from './helpers';
 
+/**
+ * Creates a {@link rocDocumentationObject}.
+ *
+ * @param {Object} initalObject - The object to create a {@link rocDocumentationObject} of.
+ * @param {rocMetaSettings} meta - The meta object to use.
+ * @param {string[]} [initalFilter=[]] - The groups that should be used, will default to all groups.
+ *
+ * @returns {rocDocumentationObject} - The completed documentation object.
+ */
 export default function buildDocumentationObject(initalObject, meta = {}, initalFilter = []) {
     const allObjects = (object, callback) => {
         return Object.keys(object).map(callback).filter((value) => value !== undefined);

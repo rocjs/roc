@@ -8,12 +8,12 @@ import generateTable from '../documentation/generate-table';
 import { pad, getDefaultValue } from '../documentation/helpers';
 
 /**
- * Generates markdown documentation for the provided configuration object
+ * Generates markdown documentation for the provided configuration object.
  *
- * @param {object} config - the configuration object to generate documentation for
- * @param {object} metaConfig - the meta configuration object that has information about the configuration object
- * @param {string[]} [filter=[]] - the groups that should be includes, by default all will be used
- * @returns {string} a markdown table as a string
+ * @param {object} config - The configuration object to generate documentation for.
+ * @param {object} metaConfig - The meta configuration object that has information about the configuration object.
+ * @param {string[]} [filter=[]] - The groups that should be includes, by default all will be used.
+ * @returns {string} - A markdown table as a string.
  */
 export function generateMarkdownDocumentation({ settings }, { settings: meta }, filter = []) {
     const documentationObject = buildDocumentationObject(settings, meta, filter);
@@ -57,12 +57,12 @@ export function generateMarkdownDocumentation({ settings }, { settings: meta }, 
 }
 
 /**
- * Generates plain text documentation for the provided configuration object
+ * Generates plain text documentation for the provided configuration object.
  *
- * @param {object} config - the configuration object to generate documentation for
- * @param {object} metaConfig - the meta configuration object that has information about the configuration object
- * @param {string[]} [filter=[]] - the groups that should be includes, by default all will be used
- * @returns {string} a table as a string
+ * @param {object} config - The configuration object to generate documentation for.
+ * @param {object} metaConfig - The meta configuration object that has information about the configuration object.
+ * @param {string[]} [filter=[]] - The groups that should be includes, by default all will be used.
+ * @returns {string} - A table as a string.
  */
 export function generateTextDocumentation({ settings }, { settings: meta }, filter = []) {
     const documentationObject = buildDocumentationObject(settings, meta, filter);

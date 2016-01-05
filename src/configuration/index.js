@@ -14,9 +14,9 @@ global.rocConfig = global.rocConfig || {};
 /**
  * Merges two configuration objects.
  *
- * @param {!object} a - Configuration object to base the merge on.
- * @param {!object} b - Configuration object that is merged into the first, overwriting the first one.
- * @returns {object} The merged configuration object
+ * @param {!Object} a - Configuration object to base the merge on.
+ * @param {!Object} b - Configuration object that is merged into the first, overwriting the first one.
+ * @returns {Object} - The merged configuration object
  */
 export function merge(a, b) {
     return deepExtend({}, a, b);
@@ -25,7 +25,7 @@ export function merge(a, b) {
 /**
  * Gets the current configuration object.
  *
- * @returns {object} The application configuration object.
+ * @returns {Object} - The application configuration object.
  */
 export function getConfig() {
     if (onceSettings && global.rocConfig.settings && Object.keys(global.rocConfig.settings).length > 0 &&
@@ -52,7 +52,7 @@ export function getConfig() {
  * Will by default get all settings.
  *
  * @param {string} [key] - The settings key to fetch.
- * @returns {object} The application settings object.
+ * @returns {Object} - The application settings object.
  */
 export function getSettings(key) {
     const settings = getConfig().settings;
@@ -66,7 +66,7 @@ export function getSettings(key) {
  * the settings will be a merge of all those calls.
  *
  * @param {!object} settingsObject - A settings object.
- * @returns {object} The settings object.
+ * @returns {Object} - The settings object.
  */
 export function appendSettings(settingsObject) {
     global.rocConfig = merge(getConfig(), { settings: settingsObject });
@@ -80,7 +80,7 @@ export function appendSettings(settingsObject) {
  * the configuration will be a merge of all those calls.
  *
  * @param {!object} configObject - A configuration object.
- * @returns {object} The configuration object.
+ * @returns {Object} - The configuration object.
  */
 export function appendConfig(configObject) {
     global.rocConfig = merge(getConfig(), configObject);

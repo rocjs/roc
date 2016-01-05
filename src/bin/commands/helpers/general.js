@@ -4,8 +4,17 @@ import { isObject } from 'lodash';
 import { getConfig } from '../../../configuration';
 import { getRocDependencies, getPackageJson } from '../../../helpers';
 
-export function validRocProject(dirPath) {
-    const packageJson = getPackageJson(dirPath);
+/**
+ * Validates if a directory seems to be a Roc application project.
+ * A valid Roc project should have a package.json file that contains some dependecy that match 'roc-*' or
+ * a `roc.config.js` file.
+ *
+ * @param {string} directory - The directory to validate.
+ *
+ * @returns {boolean} - Whether or not it is a valid Roc project.
+ */
+export function validRocProject(directory) {
+    const packageJson = getPackageJson(directory);
 
     if (!isObject(packageJson)) {
         console.log('You are not in a Node project.');
