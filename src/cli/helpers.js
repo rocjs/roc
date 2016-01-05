@@ -14,7 +14,7 @@ import generateTable from '../documentation/generate-table';
 import { getDefaultValue } from '../documentation/helpers';
 import { fileExists } from '../helpers';
 import { throwError } from '../validation';
-import { isValid } from '../validation/helpers';
+import { isValid } from '../validation';
 
 /**
  * Builds a configuration object.

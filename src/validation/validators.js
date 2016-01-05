@@ -8,7 +8,7 @@ import {
   isFunction as lodashIsFunction
 } from 'lodash';
 
-import { isValid } from './helpers';
+import { isValid } from './index.js';
 
 /**
  * Validates an array using a validator.
