@@ -74,6 +74,7 @@ export default function init({ parsedOptions }) {
             .then((dirPath) => {
                 if (!validRocProject(dirPath)) {
                     /* eslint-disable no-process-exit */
+                    console.log('Seems like this is not a Roc template.');
                     process.exit(1);
                     /* eslint-enable */
                 } else {

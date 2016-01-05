@@ -1,5 +1,5 @@
 # [Roc](http://www.getroc.org)
-Direct your focus to writing great software and away from juggling boilerplate, configuration files and dependencies.  
+Focus on writing great software and away from juggling boilerplate, configuration files and ever changing dependencies.  
 
 ![stability beta](https://img.shields.io/badge/stability-beta-yellow.svg)
 [![roc](https://img.shields.io/npm/v/roc.svg)](https://www.npmjs.com/package/roc)
@@ -27,7 +27,7 @@ npm install -g roc
 ```
 This provides you with a really simple command line interface. Only Linux and OS X is _currently_ supported.
 
-### Bootstrap Redux + React application
+### Bootstrap React + Redux application
 ```
 mkdir react-app && cd react-app
 ```
@@ -37,13 +37,13 @@ roc init web-react
 ```
 roc dev
 ```
-This will create a new directory, init a Roc project inside it that uses React and start it in development mode.
-
-### Where to go from here
-See the documentation for the extension that is used for more details on what it does. A very common use-case is to make modifications to your `roc.config.js`. To get a better understanding of all the possible options in the extension use the `roc list-settings` command.
+This will:
+* create a new directory
+* init a Roc project inside it that uses React and Redux
+* start the project in development mode
 
 ### Production ready
-To build and run in production just use
+To build and run in production just use:
 ```
 roc build
 ```
@@ -51,8 +51,11 @@ roc build
 roc start
 ```
 
+### Where to go from here
+See the documentation for the extension that is used for more details on what it does. A very common use-case is to make modifications to your `roc.config.js`. To get a better understanding of all the possible options in the extension use the `roc list-settings` command or `--help` for a specific command.
+
 ## Extensions
-Roc makes it easy to create new extensions and Roc does not enforce limits on what the extensions do or how they do it. It is trivial to both create new extensions and to extend existing ones. For example it would be possible to create a alternative to `roc-web` that uses [Browserify](http://browserify.org/) instead of [Webpack](http://webpack.github.io/).
+Roc is highly flexible and makes it easy to create new extensions and Roc does not enforce limits on what the extensions do or how they do it. It is trivial to both create new extensions and to extend existing ones. For example it would be possible to create a alternative to `roc-web` that uses [Browserify](http://browserify.org/) instead of [Webpack](http://webpack.github.io/).
 
 ### Current Extensions
 | Project | Github page |
@@ -72,7 +75,7 @@ Roc was born out of the need to create modern applications following the correct
 We quickly realized that keeping boilerplate updated within each project over time was unmanageable. It seems natural to have this _repeated complexity managed by separated semantically versioned packages_.
 
 ## Contribute
-We are still working on getting the balance between flexibility and easy-of-use. Input here is valuable to us. Please get in touch and sync with us before committing your time to large PRs at this stage of the project.
+We are still working on getting the balance between flexibility and easy-of-use. Input here is valuable to us and please contribute if you want, we welcome you to interact.
 
 ## Thanks
 Thanks to [Jongleberry](https://github.com/jonathanong) for letting us use the `roc` package name on npm.
