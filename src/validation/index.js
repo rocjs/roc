@@ -13,13 +13,14 @@ import { isValid } from './helpers';
  * @param {array|boolean} toValidate - What groups on settings that should be validated.
  * @emits {process.exit} if the config was invalid it will print the reason and terminate with status 1
  */
-export function validate(config, metaConfig, toValidate = true) {
+export function validate(config, metaConfig = {}, toValidate = true) {
     try {
         if (toValidate === true) {
-            validateMightThrow(config, metaConfig);
+            validateMightThrow(config, metaConfig.validations);
         } else {
             toValidate.forEach((group) => {
-                validateMightThrow(config[group], metaConfig[group]);
+                console.log(config[group], (metaConfig.validations[group]));
+                validateMightThrow(config[group], metaConfig.validations && metaConfig.validations[group]);
             });
         }
     } catch (err) {
@@ -35,28 +36,26 @@ export function validate(config, metaConfig, toValidate = true) {
  * Validates the provided configuration object
  *
  * @param {object} config - the configuration object to validate
- * @param {object} metaConfig - the meta configuration object that has information about how to validate
+ * @param {object} validations - the meta configuration object that has information about how to validate
  * @throws {Error} throws error if the configuration is invalid
  */
-export function validateMightThrow(config, metaConfig) {
+export function validateMightThrow(config, validations) {
     // if no meta configuration or validation is provided it is valid
-    if (!metaConfig || !metaConfig.validations) {
+    if (!validations) {
         return;
     }
 
     // validation fields to process one by one
-    const validateKeys = Object.keys(metaConfig.validations);
+    const validateKeys = Object.keys(validations);
 
     for (const validateKey of validateKeys) {
         const configValue = config[validateKey];
-        const validator = metaConfig.validations[validateKey];
+        const validator = validations[validateKey];
 
         // process validation nodes recursively
         if (isPlainObject(validator) && isPlainObject(configValue)) {
             validateMightThrow(configValue, {
-                validations: {
-                    ...validator
-                }
+                ...validator
             });
         } else {
             assertValid(configValue, validateKey, validator);
