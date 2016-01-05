@@ -7,7 +7,7 @@ import { pad, addPadding, toCliFlag } from '../src/documentation/helpers';
 
 chai.should();
 
-describe('roc-config', () => {
+describe('roc', () => {
     const validDocumentObject = [{
         name: 'runtime',
         level: 0,

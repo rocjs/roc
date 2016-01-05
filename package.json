@@ -1,5 +1,5 @@
 {
-  "name": "roc-config",
+  "name": "roc",
   "version": "1.0.0-alpha7",
   "description": "Configuration manager for the Roc ecosystem",
   "main": "lib/index.js",

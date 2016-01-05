@@ -3,7 +3,7 @@ import * as validators from '../src/validation/validators';
 
 chai.should();
 
-describe('roc-config', () => {
+describe('roc', () => {
     describe('validators', () => {
         describe('isObject', () => {
             it('must validate plain object as true', () => {

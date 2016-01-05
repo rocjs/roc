@@ -1,6 +1,5 @@
 import 'source-map-support/register';
 
-import path from 'path';
 import chalk from 'chalk';
 import { isPlainObject, isBoolean, isString, set, difference } from 'lodash';
 import resolve from 'resolve';
@@ -12,7 +11,7 @@ import { merge } from '../configuration';
 import buildDocumentationObject from '../documentation/build-documentation-object';
 import generateTable from '../documentation/generate-table';
 import { getDefaultValue } from '../documentation/helpers';
-import { fileExists } from '../helpers';
+import { fileExists, getRocDependencies, getPackageJson } from '../helpers';
 import { throwError } from '../validation';
 import { isValid } from '../validation';
 
@@ -48,18 +47,14 @@ export function buildCompleteConfig(
         }
     };
 
-    if (fileExists('package.json')) {
+    if (fileExists('package.json', directory)) {
         // If extensions are defined we will use them to merge the configurations
         if (newConfig.extensions && newConfig.extensions.length) {
             newConfig.extensions.forEach(mergeExtension);
         } else {
-            const projectPackageJson = require(path.join(directory, 'package.json'));
-            [
-                ...Object.keys(projectPackageJson.dependencies || {}),
-                ...Object.keys(projectPackageJson.devDependencies || {})
-            ]
-            .filter(dependecy => /^roc(-.+)/.test(dependecy))
-            .forEach(mergeExtension);
+            const packageJson = getPackageJson(directory);
+            getRocDependencies(packageJson)
+                .forEach(mergeExtension);
         }
 
         if (usedExtensions.length && debug) {

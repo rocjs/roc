@@ -19,11 +19,27 @@ export function getAbsolutePath(filepath, directory = process.cwd()) {
     }
 }
 
-export function fileExists(filepath) {
-    filepath = getAbsolutePath(filepath);
+export function fileExists(filepath, directory) {
+    filepath = getAbsolutePath(filepath, directory);
     try {
         return fs.statSync(filepath).isFile();
     } catch (error) {
         return false;
     }
+}
+
+export function getRocDependencies(packageJson) {
+    return [
+        ...Object.keys(packageJson.dependencies || {}),
+        ...Object.keys(packageJson.devDependencies || {})
+    ]
+    .filter(dependecy => /^roc(-.+)/.test(dependecy));
+}
+
+export function getPackageJson(directory = process.cwd()) {
+    if (fileExists('package.json', directory)) {
+        return require(path.join(directory, 'package.json'));
+    }
+
+    return null;
 }
