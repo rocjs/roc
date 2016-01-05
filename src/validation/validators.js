@@ -8,7 +8,7 @@ import {
   isFunction as lodashIsFunction
 } from 'lodash';
 
-import { isValid } from './helpers';
+import { isValid } from './index.js';
 
 /**
  * Validates an array using a validator.
@@ -17,7 +17,7 @@ import { isValid } from './helpers';
  * @return {function} Returns a function that takes a value and that returns true or false if valid or not
  */
 export function isArray(validator) {
-    return (input, info = false) => {
+    return (input, info) => {
         if (info) {
             return infoObject(validator, (wrap) => (`[ ${wrap} ]`));
         }
@@ -37,7 +37,7 @@ export function isArray(validator) {
  * @return {function} Returns a function that takes a value and that returns true or false if valid or not
  */
 export function isObject(validator) {
-    return (input, info = false) => {
+    return (input, info) => {
         if (info) {
             return infoObject(validator, (wrap) => `{ ${wrap} }`);
         }
@@ -51,7 +51,7 @@ export function isObject(validator) {
         }
 
         return Object.keys(input).map((key) => isValid(input[key], validator))
-            .reduce((a, b) => a && b, true);
+            .reduce((a, b) => a === true && b === true, true);
     };
 }
 
@@ -64,7 +64,7 @@ export function isObject(validator) {
  * @return {function} Returns a function that takes a value and that returns true or false if valid or not
  */
 export function isArrayOrSingle(validator) {
-    return (input, info = false) => {
+    return (input, info) => {
         if (info) {
             return infoObject(validator, (wrap) => (`${wrap} / [ ${wrap} ]`));
         }
@@ -88,7 +88,7 @@ export function isArrayOrSingle(validator) {
  * @param {boolean} info - If type information should be returned
  * @return {infoObject|boolean} Type information or if it is valid
  */
-export function isString(value, info = false) {
+export function isString(value, info) {
     if (info) {
         return infoObject('String');
     }
@@ -107,7 +107,7 @@ export function isString(value, info = false) {
  * @param {boolean} info - If type information should be returned
  * @return {infoObject|boolean} Type information or if it is valid
  */
-export function isBoolean(value, info = false) {
+export function isBoolean(value, info) {
     if (info) {
         return infoObject('Boolean');
     }
@@ -126,7 +126,7 @@ export function isBoolean(value, info = false) {
  * @param {boolean} info - If type information should be returned
  * @return {infoObject|boolean} Type information or if it is valid
  */
-export function isInteger(value, info = false) {
+export function isInteger(value, info) {
     if (info) {
         return infoObject('Integer');
     }
@@ -145,12 +145,12 @@ export function isInteger(value, info = false) {
  * @param {boolean} info - If type information should be returned
  * @return {infoObject|boolean} Type information or if it is valid
  */
-export function isPath(value, info = false) {
+export function isPath(value, info) {
     if (info) {
         return infoObject('Filepath');
     }
 
-    if (!isString(value)) {
+    if (isString(value) !== true) {
         return 'Was not a filepath!';
     }
 
@@ -164,7 +164,7 @@ export function isPath(value, info = false) {
  * @return {function} Returns a function that takes a value and that returns true or false if valid or not
  */
 export function oneOf(...validators) {
-    return (input, info = false) => {
+    return (input, info) => {
         if (info) {
             let types = [];
             for (const validator of validators) {
@@ -194,7 +194,7 @@ export function oneOf(...validators) {
  * @return {function} Returns a function that takes a value and that returns true or false if valid or not
  */
 export function required(validator) {
-    return (input, info = false) => {
+    return (input, info) => {
         if (info) {
             return infoObject(validator, null, true);
         }
