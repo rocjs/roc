@@ -51,7 +51,7 @@ export function isObject(validator) {
         }
 
         return Object.keys(input).map((key) => isValid(input[key], validator))
-            .reduce((a, b) => a && b, true);
+            .reduce((a, b) => a === true && b === true, true);
     };
 }
 
@@ -150,7 +150,7 @@ export function isPath(value, info) {
         return infoObject('Filepath');
     }
 
-    if (!isString(value)) {
+    if (isString(value) !== true) {
         return 'Was not a filepath!';
     }
 

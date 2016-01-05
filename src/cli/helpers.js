@@ -13,6 +13,7 @@ import buildDocumentationObject from '../documentation/build-documentation-objec
 import generateTable from '../documentation/generate-table';
 import { getDefaultValue } from '../documentation/helpers';
 import { fileExists } from '../helpers';
+import { throwError } from '../validation';
 
 /**
  * Builds a configuration object.
@@ -327,9 +328,19 @@ export function parseOptions(command, meta, options) {
                 throw new Error(`Required option "${option.name}" was not provided.`);
             }
 
-            if (option.validation && !option.validation(value)) {
-                throw new Error(`Validation failed for option "${option.name}". `
-                    + `Should be ${option.validation(null, true)}.`);
+            if (value && option.validation) {
+                const validationResult = option.validation(value);
+                if (validationResult !== true) {
+                    try {
+                        throwError(option.name, validationResult, value, 'option');
+                    } catch (err) {
+                        /* eslint-disable no-process-exit, no-console */
+                        console.log(chalk.bgRed('Arguments problem') + ' An option was not valid.\n');
+                        console.log(err.message);
+                        process.exit(1);
+                        /* eslint-enable */
+                    }
+                }
             }
 
             parsedArguments[option.name] = value;

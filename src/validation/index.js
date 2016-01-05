@@ -19,7 +19,6 @@ export function validate(config, metaConfig = {}, toValidate = true) {
             validateMightThrow(config, metaConfig.validations);
         } else {
             toValidate.forEach((group) => {
-                console.log(config[group], (metaConfig.validations[group]));
                 validateMightThrow(config[group], metaConfig.validations && metaConfig.validations[group]);
             });
         }
@@ -63,19 +62,28 @@ export function validateMightThrow(config, validations) {
     }
 }
 
+/**
+ * Throws error for failed validations
+ *
+ * @param {string} name - String with the name of what failed the validation.
+ * @param {string} message - Potential message from the validating function.
+ * @param {object} value - The value that was provided.
+ * @param {string} [type='field'] - What the failed validation value was.
+ * @throws {Error} throws error if the configuration is invalid
+ */
+export function throwError(name, message, value, type = 'field') {
+    message = message && message + '\n';
+    const val = value ? `Received: ${value} - ` : '';
+    throw new Error(
+        `Validation failed for ${type} ${chalk.underline(name)} - ` +
+        val +
+        `${message || ''}`
+    );
+}
+
 function assertValid(value, validateKey, validator) {
     const result = isValid(value, validator);
     if (result !== true) {
         throwError(validateKey, result, value);
     }
-}
-
-function throwError(field, message, value) {
-    message = message && message + '\n';
-    const val = value ? `Received: ${value} - ` : '';
-    throw new Error(
-        `Validation failed for field ${chalk.underline(field)} - ` +
-        val +
-        `${message || ''}`
-    );
 }
