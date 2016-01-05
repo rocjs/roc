@@ -55,7 +55,7 @@ roc start
 See the documentation for the extension that is used for more details on what it does. A very common use-case is to make modifications to your `roc.config.js`. To get a better understanding of all the possible options in the extension use the `roc list-settings` command or `--help` for a specific command.
 
 ## Extensions
-Roc is highly flexible and makes it easy to create new extensions and Roc does not enforce limits on what the extensions do or how they do it. It is trivial to both create new extensions and to extend existing ones. For example it would be possible to create a alternative to `roc-web` that uses [Browserify](http://browserify.org/) instead of [Webpack](http://webpack.github.io/).
+Roc is highly flexible and makes it easy to create new extensions. It does not enforce limits on what the extensions do or how they do it. It is trivial to both create new extensions and to extend existing ones. For example it would be possible to create a alternative to `roc-web` that uses [Browserify](http://browserify.org/) instead of [Webpack](http://webpack.github.io/).
 
 ### Current Extensions
 | Project | Github page |
