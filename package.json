@@ -1,7 +1,7 @@
 {
   "name": "roc",
   "version": "1.0.0-alpha7",
-  "description": "Configuration manager for the Roc ecosystem",
+  "description": "A tool that assists with creating web applications with the goal of making it easier to work with modern web development",
   "main": "lib/index.js",
   "bin": "lib/bin/index.js",
   "engines": {
@@ -22,7 +22,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/vgno/roc-config.git"
+    "url": "https://github.com/vgno/roc.git"
   },
   "keywords": [
     "roc"
