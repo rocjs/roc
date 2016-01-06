@@ -20,14 +20,9 @@ describe('helpers', () => {
             });
 
             it('must return true if package.json exists with roc config', () => {
-                const conf = global.rocConfig;
-                global.rocConfig = { key: 'value' };
-
-                const validPath = path.join(__dirname, '/data/package/invalid');
+                const validPath = path.join(__dirname, '/data/package/valid-config');
                 const result = general.validRocProject(validPath);
                 result.should.be.equal(true);
-
-                global.rocConfig = conf;
             });
 
             it('must return true if package.json exists with roc extension', () => {

@@ -1,8 +1,7 @@
 import 'source-map-support/register';
 
 import { isObject } from 'lodash';
-import { getConfig } from '../../../configuration';
-import { getRocDependencies, getPackageJson } from '../../../helpers';
+import { fileExists, getRocDependencies, getPackageJson } from '../../../helpers';
 
 /**
  * Validates if a directory seems to be a Roc application project.
@@ -16,21 +15,6 @@ import { getRocDependencies, getPackageJson } from '../../../helpers';
 export function validRocProject(directory) {
     const packageJson = getPackageJson(directory);
 
-    if (!isObject(packageJson)) {
-        console.log('You are not in a Node project.');
-        console.log('Make sure you are calling this command from the root of a Node project.\n');
-        return false;
-    }
-
-    const config = getConfig();
-    const hasRocConfig = isObject(config) && Object.keys(config).length > 0;
-    const hasRocDependency = getRocDependencies(packageJson).length;
-
-    if (!hasRocConfig && !hasRocDependency) {
-        console.log('You are not in a Roc project.');
-        console.log('Make sure you are calling this command from the root of a Roc project.\n');
-        return false;
-    }
-
-    return true;
+    return !(!isObject(packageJson) ||
+        !fileExists('roc.config.js', directory) && !getRocDependencies(packageJson).length);
 }
