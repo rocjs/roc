@@ -70,7 +70,7 @@ As can be seen in the example above the Roc settings meta object can have 3 prop
 ### `descriptions`
 Should mirror the groups and general structure of the normal settings object adding description to the properties. These descriptions will be shown when using the cli and when generation documentation for the settings.
 
-See [roc.config.meta.js in roc-web for an example of how the configuration might look](#).
+See [roc.config.meta.js in roc-web for an example of how the configuration might look](https://github.com/vgno/roc-web/blob/master/src/roc/config/roc.config.meta.js#L11).
 
 ### `groups`
 Can be used to add descriptions to the groups that will be used when using the cli and when generation documentation for the settings.
@@ -80,6 +80,6 @@ Should mirror the groups and general structure of the normal settings object add
 
 Roc assumes that the validators used is either a RegExp or a function that will return true if it's valid or false/error string if it's not. The functions can also take a optional second argument. If it is true it should return a string with information about what the validator expects for input, the required type you could call it. This information is later used when generating documentation.
 
-For convenience several types of validators exists in `roc` that can be imported from `roc/validators`. For a complete list of them please see [the JSDocs](#).
+For convenience several types of validators exists in `roc` that can be imported from `roc/validators`. For a complete list of them please see [the JSDocs](/docs/JSDocs.md).
 
-See [roc.config.meta.js in roc-web for an example of how the configuration might look](#).
+See [roc.config.meta.js in roc-web for an example of how the configuration might look](https://github.com/vgno/roc-web/blob/master/src/roc/config/roc.config.meta.js#L62).
