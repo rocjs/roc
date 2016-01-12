@@ -1,7 +1,7 @@
 {
   "name": "roc",
   "version": "1.0.0-alpha7",
-  "description": "A tool that assists with creating web applications with the goal of making it easier to work with modern web development",
+  "description": "Build modern web applications easily",
   "main": "lib/index.js",
   "bin": "lib/bin/index.js",
   "engines": {
