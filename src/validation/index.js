@@ -27,18 +27,18 @@ export function isValid(value, validator) {
 /**
  * Validates the provided configuration object.
  *
- * @param {rocConfig} config - The configuration object to validate.
- * @param {rocMetaConfig} metaConfig - The meta configuration object that has information about how to validate.
+ * @param {rocSettings} settings - The settings object to validate.
+ * @param {rocMetaSettings} metaSettings - The meta settings object that has information about how to validate.
  * @param {array|boolean} toValidate - What groups on settings that should be validated.
  * @emits {process.exit} - If the config was invalid it will print the reason and terminate with status 1.
  */
-export function validate(config, metaConfig = {}, toValidate = true) {
+export function validate(settings, metaSettings = {}, toValidate = true) {
     try {
         if (toValidate === true) {
-            validateMightThrow(config, metaConfig.validations);
+            validateMightThrow(settings, metaSettings.validations);
         } else {
             toValidate.forEach((group) => {
-                validateMightThrow(config[group], metaConfig.validations && metaConfig.validations[group]);
+                validateMightThrow(settings[group], metaSettings.validations && metaSettings.validations[group]);
             });
         }
     } catch (err) {
@@ -53,11 +53,11 @@ export function validate(config, metaConfig = {}, toValidate = true) {
 /**
  * Validates the provided configuration object.
  *
- * @param {rocConfig} config - The configuration object to validate.
+ * @param {rocSettings} settings - The settings object to validate.
  * @param {Object} validations - The meta configuration object that has information about how to validate.
  * @throws {Error} throws error if the configuration is invalid
  */
-export function validateMightThrow(config, validations) {
+export function validateMightThrow(settings, validations) {
     // If no meta configuration or validation is provided it is valid
     if (!validations) {
         return;
@@ -67,7 +67,7 @@ export function validateMightThrow(config, validations) {
     const validateKeys = Object.keys(validations);
 
     for (const validateKey of validateKeys) {
-        const configValue = config[validateKey];
+        const configValue = settings[validateKey];
         const validator = validations[validateKey];
 
         // process validation nodes recursively
@@ -90,13 +90,12 @@ export function validateMightThrow(config, validations) {
  * @param {string} [type='field'] - What the failed validation value was.
  * @throws {Error} - Throws error if the configuration is invalid.
  */
-export function throwError(name, message, value, type = 'field') {
+export function throwError(name, message, value = '[Nothing]', type = 'field') {
     message = message && message + '\n';
-    const val = value ? `Received: ${value} - ` : '';
     throw new Error(
-        `Validation failed for ${type} ${chalk.underline(name)} - ` +
-        val +
-        `${message || ''}`
+        `Validation failed for ${type} ${chalk.underline(name)} -` +
+        `Received: ${value}.` +
+        ` ${message || ''}`
     );
 }
 

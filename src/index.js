@@ -17,3 +17,5 @@ export { validate } from './validation';
 export { execute } from './cli/execute';
 
 export { getAbsolutePath, fileExists } from './helpers';
+
+export { defaultPrompt } from './bin/commands/helpers/default-prompt';

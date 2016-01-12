@@ -40,8 +40,15 @@ export function getApplicationConfig(applicationConfigPath, directory = process.
         , '\n');
     }
 
-    if (configPath && !fs.statSync(configPath).isFile()) {
-        throw new Error(`Configuration path points to unaccessable file: ${configPath}`);
+    try {
+        if (configPath) {
+            const stats = fs.statSync(configPath);
+            if (!stats.isFile()) {
+                throw new Error('Not a file.');
+            }
+        }
+    } catch (err) {
+        throwUnaccessableFile(configPath);
     }
 
     // Return correct project configuration with fallback to empty object
@@ -60,4 +67,8 @@ export function getApplicationConfig(applicationConfigPath, directory = process.
         }
         return {};
     }
+}
+
+function throwUnaccessableFile(configPath) {
+    throw new Error(`Configuration path points to unaccessable file: ${configPath}`);
 }

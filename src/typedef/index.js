@@ -57,7 +57,7 @@
 /**
  * Roc documentation object.
  *
- * @typedef {Object} rocDocumentationObject
+ * @typedef {Object[]} rocDocumentationObject
  */
 
 /**
@@ -89,6 +89,12 @@
  *
  * @typedef {Object} rocSettings
  */
+
+ /**
+  * Roc meta settings object.
+  *
+  * @typedef {Object} rocMetaSettings
+  */
 
 /**
  * Roc meta settings object.

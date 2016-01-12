@@ -1,0 +1,6 @@
+{
+    "name": "invalid-template",
+    "dependencies": {
+        "koa": "1.0.0"
+    }
+}

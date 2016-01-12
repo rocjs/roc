@@ -1,53 +1,128 @@
-import chai from 'chai';
-import sinon from 'sinon';
-import sinonChai from 'sinon-chai';
-chai.should();
-chai.use(sinonChai);
+import expect from 'expect';
 
-describe('helpers', () => {
-    describe('github', () => {
-        const github = require('../../../src/bin/commands/helpers/github');
-        let get, mkdir;
+describe('roc', () => {
+    describe('bin helpers', () => {
+        describe('github', () => {
+            let github;
+            let get;
+            let mkdir;
 
-        beforeEach(() => {
-            get = sinon.stub(require('request'), 'get');
-            mkdir = sinon.stub(require('temp'), 'mkdir');
-        });
-
-        afterEach(() => {
-            get.restore();
-            mkdir.restore();
-        });
-
-        describe('getVersions', () => {
-            it('must return promise', () => {
-                const result = github.getVersions();
-                result.should.be.a('Promise');
+            before(() => {
+                get = expect.spyOn(require('request'), 'get');
+                mkdir = expect.spyOn(require('temp'), 'mkdir');
+                github = require('../../../src/bin/commands/helpers/github');
             });
 
-            it('must reject promise upon request error', (done) => {
-                const requestError = new Error('Request failed');
-                // force get to call callback with error
-                get.callsArgWith(1, requestError);
+            afterEach(() => {
+                get.calls = [];
+                mkdir.calls = [];
+            });
 
-                github
-                    .getVersions('roc')
-                    .catch((err) => {
-                        err.should.be.equal(requestError);
-                        done();
+            after(() => {
+                get.restore();
+                mkdir.restore();
+            });
+
+            describe('getVersions', () => {
+                it('should return a promise', () => {
+                    const result = github.getVersions('roc');
+                    expect(result).toBeA(Promise);
+                });
+
+                it('should throw if no package is given', () => {
+                    expect(github.getVersions)
+                        .toThrow();
+                });
+
+                it('should reject promise upon request error', () => {
+                    get.andCall((fetchObject, cb) => {
+                        cb('Error');
                     });
-            });
-        });
 
-        describe('get', () => {
-            it('must return promise', () => {
-                const result = github.get();
-                result.should.be.a('Promise');
+                    return github
+                        .getVersions('roc')
+                        .catch((err) => {
+                            expect(err).toEqual('Error');
+                        });
+                });
+
+                it('should reject promise upon non 200 status code', () => {
+                    get.andCall((fetchObject, cb) => {
+                        cb(null, { statusCode: 500 });
+                    });
+
+                    return github
+                        .getVersions('roc')
+                        .catch((err) => {
+                            expect(err.message).toInclude('returned 500');
+                        });
+                });
+
+                it('should resolve when reciving 200 as status code', () => {
+                    const body = { a: 1 };
+                    get.andCall((fetchObject, cb) => {
+                        cb(null, { statusCode: 200 }, JSON.stringify(body));
+                    });
+
+                    return github
+                        .getVersions('roc')
+                        .then((result) => {
+                            expect(get.calls[0].arguments[0].url).toBe('https://api.github.com/repos/roc/tags');
+                            expect(result).toEqual(body);
+                        });
+                });
             });
 
-            it('must make temporary directory "roc"', () => {
-                github.get();
-                mkdir.should.have.been.calledWith('roc');
+            describe('get', () => {
+                it('should return a promise', () => {
+                    const result = github.get('roc');
+                    expect(result).toBeA(Promise);
+                });
+
+                it('should throw if no package is given', () => {
+                    expect(github.get)
+                        .toThrow();
+                });
+
+                it('should reject if error exists', () => {
+                    mkdir.andCall((dirName, cb) => {
+                        cb('Error');
+                    });
+
+                    return github
+                        .get('vgno/roc-template-web')
+                        .catch((err) => {
+                            expect(err).toEqual('Error');
+                        });
+                });
+
+                it('should resolve with directory path when completed', () => {
+                    mkdir.andCall((dirName, cb) => {
+                        cb(null, 'some/dir/path');
+                    });
+
+                    // Mocked stream
+                    get.andCall(() => {
+                        return {
+                            on: () =>
+                                ({ pipe: () =>
+                                    ({ on: () =>
+                                        ({ pipe: (writeTar) => {
+                                            writeTar.end();
+                                            return { on: () => {} };
+                                        }})
+                                    })
+                                })
+                        };
+                    });
+
+                    return github
+                        .get('vgno/roc-template-web')
+                        .then((dirPath) => {
+                            expect(dirPath).toBe('some/dir/path');
+                            expect(mkdir.calls[0].arguments[0]).toBe('roc');
+                        });
+                });
             });
         });
     });

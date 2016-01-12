@@ -4,6 +4,8 @@ import { isPlainObject, isFunction } from 'lodash';
 
 import { toCliFlag } from './helpers';
 
+const defaultValidation = (input, info) => info ? {type: 'Unknown'} : true;
+
 /**
  * Creates a {@link rocDocumentationObject}.
  *
@@ -29,9 +31,8 @@ export default function buildDocumentationObject(initalObject, meta = {}, inital
         };
     };
 
-    const manageLeaf = (object, name, description,
-        validation = (input, info) => info ? {type: 'Unknown'} : input, parents) => {
-        const { type = 'Unknown', required } = isFunction(validation) ?
+    const manageLeaf = (object, name, description, validation = defaultValidation, parents) => {
+        const { type = 'Unknown', required = false } = isFunction(validation) ?
             validation(null, true) :
             ({type: validation.toString(), req: false });
 

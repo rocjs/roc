@@ -223,7 +223,7 @@ function getCommandOptionsAsString(command = {}) {
   *
   * @returns {string} - A string with documentation based on the selected commands.
   */
-export function generateCommandDocumentation({ settings }, { commands, settings: meta }, command, name) {
+export function generateCommandDocumentation({ settings }, { commands = {}, settings: meta }, command, name) {
     const rows = [];
     rows.push('Usage: ' + name + ' ' + command + ' ' + getCommandOptionsAsString(commands[command]));
     rows.push('');

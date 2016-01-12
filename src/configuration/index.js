@@ -6,7 +6,7 @@ import deepExtend from 'deep-extend';
 /* Make sure that we only print some feedback once */
 let onceSettings = true;
 
-/* Using global varaibles here to make sure that we can access the values set from different projects.
+/* Using global variables here to make sure that we can access the values set from different projects.
  * This guarantees that the varaibles will live outside the require cache, something that we need for stability.
  */
 global.rocConfig = global.rocConfig || {};
@@ -32,7 +32,9 @@ export function getConfig() {
     if (onceSettings && process.env.ROC_CONFIG_SETTINGS) {
         onceSettings = false;
 
-        if (Object.keys(global.rocConfig.settings).length > 0 && process.env.ROC_CONFIG_SETTINGS) {
+        if (global.rocConfig.settings && Object.keys(global.rocConfig.settings).length > 0 &&
+            process.env.ROC_CONFIG_SETTINGS
+        ) {
             console.log(
                 chalk.yellow('You have settings defined on the environment variable ROC_CONFIG_SETTINGS ' +
                 'and they will be appended to the settings. Will append the following:\n' +

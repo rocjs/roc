@@ -16,6 +16,10 @@ temp.track();
  * @returns {object[]} - Array of tags/versions for the package
  */
 export function getVersions(packageName) {
+    if (!packageName) {
+        throw new Error('No packageName was given.');
+    }
+
     return new Promise((resolve, reject) => {
         request.get({
             url: `https://api.github.com/repos/${packageName}/tags`,
@@ -45,8 +49,12 @@ export function getVersions(packageName) {
  * @returns {string} The path to the temporary directory where the unarchived tarball is located.
  */
 export function get(packageName, version = 'master') {
+    if (!packageName) {
+        throw new Error('No packageName was given.');
+    }
+
     return new Promise((resolve, reject) => {
-        temp.mkdir('roc', function(err, dirPath) {
+        temp.mkdir('roc', (err, dirPath) => {
             if (err) {
                 reject(err);
             }
