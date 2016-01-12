@@ -14,7 +14,7 @@ Roc can be configured to a great extent using the `roc.config.js` file. By defau
 The file should export an object that can contain the following properties:
 
 * [`settings`](/docs/config/settings.md)
-* [`commands`](/docs/config/commands.md)
+* [`commands`](/docs/config/commands.md)mai
 * [`plugins`](/docs/config/plugins.md)
 * [`extensions`](/docs/config/extensions.md)
 
@@ -31,7 +31,7 @@ roc COMMAND --config path/to/roc.config.js
 You can override the current the location and name for the `roc.config.js` file using the `-c, --config` flag. The path can be either relative to the current working directory or absolute.
 
 ## Configuration in extensions
-The section above talked about how configuration files are managed in applications but it holds mostly true for extensions as well. They follow the same structure in `roc.config.js`; however they must mainly be managed, meaning they can basically be called anything and be located anywhere.
+The section above talked about how configuration files are managed in applications but it holds mostly true for extensions as well. They follow the same structure in `roc.config.js`; however they must manually be managed, meaning they can basically be called anything and be located anywhere.
 
 They also have the option to export a meta configuration file, a `roc.config.meta.js` file. This file is important to add extra data that is non-existing in the `roc.config.js` file.
 
