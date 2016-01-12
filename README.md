@@ -1,5 +1,7 @@
 # [Roc](http://www.getroc.org)
-Focus on writing great software and away from juggling boilerplate, configuration files and ever changing dependencies.  
+Roc enables you to focus on writing great software and away from juggling boilerplate, configuration files and ever changing dependencies.
+
+Can be used to quickly prototype something with zero-setup to running applications in production.
 
 ![stability beta](https://img.shields.io/badge/stability-beta-yellow.svg)
 [![roc](https://img.shields.io/npm/v/roc.svg)](https://www.npmjs.com/package/roc)
@@ -52,7 +54,7 @@ roc start
 ```
 
 ### Where to go from here
-See the documentation for the extension that is used for more details on what it does. A very common use-case is to make modifications to your `roc.config.js`. To get a better understanding of all the possible options in the extension use the `roc list-settings` command or `--help` for a specific command.
+See the documentation for the particular extension that is used for more details on what it does. A very common use-case is to make modifications to your `roc.config.js`. To get a better understanding of all the possible options in the extension use the `roc list-settings` command or `--help` for a specific command.
 
 ## Extensions
 Roc is highly flexible and makes it easy to create new extensions. It does not enforce limits on what the extensions do or how they do it. It is trivial to both create new extensions and to extend existing ones. For example it would be possible to create a alternative to `roc-web` that uses [Browserify](http://browserify.org/) instead of [Webpack](http://webpack.github.io/).
@@ -69,10 +71,18 @@ Roc is highly flexible and makes it easy to create new extensions. It does not e
 - [React](http://facebook.github.io/react/) (complete with [Redux](https://github.com/rackt/redux) and server side rendering).
 - First class developer experience featuring hot code reloading and [Browsersync](http://browsersync.io).
 
+## Documentation
+See the [documentation](/docs/README.md).
+
 ## Motivation
 Roc was born out of the need to create modern applications following the correct conventions and using best practices consistently.
 
 We quickly realized that keeping boilerplate updated within each project over time was unmanageable. It seems natural to have this _repeated complexity managed by separated semantically versioned packages_.
+
+Development of Roc was started before these posts where created but they still describe in a good way what Roc aims to solve:
+
+* [Challenge: Best JavaScript Setup for Quick Prototyping](http://blog.vjeux.com/2015/javascript/challenge-best-javascript-setup-for-quick-prototyping.html) by [**@vjeux**](https://github.com/vjeux)
+* [Javascript Fatigue](https://medium.com/@ericclemmons/javascript-fatigue-48d4011b6fc4) by [**@ericclemmons**](https://github.com/ericclemmons)
 
 ## Contribute
 We are still working on getting the balance between flexibility and easy-of-use. Input here is valuable to us and please contribute if you want, we welcome you to interact.

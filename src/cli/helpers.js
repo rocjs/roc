@@ -16,19 +16,20 @@ import { throwError } from '../validation';
 import { isValid } from '../validation';
 
 /**
- * Builds a configuration object.
+ * Builds the complete configuration objects.
  *
  * @param {boolean} debug - If debug mode should be enabled, logs some extra information.
- * @param {object} config - The base configuration.
- * @param {object} meta - The base meta configuration.
- * @param {object} newConfig - The new configuration to base the merge on.
- * @param {object} newMeta - The new meta configuration to base the merge on.
+ * @param {rocConfig} config - The base configuration.
+ * @param {rocMetaConfig} meta - The base meta configuration.
+ * @param {rocConfig} newConfig - The new configuration to base the merge on.
+ * @param {rocMetaConfig} newMeta - The new meta configuration to base the merge on.
  * @param {string} [directory=process.cwd()] - The directory to resolve relative paths from.
  * @param {boolean} [validate=true] - If the newConfig and the newMeta structure should be validated.
- * @returns {object} The result of with the built configurations.
- * @property {extensionConfig} The extensions merged configurations
- * @property {config} The final configuration, with application configuration.
- * @property {meta} The merged meta configuration.
+ *
+ * @returns {Object} - The result of with the built configurations.
+ * @property {rocConfig} extensionConfig - The extensions merged configurations
+ * @property {rocConfig} config - The final configuration, with application configuration.
+ * @property {rocMetaConfig} meta - The merged meta configuration.
  */
 export function buildCompleteConfig(
     debug, config = {}, meta = {}, newConfig = {}, newMeta = {}, directory = process.cwd(), validate = true
@@ -123,6 +124,15 @@ function validateConfigurationStructure(config, applicationConfig) {
     return info.join('\n');
 }
 
+/**
+ * Will create a string with suggestions for possible typos.
+ *
+ * @param {string[]} current - The current values that might be incorrect.
+ * @param {string[]} possible - All the possible correct values.
+ * @param {boolean} [command=false] - If the suggestion should be managed as a command.
+ *
+ * @returns {string} - A string with possible suggestions for typos.
+ */
 export function getSuggestions(current, possible, command = false) {
     const info = [];
 
@@ -157,6 +167,14 @@ export function getSuggestions(current, possible, command = false) {
     return info.join('\n');
 }
 
+/**
+ * Generates a string with information about all the possible commands.
+ *
+ * @param {rocConfig} commands - The Roc config object, uses commands from it.
+ * @param {rocMetaConfig} commandsmeta - The Roc meta config object, uses commands from it.
+ *
+ * @returns {string} - A string with documentation based on the available commands.
+ */
 export function generateCommandsDocumentation({ commands }, { commands: commandsMeta }) {
     const header = {
         name: true,
@@ -166,7 +184,7 @@ export function generateCommandsDocumentation({ commands }, { commands: commands
     const noCommands = {'No commands available.': ''};
     commandsMeta = commandsMeta || {};
 
-    let table = [{
+    let body = [{
         name: 'Commands',
         objects: Object.keys(commands || noCommands).map((command) => {
             const options = commandsMeta[command] ?
@@ -181,36 +199,9 @@ export function generateCommandsDocumentation({ commands }, { commands: commands
                 description
             };
         })
-    }, {
-        name: 'Options',
-        objects: [{
-            name: '-h, --help',
-            description: 'Output usage information.'
-        }, {
-            name: '-v, --version',
-            description: 'Output version number.'
-        }, {
-            name: '-d, --debug',
-            description: 'Enable debug mode.'
-        }, {
-            name: '-c, --config',
-            description: `Path to configuration file, will default to ${chalk.bold('roc.config.js')} in current ` +
-                `working directory.`
-        }, {
-            name: '-D, --directory',
-            description: 'Path to working directory, will default to the current working directory. Can be either ' +
-                'absolute or relative.'
-        }]
     }];
 
-    return generateTable(table, header, {
-        compact: true,
-        titleWrapper: (name) => name + ':',
-        cellDivider: '',
-        rowWrapper: (input) => `${input}`,
-        header: false,
-        groupTitleWrapper: (input) => input + ':'
-    });
+    return generateCommandDocsHelper(body, header, 'Options', 'name');
 }
 
 function getCommandOptionsAsString(command = {}) {
@@ -222,17 +213,16 @@ function getCommandOptionsAsString(command = {}) {
     return options;
 }
 
-/**
- * Generates plain text documentation for the provided configuration object
- *
- * Prints the documentation directly to the console.log
- *
- * @param {object} config - the configuration object to generate documentation for
- * @param {object} metaConfig - the meta configuration object that has information about the configuration object
- * @param {string} command - the current command to show information about
- * @param {string} name - the current command line program
- * @returns {string} The documentation as a string.
- */
+ /**
+  * Generates a string with information about a specific command.
+  *
+  * @param {rocConfig} settings - The Roc config object, uses settings from it.
+  * @param {rocMetaConfig} commands+meta - The Roc meta config object, uses commands and settings from it.
+  * @param {string} command - The selected command.
+  * @param {string} name - The name of the cli.
+  *
+  * @returns {string} - A string with documentation based on the selected commands.
+  */
 export function generateCommandDocumentation({ settings }, { commands, settings: meta }, command, name) {
     const rows = [];
     rows.push('Usage: ' + name + ' ' + command + ' ' + getCommandOptionsAsString(commands[command]));
@@ -243,7 +233,7 @@ export function generateCommandDocumentation({ settings }, { commands, settings:
         rows.push('');
     }
 
-    let documentationObject = [];
+    let body = [];
 
     // Generate the options table
     if (commands[command] && commands[command].settings) {
@@ -252,7 +242,7 @@ export function generateCommandDocumentation({ settings }, { commands, settings:
 
         const filter = commands[command].settings === true ? [] : commands[command].settings;
 
-        documentationObject = buildDocumentationObject(settings, meta, filter);
+        body = buildDocumentationObject(settings, meta, filter);
     }
 
     const header = {
@@ -279,45 +269,60 @@ export function generateCommandDocumentation({ settings }, { commands, settings:
         }
     };
 
-    documentationObject.push({
-        name: 'CLI options',
+    rows.push(generateCommandDocsHelper(body, header, 'CLI options', 'cli'));
+
+    return rows.join('\n');
+}
+
+function generateCommandDocsHelper(body, header, options, name) {
+    body.push({
+        name: options,
         objects: [{
-            cli: '-h, --help',
+            [name]: '-h, --help',
             description: 'Output usage information.'
         }, {
-            cli: '-v, --version',
+            [name]: '-v, --version',
             description: 'Output version number.'
         }, {
-            cli: '-d, --debug',
+            [name]: '-d, --debug',
             description: 'Enable debug mode.'
         }, {
-            cli: '-c, --config',
+            [name]: '-c, --config',
             description: `Path to configuration file, will default to ${chalk.bold('roc.config.js')} in current ` +
                 `working directory.`
         }, {
-            cli: '-D, --directory',
+            [name]: '-D, --directory',
             description: 'Path to working directory, will default to the current working directory. Can be either ' +
                 'absolute or relative.'
         }]
     });
 
-    rows.push(generateTable(documentationObject, header, {
+    return generateTable(body, header, {
         compact: true,
         titleWrapper: (input) => input + ':',
         cellDivider: '',
         rowWrapper: (input) => `${input}`,
         header: false,
         groupTitleWrapper: (input) => input + ':'
-    }));
-
-    return rows.join('\n');
+    });
 }
 
-export function parseOptions(command, meta, options) {
+/**
+ * Parses options and validates them.
+ *
+ * @param {string} command - The command to parse options for.
+ * @param {Object} commands - commands from {@link rocMetaConfig}.
+ * @param {Object[]} options - Options parsed by minimist.
+ *
+ * @returns {Object} - Parsed options.
+ * @property {object[]} options - The parsed options that was matched against the meta configuration for the command.
+ * @property {object[]} rest - The rest of the options that could not be matched against the configuration.
+ */
+export function parseOptions(command, commands, options) {
     // If the command supports options
-    if (meta[command] && meta[command].options) {
-        let parsedArguments = {};
-        meta[command].options.forEach((option, index) => {
+    if (commands[command] && commands[command].options) {
+        let parsedOptions = {};
+        commands[command].options.forEach((option, index) => {
             const value = options[index];
 
             if (option.required && !value) {
@@ -339,21 +344,29 @@ export function parseOptions(command, meta, options) {
                 }
             }
 
-            parsedArguments[option.name] = value;
+            parsedOptions[option.name] = value;
         });
 
         return {
-            arguments: parsedArguments,
-            rest: options.splice(Object.keys(parsedArguments).length)
+            options: parsedOptions,
+            rest: options.splice(Object.keys(parsedOptions).length)
         };
     }
 
     return {
-        arguments: undefined,
+        options: undefined,
         rest: options
     };
 }
 
+/**
+ * Creates mappings between cli commands to their "path" in the configuration structure, their validator and type
+ * convertor.
+ *
+ * @param {rocDocumentationObject} documentationObject - Documentation object to create mappings for.
+ *
+ * @returns {Object} - Properties are the cli command without leading dashes that maps to a {@link rocMapObject}.
+ */
 export function getMappings(documentationObject) {
     const recursiveHelper = (groups) => {
         let mappings = {};
@@ -362,6 +375,7 @@ export function getMappings(documentationObject) {
             group.objects.forEach((element) => {
                 // Remove the two dashes in the beginning to match correctly
                 mappings[element.cli.substr(2)] = {
+                    name: element.cli,
                     path: element.path,
                     convertor: getConvertor(element.defaultValue, element.cli),
                     validator: element.validator
@@ -388,7 +402,6 @@ function getConvertor(value, name) {
                 return input === 'true';
             }
 
-            // TODO Do not have console.log here!
             console.log(`Invalid value given for ${chalk.bold(name)}. Will use the default ` +
                 `${chalk.bold(value)}.`);
 
@@ -418,6 +431,14 @@ function getConvertor(value, name) {
     return (input) => input;
 }
 
+/**
+ * Converts a set of arguments to {@link rocConfigSettings} object.
+ *
+ * @param {Object} args - Arguments parsed from minimist.
+ * @param {Object} mappings - Result from {@link getMappings}.
+ *
+ * @returns {Object} - The mapped Roc configuration settings object.
+ */
 export function parseArguments(args, mappings) {
     const config = {};
     const info = [];
@@ -441,10 +462,17 @@ export function parseArguments(args, mappings) {
 }
 
 function convert(value, mapping) {
-    // Maybe we can let the validation happen later?
-    // Should in reallity be managed when we do validation on everything
     const val = mapping.convertor(value);
-    if (mapping.validator(val)) {
+    const validationResult = isValid(val, mapping.validator);
+    if (validationResult === true) {
         return val;
     }
+
+    console.log(
+        chalk.yellow(`There was a problem when trying to automatically convert ${chalk.bold(mapping.name)}. This ` +
+        `value will be ignored.`)
+    );
+    console.log(
+        `Received ${chalk.underline(value)} and it was converted to ${chalk.underline(val)}.`, validationResult, '\n'
+    );
 }

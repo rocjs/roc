@@ -20,6 +20,17 @@ import {
     getSuggestions
 } from './helpers';
 
+/**
+ * Invokes the Roc cli.
+ *
+ * @param {{version: string, name: string}} info - Information about the cli.
+ * @param {rocConfig} initalConfig - The inital configuration, will be merged with the selected extensions and
+ *  application.
+ * @param {rocMetaConfig} initalMeta - The inital meta configuration, will be merged with the selected extensions.
+ * @param {string[]} [args=process.argv] - From where it should parse the arguments.
+ *
+ * @returns {undefined}
+ */
 export function runCli(info = {version: 'Unknown', name: 'Unknown'}, initalConfig, initalMeta, args = process.argv) {
     const {_, h, help, d, debug, v, version, c, config, D, directory, ...restArgs} = minimist(args.slice(2));
 
@@ -47,19 +58,19 @@ export function runCli(info = {version: 'Unknown', name: 'Unknown'}, initalConfi
 
     // If we have no command we will display some help information about all possible commands
     if (!command) {
-        // TODO extensionConfig vs configObject
         return console.log(generateCommandsDocumentation(extensionConfig, metaObject));
     }
 
     // If the command does not exist show error
+    // Will ignore application configuration
     if (!extensionConfig.commands || !extensionConfig.commands[command]) {
         console.log(chalk.bgRed('Invalid command'), '\n');
         return console.log(getSuggestions([command], Object.keys(extensionConfig.commands)), '\n');
     }
 
     // Show command help information if requested
+    // Will ignore application configuration
     if (help || h) {
-        // TODO extensionConfig vs configObject
         return console.log(generateCommandDocumentation(extensionConfig, metaObject, command, info.name));
     }
 
@@ -67,8 +78,9 @@ export function runCli(info = {version: 'Unknown', name: 'Unknown'}, initalConfi
 
     // Only parse arguments if the command accepts it
     if (metaObject.commands[command] && metaObject.commands[command].settings) {
-        // Get config from application!
-        const documentationObject = buildDocumentationObject(configObject.settings, metaObject.settings);
+        // Get config from application and only parse options that this command cares about.
+        const filter = metaObject.commands[command].settings === true ? [] : metaObject.commands[command].settings;
+        const documentationObject = buildDocumentationObject(configObject.settings, metaObject.settings, filter);
 
         const configuration = parseArguments(restArgs, getMappings(documentationObject));
         configObject = merge(configObject, {

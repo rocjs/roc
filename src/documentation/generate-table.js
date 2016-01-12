@@ -15,6 +15,15 @@ const defaultSettings = {
     compact: false
 };
 
+/**
+ * Creates a table based on a {@link rocDocumentationObject}.
+ *
+ * @param {rocDocumentationObject} initalDocumentationObject - The documentation object to create a table of.
+ * @param {rocTableHeader} header - Header object to use.
+ * @param {rocTableSettings} settings - The settings to use.
+ *
+ * @returns {string} - A table.
+ */
 export default function generateTable(initalDocumentationObject, header, settings) {
     settings = deepExtend({}, defaultSettings, settings);
     const headerLengths = createLengthObject(header, header, {}, true);

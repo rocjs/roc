@@ -6,9 +6,9 @@ import { isPlainObject, isFunction, isRegExp } from 'lodash';
 /**
  * Helper to use a validator.
  *
- * @param {object} value - Something to validate
- * @param {function|RegExp} validator - A validator
- * @return {boolean} Returns if valid or not
+ * @param {object} value - Something to validate.
+ * @param {function|RegExp} validator - A validator.
+ * @return {boolean} - If valid or not.
  */
 export function isValid(value, validator) {
     if (isFunction(validator)) {
@@ -25,12 +25,12 @@ export function isValid(value, validator) {
 }
 
 /**
- * Validates the provided configuration object
+ * Validates the provided configuration object.
  *
- * @param {object} config - the configuration object to validate
- * @param {object} metaConfig - the meta configuration object that has information about how to validate
+ * @param {rocConfig} config - The configuration object to validate.
+ * @param {rocMetaConfig} metaConfig - The meta configuration object that has information about how to validate.
  * @param {array|boolean} toValidate - What groups on settings that should be validated.
- * @emits {process.exit} if the config was invalid it will print the reason and terminate with status 1
+ * @emits {process.exit} - If the config was invalid it will print the reason and terminate with status 1.
  */
 export function validate(config, metaConfig = {}, toValidate = true) {
     try {
@@ -51,14 +51,14 @@ export function validate(config, metaConfig = {}, toValidate = true) {
 }
 
 /**
- * Validates the provided configuration object
+ * Validates the provided configuration object.
  *
- * @param {object} config - the configuration object to validate
- * @param {object} validations - the meta configuration object that has information about how to validate
+ * @param {rocConfig} config - The configuration object to validate.
+ * @param {Object} validations - The meta configuration object that has information about how to validate.
  * @throws {Error} throws error if the configuration is invalid
  */
 export function validateMightThrow(config, validations) {
-    // if no meta configuration or validation is provided it is valid
+    // If no meta configuration or validation is provided it is valid
     if (!validations) {
         return;
     }
@@ -82,13 +82,13 @@ export function validateMightThrow(config, validations) {
 }
 
 /**
- * Throws error for failed validations
+ * Throws error for failed validations.
  *
  * @param {string} name - String with the name of what failed the validation.
  * @param {string} message - Potential message from the validating function.
  * @param {object} value - The value that was provided.
  * @param {string} [type='field'] - What the failed validation value was.
- * @throws {Error} throws error if the configuration is invalid
+ * @throws {Error} - Throws error if the configuration is invalid.
  */
 export function throwError(name, message, value, type = 'field') {
     message = message && message + '\n';

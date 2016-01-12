@@ -10,15 +10,15 @@
   "scripts": {
     "build": "babel src --out-dir lib --source-maps",
     "build:watch": "npm run build -- --watch",
-    "clean": "rimraf lib docs coverage",
+    "clean": "rimraf lib esdocs coverage",
     "lint": "eslint .",
     "test": "npm run lint && npm run test:coverage",
     "test:coverage": "NODE_ENV=test babel-node node_modules/isparta/bin/isparta cover _mocha -- --recursive test/",
     "test:unit": "NODE_ENV=test mocha --compilers js:babel/register test --recursive",
     "test:unit:watch": "npm run test:unit -- --watch",
     "check": "ncu",
-    "docs": "esdoc -c esdoc.json",
-    "prepublish": "npm test && npm run clean && npm run build && npm run docs"
+    "esdocs": "esdoc -c esdoc.json",
+    "prepublish": "npm test && npm run clean && npm run build && npm run esdocs"
   },
   "repository": {
     "type": "git",

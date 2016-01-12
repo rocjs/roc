@@ -24,8 +24,9 @@ let onceApp = true;
  * @param {string} [directory=process.cwd()] - The directory to resolve realative paths to. By default will use the
  *     current working directory.
  * @param {boolean} [debug=false] - If extra information should be printed.
- * @returns {object} The application configuration object.
- * @throws {Error} When an invalid path override is specified.
+ *
+ * @returns {object} - The application configuration object.
+ * @throws {Error} - When an invalid path override is specified.
  */
 export function getApplicationConfig(applicationConfigPath, directory = process.cwd(), debug = false) {
     const configPath = getAbsolutePath(process.env.ROC_CONFIG_PATH || applicationConfigPath, directory);

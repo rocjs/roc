@@ -24,8 +24,13 @@ const templates = [{
     repo: 'vgno/roc-template-web-react'
 }];
 
+/**
+ * Command used to init a new Roc project.
+ *
+ * @param {rocCommandObject} parsedArguments - The Roc command object, uses parsedArguments from it.
+ */
 export default function init({ parsedOptions }) {
-    const { template, version } = parsedOptions.arguments;
+    const { template, version } = parsedOptions.options;
 
     // Make sure the directory is empty!
     assertEmptyDir();
