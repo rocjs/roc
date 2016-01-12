@@ -14,7 +14,7 @@ Roc can be configured to a great extent using the `roc.config.js` file. By defau
 The file should export an object that can contain the following properties:
 
 * [`settings`](/docs/config/settings.md)
-* [`commands`](/docs/config/commands.md)mai
+* [`commands`](/docs/config/commands.md)
 * [`plugins`](/docs/config/plugins.md)
 * [`extensions`](/docs/config/extensions.md)
 
