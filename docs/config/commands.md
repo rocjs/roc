@@ -58,7 +58,7 @@ What arguments that are parsed is defined by the related meta object for the com
 
 ## Meta
 
-Meta for commands are used to better define what they should do and describe what they are used for. It is optional but if used it should match the commands properties. The following properties will be used by Roc if they exists:
+Meta for commands are used to better define what they should do and describe what they are used for. It is optional but if used it should match the command properties. The following properties will be used by Roc if they exists:
 ```
 description         Describes the command
 help                Additional information used when printing help for a single command
