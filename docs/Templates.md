@@ -29,23 +29,23 @@ If one wants to extend a manual merge must be performed by importing the default
 ```js
 export const prompt = [{
     type: 'input',
-    name: 'appName',
+    name: 'rocAppName',
     message: 'What\'s the name of your application?',
     default: 'my-roc-app',
     filter: (input) => input.toLowerCase().split(' ').join('-')
 }, {
     type: 'input',
-    name: 'appDesc',
+    name: 'rocAppDesc',
     message: 'What\'s the description for the application?',
     default: 'My Roc Application'
 }, {
     type: 'input',
-    name: 'appAuthor',
+    name: 'rocAppAuthor',
     message: 'Who\'s the author of the application?',
     default: 'John Doe'
 }, {
     type: 'input',
-    name: 'appLicense',
+    name: 'rocAppLicense',
     message: 'What\'s the license for the application?',
     default: 'MIT'
 }];
@@ -54,4 +54,6 @@ export const prompt = [{
 ### template/
 A folder containing files needed for a normal application with `package.json` and potential `roc.config.js` and more. Important to note here is that Roc requires that there exist a `package.json` file in this directory and that it either has at least one dependency on a a Roc extension matching the `roc-*` pattern or it has a `roc.config.js` file that defines [extensions](/docs/config/extensions.md).
 
-All files in the directory will be parsed and `{{{ KEY }}}` all occurrences of this pattern will be replaced of there is a match. The `KEY` will be based on the `name` from the prompt property. So for instance will occurrences of `{{{ appName }}}` be replaced with `my-roc-app` if no other value is given when the prompt asks.
+All files in the directory will be parsed using a Handlebars syntax: looks like this `{{ KEY }}`. All occurrences of this pattern will be replaced if there is a match with something from the prompt. That is the `KEY` will be based on the `name` from the prompt property that can be seen above. For instance will occurrences of `{{ rocAppName }}` be replaced with `my-roc-app` if no other value is given when the prompt asks.
+
+Something to remember here when creating your own template is that if you use Handlebars for the application itself make sure that you are not using clashing names since you might then change something that should stay as a template value.
