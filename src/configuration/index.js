@@ -7,7 +7,7 @@ import deepExtend from 'deep-extend';
 let onceSettings = true;
 
 /* Using global variables here to make sure that we can access the values set from different projects.
- * This guarantees that the varaibles will live outside the require cache, something that we need for stability.
+ * This guarantees that the variables will live outside the require cache, something that we need for stability.
  */
 global.rocConfig = global.rocConfig || {};
 

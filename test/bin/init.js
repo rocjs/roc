@@ -141,7 +141,7 @@ describe('roc', () => {
                     });
                 });
 
-                it('should manage the provided version as best as possible', () => {
+                it('should manage the provided template version as expected', () => {
                     const dirPath = path.join(__dirname, 'data', 'valid-template');
 
                     prompt.andCall((options, cb) => {

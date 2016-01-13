@@ -45,7 +45,7 @@ describe('roc', () => {
                 log.restore();
             });
 
-            it('should manage settings defined using enviorment varaible and warn if previous settings existed', () => {
+            it('should manage settings defined using environment variable & warn if previous settings existed', () => {
                 global.rocConfig = { a: 2, settings: { a: 1 } };
                 const testConfig = { b: 1 };
                 process.env.ROC_CONFIG_SETTINGS = JSON.stringify(testConfig);

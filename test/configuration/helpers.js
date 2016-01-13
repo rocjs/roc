@@ -69,7 +69,7 @@ describe('roc', () => {
                 log.restore();
             });
 
-            it('should inform that and environment varaible is set the first time', () => {
+            it('should inform that and environment variable is set the first time', () => {
                 process.env.ROC_CONFIG_PATH = path.join(__dirname, 'mock-data/roc.simple.config.js');
                 let result = getApplicationConfig('roc.complex.config.js', __dirname);
                 expect(result).toEqual({

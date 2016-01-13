@@ -26,7 +26,7 @@ describe('execute', () => {
         spawn.restore();
     });
 
-    it('multiple commands is correctly passed through', () => {
+    it('multiple commands are correctly passed through', () => {
         return execute('roc -h & git log & npm view roc').then(() => {
             expect(spawn.calls.length).toEqual(3);
             expect(spawn.calls[0].arguments.slice(0, 2)).toEqual(['roc', ['-h']]);
@@ -42,7 +42,7 @@ describe('execute', () => {
         });
     });
 
-    it('should handle sync commands correctly, should run in the correct order', () => {
+    it('should handle sync commands correctly and run in the correct order', () => {
         return execute('npm view roc && roc -h & git log').then(() => {
             expect(spawn.calls[0].arguments.slice(0, 1)).toEqual(['npm']);
             expect(spawn.calls[1].arguments.slice(0, 1)).toEqual(['git']);
