@@ -123,7 +123,7 @@ export default function init({ parsedOptions }) {
     function replaceTemplatedValues(answers, dirPath) {
         Object.keys(answers).map((key) => {
             replace({
-                regex: `{{{\\s*${key}*\\s*}}}`,
+                regex: `{{\\s*${key}*\\s*}}`,
                 replacement: answers[key],
                 paths: [dirPath + '/template'],
                 recursive: true,
