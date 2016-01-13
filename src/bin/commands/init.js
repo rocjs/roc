@@ -61,7 +61,8 @@ export default function init({ parsedOptions }) {
 
         return getVersions(toFetch)
             .then((versions) => {
-                if (selectVersion && selectVersion.charAt(0) !== 'v') {
+                // If the name starts with a number we will automatically add 'v' infront of it to match Github default
+                if (selectVersion && !isNaN(Number(selectVersion.charAt(0))) && selectVersion.charAt(0) !== 'v') {
                     selectVersion = `v${selectVersion}`;
                 }
 
@@ -122,7 +123,7 @@ export default function init({ parsedOptions }) {
     function replaceTemplatedValues(answers, dirPath) {
         Object.keys(answers).map((key) => {
             replace({
-                regex: `{{{\\s*${key}*\\s*}}}`,
+                regex: `{{\\s*${key}*\\s*}}`,
                 replacement: answers[key],
                 paths: [dirPath + '/template'],
                 recursive: true,
