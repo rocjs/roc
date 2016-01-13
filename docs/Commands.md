@@ -1,12 +1,12 @@
 # Commands
-Roc is dynamic in its nature and new commands can easily be added and removed from it. Most commands will come form the extensions that are used for a particular application but some will be default from Roc itself. The commands below are default to Roc and will be available in most situations. For more commands please see the extensions documentation or run `roc --help` to get information of the currently possible commands.
+Roc is dynamic in its nature and new commands can easily be added and removed from it. Most commands will come from the extensions that are used for a particular application but some will be provided by default from Roc itself. The commands below are Roc defaults and will be available in most situations. For more commands please see the extensions documentation or run `roc --help` to get information of the currently available commands.
 
 ## init
 ```
 init [template] [version]   Init a new project.   
 ```
 
-The __init__ command can be used to initiate a new Roc project and currently expects that it's run inside a empty directory. As can be seen above it takes two optional arguments, template and version. If no template is given a prompt will be shown with the possible alternatives that exists. Currently these alternatives are coded into Roc and matches `web` and `web-react` mentioned below. There is a plan to instead manage this from a remote location making it easy to add and remove templates.
+The __init__ command can be used to initiate a new Roc project and currently expects that it's run inside an empty directory. As can be seen above it takes two optional arguments, template and version. If no template is given a prompt will be shown with the possible alternatives that exists. Currently these alternatives are coded into Roc and matches `web` and `web-react` mentioned below. There is a plan to instead manage this from a remote location making it easy to add and remove templates.
 
 ### template
 Template can either be a short name for a specific template, currently it accepts `web` and `web-react` that will be converted internally to `vgno/roc-template-web` and `vgno/roc-template-web-react`. As can be seen here the actual template reference is a Github repo and can be anything matching that pattern `USERNAME/PROJECT`.
@@ -16,7 +16,7 @@ It will also expect that the template has a folder named `template` and that ins
 For exactly how a template can be structured and functions please see the separate documentation for that [here](/docs/Template.md).
 
 ### version
-Versions should match a tag on the Github repo and will default to master if non exists. When giving an input on the command line Roc will automatically add `v` in front of versions that starts with a number to match Github default that have versions tags that start with `v` like `v1.0.0`.
+Versions should match a tag on the Github repo and will default to master if none exists. When giving an input on the command line Roc will automatically add `v` in front of versions that starts with a number to match Github default that have versions tags that start with `v` like `v1.0.0`.
 
 ### Internal flow
 
