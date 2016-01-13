@@ -28,6 +28,8 @@ const templates = [{
  * Command used to init a new Roc project.
  *
  * @param {rocCommandObject} parsedArguments - The Roc command object, uses parsedArguments from it.
+ *
+ * @returns {Promise} - Promise for the command.
  */
 export default function init({ parsedOptions }) {
     const { template, version } = parsedOptions.options;
@@ -36,10 +38,10 @@ export default function init({ parsedOptions }) {
     assertEmptyDir();
 
     if (!template) {
-        interativeMenu();
-    } else {
-        fetchTemplate(template, version);
+        return interativeMenu();
     }
+
+    return fetchTemplate(template, version);
 
     /*
      * Helpers
@@ -57,7 +59,7 @@ export default function init({ parsedOptions }) {
             toFetch = selectedTemplate.repo;
         }
 
-        getVersions(toFetch)
+        return getVersions(toFetch)
             .then((versions) => {
                 if (selectVersion && selectVersion.charAt(0) !== 'v') {
                     selectVersion = `v${selectVersion}`;
@@ -77,27 +79,28 @@ export default function init({ parsedOptions }) {
                 return get(toFetch, actualVersion);
             })
             .then((dirPath) => {
-                if (!validRocProject(dirPath)) {
+                if (!validRocProject(path.join(dirPath, 'template'))) {
                     /* eslint-disable no-process-exit */
                     console.log('Seems like this is not a Roc template.');
                     process.exit(1);
                     /* eslint-enable */
                 } else {
                     console.log('\nInstalling template setup dependencies…');
-                    return npmInstall(dirPath).then(() => {
-                        inquirer.prompt(getPrompt(dirPath), (answers) => {
-                            replaceTemplatedValues(answers, dirPath);
-                            configureFiles(dirPath);
-
-                            console.log(`\nInstalling template dependencies… ` +
-                                `${chalk.dim('(If this fails you can always try to run npm install directly)')}`);
-                            return npmInstall().then(() => {
-                                console.log(chalk.green('\nSetup completed!\n'));
-                                console.log(`Start in dev mode by typing ${chalk.bold('roc dev')}`);
-                            });
-                        });
-                    });
+                    return npmInstall(dirPath);
                 }
+            })
+            .then((dirPath) => {
+                inquirer.prompt(getPrompt(dirPath), (answers) => {
+                    replaceTemplatedValues(answers, dirPath);
+                    configureFiles(dirPath);
+
+                    console.log(`\nInstalling template dependencies… ` +
+                        `${chalk.dim('(If this fails you can always try to run npm install directly)')}`);
+                    return npmInstall().then(() => {
+                        console.log(chalk.green('\nSetup completed!\n'));
+                        console.log(`Start in dev mode by typing ${chalk.bold('roc dev')}`);
+                    });
+                });
             })
             .catch((error) => {
                 console.log(chalk.red('\nAn error occured during init!\n'));
@@ -112,7 +115,7 @@ export default function init({ parsedOptions }) {
         try {
             return require(path.join(dirPath, 'roc.setup.js')).prompt;
         } catch (error) {
-            return require('../index').prompt;
+            return require('./helpers/default-prompt').prompt;
         }
     }
 
@@ -142,11 +145,7 @@ export default function init({ parsedOptions }) {
             // Run npm install
             const npm = spawn('npm', ['install'], {
                 cwd: dirPath,
-                stdio: [
-                    process.stdin,
-                    process.stdout,
-                    process.stderr
-                ]
+                stdio: 'inherit'
             });
 
             npm.on('close', function(code) {
@@ -154,27 +153,29 @@ export default function init({ parsedOptions }) {
                     return reject(new Error('npm install failed with status code: ' + code));
                 }
 
-                return resolve();
+                return resolve(dirPath);
             });
         });
     }
 
     function interativeMenu() {
-        const choices = templates.map((elem) => ({ name: elem.name, value: elem.identifier }));
+        return new Promise((resolve) => {
+            const choices = templates.map((elem) => ({ name: elem.name, value: elem.identifier }));
 
-        inquirer.prompt([{
-            type: 'rawlist',
-            name: 'option',
-            message: 'Selected a type',
-            choices: choices
-        }], answers => {
-            fetchTemplate(answers.option);
+            inquirer.prompt([{
+                type: 'rawlist',
+                name: 'option',
+                message: 'Selected a type',
+                choices: choices
+            }], answers => {
+                resolve(fetchTemplate(answers.option));
+            });
         });
     }
 
     function assertEmptyDir() {
         if (fs.readdirSync(process.cwd()).length > 0) {
-            console.log(chalk.yellow('You need to call this command from a empty directory.'));
+            console.log(chalk.yellow('You need to call this command from an empty directory.'));
             /* eslint-disable no-process-exit */
             process.exit(1);
             /* eslint-enable */

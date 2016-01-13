@@ -1,7 +1,7 @@
 instrumentation:
     root: src
-    excludes: []
-    include-all-sources: false
+    excludes: [bin/index.js]
+    include-all-sources: true
 reporting:
     print: summary
     reports:

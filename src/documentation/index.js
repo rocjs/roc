@@ -10,9 +10,10 @@ import { pad, getDefaultValue } from '../documentation/helpers';
 /**
  * Generates markdown documentation for the provided configuration object.
  *
- * @param {object} config - The configuration object to generate documentation for.
- * @param {object} metaConfig - The meta configuration object that has information about the configuration object.
+ * @param {rocConfig} config - The configuration object to generate documentation for.
+ * @param {rocMetaConfig} metaConfig - The meta configuration object that has information about the config object.
  * @param {string[]} [filter=[]] - The groups that should be includes, by default all will be used.
+ *
  * @returns {string} - A markdown table as a string.
  */
 export function generateMarkdownDocumentation({ settings }, { settings: meta }, filter = []) {
@@ -59,9 +60,10 @@ export function generateMarkdownDocumentation({ settings }, { settings: meta }, 
 /**
  * Generates plain text documentation for the provided configuration object.
  *
- * @param {object} config - The configuration object to generate documentation for.
- * @param {object} metaConfig - The meta configuration object that has information about the configuration object.
+ * @param {rocConfig} config - The configuration object to generate documentation for.
+ * @param {rocMetaConfig} metaConfig - The meta configuration object that has information about the config object.
  * @param {string[]} [filter=[]] - The groups that should be includes, by default all will be used.
+ *
  * @returns {string} - A table as a string.
  */
 export function generateTextDocumentation({ settings }, { settings: meta }, filter = []) {

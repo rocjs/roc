@@ -1,0 +1,6 @@
+{
+    "name": "roc-test",
+    "dependencies": {
+        "roc-web": "1.0.0"
+    }
+}

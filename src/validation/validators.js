@@ -86,7 +86,7 @@ export function isArrayOrSingle(validator) {
  *
  * @param {object} value - Something to validate.
  * @param {boolean} info - If type information should be returned.
- * @return {infoObject|boolean} - Type information or if it is valid.
+ * @return {infoObject|boolean|string} - Type information or if it is valid.
  */
 export function isString(value, info) {
     if (info) {
@@ -105,7 +105,7 @@ export function isString(value, info) {
  *
  * @param {object} value - Something to validate.
  * @param {boolean} info - If type information should be returned.
- * @return {infoObject|boolean} - Type information or if it is valid.
+ * @return {infoObject|boolean|string} - Type information or if it is valid.
  */
 export function isBoolean(value, info) {
     if (info) {
@@ -124,7 +124,7 @@ export function isBoolean(value, info) {
  *
  * @param {object} value - Something to validate.
  * @param {boolean} info - If type information should be returned.
- * @return {infoObject|boolean} - Type information or if it is valid.
+ * @return {infoObject|boolean|string} - Type information or if it is valid.
  */
 export function isInteger(value, info) {
     if (info) {
@@ -143,7 +143,7 @@ export function isInteger(value, info) {
  *
  * @param {object} value - Something to validate.
  * @param {boolean} info - If type information should be returned.
- * @return {infoObject|boolean} - Type information or if it is valid.
+ * @return {infoObject|boolean|string} - Type information or if it is valid.
  */
 export function isPath(value, info) {
     if (info) {
@@ -164,6 +164,10 @@ export function isPath(value, info) {
  * @return {function} - A function that takes a value and that returns true or false if valid or not.
  */
 export function oneOf(...validators) {
+    if (!validators.length) {
+        throw new Error('You need to use at least one validator.');
+    }
+
     return (input, info) => {
         if (info) {
             let types = [];
@@ -179,7 +183,7 @@ export function oneOf(...validators) {
             if (result === true) {
                 return true;
             }
-            invalid.push(result);
+            invalid.push(validator(null, true).type);
         }
 
         return 'Was not any of the possible types:\n' +
@@ -205,6 +209,10 @@ export function required(validator) {
             lodashIsPlainObject(input) && Object.keys(input).length === 0
         ) {
             return 'A value was required but none was given!';
+        }
+
+        if (!validator) {
+            return true;
         }
 
         return validator(input);
