@@ -6,7 +6,7 @@ describe('roc', () => {
             describe('defaultPrompt', () => {
                 const prompt = require('../../../src/bin/commands/helpers/default-prompt');
 
-                it('property defaultPrompt should return an array', () => {
+                it('should have a property named defaultPrompt that is an array', () => {
                     expect(prompt.defaultPrompt).toBeAn(Array);
                 });
             });
