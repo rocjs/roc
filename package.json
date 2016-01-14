@@ -18,7 +18,8 @@
     "test:unit:watch": "npm run test:unit -- --watch",
     "check": "ncu",
     "esdocs": "esdoc -c esdoc.json",
-    "prepublish": "npm test && npm run clean && npm run build && npm run esdocs"
+    "prepublish": "npm test && npm run clean && npm run build && npm run esdocs",
+    "postinstall": "node ./npm-scripts/post-install.js"
   },
   "repository": {
     "type": "git",
