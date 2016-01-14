@@ -3,7 +3,7 @@ import 'source-map-support/register';
 /**
  * The default prompt options.
  */
-export const prompt = [{
+export const defaultPrompt = [{
     type: 'input',
     name: 'rocAppName',
     message: 'What\'s the name of your application?',
