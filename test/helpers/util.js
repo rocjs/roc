@@ -4,6 +4,10 @@ export const makeGetterSpy = function(obj, getter) {
     // store reference to old getter for restore
     const oldGetter = obj.__lookupGetter__(getter);
 
+    if (!oldGetter) {
+        throw new Error('Attempted to add getter spy to unsupported attribute');
+    }
+
     // define spy getter
     Object.defineProperty(obj, getter, {
         get: function() {
