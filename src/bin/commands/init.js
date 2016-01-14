@@ -119,7 +119,7 @@ export default function init({ parsedOptions }) {
         try {
             return require(path.join(dirPath, 'roc.setup.js')).prompt;
         } catch (error) {
-            return require('./helpers/default-prompt').prompt;
+            return require('./helpers/default-prompt').defaultPrompt;
         }
     }
 
