@@ -9,7 +9,7 @@ import chalk from 'chalk';
 
 import { get, getVersions } from './helpers/github';
 import { validRocProject } from './helpers/general';
-import { error as styleError, warning, important, ok } from '../../helpers/style';
+import { error as styleError, warning, important, ok } from '../helpers/style';
 
 /* This should be fetched from a server!
  */

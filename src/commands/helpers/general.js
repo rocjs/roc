@@ -1,7 +1,7 @@
 import 'source-map-support/register';
 
 import { isObject } from 'lodash';
-import { fileExists, getRocDependencies, getPackageJson } from '../../../helpers';
+import { fileExists, getRocDependencies, getPackageJson } from '../../helpers';
 
 /**
  * Validates if a directory seems to be a Roc application project.

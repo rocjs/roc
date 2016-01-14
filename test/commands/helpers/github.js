@@ -1,7 +1,7 @@
 import expect from 'expect';
 
 describe('roc', () => {
-    describe('bin', () => {
+    describe('commands', () => {
         describe('helpers', () => {
             describe('github', () => {
                 let github;
@@ -17,7 +17,7 @@ describe('roc', () => {
                         on: (name, cb) => cb(),
                         end: () => {}
                     });
-                    github = require('../../../src/bin/commands/helpers/github');
+                    github = require('../../../src/commands/helpers/github');
                 });
 
                 afterEach(() => {
