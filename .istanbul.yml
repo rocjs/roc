@@ -1,6 +1,5 @@
 instrumentation:
     root: src
-    excludes: [bin/index.js]
     include-all-sources: true
 reporting:
     print: summary
