@@ -90,11 +90,11 @@ export function validateMightThrow(settings, validations) {
  * @param {string} [type='field'] - What the failed validation value was.
  * @throws {Error} - Throws error if the configuration is invalid.
  */
-export function throwError(name, message, value = '[Nothing]', type = 'field') {
-    message = message && message + '\n';
+export function throwError(name, message, value, type = 'field') {
+    value = value || '[Nothing]';
     throw new Error(
         `Validation failed for ${type} ${chalk.underline(name)} -` +
-        `Received: ${value}.` +
+        ` Received: ${value}.` +
         ` ${message || ''}`
     );
 }
