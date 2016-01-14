@@ -1,11 +1,11 @@
 import 'source-map-support/register';
 
-import chalk from 'chalk';
 import { escape } from 'lodash';
 
 import buildDocumentationObject from '../documentation/build-documentation-object';
 import generateTable from '../documentation/generate-table';
 import { pad, getDefaultValue } from '../documentation/helpers';
+import * as style from '../helpers/style';
 
 /**
  * Generates markdown documentation for the provided configuration object.
@@ -82,7 +82,7 @@ export function generateTextDocumentation({ settings }, { settings: meta }, filt
             renderer: (input) => {
                 input = getDefaultValue(input);
                 if (!input) {
-                    return chalk.yellow('No default value');
+                    return style.warning('No default value');
                 }
                 return input;
             }
@@ -94,9 +94,9 @@ export function generateTextDocumentation({ settings }, { settings: meta }, filt
             name: 'Required',
             renderer: (input) => {
                 if (input === true) {
-                    return chalk.green('Yes');
+                    return style.ok('Yes');
                 }
-                return chalk.red('No');
+                return style.error('No');
             }
         }
     };

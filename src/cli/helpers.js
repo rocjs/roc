@@ -14,6 +14,7 @@ import { getDefaultValue } from '../documentation/helpers';
 import { fileExists, getRocDependencies, getPackageJson } from '../helpers';
 import { throwError } from '../validation';
 import { isValid } from '../validation';
+import * as style from '../helpers/style';
 
 /**
  * Builds the complete configuration objects.
@@ -59,7 +60,7 @@ export function buildCompleteConfig(
         }
 
         if (usedExtensions.length && debug) {
-            console.log('The following Roc extensions will be used:', usedExtensions, '\n');
+            console.log(style.warningLabel('The following Roc extensions will be used:'), usedExtensions, '\n');
         }
 
         // Check for a mismatch between application configuration and extensions.
@@ -86,7 +87,7 @@ function getExtension(extensionName, directory) {
         return { baseConfig, metaConfig };
     } catch (err) {
         console.log(
-            chalk.bgRed(
+            style.errorLabel(
                 'Failed to load Roc extension ' + chalk.bold(extensionName) + '. ' +
                 'Make sure you have it installed. Try running:'
             ) + ' ' +
@@ -115,7 +116,7 @@ function validateConfigurationStructure(config, applicationConfig) {
     const keys = getKeys(config);
     const diff = difference(getKeys(applicationConfig), keys);
     if (diff.length > 0) {
-        info.push(chalk.bgRed('Configuration problem') +
+        info.push(style.errorLabel('Configuration problem') +
             ' There was a mismatch in the application configuration structure, make sure this is correct.\n');
         info.push(getSuggestions(diff, keys));
         info.push('');
@@ -261,7 +262,7 @@ export function generateCommandDocumentation({ settings }, { commands = {}, sett
                 }
 
                 if (!input) {
-                    return chalk.yellow('No default value');
+                    return style.warning('No default value');
                 }
 
                 return chalk.cyan(input);
@@ -336,7 +337,7 @@ export function parseOptions(command, commands, options) {
                         throwError(option.name, validationResult, value, 'option');
                     } catch (err) {
                         /* eslint-disable no-process-exit, no-console */
-                        console.log(chalk.bgRed('Arguments problem') + ' An option was not valid.\n');
+                        console.log(style.errorLabel('Arguments problem') + ' An option was not valid.\n');
                         console.log(err.message);
                         process.exit(1);
                         /* eslint-enable */
@@ -402,8 +403,10 @@ function getConvertor(value, name) {
                 return input === 'true';
             }
 
-            console.log(`Invalid value given for ${chalk.bold(name)}. Will use the default ` +
-                `${chalk.bold(value)}.`);
+            console.log(
+                style.warningLabel(`Invalid value given for ${chalk.bold(name)}.`),
+                `Will use the default ${chalk.bold(value)}.`
+            );
 
             return value;
         };
@@ -454,7 +457,7 @@ export function parseArguments(args, mappings) {
     });
 
     if (info.length > 0) {
-        console.log(chalk.bgRed('CLI problem') + ' Some commands was not understood.\n');
+        console.log(style.errorLabel('CLI problem'), 'Some commands were not understood.\n');
         console.log(info.join('\n') + '\n');
     }
 
@@ -469,7 +472,7 @@ function convert(value, mapping) {
     }
 
     console.log(
-        chalk.yellow(`There was a problem when trying to automatically convert ${chalk.bold(mapping.name)}. This ` +
+        style.warning(`There was a problem when trying to automatically convert ${chalk.bold(mapping.name)}. This ` +
         `value will be ignored.`)
     );
     console.log(
