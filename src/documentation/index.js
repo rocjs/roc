@@ -5,7 +5,7 @@ import { escape } from 'lodash';
 import buildDocumentationObject from '../documentation/build-documentation-object';
 import generateTable from '../documentation/generate-table';
 import { pad, getDefaultValue } from '../documentation/helpers';
-import * as style from '../helpers/style';
+import { error as styleError, warning, ok } from '../helpers/style';
 
 /**
  * Generates markdown documentation for the provided configuration object.
@@ -82,7 +82,7 @@ export function generateTextDocumentation({ settings }, { settings: meta }, filt
             renderer: (input) => {
                 input = getDefaultValue(input);
                 if (!input) {
-                    return style.warning('No default value');
+                    return warning('No default value');
                 }
                 return input;
             }
@@ -94,9 +94,9 @@ export function generateTextDocumentation({ settings }, { settings: meta }, filt
             name: 'Required',
             renderer: (input) => {
                 if (input === true) {
-                    return style.ok('Yes');
+                    return ok('Yes');
                 }
-                return style.error('No');
+                return styleError('No');
             }
         }
     };

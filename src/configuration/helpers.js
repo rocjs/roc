@@ -4,7 +4,7 @@ import fs from 'fs';
 import chalk from 'chalk';
 
 import { getAbsolutePath } from '../helpers';
-import * as style from '../helpers/style';
+import { error as styleError, warning } from '../helpers/style';
 
 /* Make sure that we only print some feedback once */
 let onceApp = true;
@@ -35,7 +35,7 @@ export function getApplicationConfig(applicationConfigPath, directory = process.
     if (onceApp && applicationConfigPath && process.env.ROC_CONFIG_PATH) {
         onceApp = false;
         console.log(
-            style.error('You have configured a location for the application configuration file but the ' +
+            styleError('You have configured a location for the application configuration file but the ' +
             'environment variable ' + chalk.bold('ROC_CONFIG_PATH') + ' is set and that will be used instead. The ' +
             'path that will be used is ' + configPath)
         , '\n');
@@ -58,13 +58,13 @@ export function getApplicationConfig(applicationConfigPath, directory = process.
         const config = require(appConfigPath);
 
         if (Object.keys(config).length === 0) {
-            console.log(style.warning('The configuration file at ' + chalk.bold(appConfigPath) + ' was empty.'));
+            console.log(warning('The configuration file at ' + chalk.bold(appConfigPath) + ' was empty.'));
         }
 
         return config;
     } catch (error) {
         if (debug) {
-            console.log(style.warning('Could not read the configuration file at ' + chalk.bold(appConfigPath)));
+            console.log(warning('Could not read the configuration file at ' + chalk.bold(appConfigPath)));
         }
         return {};
     }

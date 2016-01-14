@@ -9,7 +9,7 @@ import chalk from 'chalk';
 
 import { get, getVersions } from './helpers/github';
 import { validRocProject } from './helpers/general';
-import * as style from '../../helpers/style';
+import { error as styleError, warning, important, ok } from '../../helpers/style';
 
 /* This should be fetched from a server!
  */
@@ -51,7 +51,7 @@ export default function init({ parsedOptions }) {
         if (toFetch.indexOf('/') === -1) {
             const selectedTemplate = templates.find((elem) => elem.identifier === toFetch);
             if (!selectedTemplate) {
-                console.log(style.error('Invalid template name given.'));
+                console.log(styleError('Invalid template name given.'));
                 /* eslint-disable no-process-exit */
                 process.exit(1);
                 /* eslint-enable */
@@ -74,10 +74,10 @@ export default function init({ parsedOptions }) {
 
                 if (!selectedVersion && selectVersion) {
                     console.log(
-                        style.warning(`Selected template version not found, using ${chalk.bold(actualVersion)}`)
+                        warning(`Selected template version not found, using ${chalk.bold(actualVersion)}`)
                     );
                 } else if (!selectedVersion) {
-                    console.log(style.warning(`Using ${chalk.bold(actualVersion)} as template version`));
+                    console.log(important(`Using ${chalk.bold(actualVersion)} as template version`));
                 }
 
                 return get(toFetch, actualVersion);
@@ -85,7 +85,7 @@ export default function init({ parsedOptions }) {
             .then((dirPath) => {
                 if (!validRocProject(path.join(dirPath, 'template'))) {
                     /* eslint-disable no-process-exit */
-                    console.log(style.error('Seems like this is not a Roc template.'));
+                    console.log(styleError('Seems like this is not a Roc template.'));
                     process.exit(1);
                     /* eslint-enable */
                 } else {
@@ -101,13 +101,13 @@ export default function init({ parsedOptions }) {
                     console.log(`\nInstalling template dependencies… ` +
                         `${chalk.dim('(If this fails you can always try to run npm install directly)')}`);
                     return npmInstall().then(() => {
-                        console.log(style.ok('\nSetup completed!\n'));
+                        console.log(ok('\nSetup completed!\n'));
                         console.log(`Start in dev mode by typing ${chalk.bold('roc dev')}`);
                     });
                 });
             })
             .catch((error) => {
-                console.log(style.error('\nAn error occured during init!\n'));
+                console.log(styleError('\nAn error occured during init!\n'));
                 console.error(error.stack);
                 /* eslint-disable no-process-exit */
                 process.exit(1);
@@ -179,7 +179,7 @@ export default function init({ parsedOptions }) {
 
     function assertEmptyDir() {
         if (fs.readdirSync(process.cwd()).length > 0) {
-            console.log(style.error('You need to call this command from an empty directory.'));
+            console.log(styleError('You need to call this command from an empty directory.'));
             /* eslint-disable no-process-exit */
             process.exit(1);
             /* eslint-enable */

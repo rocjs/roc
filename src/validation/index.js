@@ -3,7 +3,7 @@ import 'source-map-support/register';
 import chalk from 'chalk';
 import { isPlainObject, isFunction, isRegExp } from 'lodash';
 
-import * as style from '../helpers/style';
+import { errorLabel } from '../helpers/style';
 
 /**
  * Helper to use a validator.
@@ -45,7 +45,7 @@ export function validate(settings, metaSettings = {}, toValidate = true) {
         }
     } catch (err) {
         /* eslint-disable no-process-exit, no-console */
-        console.log(style.errorLabel('Validation problem') + ' Configuration was not valid.\n');
+        console.log(errorLabel('Validation problem') + ' Configuration was not valid.\n');
         console.log(err.message);
         process.exit(1);
         /* eslint-enable */

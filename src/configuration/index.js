@@ -2,7 +2,7 @@ import 'source-map-support/register';
 
 import deepExtend from 'deep-extend';
 
-import * as style from '../helpers/style';
+import { warning } from '../helpers/style';
 
 /* Make sure that we only print some feedback once */
 let onceSettings = true;
@@ -37,7 +37,7 @@ export function getConfig() {
             process.env.ROC_CONFIG_SETTINGS
         ) {
             console.log(
-                style.warning('You have settings defined on the environment variable ROC_CONFIG_SETTINGS ' +
+                warning('You have settings defined on the environment variable ROC_CONFIG_SETTINGS ' +
                 'and they will be appended to the settings. Will append the following:\n' +
                 JSON.stringify(process.env.ROC_CONFIG_SETTINGS, null, 2))
             , '\n');

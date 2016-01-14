@@ -6,9 +6,11 @@ import {
     warning,
     warningLabel,
     ok,
-    okLabel
+    okLabel,
+    important,
+    importantLabel
 } from '../../src/helpers/style';
-import { makeGetterSpy } from './util';
+import { makeGetterSpy } from '../utils';
 
 describe('roc', () => {
     describe('helpers', () => {
@@ -18,13 +20,13 @@ describe('roc', () => {
             describe('error', () => {
                 let red, bgRed, white;
 
-                before(() => {
+                beforeEach(() => {
                     red = makeGetterSpy(chalk, 'red');
                     bgRed = makeGetterSpy(chalk, 'bgRed');
                     white = makeGetterSpy(chalk, 'white');
                 });
 
-                after(() => {
+                afterEach(() => {
                     red.restore();
                     bgRed.restore();
                     white.restore();
@@ -51,13 +53,13 @@ describe('roc', () => {
             describe('warning', () => {
                 let yellow, bgYellow, white;
 
-                before(() => {
+                beforeEach(() => {
                     yellow = makeGetterSpy(chalk, 'yellow');
                     bgYellow = makeGetterSpy(chalk, 'bgYellow');
                     white = makeGetterSpy(chalk, 'white');
                 });
 
-                after(() => {
+                afterEach(() => {
                     yellow.restore();
                     bgYellow.restore();
                     white.restore();
@@ -84,13 +86,13 @@ describe('roc', () => {
             describe('ok', () => {
                 let green, bgGreen, white;
 
-                before(() => {
+                beforeEach(() => {
                     green = makeGetterSpy(chalk, 'green');
                     bgGreen = makeGetterSpy(chalk, 'bgGreen');
                     white = makeGetterSpy(chalk, 'white');
                 });
 
-                after(() => {
+                afterEach(() => {
                     green.restore();
                     bgGreen.restore();
                     white.restore();
@@ -109,6 +111,39 @@ describe('roc', () => {
                         const result = okLabel('test');
                         expect(white.called()).toBe(true);
                         expect(bgGreen.called()).toBe(true);
+                        expect(result).toInclude('test');
+                    });
+                });
+            });
+
+            describe('important', () => {
+                let cyan, bgCyan, black;
+
+                beforeEach(() => {
+                    cyan = makeGetterSpy(chalk, 'cyan');
+                    bgCyan = makeGetterSpy(chalk, 'bgCyan');
+                    black = makeGetterSpy(chalk, 'black');
+                });
+
+                afterEach(() => {
+                    cyan.restore();
+                    bgCyan.restore();
+                    black.restore();
+                });
+
+                describe('default', () => {
+                    it('should chalk text cyan', () => {
+                        const result = important('test');
+                        expect(cyan.called()).toBe(true);
+                        expect(result).toInclude('test');
+                    });
+                });
+
+                describe('label', () => {
+                    it('should chalk text black and background cyan', () => {
+                        const result = importantLabel('test');
+                        expect(black.called()).toBe(true);
+                        expect(bgCyan.called()).toBe(true);
                         expect(result).toInclude('test');
                     });
                 });

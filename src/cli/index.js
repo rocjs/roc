@@ -18,7 +18,7 @@ import {
     parseArguments,
     getSuggestions
 } from './helpers';
-import * as style from '../helpers/style';
+import { error as styleError } from '../helpers/style';
 
 /**
  * Invokes the Roc cli.
@@ -64,7 +64,7 @@ export function runCli(info = {version: 'Unknown', name: 'Unknown'}, initalConfi
     // If the command does not exist show error
     // Will ignore application configuration
     if (!extensionConfig.commands || !extensionConfig.commands[command]) {
-        console.log(style.error('Invalid command'), '\n');
+        console.log(styleError('Invalid command'), '\n');
         return console.log(getSuggestions([command], Object.keys(extensionConfig.commands)), '\n');
     }
 
