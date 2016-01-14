@@ -56,7 +56,7 @@ export function get(packageName, version = 'master') {
     return new Promise((resolve, reject) => {
         temp.mkdir('roc', (err, dirPath) => {
             if (err) {
-                reject(err);
+                return reject(err);
             }
 
             /* eslint-disable new-cap */

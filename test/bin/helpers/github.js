@@ -6,21 +6,29 @@ describe('roc', () => {
             let github;
             let get;
             let mkdir;
+            let tar;
 
             before(() => {
                 get = expect.spyOn(require('request'), 'get');
                 mkdir = expect.spyOn(require('temp'), 'mkdir');
+                tar = expect.spyOn(require('tar'), 'Extract')
+                    .andReturn({
+                        on: (name, cb) => cb(),
+                        end: () => {}
+                    });
                 github = require('../../../src/bin/commands/helpers/github');
             });
 
             afterEach(() => {
                 get.calls = [];
                 mkdir.calls = [];
+                tar.calls = [];
             });
 
             after(() => {
                 get.restore();
                 mkdir.restore();
+                tar.restore();
             });
 
             describe('getVersions', () => {
