@@ -1,6 +1,6 @@
 {
   "name": "roc",
-  "version": "1.0.0-beta1",
+  "version": "1.0.0-beta2",
   "description": "Build modern web applications easily",
   "main": "lib/index.js",
   "bin": "bin/index.js",
