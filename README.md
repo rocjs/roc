@@ -70,6 +70,7 @@ Roc is highly flexible and makes it easy to create new extensions. It does not e
 - Web server through [Koa](http://koajs.com/).
 - [React](http://facebook.github.io/react/) (complete with [Redux](https://github.com/rackt/redux) and server side rendering).
 - First class developer experience featuring hot code reloading and [Browsersync](http://browsersync.io).
+- Transpiling from ES2015 _(ES6)_ and beyond using [Babel](http://babeljs.io).
 
 ## Documentation
 See the [documentation](/docs/README.md).
