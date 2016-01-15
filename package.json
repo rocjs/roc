@@ -26,7 +26,13 @@
     "url": "https://github.com/vgno/roc.git"
   },
   "keywords": [
-    "roc"
+    "roc",
+    "react",
+    "universal",
+    "isomorphic",
+    "build",
+    "cli",
+    "redux"
   ],
   "author": "VG",
   "license": "MIT",
