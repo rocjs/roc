@@ -2,10 +2,10 @@ import expect from 'expect';
 import path from 'path';
 
 describe('roc', () => {
-    describe('bin', () => {
+    describe('commands', () => {
         describe('helpers', () => {
             describe('general', () => {
-                const general = require('../../../src/bin/commands/helpers/general');
+                const general = require('../../../src/commands/helpers/general');
 
                 describe('validRocProject', () => {
                     it('should return false if package.json does not exist', () => {

@@ -3,7 +3,7 @@
 const runCli = require('../lib/cli').runCli;
 const validators = require('../lib/validation/validators');
 
-const init = require('../lib/bin/commands/init');
+const init = require('../lib/commands/init');
 
 const pkg = require('../package.json');
 
