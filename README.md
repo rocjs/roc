@@ -1,6 +1,11 @@
 # roc-config
 Configuration manager for the Roc ecosystem.
 
+<h2 style="color:red">DEPRECATED</h2>
+This module is no longer used by Roc. All relevant code is now a part of the Roc module itself.
+
+---
+
 ![stability alpha](https://img.shields.io/badge/stability-alpha-red.svg)
 [![roc](https://img.shields.io/npm/v/roc-config.svg)](https://www.npmjs.com/package/roc-config)
 [![Build Status](https://travis-ci.org/vgno/roc-config.svg)](https://travis-ci.org/vgno/roc-config)
