@@ -18,4 +18,4 @@ export { execute } from './cli/execute';
 
 export { getAbsolutePath, fileExists } from './helpers';
 
-export { defaultPrompt } from './bin/commands/helpers/default-prompt';
+export { defaultPrompt } from './commands/helpers/default-prompt';
