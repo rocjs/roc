@@ -99,10 +99,10 @@ export default function init({ parsedOptions }) {
                     configureFiles(dirPath);
 
                     console.log(`\nInstalling template dependencies… ` +
-                        `${chalk.dim('(If this fails you can always try to run npm install directly)')}`);
+                        `${chalk.dim('(If this fails you can try to run npm install directly)')}`);
                     return npmInstall().then(() => {
                         console.log(ok('\nSetup completed!\n'));
-                        console.log(`Start in dev mode by typing ${chalk.bold('roc dev')}`);
+                        showCompletionMessage(dirPath);
                     });
                 });
             })
@@ -120,6 +120,14 @@ export default function init({ parsedOptions }) {
             return require(path.join(dirPath, 'roc.setup.js')).prompt;
         } catch (error) {
             return require('./helpers/default-prompt').defaultPrompt;
+        }
+    }
+
+    function showCompletionMessage(dirPath) {
+        try {
+            console.log(require(path.join(dirPath, 'roc.setup.js')).completionMessage);
+        } catch (error) {
+            // Do nothing
         }
     }
 
