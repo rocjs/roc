@@ -22,7 +22,7 @@ let onceApp = true;
  * 4. Return a empty object along with a warning.
  *
  * @param {string} applicationConfigPath - Path to application configuration file. Can be either relative or absolute.
- * @param {string} [directory=process.cwd()] - The directory to resolve realative paths to. By default will use the
+ * @param {string} [directory=process.cwd()] - The directory to resolve relative paths to. By default will use the
  *     current working directory.
  * @param {boolean} [debug=false] - If extra information should be printed.
  *
