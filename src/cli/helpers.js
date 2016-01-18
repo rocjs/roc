@@ -103,7 +103,9 @@ function validateConfigurationStructure(config, applicationConfig) {
             const value = obj[key];
             const newPath = oldPath + key;
 
-            if (isPlainObject(value)) {
+            // Handle plugins special since we can't predict how they will look.
+            // For example plugins.createBuilder can be an object with new keys or it might not be it.
+            if (isPlainObject(value) && oldPath !== 'plugins.') {
                 getKeys(value, newPath + '.', allKeys);
             } else {
                 allKeys.push(newPath);
