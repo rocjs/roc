@@ -101,7 +101,7 @@ export function isString(value, info) {
 }
 
 /**
- * Validates an string.
+ * Validates an boolean.
  *
  * @param {object} value - Something to validate.
  * @param {boolean} info - If type information should be returned.
@@ -112,7 +112,7 @@ export function isBoolean(value, info) {
         return infoObject('Boolean');
     }
 
-    if (!lodashIsBoolean(value)) {
+    if (value !== null && !lodashIsBoolean(value)) {
         return 'Was not a boolean!';
     }
 
@@ -120,7 +120,7 @@ export function isBoolean(value, info) {
 }
 
 /**
- * Validates an string.
+ * Validates an integer.
  *
  * @param {object} value - Something to validate.
  * @param {boolean} info - If type information should be returned.
@@ -139,7 +139,7 @@ export function isInteger(value, info) {
 }
 
 /**
- * Validates an string.
+ * Validates an path.
  *
  * @param {object} value - Something to validate.
  * @param {boolean} info - If type information should be returned.

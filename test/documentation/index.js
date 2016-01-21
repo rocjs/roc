@@ -21,7 +21,10 @@ describe('roc', () => {
             it('should return a simple markdown table given input', () => {
                 expect(generateMarkdownDocumentation({
                     settings: {
-                        runtime: { port: 80}
+                        runtime: {
+                            port: 80,
+                            enabled: false
+                        }
                     }
                 }, {
                     settings: {}
@@ -29,9 +32,10 @@ describe('roc', () => {
                     redent(`
                         # Runtime
 
-                        | Name | Description | Path         | CLI Flag | Default | Type      | Required |
-                        | ---- | ----------- | ------------ | -------- | ------- | --------- | -------- |
-                        | port |             | runtime.port | --port   | \`80\`    | \`Unknown\` | No       |
+                        | Name    | Description | Path            | CLI Flag  | Default | Type      | Required |
+                        | ------- | ----------- | --------------- | --------- | ------- | --------- | -------- |
+                        | port    |             | runtime.port    | --port    | \`80\`    | \`Unknown\` | No       |
+                        | enabled |             | runtime.enabled | --enabled | \`false\` | \`Unknown\` | No       |
                         `
                     )
                 );
@@ -50,21 +54,35 @@ describe('roc', () => {
             it('should return a simple markdown table given input', () => {
                 const table = generateTextDocumentation({
                     settings: {
-                        runtime: { port: 80}
+                        runtime: {
+                            port: 80,
+                            on: false
+                        }
                     }
                 }, {
-                    settings: {}
+                    settings: {
+                        descriptions: {
+                            runtime: {
+                                port: 'Some really long description string that is over 100 characters long so we ' +
+                                'can test the cut off and make sure dots are added',
+                                on: 'Short description'
+                            }
+                        }
+                    }
                 });
+                /* eslint-disable max-len */
                 expect(stripAnsi(table)).toEqual(
                     redent(`
                         runtime
 
-                        | Description | Path         | Default | CLI Flag | Required |
-                        | ----------- | ------------ | ------- | -------- | -------- |
-                        |             | runtime.port | 80      | --port   | No       |
+                        | Description                                                                                           | Path         | Default | CLI Flag | Required |
+                        | ----------------------------------------------------------------------------------------------------- | ------------ | ------- | -------- | -------- |
+                        | Some really long description string that is over 100 characters long so we can test the cut off and … | runtime.port | 80      | --port   | No       |
+                        | Short description                                                                                     | runtime.on   | false   | --on     | No       |
                         `
                     )
                 );
+                /* eslint-enable */
             });
         });
     });

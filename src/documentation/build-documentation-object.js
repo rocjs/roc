@@ -21,7 +21,7 @@ export default function buildDocumentationObject(initalObject, meta = {}, inital
     };
 
     const manageGroup = (object, name, group = {}, description = {}, validation = {}, parents, level) => {
-        const groupDescription = isPlainObject(group) ? undefined : group;
+        const groupDescription = isPlainObject(group) ? group._description || undefined : group;
         return {
             name,
             level,
@@ -56,7 +56,8 @@ export default function buildDocumentationObject(initalObject, meta = {}, inital
                 const parents = [].concat(initalParents, key);
                 const value = object[key];
                 if (isPlainObject(value) && Object.keys(value).length > 0 && !leaves) {
-                    return manageGroup(value, key, groups[key], descriptions[key], validations[key], parents, level);
+                    const group = isPlainObject(groups) ? groups[key] : {};
+                    return manageGroup(value, key, group, descriptions[key], validations[key], parents, level);
                 } else if ((!isPlainObject(value) || Object.keys(value).length === 0) && leaves) {
                     return manageLeaf(value, key, descriptions[key], validations[key], parents);
                 }

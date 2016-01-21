@@ -51,7 +51,10 @@ module.exports = {
         },
         groups: {
             group1: 'Description for 1',
-            group2: 'Description for 2',
+            group2: {
+                _description: 'Description for 2',
+                subgroup: 'Description for subgroup'
+            },
         }
         validations: {
             group1: {
@@ -73,7 +76,7 @@ Should mirror the groups and general structure of the normal settings object add
 See [roc.config.meta.js in roc-web for an example of how the configuration might look](https://github.com/vgno/roc-web/blob/master/src/roc/config/roc.config.meta.js#L11).
 
 ### `groups`
-Can be used to add descriptions to the groups that will be used when using the cli and when generation documentation for the settings.
+Can be used to add descriptions to the groups that will be used when using the cli and when generation documentation for the settings. Use the special property `_description` to add description to a group when you also want descriptions to sub groups within it.
 
 ### `validations`
 Should mirror the groups and general structure of the normal settings object adding validations to the properties. These validations will be used by the cli to verify the configuration structure and inputs given to the cli directly.

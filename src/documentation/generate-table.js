@@ -55,7 +55,7 @@ export default function generateTable(initalDocumentationObject, header, setting
         ).join(settings.cellDivider));
     };
 
-    const printTableHead = (name, description, level = 0) => {
+    const printTableHead = (name, description, level = 0, printTableHeader = true) => {
         const rows = [];
         rows.push(settings.groupTitleWrapper(name, level));
 
@@ -63,10 +63,9 @@ export default function generateTable(initalDocumentationObject, header, setting
             rows.push(description);
         }
 
-        // Add a new empty row
-        rows.push('');
-
-        if (settings.header) {
+        if (settings.header && printTableHeader) {
+            // Add a new empty row
+            rows.push('');
             rows.push(printTableRow(header, true));
             rows.push(printTableSplitter());
         }
@@ -82,7 +81,7 @@ export default function generateTable(initalDocumentationObject, header, setting
             const level = group.level || 0;
 
             if (level === 0 || !settings.compact) {
-                rows = rows.concat(printTableHead(group.name, group.description, level));
+                rows = rows.concat(printTableHead(group.name, group.description, level, group.objects.length > 0));
             }
 
             rows = rows.concat(group.objects.map((element) =>

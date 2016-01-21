@@ -169,6 +169,11 @@ describe('roc', () => {
                         .toBe(true);
                 });
 
+                it('should validate a boolean correctly when null', () => {
+                    expect(isBoolean(null))
+                        .toBe(true);
+                });
+
                 it('should return error if value is not a boolean', () => {
                     expect(isBoolean(1))
                         .toInclude('not a boolean');
