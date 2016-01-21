@@ -35,7 +35,7 @@ export function generateMarkdownDocumentation({ settings }, { settings: meta }, 
         },
         defaultValue: {
             name: 'Default',
-            renderer: (input) => input && `\`${getDefaultValue(input)}\``
+            renderer: (input) => input !== undefined && `\`${getDefaultValue(input)}\``
         },
         type: {
             name: 'Type',
