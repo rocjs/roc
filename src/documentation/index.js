@@ -72,7 +72,15 @@ export function generateTextDocumentation({ settings }, { settings: meta }, filt
     const header = {
         description: {
             name: 'Description',
-            renderer: (input) => input && input.substr(0, 100) + '…'
+            renderer: (input) => {
+                if (input && input.length > 100) {
+                    return input.substr(0, 100) + '…';
+                }
+
+                if (input) {
+                    return input;
+                }
+            }
         },
         path: {
             name: 'Path'
@@ -80,11 +88,11 @@ export function generateTextDocumentation({ settings }, { settings: meta }, filt
         defaultValue: {
             name: 'Default',
             renderer: (input) => {
-                input = getDefaultValue(input);
-                if (!input) {
+                const defaultValue = getDefaultValue(input);
+                if (!defaultValue || input === null) {
                     return warning('No default value');
                 }
-                return input;
+                return defaultValue;
             }
         },
         cli: {
