@@ -44,17 +44,17 @@ describe('roc', () => {
             });
 
             it('should give correct feedback if the configuration file is empty', () => {
-                const result = getApplicationConfig('mock-data/roc.empty.config.js', __dirname);
+                const result = getApplicationConfig('data/roc.empty.config.js', __dirname);
                 expect(result).toEqual({});
                 expect(stripAnsi(log.calls[0].arguments.slice(0, 1)[0]))
                     .toEqual('The configuration file at ' +
-                        path.join(__dirname, 'mock-data/roc.empty.config.js') + ' was empty.');
+                        path.join(__dirname, 'data/roc.empty.config.js') + ' was empty.');
 
                 log.restore();
             });
 
             it('should return the content of a configuration file', () => {
-                const result = getApplicationConfig('mock-data/roc.simple.config.js', __dirname);
+                const result = getApplicationConfig('data/roc.simple.config.js', __dirname);
                 expect(result).toEqual({
                     settings: {}
                 });
@@ -64,13 +64,22 @@ describe('roc', () => {
                 const result = getApplicationConfig(undefined, __dirname, true);
                 expect(result).toEqual({});
                 expect(stripAnsi(log.calls[0].arguments.slice(0, 1)[0]))
-                    .toEqual('Could not read the configuration file at ' + path.join(__dirname, 'roc.config.js'));
+                    .toEqual('Could not find the configuration file at ' + path.join(__dirname, 'roc.config.js'));
+
+                log.restore();
+            });
+
+            it('should give feedback when the default configuration has a SyntaxError', () => {
+                const result = getApplicationConfig('data/roc.syntax-error.config.js.ignore', __dirname);
+                expect(result).toEqual({});
+                expect(stripAnsi(log.calls[0].arguments.slice(0, 1)[0]))
+                    .toInclude('Something is wrong with the configuration file at');
 
                 log.restore();
             });
 
             it('should inform that and environment variable is set the first time', () => {
-                process.env.ROC_CONFIG_PATH = path.join(__dirname, 'mock-data/roc.simple.config.js');
+                process.env.ROC_CONFIG_PATH = path.join(__dirname, 'data/roc.simple.config.js');
                 let result = getApplicationConfig('roc.complex.config.js', __dirname);
                 expect(result).toEqual({
                     settings: {}
@@ -78,7 +87,7 @@ describe('roc', () => {
                 expect(stripAnsi(log.calls[0].arguments[0]))
                     .toInclude('You have configured a location for the application');
 
-                result = getApplicationConfig('mock-data/roc.complex.config.js', __dirname);
+                result = getApplicationConfig('data/roc.complex.config.js', __dirname);
                 expect(result).toEqual({
                     settings: {}
                 });
