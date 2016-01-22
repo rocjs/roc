@@ -16,7 +16,7 @@ It will also expect that the template has a folder named `template` and that ins
 For exactly how a template can be structured and functions please see the separate documentation for that [here](/docs/Template.md).
 
 ### version
-Versions should match a tag on the Github repo and will default to master if none exists. When giving an input on the command line Roc will automatically add `v` in front of versions that starts with a number to match Github default that have versions tags that start with `v` like `v1.0.0`.
+Versions should match a tag on the Github repo and will default to master if none exists. When giving an input on the command line Roc will automatically add `v` in front of versions that starts with a number to match Github default that have versions tags that start with `v` like `v1.0.0`. `master` is also always available as an option.
 
 ### Internal flow
 
