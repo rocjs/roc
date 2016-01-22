@@ -21,11 +21,17 @@ See an example [here](https://github.com/vgno/roc-template-web).
 A normal `package.json` file containing the dependencies needed for doing the setup of the project.
 
 ### roc.setup.js
-File used by Roc when setting up the project. Currently it is expected that it exports an object with a property `prompt` that follows [inquirer.js](https://github.com/SBoudrias/Inquirer.js) structure and the answers will later be used for replacing values in the `template/` folder. Not required, unless needing to extend/override the default prompt from Roc itself.
+File used by Roc when setting up the project. Can export two properties that will be used in Roc.
+
+#### completionMessage
+The `completionMessage` property is used to give feedback to a user `roc init` has successfully been completed. It could for instance be used to inform of what command to run next.
+
+#### prompt
+The `prompt` property follows [inquirer.js](https://github.com/SBoudrias/Inquirer.js) structure and the answers will later be used for replacing values in the `template/` folder. Not required, unless needing to extend/override the default prompt from Roc itself.
 
 If one wants to extend the defaults, a manual merge must be performed by importing the default prompt and merge the array with whatever ones need to be added. It can be imported by `import { defaultPrompt } from 'roc'` or `const defaultPrompt = require('roc')`.
 
-#### Default prompt
+##### Default prompt
 ```js
 export const prompt = [{
     type: 'input',
