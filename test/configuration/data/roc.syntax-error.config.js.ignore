@@ -1,0 +1,6 @@
+module.exports = {
+    settings: {
+        port: 8080
+        on: false
+    }
+};

@@ -63,9 +63,13 @@ export function getApplicationConfig(applicationConfigPath, directory = process.
 
         return config;
     } catch (error) {
-        if (debug) {
-            console.log(warning('Could not read the configuration file at ' + chalk.bold(appConfigPath)));
+        if (error.constructor === SyntaxError) {
+            console.log(warning('Something is wrong with the configuration file at ' + chalk.bold(appConfigPath) +
+                ' and it will be ignored. Received: ' + chalk.underline(error.message)));
+        } else if (debug) {
+            console.log(warning('Could not find the configuration file at ' + chalk.bold(appConfigPath)));
         }
+
         return {};
     }
 }
