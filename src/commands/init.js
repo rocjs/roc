@@ -62,6 +62,9 @@ export default function init({ parsedOptions }) {
 
         return getVersions(toFetch)
             .then((versions) => {
+                // Add master so we always have a way to install it
+                versions.push({name: 'master'});
+
                 // If the name starts with a number we will automatically add 'v' infront of it to match Github default
                 if (selectVersion && !isNaN(Number(selectVersion.charAt(0))) && selectVersion.charAt(0) !== 'v') {
                     selectVersion = `v${selectVersion}`;
