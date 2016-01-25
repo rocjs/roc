@@ -473,11 +473,15 @@ function convert(value, mapping) {
         return val;
     }
 
+    // Make sure that we got something from the conversion.
+    const message = val !== undefined && val !== null && val.toString().length > 0 ?
+        `Received ${chalk.underline(JSON.stringify(value)) } and it was converted to ` +
+            `${chalk.underline(JSON.stringify(val))}. ` :
+        '';
+
     console.log(
         warning(`There was a problem when trying to automatically convert ${chalk.bold(mapping.name)}. This ` +
         `value will be ignored.`)
     );
-    console.log(
-        `Received ${chalk.underline(value)} and it was converted to ${chalk.underline(val)}.`, validationResult, '\n'
-    );
+    console.log(message + validationResult, '\n');
 }
