@@ -2,7 +2,7 @@ import 'source-map-support/register';
 
 import { escape } from 'lodash';
 
-import buildDocumentationObject from '../documentation/build-documentation-object';
+import buildDocumentationObject, { sortOnProperty } from '../documentation/build-documentation-object';
 import generateTable from '../documentation/generate-table';
 import { pad, getDefaultValue } from '../documentation/helpers';
 import { error as styleError, warning, ok } from '../helpers/style';
@@ -17,7 +17,7 @@ import { error as styleError, warning, ok } from '../helpers/style';
  * @returns {string} - A markdown table as a string.
  */
 export function generateMarkdownDocumentation({ settings }, { settings: meta }, filter = []) {
-    const documentationObject = buildDocumentationObject(settings, meta, filter);
+    const documentationObject = sortOnProperty('name', buildDocumentationObject(settings, meta, filter));
 
     const header = {
         name: {
@@ -31,7 +31,7 @@ export function generateMarkdownDocumentation({ settings }, { settings: meta }, 
             name: 'Path'
         },
         cli: {
-            name: 'CLI Flag'
+            name: 'CLI option'
         },
         defaultValue: {
             name: 'Default',
@@ -67,7 +67,7 @@ export function generateMarkdownDocumentation({ settings }, { settings: meta }, 
  * @returns {string} - A table as a string.
  */
 export function generateTextDocumentation({ settings }, { settings: meta }, filter = []) {
-    const documentationObject = buildDocumentationObject(settings, meta, filter);
+    const documentationObject = sortOnProperty('name', buildDocumentationObject(settings, meta, filter));
 
     const header = {
         description: {
@@ -96,7 +96,7 @@ export function generateTextDocumentation({ settings }, { settings: meta }, filt
             }
         },
         cli: {
-            name: 'CLI Flag'
+            name: 'CLI option'
         },
         required: {
             name: 'Required',
@@ -109,5 +109,7 @@ export function generateTextDocumentation({ settings }, { settings: meta }, filt
         }
     };
 
-    return generateTable(documentationObject, header);
+    return generateTable(documentationObject, header, {
+        groupTitleWrapper: (name, level, parentNames) => parentNames.concat(name).join(' > ')
+    });
 }

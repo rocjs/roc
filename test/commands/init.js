@@ -66,7 +66,7 @@ describe('roc', () => {
 
                 return consoleMockWrapper((log) => {
                     expect(init)
-                        .withArgs({ parsedOptions: { options: {} } })
+                        .withArgs({ parsedArguments: { arguments: {} } })
                         .toThrow();
 
                     expect(log.calls[0].arguments[0]).toInclude('need to call this command from an empty');
@@ -77,7 +77,7 @@ describe('roc', () => {
                 readdirSync.andReturn([]);
 
                 return consoleMockWrapper(() => {
-                    init({ parsedOptions: { options: {} } });
+                    init({ parsedArguments: { arguments: {} } });
                     expect(prompt.calls[0].arguments[0][0].choices.length).toBe(2);
                 });
             });
@@ -87,7 +87,7 @@ describe('roc', () => {
 
                 return consoleMockWrapper((log) => {
                     expect(init)
-                        .withArgs({ parsedOptions: { options: { template: 'roc-template' } } })
+                        .withArgs({ parsedArguments: { arguments: { template: 'roc-template' } } })
                         .toThrow();
 
                     expect(log).toHaveBeenCalled();
@@ -105,7 +105,7 @@ describe('roc', () => {
                 getVersions.andReturn(Promise.resolve(['1.0']));
                 get.andReturn(Promise.resolve(dirPath));
                 return consoleMockWrapper((log) => {
-                    return init({ parsedOptions: { options: { template: 'vgno/roc-template-web' } } })
+                    return init({ parsedArguments: { arguments: { template: 'vgno/roc-template-web' } } })
                         .then(() => {
                             expect(renameSync).toHaveBeenCalledWith(path.join(dirPath, 'package.json'),
                                 path.join(dirPath, 'template', '.roc'));
@@ -128,7 +128,7 @@ describe('roc', () => {
                 get.andReturn(Promise.resolve(path.join(__dirname, 'data', 'invalid-template')));
 
                 return consoleMockWrapper((log) => {
-                    return init({ parsedOptions: { options: { template: 'vgno/roc-template-web' } } })
+                    return init({ parsedArguments: { arguments: { template: 'vgno/roc-template-web' } } })
                         .catch((err) => {
                             if (err.message !== 'process exit called') {
                                 throw err;
@@ -150,7 +150,7 @@ describe('roc', () => {
                 getVersions.andReturn(Promise.resolve([{name: 'v1.0'}]));
                 get.andReturn(Promise.resolve(path.join(__dirname, 'data', 'valid-template')));
                 return consoleMockWrapper((log) => {
-                    return init({ parsedOptions: { options:
+                    return init({ parsedArguments: { arguments:
                             { template: 'vgno/roc-template-web', version: 'v1.0' } } })
                         .then(() => {
                             expect(renameSync).toHaveBeenCalledWith(path.join(dirPath, 'package.json'),

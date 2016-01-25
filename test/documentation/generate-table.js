@@ -20,7 +20,7 @@ describe('roc', () => {
                         name: 'Path'
                     },
                     cli: {
-                        name: 'CLI Flag'
+                        name: 'CLI Option'
                     },
                     defaultValue: {
                         name: 'Default'
@@ -45,13 +45,13 @@ describe('roc', () => {
                             runtime
                             Runtime configuration
 
-                            | Name    | Description  | Path            | CLI Flag      | Default | Type   | Required |
+                            | Name    | Description  | Path            | CLI Option    | Default | Type   | Required |
                             | ------- | ------------ | --------------- | ------------- | ------- | ------ | -------- |
                             | option1 | description1 | runtime.option1 | --option1     | value1  | String | No       |
 
                             dev
 
-                            | Name    | Description  | Path            | CLI Flag      | Default | Type   | Required |
+                            | Name    | Description  | Path            | CLI Option    | Default | Type   | Required |
                             | ------- | ------------ | --------------- | ------------- | ------- | ------ | -------- |
                             | option2 | description2 | dev.option2     | --dev-option2 |         | String | Yes      |
                             `

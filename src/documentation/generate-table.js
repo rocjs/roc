@@ -29,14 +29,14 @@ export default function generateTable(initalDocumentationObject, header, setting
     const headerLengths = createLengthObject(header, header, {}, true);
     const lengths = createLengthObject(initalDocumentationObject, header, headerLengths);
 
-    const printTableCell = (key, element, renderer = (input) => input || '', fill = false) => {
+    const printTableCell = (key, element, renderer = (input) => input || '', fill = false, object) => {
         if (fill) {
             return settings.cellWrapper(pad(lengths[key], '-'));
         }
         const padding = isUndefined(header[key].padding) ? true : header[key].padding;
         const text = padding ?
-            addPadding(renderer(element), lengths[key]) :
-            renderer(element);
+            addPadding(renderer(element, object), lengths[key]) :
+            renderer(element, object);
 
         return settings.cellWrapper(text);
     };
@@ -45,7 +45,7 @@ export default function generateTable(initalDocumentationObject, header, setting
         return settings.rowWrapper(Object.keys(header).map((key) => {
             const { value, renderer } = getValueAndRenderer(isHeader, header[key], object[key]);
 
-            return printTableCell(key, value, renderer);
+            return printTableCell(key, value, renderer, undefined, object);
         }).join(settings.cellDivider));
     };
 
@@ -55,9 +55,9 @@ export default function generateTable(initalDocumentationObject, header, setting
         ).join(settings.cellDivider));
     };
 
-    const printTableHead = (name, description, level = 0, printTableHeader = true) => {
+    const printTableHead = (name, parentNames, description, level = 0, printTableHeader = true) => {
         const rows = [];
-        rows.push(settings.groupTitleWrapper(name, level));
+        rows.push(settings.groupTitleWrapper(name, level, parentNames));
 
         if (description) {
             rows.push(description);
@@ -79,17 +79,20 @@ export default function generateTable(initalDocumentationObject, header, setting
         return documentationObject.map((group) => {
             let rows = [];
             const level = group.level || 0;
+            const objects = group.objects || [];
 
             if (level === 0 || !settings.compact) {
-                rows = rows.concat(printTableHead(group.name, group.description, level, group.objects.length > 0));
+                rows = rows.concat(
+                    printTableHead(group.name, group.parentNames, group.description, level, objects.length > 0)
+                );
             }
 
-            rows = rows.concat(group.objects.map((element) =>
+            rows = rows.concat(objects.map((element) =>
                 printTableRow(element)));
 
             rows = rows.concat(recursiveHelper(group.children));
 
-            if (level === 0 && settings.compact) {
+            if (group.level !== undefined && level === 0 && settings.compact) {
                 rows.push('');
             }
 
@@ -101,8 +104,8 @@ export default function generateTable(initalDocumentationObject, header, setting
 }
 
 function createLengthObject(initalElements, header, initalLengths, isHeader = false) {
-    const getObjectLength = (object, renderer = (input) => input) => {
-        return stripAnsi(renderer(object)).length;
+    const getObjectLength = (element, renderer = (input) => input, object) => {
+        return stripAnsi(renderer(element, object)).length;
     };
 
     const getLength = (newLength, currentLength = 0) => {
@@ -112,11 +115,12 @@ function createLengthObject(initalElements, header, initalLengths, isHeader = fa
     const recursiveHelper = (elements = [], lengths = {}) => {
         let newLengths = { ...lengths };
         elements.forEach((element) => {
-            element.objects.forEach((object) => {
+            const objects = element.objects || [];
+            objects.forEach((object) => {
                 Object.keys(header).forEach((key) => {
                     const { value, renderer } = getValueAndRenderer(isHeader, header[key], object[key]);
-                    if (value) {
-                        newLengths[key] = getLength(getObjectLength(value, renderer), newLengths[key]);
+                    if (value !== undefined && value !== null) {
+                        newLengths[key] = getLength(getObjectLength(value, renderer, object), newLengths[key]);
                     }
                 });
             });

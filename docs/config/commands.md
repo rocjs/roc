@@ -32,6 +32,7 @@ debug               If debug mode has been enabled
 configObject        The final configuration object where everything has been merged
 metaObject          The final meta configuration object where everything has been merged
 extensionConfig     The configuration object where all extensions has been merged
+parsedArguments     The parsed arguments given to the cli
 parsedOptions       The parsed options given to the cli
 ```
 
@@ -47,7 +48,7 @@ Will contain the final meta configuration object. This means that the applicatio
 ### extensionConfig
 The configuration object where all extensions has been merged. This means that this does not contain the application configuration or settings set in the cli.
 
-### parsedOptions
+### parsedArguments
 An object with the following properties:
 ```
 arguments           Object with the parsed arguments from the cli as key-value
@@ -56,13 +57,23 @@ rest                Arguments that was not matched with anything
 
 What arguments that are parsed is defined by the related meta object for the command. See below for more information.
 
+### parsedOptions
+An object with the following properties:
+```
+options             Object with the parsed options from the cli as key-value
+rest                Options that was not matched with anything
+```
+
+What options that are parsed is defined by the related meta object for the command. See below for more information.
+
 ## Meta
 
 Meta for commands are used to better define what they should do and describe what they are used for. It is optional but if used it should match the command properties. The following properties will be used by Roc if they exists:
 ```
 description         Describes the command
 help                Additional information used when printing help for a single command
-options             Options object that define what arguments/options the command uses
+options             Command line options that the command uses that are not part of the settings
+arguments           Arguments object that define what arguments the command uses
 settings            What roc settings the command uses, can either be true or an array with groups
 ```
 
@@ -70,28 +81,59 @@ settings            What roc settings the command uses, can either be true or an
 A string that describes what the command does. Used when printing general information about all the possible commands.
 
 ### help
-Used when printing information about a specific command. The input is reindented and starting/ending newlines are trimmed which means you can use a template literal without having to care about using the correct amount of indent.
+Used when printing information about a specific command. The input is reindented and starting/ending newlines are trimmed which means you can use a template literal without having to care about using the correct amount of indent. If no help is provided the description will be used instead.
 
-### options
+### arguments
 An array of objects that can have the following properties:
 ```
 name                The name of the option
 validation          A validation function that should return true if valid or false/error string if not
 required            If the option is required
+description         A text that describes how the option can be used
 ```
 
 The order of the objects in the array matter, they are parsed in the same order.
 
 #### name
-The name of the option. Will be used for in the cli for information and as the name of the value [parsedOptions](#parsedOptions).
+The name of the argument. Will be used for in the cli for information and as the name of the value [parsedArguments](#parsedArguments).
 
 #### validation
 Roc assumes that the validators used is either a RegExp or a function that will return true if it's valid or false/error string if it's not.
 
-For convenience several types of validators exists in `roc` that can be imported from `roc/validators`. For a complete list of them please see [the JSDocs](#).
+For convenience several types of validators exists in `roc` that can be imported from `roc/validators`. For a complete list of them please see [the JSDocs](/docs/JSDocs.md).
 
 #### required
 Set to true if the option is required.
+
+#### description
+Describes what it can be used for.
+
+### options
+An array of objects that can have the following properties:
+```
+name                The name of the option, will be used as '--name'
+shortname           The shortname for the option, will be used as '-shortname' and should be a single character
+validation          A validation function that should return true if valid or false/error string if not
+required            If the option is required
+description         A text that describes how the option can be used
+```
+
+#### name
+The name of the option. Will be used for in the cli for information and as the name of the value [parsedOptions](#parsedOptions).
+
+#### shortname
+The shortname of the option. Should be a single character long.
+
+#### validation
+Roc assumes that the validators used is either a RegExp or a function that will return true if it's valid or false/error string if it's not.
+
+For convenience several types of validators exists in `roc` that can be imported from `roc/validators`. For a complete list of them please see [the JSDocs](/docs/JSDocs.md).
+
+#### required
+Set to true if the option is required.
+
+#### description
+Describes what it can be used for.
 
 ### settings
 What roc settings the command uses, can either be true or an array with strings of the groups to use. Will determine what information the cli outputs, what it parses and what it validates.

@@ -32,8 +32,8 @@ const templates = [{
  *
  * @returns {Promise} - Promise for the command.
  */
-export default function init({ parsedOptions }) {
-    const { template, version } = parsedOptions.options;
+export default function init({ parsedArguments }) {
+    const { template, version } = parsedArguments.arguments;
 
     // Make sure the directory is empty!
     assertEmptyDir();

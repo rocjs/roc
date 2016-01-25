@@ -18,12 +18,17 @@ runCli({
     commands: {
         init: {
             description: 'Init a new project.',
-            options: [{
+            help: `
+                Used to init new projects using special templates. If no template is given a prompt...
+                The templates are fetched from Github and it's easy to create new ones.`,
+            arguments: [{
                 name: 'template',
-                validation: validators.isPath
+                validation: validators.isPath,
+                description: 'What template to use. Matches Github structure with Username/Repo.'
             }, {
                 name: 'version',
-                validation: validators.isString
+                validation: validators.isString,
+                description: 'What version to use.'
             }]
         }
     }
