@@ -66,7 +66,7 @@ describe('roc', () => {
 
                 return consoleMockWrapper((log) => {
                     expect(init)
-                        .withArgs({ parsedArguments: { arguments: {} } })
+                        .withArgs({ parsedArguments: { arguments: {} }, parsedOptions: { options: {} } })
                         .toThrow();
 
                     expect(log.calls[0].arguments[0]).toInclude('need to call this command from an empty');
@@ -77,7 +77,10 @@ describe('roc', () => {
                 readdirSync.andReturn([]);
 
                 return consoleMockWrapper(() => {
-                    init({ parsedArguments: { arguments: {} } });
+                    init({
+                        parsedArguments: { arguments: {} },
+                        parsedOptions: { options: {} }
+                    });
                     expect(prompt.calls[0].arguments[0][0].choices.length).toBe(2);
                 });
             });
@@ -87,7 +90,10 @@ describe('roc', () => {
 
                 return consoleMockWrapper((log) => {
                     expect(init)
-                        .withArgs({ parsedArguments: { arguments: { template: 'roc-template' } } })
+                        .withArgs({
+                            parsedArguments: { arguments: { template: 'roc-template' } },
+                            parsedOptions: { options: {} }
+                        })
                         .toThrow();
 
                     expect(log).toHaveBeenCalled();
@@ -105,20 +111,23 @@ describe('roc', () => {
                 getVersions.andReturn(Promise.resolve(['1.0']));
                 get.andReturn(Promise.resolve(dirPath));
                 return consoleMockWrapper((log) => {
-                    return init({ parsedArguments: { arguments: { template: 'vgno/roc-template-web' } } })
-                        .then(() => {
-                            expect(renameSync).toHaveBeenCalledWith(path.join(dirPath, 'package.json'),
-                                path.join(dirPath, 'template', '.roc'));
-                            expect(copySync).toHaveBeenCalledWith(path.join(dirPath, 'template'),
-                                process.cwd());
+                    return init({
+                        parsedArguments: { arguments: { template: 'vgno/roc-template-web' } },
+                        parsedOptions: { options: {} }
+                    })
+                    .then(() => {
+                        expect(renameSync).toHaveBeenCalledWith(path.join(dirPath, 'package.json'),
+                            path.join(dirPath, 'template', '.roc'));
+                        expect(copySync).toHaveBeenCalledWith(path.join(dirPath, 'template'),
+                            process.cwd());
 
-                            expect(spawn.calls[0].arguments[2].cwd).toEqual(dirPath);
-                            expect(spawn.calls[1].arguments[2].cwd).toEqual(process.cwd());
+                        expect(spawn.calls[0].arguments[2].cwd).toEqual(dirPath);
+                        expect(spawn.calls[1].arguments[2].cwd).toEqual(process.cwd());
 
-                            expect(log.calls[0].arguments[0]).toInclude('Installing template setup dependencies');
-                            expect(log.calls[1].arguments[0]).toInclude('Installing template dependencies');
-                            expect(log.calls[2].arguments[0]).toInclude('Setup completed');
-                        });
+                        expect(log.calls[0].arguments[0]).toInclude('Installing template setup dependencies');
+                        expect(log.calls[1].arguments[0]).toInclude('Installing template dependencies');
+                        expect(log.calls[2].arguments[0]).toInclude('Setup completed');
+                    });
                 });
             });
 
@@ -128,15 +137,17 @@ describe('roc', () => {
                 get.andReturn(Promise.resolve(path.join(__dirname, 'data', 'invalid-template')));
 
                 return consoleMockWrapper((log) => {
-                    return init({ parsedArguments: { arguments: { template: 'vgno/roc-template-web' } } })
-                        .catch((err) => {
-                            if (err.message !== 'process exit called') {
-                                throw err;
-                            }
+                    return init({
+                        parsedArguments: { arguments: { template: 'vgno/roc-template-web' } },
+                        parsedOptions: { options: {} }
+                    }).catch((err) => {
+                        if (err.message !== 'process exit called') {
+                            throw err;
+                        }
 
-                            expect(log.calls[0].arguments[0]).toInclude('this is not a Roc template');
-                            expect(exit).toHaveBeenCalledWith(1);
-                        });
+                        expect(log.calls[0].arguments[0]).toInclude('this is not a Roc template');
+                        expect(exit).toHaveBeenCalledWith(1);
+                    });
                 });
             });
 
@@ -150,21 +161,23 @@ describe('roc', () => {
                 getVersions.andReturn(Promise.resolve([{name: 'v1.0'}]));
                 get.andReturn(Promise.resolve(path.join(__dirname, 'data', 'valid-template')));
                 return consoleMockWrapper((log) => {
-                    return init({ parsedArguments: { arguments:
-                            { template: 'vgno/roc-template-web', version: 'v1.0' } } })
-                        .then(() => {
-                            expect(renameSync).toHaveBeenCalledWith(path.join(dirPath, 'package.json'),
-                                path.join(dirPath, 'template', '.roc'));
-                            expect(copySync).toHaveBeenCalledWith(path.join(dirPath, 'template'),
-                                process.cwd());
+                    return init({
+                        parsedArguments: { arguments:
+                            { template: 'vgno/roc-template-web', version: 'v1.0' } },
+                        parsedOptions: { options: {} }
+                    }).then(() => {
+                        expect(renameSync).toHaveBeenCalledWith(path.join(dirPath, 'package.json'),
+                            path.join(dirPath, 'template', '.roc'));
+                        expect(copySync).toHaveBeenCalledWith(path.join(dirPath, 'template'),
+                            process.cwd());
 
-                            expect(spawn.calls[0].arguments[2].cwd).toEqual(dirPath);
-                            expect(spawn.calls[1].arguments[2].cwd).toEqual(process.cwd());
+                        expect(spawn.calls[0].arguments[2].cwd).toEqual(dirPath);
+                        expect(spawn.calls[1].arguments[2].cwd).toEqual(process.cwd());
 
-                            expect(log.calls[0].arguments[0]).toInclude('Installing template setup dependencies');
-                            expect(log.calls[1].arguments[0]).toInclude('Installing template dependencies');
-                            expect(log.calls[2].arguments[0]).toInclude('Setup completed');
-                        });
+                        expect(log.calls[0].arguments[0]).toInclude('Installing template setup dependencies');
+                        expect(log.calls[1].arguments[0]).toInclude('Installing template dependencies');
+                        expect(log.calls[2].arguments[0]).toInclude('Setup completed');
+                    });
                 });
             });
         });

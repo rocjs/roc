@@ -21,6 +21,17 @@ runCli({
             help: `
                 Used to init new projects using special templates. If no template is given a prompt...
                 The templates are fetched from Github and it's easy to create new ones.`,
+            options: [{
+                name: 'list',
+                shortname: 'l',
+                validation: validators.isBoolean,
+                description: 'List the available versions of a template.'
+            }, {
+                name: 'force',
+                shortname: 'f',
+                validation: validators.isBoolean,
+                description: 'Ignore non empty directory warning.'
+            }],
             arguments: [{
                 name: 'template',
                 validation: validators.isPath,
