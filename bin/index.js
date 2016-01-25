@@ -19,7 +19,7 @@ runCli({
         init: {
             description: 'Init a new project.',
             help: `
-                Used to init new projects using special templates. If no template is given a prompt...
+                Used to init new projects using special templates. If no template is given a prompt will ask for one.
                 The templates are fetched from Github and it's easy to create new ones.`,
             options: [{
                 name: 'list',
