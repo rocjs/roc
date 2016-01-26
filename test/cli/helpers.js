@@ -193,15 +193,15 @@ describe('roc', () => {
                 })).replace(/ +$/gm, '')).toEqual((
                     /* eslint-disable max-len */
 `Commands:
- test [version]   This command will do awesome stuff!
  help
+ test [version]   This command will do awesome stuff!
 
 General options:
+ -c, --config     Path to configuration file, will default to roc.config.js in current working directory.
+ -d, --debug      Enable debug mode.
+ -D, --directory  Path to working directory, will default to the current working directory. Can be either absolute or relative.
  -h, --help       Output usage information.
  -v, --version    Output version number.
- -d, --debug      Enable debug mode.
- -c, --config     Path to configuration file, will default to roc.config.js in current working directory.
- -D, --directory  Path to working directory, will default to the current working directory. Can be either absolute or relative.
 `
                     /* eslint-enable */
                 ));
@@ -246,11 +246,11 @@ runtime:
  --port             8080
 
 General options:
+ -c, --config     Path to configuration file, will default to roc.config.js in current working directory.
+ -d, --debug      Enable debug mode.
+ -D, --directory  Path to working directory, will default to the current working directory. Can be either absolute or relative.
  -h, --help       Output usage information.
  -v, --version    Output version number.
- -d, --debug      Enable debug mode.
- -c, --config     Path to configuration file, will default to roc.config.js in current working directory.
- -D, --directory  Path to working directory, will default to the current working directory. Can be either absolute or relative.
 `
                     /* eslint-enable */
                 ));

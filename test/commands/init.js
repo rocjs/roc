@@ -9,6 +9,7 @@ describe('roc', () => {
             let readdirSync;
             let renameSync;
             let copySync;
+            let mkdir;
             let exit;
             let prompt;
             let init;
@@ -20,6 +21,10 @@ describe('roc', () => {
                 readdirSync = expect.spyOn(require('fs-extra'), 'readdirSync');
                 renameSync = expect.spyOn(require('fs-extra'), 'renameSync');
                 copySync = expect.spyOn(require('fs-extra'), 'copySync');
+                mkdir = expect.spyOn(require('fs-extra'), 'mkdir')
+                    .andCall((dirPath, cb) => {
+                        cb();
+                    });
 
                 exit = expect.spyOn(process, 'exit').andCall(() => {
                     throw new Error('process exit called');
@@ -46,6 +51,7 @@ describe('roc', () => {
                 readdirSync.restore();
                 renameSync.restore();
                 copySync.restore();
+                mkdir.restore();
 
                 exit.calls = [];
                 exit.restore();
@@ -53,7 +59,9 @@ describe('roc', () => {
                 spawn.calls = [];
                 spawn.restore();
 
+                prompt.calls = [];
                 prompt.restore();
+
                 getVersions.restore();
                 get.restore();
             });
@@ -61,27 +69,51 @@ describe('roc', () => {
             after(() => {
             });
 
-            it('should give information about non empty directory and terminate process', () => {
+            it('should give information about non empty directory and terminate process if selected', () => {
                 readdirSync.andReturn([1]);
 
-                return consoleMockWrapper((log) => {
-                    expect(init)
-                        .withArgs({ parsedArguments: { arguments: {} }, parsedOptions: { options: {} } })
-                        .toThrow();
+                prompt.andCall((options, cb) => {
+                    cb({selection: 'abort'});
+                });
 
-                    expect(log.calls[0].arguments[0]).toInclude('need to call this command from an empty');
+                return consoleMockWrapper(() => {
+                    return init({ parsedArguments: { arguments: {} }, parsedOptions: { options: {} } })
+                        .catch((error) => {
+                            expect(prompt.calls[0].arguments[0][0].message)
+                                .toBe('The directory is not empty, what do you want to do?');
+                            expect(error).toBeA(Error);
+                        });
+                });
+            });
+
+            it('should give information about non empty directory and ask for name of new if selected', () => {
+                readdirSync.andReturn([1]);
+
+                prompt.andCall((options, cb) => {
+                    cb({selection: 'new', name: 'test', option: ''});
+                });
+
+                return consoleMockWrapper(() => {
+                    return init({ parsedArguments: { arguments: {} }, parsedOptions: { options: {} } })
+                        .catch(() => {
+                            expect(prompt.calls[1].arguments[0][0].message)
+                                .toBe('What do you want to name the directory?');
+                        });
                 });
             });
 
             it('should give prompt if no template is defined', () => {
                 readdirSync.andReturn([]);
 
+                prompt.andCall((options, cb) => {
+                    cb({option: ''});
+                });
+
                 return consoleMockWrapper(() => {
-                    init({
+                    return init({
                         parsedArguments: { arguments: {} },
                         parsedOptions: { options: {} }
-                    });
-                    expect(prompt.calls[0].arguments[0][0].choices.length).toBe(2);
+                    }).catch(() => expect(prompt.calls[0].arguments[0][0].choices.length).toBe(2));
                 });
             });
 
@@ -89,15 +121,14 @@ describe('roc', () => {
                 readdirSync.andReturn([]);
 
                 return consoleMockWrapper((log) => {
-                    expect(init)
-                        .withArgs({
-                            parsedArguments: { arguments: { template: 'roc-template' } },
-                            parsedOptions: { options: {} }
-                        })
-                        .toThrow();
-
-                    expect(log).toHaveBeenCalled();
-                    expect(exit).toHaveBeenCalledWith(1);
+                    return init({
+                        parsedArguments: { arguments: { template: 'roc-template' } },
+                        parsedOptions: { options: {} }
+                    }).catch((error) => {
+                        expect(log.calls[0].arguments[0])
+                            .toInclude('Invalid template name given');
+                        expect(error).toBeA(Error);
+                    });
                 });
             });
 
@@ -127,6 +158,26 @@ describe('roc', () => {
                         expect(log.calls[0].arguments[0]).toInclude('Installing template setup dependencies');
                         expect(log.calls[1].arguments[0]).toInclude('Installing template dependencies');
                         expect(log.calls[2].arguments[0]).toInclude('Setup completed');
+                    });
+                });
+            });
+
+            it('should list versions if asked', () => {
+                readdirSync.andReturn([]);
+                getVersions.andReturn(Promise.resolve([{name: '1.0'}]));
+
+                return consoleMockWrapper((log) => {
+                    return init({
+                        parsedArguments: { arguments: { template: 'vgno/roc-template-web' } },
+                        parsedOptions: { options: {list: true} }
+                    }).catch((err) => {
+                        if (err.message !== 'process exit called') {
+                            throw err;
+                        }
+
+                        expect(log.calls[0].arguments[0]).toInclude('The available versions are:');
+                        expect(log.calls[1].arguments[0]).toBe(' 1.0\n master');
+                        expect(exit).toHaveBeenCalledWith(1);
                     });
                 });
             });

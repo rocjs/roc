@@ -74,11 +74,13 @@ describe('roc', () => {
 
             it('should call command function', () => {
                 return consoleMockWrapper(() => {
-                    runCli({version: '1.0.1', name: 'roc-test' }, config, meta,
+                    const info = {version: '1.0.1', name: 'roc-test' };
+                    runCli(info, config, meta,
                         ['node', '/some/path', 'test']);
 
                     expect(spy.calls[0].arguments[0]).toEqual({
                         debug: false,
+                        info: info,
                         configObject: config,
                         extensionConfig: config,
                         metaObject: meta,
@@ -90,11 +92,13 @@ describe('roc', () => {
 
             it('should call relay debug option', () => {
                 return consoleMockWrapper(() => {
-                    runCli({version: '1.0.1', name: 'roc-test' }, config, meta,
+                    const info = {version: '1.0.1', name: 'roc-test' };
+                    runCli(info, config, meta,
                         ['node', '/some/path', 'test', '--debug']);
 
                     expect(spy.calls[0].arguments[0]).toEqual({
                         debug: true,
+                        info: info,
                         configObject: config,
                         extensionConfig: config,
                         metaObject: meta,
@@ -106,7 +110,8 @@ describe('roc', () => {
 
             it('should parse argument', () => {
                 return consoleMockWrapper(() => {
-                    runCli({version: '1.0.1', name: 'roc-test' }, config, meta,
+                    const info = {version: '1.0.1', name: 'roc-test' };
+                    runCli(info, config, meta,
                         ['node', '/some/path', 'test', '--group1-port=8080']);
 
                     const newConfig = {
@@ -121,6 +126,7 @@ describe('roc', () => {
 
                     expect(spy.calls[0].arguments[0]).toEqual({
                         debug: false,
+                        info: info,
                         configObject: newConfig,
                         extensionConfig: config,
                         metaObject: meta,
