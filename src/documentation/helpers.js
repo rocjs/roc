@@ -29,13 +29,13 @@ export function addPadding(string, length) {
 }
 
 /**
- * Takes a configuration path array and convertes it to a cli flag.
+ * Takes a configuration path array and convertes it to a cli option.
  *
  * @param {string[]} configPaths - The configuration path, a array consiting of properties.
  *
- * @returns {string} - The cli flag to set the given configuration option.
+ * @returns {string} - The cli option to set the given configuration option.
  */
-export function toCliFlag(configPaths) {
+export function toCliOption(configPaths) {
     // Runtime should be added directly
     if (configPaths[0] === 'runtime') {
         configPaths.shift();

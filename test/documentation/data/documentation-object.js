@@ -22,7 +22,8 @@ export const validDocumentObject = [{
         type: 'String',
         validator: isString
     }],
-    children: []
+    children: [],
+    parentNames: []
 }, {
     name: 'dev',
     level: 0,
@@ -37,7 +38,8 @@ export const validDocumentObject = [{
         type: 'String',
         validator: required(isString)
     }],
-    children: []
+    children: [],
+    parentNames: []
 }];
 
 export const complexDocumentObject = [{

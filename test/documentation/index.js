@@ -32,10 +32,10 @@ describe('roc', () => {
                     redent(`
                         # Runtime
 
-                        | Name    | Description | Path            | CLI Flag  | Default | Type      | Required |
-                        | ------- | ----------- | --------------- | --------- | ------- | --------- | -------- |
-                        | port    |             | runtime.port    | --port    | \`80\`    | \`Unknown\` | No       |
-                        | enabled |             | runtime.enabled | --enabled | \`false\` | \`Unknown\` | No       |
+                        | Name    | Description | Path            | CLI option | Default | Type      | Required |
+                        | ------- | ----------- | --------------- | ---------- | ------- | --------- | -------- |
+                        | enabled |             | runtime.enabled | --enabled  | \`false\` | \`Unknown\` | No       |
+                        | port    |             | runtime.port    | --port     | \`80\`    | \`Unknown\` | No       |
                         `
                     )
                 );
@@ -75,10 +75,10 @@ describe('roc', () => {
                     redent(`
                         runtime
 
-                        | Description                                                                                           | Path         | Default | CLI Flag | Required |
-                        | ----------------------------------------------------------------------------------------------------- | ------------ | ------- | -------- | -------- |
-                        | Some really long description string that is over 100 characters long so we can test the cut off and … | runtime.port | 80      | --port   | No       |
-                        | Short description                                                                                     | runtime.on   | false   | --on     | No       |
+                        | Description                                                                                           | Path         | Default | CLI option | Required |
+                        | ----------------------------------------------------------------------------------------------------- | ------------ | ------- | ---------- | -------- |
+                        | Short description                                                                                     | runtime.on   | false   | --on       | No       |
+                        | Some really long description string that is over 100 characters long so we can test the cut off and … | runtime.port | 80      | --port     | No       |
                         `
                     )
                 );

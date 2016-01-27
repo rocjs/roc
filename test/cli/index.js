@@ -24,8 +24,11 @@ describe('roc', () => {
                 commands: {
                     test: {
                         settings: true,
-                        options: [{
+                        arguments: [{
                             name: 'artifact'
+                        }],
+                        options: [{
+                            name: 'list'
                         }]
                     }
                 }
@@ -79,7 +82,8 @@ describe('roc', () => {
                         configObject: config,
                         extensionConfig: config,
                         metaObject: meta,
-                        parsedOptions: { options: { artifact: undefined }, rest: [] }
+                        parsedArguments: { arguments: { artifact: undefined }, rest: [] },
+                        parsedOptions: { options: { list: undefined }, rest: {} }
                     });
                 });
             });
@@ -94,7 +98,8 @@ describe('roc', () => {
                         configObject: config,
                         extensionConfig: config,
                         metaObject: meta,
-                        parsedOptions: { options: { artifact: undefined }, rest: [] }
+                        parsedArguments: { arguments: { artifact: undefined }, rest: [] },
+                        parsedOptions: { options: { list: undefined }, rest: {} }
                     });
                 });
             });
@@ -119,7 +124,8 @@ describe('roc', () => {
                         configObject: newConfig,
                         extensionConfig: config,
                         metaObject: meta,
-                        parsedOptions: { options: { artifact: undefined }, rest: [] }
+                        parsedArguments: { arguments: { artifact: undefined }, rest: [] },
+                        parsedOptions: { options: { list: undefined }, rest: {} }
                     });
                 });
             });

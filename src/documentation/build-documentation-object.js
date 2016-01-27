@@ -2,7 +2,7 @@ import 'source-map-support/register';
 
 import { isPlainObject, isFunction } from 'lodash';
 
-import { toCliFlag } from './helpers';
+import { toCliOption } from './helpers';
 
 const defaultValidation = (input, info) => info ? {type: 'Unknown'} : true;
 
@@ -20,14 +20,17 @@ export default function buildDocumentationObject(initalObject, meta = {}, inital
         return Object.keys(object).map(callback).filter((value) => value !== undefined);
     };
 
-    const manageGroup = (object, name, group = {}, description = {}, validation = {}, parents, level) => {
+    const manageGroup = (object, name, group = {}, description = {}, validation = {}, parents, level, parentNames) => {
         const groupDescription = isPlainObject(group) ? group._description || undefined : group;
         return {
             name,
+            parentNames,
             level,
             description: groupDescription,
-            objects: recursiveHelper(object, group, description, validation, [], parents, level + 1, true),
-            children: recursiveHelper(object, group, description, validation, [], parents, level + 1)
+            objects: recursiveHelper(object, group, description, validation, [], parents, level + 1,
+                parentNames.concat(name), true),
+            children: recursiveHelper(object, group, description, validation, [], parents, level + 1,
+                parentNames.concat(name))
         };
     };
 
@@ -42,14 +45,14 @@ export default function buildDocumentationObject(initalObject, meta = {}, inital
             type,
             required,
             path: parents.join('.'),
-            cli: toCliFlag(parents),
+            cli: toCliOption(parents),
             defaultValue: object,
             validator: validation
         };
     };
 
     function recursiveHelper(object, groups = {}, descriptions = {}, validations = {}, filter = [],
-        initalParents = [], level = 0, leaves = false) {
+        initalParents = [], level = 0, parentNames = [], leaves = false) {
         return allObjects(object, (key) => {
             // Make sure that we either have no filter or that there is a match
             if (filter.length === 0 || filter.indexOf(key) !== -1) {
@@ -57,7 +60,8 @@ export default function buildDocumentationObject(initalObject, meta = {}, inital
                 const value = object[key];
                 if (isPlainObject(value) && Object.keys(value).length > 0 && !leaves) {
                     const group = isPlainObject(groups) ? groups[key] : {};
-                    return manageGroup(value, key, group, descriptions[key], validations[key], parents, level);
+                    return manageGroup(value, key, group, descriptions[key], validations[key], parents, level,
+                        parentNames);
                 } else if ((!isPlainObject(value) || Object.keys(value).length === 0) && leaves) {
                     return manageLeaf(value, key, descriptions[key], validations[key], parents);
                 }
@@ -66,4 +70,24 @@ export default function buildDocumentationObject(initalObject, meta = {}, inital
     }
 
     return recursiveHelper(initalObject, meta.groups, meta.descriptions, meta.validations, initalFilter);
+}
+
+export function sortOnProperty(property, documentationObject = []) {
+    documentationObject.sort(function(a, b) {
+        if (a[property] > b[property]) {
+            return 1;
+        }
+        if (a[property] < b[property]) {
+            return -1;
+        }
+
+        return 0;
+    });
+    return documentationObject.map((group) => {
+        return {
+            ...group,
+            objects: sortOnProperty(property, group.objects),
+            children: sortOnProperty(property, group.children)
+        };
+    });
 }

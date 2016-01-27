@@ -27,15 +27,15 @@ import { error as styleError } from '../helpers/style';
  * @param {rocConfig} initalConfig - The inital configuration, will be merged with the selected extensions and
  *  application.
  * @param {rocMetaConfig} initalMeta - The inital meta configuration, will be merged with the selected extensions.
- * @param {string[]} [args=process.argv] - From where it should parse the arguments.
+ * @param {string[]} [argv=process.argv] - From where it should parse the arguments.
  *
  * @returns {undefined}
  */
-export function runCli(info = {version: 'Unknown', name: 'Unknown'}, initalConfig, initalMeta, args = process.argv) {
-    const {_, h, help, d, debug, v, version, c, config, D, directory, ...restArgs} = minimist(args.slice(2));
+export function runCli(info = {version: 'Unknown', name: 'Unknown'}, initalConfig, initalMeta, argv = process.argv) {
+    const {_, h, help, d, debug, v, version, c, config, D, directory, ...restOptions} = minimist(argv.slice(2));
 
     // The first should be our command if there is one
-    const [command, ...options] = _;
+    const [command, ...args] = _;
 
     // If version is selected output that and stop
     if (version || v) {
@@ -74,20 +74,25 @@ export function runCli(info = {version: 'Unknown', name: 'Unknown'}, initalConfi
         return console.log(generateCommandDocumentation(extensionConfig, metaObject, command, info.name));
     }
 
-    const parsedOptions = parseOptions(command, metaObject.commands, options);
+    const parsedArguments = parseArguments(command, metaObject.commands, args);
 
+    let documentationObject;
     // Only parse arguments if the command accepts it
     if (metaObject.commands[command] && metaObject.commands[command].settings) {
         // Get config from application and only parse options that this command cares about.
         const filter = metaObject.commands[command].settings === true ? [] : metaObject.commands[command].settings;
-        const documentationObject = buildDocumentationObject(configObject.settings, metaObject.settings, filter);
+        documentationObject = buildDocumentationObject(configObject.settings, metaObject.settings, filter);
+    }
 
-        const configuration = parseArguments(restArgs, getMappings(documentationObject));
-        configObject = merge(configObject, {
-            settings: configuration
-        });
+    const { settings, parsedOptions } =
+        parseOptions(restOptions, getMappings(documentationObject), metaObject.commands[command]);
 
-        // Validate configuration
+    configObject = merge(configObject, {
+        settings
+    });
+
+    // Validate configuration
+    if (metaObject.commands[command] && metaObject.commands[command].settings) {
         validate(configObject.settings, metaObject.settings, metaObject.commands[command].settings);
     }
 
@@ -105,6 +110,7 @@ export function runCli(info = {version: 'Unknown', name: 'Unknown'}, initalConfi
         configObject,
         metaObject,
         extensionConfig,
+        parsedArguments,
         parsedOptions
     });
 }

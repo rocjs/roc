@@ -8,7 +8,8 @@ import trimNewlines from 'trim-newlines';
 import redent from 'redent';
 
 import { merge } from '../configuration';
-import buildDocumentationObject from '../documentation/build-documentation-object';
+import keyboardDistance from './keyboard-distance';
+import buildDocumentationObject, { sortOnProperty } from '../documentation/build-documentation-object';
 import generateTable from '../documentation/generate-table';
 import { getDefaultValue } from '../documentation/helpers';
 import { fileExists, getRocDependencies, getPackageJson } from '../helpers';
@@ -60,7 +61,7 @@ export function buildCompleteConfig(
         }
 
         if (usedExtensions.length && debug) {
-            console.log(importantLabel('The following Roc extensions will be used:'), usedExtensions, '\n');
+            console.log(importantLabel('The following Roc extensions will be used:'), usedExtensions);
         }
 
         // Check for a mismatch between application configuration and extensions.
@@ -132,11 +133,11 @@ function validateConfigurationStructure(config, applicationConfig) {
  *
  * @param {string[]} current - The current values that might be incorrect.
  * @param {string[]} possible - All the possible correct values.
- * @param {boolean} [command=false] - If the suggestion should be managed as a command.
+ * @param {string} [prefix=''] - Something that the suggestion should be prefixed with. Useful for CLI options.
  *
  * @returns {string} - A string with possible suggestions for typos.
  */
-export function getSuggestions(current, possible, command = false) {
+export function getSuggestions(current, possible, prefix = '') {
     const info = [];
 
     current.forEach((currentKey) => {
@@ -158,12 +159,11 @@ export function getSuggestions(current, possible, command = false) {
             shortest = distance;
         }
 
-        const extra = command ? '--' : '';
         if (closest) {
-            info.push('Did not understand ' + chalk.underline(extra + currentKey) +
-                ' - Did you mean ' + chalk.underline(extra + closest));
+            info.push('Did not understand ' + chalk.underline(prefix + currentKey) +
+                ' - Did you mean ' + chalk.underline(prefix + closest));
         } else {
-            info.push('Did not understand ' + chalk.underline(extra + currentKey));
+            info.push('Did not understand ' + chalk.underline(prefix + currentKey));
         }
     });
 
@@ -189,9 +189,10 @@ export function generateCommandsDocumentation({ commands }, { commands: commands
 
     let body = [{
         name: 'Commands',
+        level: 0,
         objects: Object.keys(commands || noCommands).map((command) => {
             const options = commandsMeta[command] ?
-                ' ' + getCommandOptionsAsString(commandsMeta[command]) :
+                ' ' + getCommandArgumentsAsString(commandsMeta[command]) :
                 '';
             const description = commandsMeta[command] && commandsMeta[command].description ?
                 commandsMeta[command].description :
@@ -204,16 +205,16 @@ export function generateCommandsDocumentation({ commands }, { commands: commands
         })
     }];
 
-    return generateCommandDocsHelper(body, header, 'Options', 'name');
+    return generateCommandDocsHelper(body, header, 'General options', 'name');
 }
 
-function getCommandOptionsAsString(command = {}) {
-    let options = '';
-    (command.options || []).forEach((option) => {
-        options += option.required ? `<${option.name}> ` : `[${option.name}] `;
+function getCommandArgumentsAsString(command = {}) {
+    let args = '';
+    (command.arguments || []).forEach((argument) => {
+        args += argument.required ? `<${argument.name}> ` : `[${argument.name}] `;
     });
 
-    return options;
+    return args;
 }
 
  /**
@@ -228,34 +229,78 @@ function getCommandOptionsAsString(command = {}) {
   */
 export function generateCommandDocumentation({ settings }, { commands = {}, settings: meta }, command, name) {
     const rows = [];
-    rows.push('Usage: ' + name + ' ' + command + ' ' + getCommandOptionsAsString(commands[command]));
+    rows.push('Usage: ' + name + ' ' + command + ' ' + getCommandArgumentsAsString(commands[command]));
     rows.push('');
 
-    if (commands[command] && commands[command].help) {
-        rows.push(redent(trimNewlines(commands[command].help)));
+    if (commands[command] && (commands[command].description || commands[command].help)) {
+        if (commands[command].help) {
+            rows.push(redent(trimNewlines(commands[command].help)));
+        } else {
+            rows.push(commands[command].description);
+        }
+
         rows.push('');
     }
 
     let body = [];
 
-    // Generate the options table
-    if (commands[command] && commands[command].settings) {
-        rows.push('Options:');
-        rows.push('');
+    // Generate the arguments table
+    if (commands[command] && commands[command].arguments) {
+        const objects = commands[command].arguments.map((argument) => {
+            return {
+                cli: `${argument.name}`,
+                description: `${argument.description && argument.description + '  ' || ''}` +
+                    `${argument.required && chalk.green('Required') + '  ' || ''}` +
+                    `${argument.validation ? chalk.dim('(' + argument.validation(null, true).type + ')') : ''}`
+            };
+        });
 
+        if (objects.length > 0) {
+            body = body.concat({
+                name: 'Arguments',
+                level: 0,
+                objects: objects
+            });
+        }
+    }
+
+    // Generate the options table
+    if (commands[command] && commands[command].options) {
+        const objects = commands[command].options.map((option) => {
+            return {
+                cli: option.shortname ? `-${option.shortname}, --${option.name}` : `--${option.name}`,
+                description: `${option.description && option.description + '  ' || ''}` +
+                    `${option.required && chalk.green('Required') + '  ' || ''}` +
+                    `${option.validation ? chalk.dim('(' + option.validation(null, true).type + ')') : ''}`
+            };
+        });
+
+        if (objects.length > 0) {
+            body = body.concat({
+                name: 'Command options',
+                level: 0,
+                objects: objects
+            });
+        }
+    }
+
+    // Generate the settings table
+    if (commands[command] && commands[command].settings) {
         const filter = commands[command].settings === true ? [] : commands[command].settings;
 
-        body = buildDocumentationObject(settings, meta, filter);
+        body = body.concat({
+            name: 'Settings options',
+            children: sortOnProperty('name', buildDocumentationObject(settings, meta, filter))
+        });
     }
 
     const header = {
         cli: true,
         description: {
-            name: 'Description',
             padding: false
         },
         defaultValue: {
-            name: 'Default',
+            padding: false,
             renderer: (input) => {
                 input = getDefaultValue(input);
 
@@ -269,10 +314,20 @@ export function generateCommandDocumentation({ settings }, { commands = {}, sett
 
                 return chalk.cyan(input);
             }
+        },
+        required: {
+            padding: false,
+            renderer: (input, object) => {
+                if (input && !object.defaultValue) {
+                    return chalk.green('Required');
+                }
+
+                return '';
+            }
         }
     };
 
-    rows.push(generateCommandDocsHelper(body, header, 'CLI options', 'cli'));
+    rows.push(generateCommandDocsHelper(body, header, 'General options', 'cli'));
 
     return rows.join('\n');
 }
@@ -280,6 +335,7 @@ export function generateCommandDocumentation({ settings }, { commands = {}, sett
 function generateCommandDocsHelper(body, header, options, name) {
     body.push({
         name: options,
+        level: 0,
         objects: [{
             [name]: '-h, --help',
             description: 'Output usage information.'
@@ -311,35 +367,39 @@ function generateCommandDocsHelper(body, header, options, name) {
 }
 
 /**
- * Parses options and validates them.
+ * Parses arguments and validates them.
  *
- * @param {string} command - The command to parse options for.
+ * @param {string} command - The command to parse arguments for.
  * @param {Object} commands - commands from {@link rocMetaConfig}.
- * @param {Object[]} options - Options parsed by minimist.
+ * @param {Object[]} args - Arguments parsed by minimist.
  *
- * @returns {Object} - Parsed options.
- * @property {object[]} options - The parsed options that was matched against the meta configuration for the command.
- * @property {object[]} rest - The rest of the options that could not be matched against the configuration.
+ * @returns {Object} - Parsed arguments.
+ * @property {object[]} options - The parsed arguments that was matched against the meta configuration for the command.
+ * @property {object[]} rest - The rest of the arguments that could not be matched against the configuration.
  */
-export function parseOptions(command, commands, options) {
+export function parseArguments(command, commands, args) {
     // If the command supports options
-    if (commands[command] && commands[command].options) {
-        let parsedOptions = {};
-        commands[command].options.forEach((option, index) => {
-            const value = options[index];
+    if (commands[command] && commands[command].arguments) {
+        let parsedArguments = {};
+        commands[command].arguments.forEach((argument, index) => {
+            const value = args[index];
 
-            if (option.required && !value) {
-                throw new Error(`Required option "${option.name}" was not provided.`);
+            if (argument.required && !value) {
+                /* eslint-disable no-process-exit */
+                console.log(errorLabel('Arguments problem') +
+                    ` Required argument ${chalk.bold(argument.name)} was not provided.\n`);
+                process.exit(1);
+                /* eslint-enable */
             }
 
-            if (value && option.validation) {
-                const validationResult = isValid(value, option.validation);
+            if (value && argument.validation) {
+                const validationResult = isValid(value, argument.validation);
                 if (validationResult !== true) {
                     try {
-                        throwError(option.name, validationResult, value, 'option');
+                        throwError(argument.name, validationResult, value, 'argument');
                     } catch (err) {
-                        /* eslint-disable no-process-exit, no-console */
-                        console.log(errorLabel('Arguments problem') + ' An option was not valid.\n');
+                        /* eslint-disable no-process-exit */
+                        console.log(errorLabel('Arguments problem') + ' An argument was not valid.\n');
                         console.log(err.message);
                         process.exit(1);
                         /* eslint-enable */
@@ -347,18 +407,18 @@ export function parseOptions(command, commands, options) {
                 }
             }
 
-            parsedOptions[option.name] = value;
+            parsedArguments[argument.name] = value;
         });
 
         return {
-            options: parsedOptions,
-            rest: options.splice(Object.keys(parsedOptions).length)
+            arguments: parsedArguments,
+            rest: args.splice(Object.keys(parsedArguments).length)
         };
     }
 
     return {
-        options: undefined,
-        rest: options
+        arguments: undefined,
+        rest: args
     };
 }
 
@@ -370,7 +430,7 @@ export function parseOptions(command, commands, options) {
  *
  * @returns {Object} - Properties are the cli command without leading dashes that maps to a {@link rocMapObject}.
  */
-export function getMappings(documentationObject) {
+export function getMappings(documentationObject = []) {
     const recursiveHelper = (groups) => {
         let mappings = {};
 
@@ -437,33 +497,157 @@ function getConvertor(value, name) {
 }
 
 /**
- * Converts a set of arguments to {@link rocConfigSettings} object.
+ * Converts a set of options to {@link rocConfigSettings} object and command specific options.
  *
- * @param {Object} args - Arguments parsed from minimist.
+ * @param {Object} options - Options parsed from minimist.
  * @param {Object} mappings - Result from {@link getMappings}.
+ * @param {Object} command - A command.
  *
- * @returns {Object} - The mapped Roc configuration settings object.
+ * @returns {{settings: rocConfigSettings, parseOptions: Object}} - The mapped Roc configuration settings object.
  */
-export function parseArguments(args, mappings) {
-    const config = {};
-    const info = [];
+export function parseOptions(options, mappings, command) {
+    const infoSettings = [];
 
-    Object.keys(args).forEach((key) => {
-        if (mappings[key]) {
-            const value = convert(args[key], mappings[key]);
-            set(config, mappings[key].path, value);
+    const { settings, notManaged } = parseSettingsOptions(options, mappings);
+
+    const {
+        possibleCommandOptions,
+        possibleCommandOptionsShort,
+        infoOptions,
+        parsedOptions,
+        finalNotManaged
+    } = parseCommandOptions(command, notManaged);
+
+    const defaultOptions = ['help', 'config', 'debug', 'directory', 'version'];
+    const defaultOptionsShort = ['h', 'd', 'c', 'D', 'v'];
+
+    Object.keys(finalNotManaged).forEach((key) => {
+        if (key.length > 1) {
+            infoSettings.push(getSuggestions([key],
+                Object.keys(mappings).concat(defaultOptions, possibleCommandOptions), '--'));
         } else {
-            // We did not find a match
-            info.push(getSuggestions([key], Object.keys(mappings), true));
+            infoSettings.push(getSuggestions([key],
+                [keyboardDistance(key, defaultOptionsShort.concat(possibleCommandOptionsShort))], '-'));
         }
     });
 
-    if (info.length > 0) {
-        console.log(errorLabel('CLI problem'), 'Some commands were not understood.\n');
-        console.log(info.join('\n') + '\n');
+    if (infoSettings.length > 0) {
+        console.log(errorLabel('Option problem'), 'Some options were not understood.\n');
+        console.log(infoSettings.join('\n') + '\n');
     }
 
-    return config;
+    if (infoOptions.length > 0) {
+        console.log(errorLabel('Command options problem'), 'Some command options were not provided.\n');
+        console.log(infoOptions.join('\n') + '\n');
+        /* eslint-disable no-process-exit */
+        process.exit(1);
+        /* eslint-enable */
+    }
+
+    return {
+        settings,
+        parsedOptions
+    };
+}
+
+function parseSettingsOptions(options, mappings) {
+    const settings = {};
+    let notManaged = {};
+
+    Object.keys(options).forEach((key) => {
+        if (mappings[key]) {
+            const value = convert(options[key], mappings[key]);
+            set(settings, mappings[key].path, value);
+        } else {
+            // We did not find a match
+            notManaged = {
+                ...notManaged,
+                [key]: options[key]
+            };
+        }
+    });
+
+    return {
+        settings,
+        notManaged
+    };
+}
+
+function parseCommandOptions(command, notManaged) {
+    const infoOptions = [];
+    let possibleCommandOptions = [];
+    let possibleCommandOptionsShort = [];
+    const parsedOptions = {
+        options: {},
+        rest: {}
+    };
+
+    const getName = (name) => name.length === 1 ? '-' + name : '--' + name;
+
+    if (command && command.options) {
+        possibleCommandOptions = command.options.map((option) => option.name);
+        possibleCommandOptionsShort = command.options.reduce((previous, option) => {
+            if (option.shortname) {
+                return previous.concat(option.shortname);
+            }
+
+            return previous;
+        }, []);
+
+        command.options.forEach((option) => {
+            let value;
+            let name;
+
+            // See if we can match the option against anything.
+            if (notManaged[option.name]) {
+                value = notManaged[option.name];
+                delete notManaged[option.name];
+                name = option.name;
+            } else if (notManaged[option.shortname]) {
+                value = notManaged[option.shortname];
+                delete notManaged[option.shortname];
+                name = option.shortname;
+            }
+
+            // The option is required but no value was found
+            if (option.required && !value) {
+                const getOptions = () => {
+                    const shortOption = option.shortname ? ' or ' + chalk.bold('-' + option.shortname) : '';
+                    return chalk.bold('--' + option.name) + shortOption;
+                };
+
+                infoOptions.push(`Required option ${getOptions()} was not provided.`);
+            }
+
+            // If we have a value and a validator
+            if (value && option.validation) {
+                const validationResult = isValid(value, option.validation);
+                if (validationResult !== true) {
+                    try {
+                        throwError(getName(name), validationResult, value, 'option');
+                    } catch (err) {
+                        /* eslint-disable no-process-exit */
+                        console.log(errorLabel('Command options problem') + ' A option was not valid.\n');
+                        console.log(err.message);
+                        process.exit(1);
+                        /* eslint-enable */
+                    }
+                }
+            }
+
+            parsedOptions.options[option.name] = value;
+        });
+    }
+
+    parsedOptions.rest = notManaged;
+
+    return {
+        possibleCommandOptions,
+        possibleCommandOptionsShort,
+        infoOptions,
+        parsedOptions,
+        finalNotManaged: notManaged
+    };
 }
 
 function convert(value, mapping) {

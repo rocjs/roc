@@ -3,7 +3,7 @@ import expect from 'expect';
 import {
     pad,
     addPadding,
-    toCliFlag,
+    toCliOption,
     getDefaultValue
 } from '../../src/documentation/helpers';
 
@@ -22,13 +22,13 @@ describe('roc', () => {
                 });
             });
 
-            describe('toCliFlag', () => {
+            describe('toCliOption', () => {
                 it('should return a runtime option correct', () => {
-                    expect(toCliFlag(['runtime', 'option1'])).toBe('--option1');
+                    expect(toCliOption(['runtime', 'option1'])).toBe('--option1');
                 });
 
                 it('should return a "general" option correct', () => {
-                    expect(toCliFlag(['build', 'option2'])).toBe('--build-option2');
+                    expect(toCliOption(['build', 'option2'])).toBe('--build-option2');
                 });
             });
 

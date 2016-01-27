@@ -32,11 +32,12 @@ const templates = [{
  *
  * @returns {Promise} - Promise for the command.
  */
-export default function init({ parsedOptions }) {
-    const { template, version } = parsedOptions.options;
+export default function init({ parsedArguments, parsedOptions }) {
+    const { list, force } = parsedOptions.options;
+    const { template, version } = parsedArguments.arguments;
 
     // Make sure the directory is empty!
-    assertEmptyDir();
+    assertEmptyDir(force);
 
     if (!template) {
         return interativeMenu();
@@ -64,6 +65,14 @@ export default function init({ parsedOptions }) {
             .then((versions) => {
                 // Add master so we always have a way to install it
                 versions.push({name: 'master'});
+
+                if (list) {
+                    console.log('The available versions are:');
+                    console.log(Object.keys(versions).map((index) => ` ${versions[index].name}`).join('\n'));
+                    /* eslint-disable no-process-exit */
+                    process.exit(0);
+                    /* eslint-enable */
+                }
 
                 // If the name starts with a number we will automatically add 'v' infront of it to match Github default
                 if (selectVersion && !isNaN(Number(selectVersion.charAt(0))) && selectVersion.charAt(0) !== 'v') {
@@ -111,7 +120,7 @@ export default function init({ parsedOptions }) {
             })
             .catch((error) => {
                 console.log(styleError('\nAn error occured during init!\n'));
-                console.error(error.stack);
+                console.error(error.message);
                 /* eslint-disable no-process-exit */
                 process.exit(1);
                 /* eslint-enable */
@@ -188,8 +197,8 @@ export default function init({ parsedOptions }) {
         });
     }
 
-    function assertEmptyDir() {
-        if (fs.readdirSync(process.cwd()).length > 0) {
+    function assertEmptyDir(ignoreNonEmpty = false) {
+        if (!ignoreNonEmpty && fs.readdirSync(process.cwd()).length > 0) {
             console.log(styleError('You need to call this command from an empty directory.'));
             /* eslint-disable no-process-exit */
             process.exit(1);
