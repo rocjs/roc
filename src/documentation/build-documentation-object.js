@@ -13,6 +13,7 @@ const defaultValidation = (input, info) => info ? {type: 'Unknown'} : true;
  * @param {Object} initalObject - The object to create a {@link rocDocumentationObject} of.
  * @param {rocMetaSettings} meta - The meta object to use.
  * @param {string[]} [initalFilter=[]] - The groups that should be used, will default to all groups.
+ * @param {number}  [initalLevel=0] - The level that the groups should be based on.
  *
  * @returns {rocDocumentationObject} - The completed documentation object.
  */
@@ -73,6 +74,14 @@ export default function buildDocumentationObject(initalObject, meta = {}, inital
     return recursiveHelper(initalObject, meta.groups, meta.descriptions, meta.validations, initalFilter, initalLevel);
 }
 
+/**
+ * Sort a documentationObject on a specific property.
+ *
+ * @param {string} property - The property to sort on.
+ * @param {rocDocumentationObject} documentationObject - The documentationObject to sort.
+ *
+ * @returns {rocDocumentationObject} - The sorted documentationObject.
+ */
 export function sortOnProperty(property, documentationObject = []) {
     documentationObject.sort(onProperty(property));
     return documentationObject.map((group) => {

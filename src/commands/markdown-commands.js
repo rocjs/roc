@@ -7,6 +7,17 @@ import { pad } from '../documentation/helpers';
 import { getCommandArgumentsAsString, getDefaultOptions } from '../cli/helpers';
 import onProperty from '../helpers/on-property';
 
+/**
+ * Command used to generate markdown documentation for all the possible commands.
+ * Can be piped to a file and uploaded somewhere easily.
+ *
+ * @param {rocConfig} config - Roc configuration object.
+ * @param {rocMetaConfig} metaConfig - Roc meta configuration object.
+ * @param {{name: string}} info - Info object in {@link rocCommandObject} containing name of the cli.
+ * @param {Object} args - The arguments from parsedArguments in {@link rocCommandObject}
+ *
+ * @returns {string} - Markdown documentation.
+ */
 export default function markdownCommands(config, metaConfig, { name }, args) {
     const rows = [];
     const allSettingGroups = Object.keys(config.settings).sort();

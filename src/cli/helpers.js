@@ -357,6 +357,14 @@ function generateCommandDocsHelper(body, header, options, name) {
     });
 }
 
+/**
+ * Gets and array with the default options for the cli.
+ * Will be formatted to work with {@link generateTable}
+ *
+ * @param {string} name - What property the option/flag name should be set.
+ *
+ * @returns {Object[]} - Array with the default options formatted for {@link generateTable}.
+ */
 export function getDefaultOptions(name) {
     return [{
         [name]: '-c, --config',
