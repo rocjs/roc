@@ -367,15 +367,15 @@ function generateCommandDocsHelper(body, header, options, name) {
 }
 
 /**
- * Parses options and validates them.
+ * Parses arguments and validates them.
  *
  * @param {string} command - The command to parse arguments for.
  * @param {Object} commands - commands from {@link rocMetaConfig}.
  * @param {Object[]} args - Arguments parsed by minimist.
  *
- * @returns {Object} - Parsed options.
- * @property {object[]} options - The parsed options that was matched against the meta configuration for the command.
- * @property {object[]} rest - The rest of the options that could not be matched against the configuration.
+ * @returns {Object} - Parsed arguments.
+ * @property {object[]} options - The parsed arguments that was matched against the meta configuration for the command.
+ * @property {object[]} rest - The rest of the arguments that could not be matched against the configuration.
  */
 export function parseArguments(command, commands, args) {
     // If the command supports options
@@ -503,94 +503,25 @@ function getConvertor(value, name) {
  * @param {Object} mappings - Result from {@link getMappings}.
  * @param {Object} command - A command.
  *
- * @returns {Object} - The mapped Roc configuration settings object.
+ * @returns {{settings: rocConfigSettings, parseOptions: Object}} - The mapped Roc configuration settings object.
  */
 export function parseOptions(options, mappings, command) {
-    const configuration = {};
     const infoSettings = [];
-    const infoOptions = [];
 
-    let notManagedOptions = {};
-    let possibleCommandOptions = [];
-    let possibleCommandOptionsShort = [];
-    const parsedOptions = {
-        options: {},
-        rest: {}
-    };
+    const { settings, notManaged } = parseSettingsOptions(options, mappings);
 
-    const getName = (name) => name.length === 1 ? '-' + name : '--' + name;
-
-    // Always match settings options first
-    Object.keys(options).forEach((key) => {
-        if (mappings[key]) {
-            const value = convert(options[key], mappings[key]);
-            set(configuration, mappings[key].path, value);
-        } else {
-            // We did not find a match
-            notManagedOptions = {
-                ...notManagedOptions,
-                [key]: options[key]
-            };
-        }
-    });
-
-    if (command && command.options) {
-        possibleCommandOptions = command.options.map((option) => option.name);
-        possibleCommandOptionsShort = command.options.reduce((previous, option) => {
-            if (option.shortname) {
-                return previous.concat(option.shortname);
-            }
-
-            return previous;
-        }, []);
-
-        command.options.forEach((option) => {
-            let value;
-            let name;
-            if (notManagedOptions[option.name]) {
-                value = notManagedOptions[option.name];
-                delete notManagedOptions[option.name];
-                name = option.name;
-            } else if (notManagedOptions[option.shortname]) {
-                value = notManagedOptions[option.shortname];
-                delete notManagedOptions[option.shortname];
-                name = option.shortname;
-            }
-
-            if (option.required && !value) {
-                const getOptions = () => {
-                    const shortOption = option.shortname ? ' or ' + chalk.bold('-' + option.shortname) : '';
-                    return chalk.bold('--' + option.name) + shortOption;
-                };
-
-                infoOptions.push(`Required option ${getOptions()} was not provided.`);
-            }
-
-            if (value && option.validation) {
-                const validationResult = isValid(value, option.validation);
-                if (validationResult !== true) {
-                    try {
-                        throwError(getName(name), validationResult, value, 'option');
-                    } catch (err) {
-                        /* eslint-disable no-process-exit */
-                        console.log(errorLabel('Command options problem') + ' A option was not valid.\n');
-                        console.log(err.message);
-                        process.exit(1);
-                        /* eslint-enable */
-                    }
-                }
-            }
-
-            parsedOptions.options[option.name] = value;
-        });
-    }
-
-    parsedOptions.rest = notManagedOptions;
+    const {
+        possibleCommandOptions,
+        possibleCommandOptionsShort,
+        infoOptions,
+        parsedOptions,
+        finalNotManaged
+    } = parseCommandOptions(command, notManaged);
 
     const defaultOptions = ['help', 'config', 'debug', 'directory', 'version'];
     const defaultOptionsShort = ['h', 'd', 'c', 'D', 'v'];
 
-    Object.keys(notManagedOptions).forEach((key) => {
+    Object.keys(finalNotManaged).forEach((key) => {
         if (key.length > 1) {
             infoSettings.push(getSuggestions([key],
                 Object.keys(mappings).concat(defaultOptions, possibleCommandOptions), '--'));
@@ -614,8 +545,108 @@ export function parseOptions(options, mappings, command) {
     }
 
     return {
-        configuration,
+        settings,
         parsedOptions
+    };
+}
+
+function parseSettingsOptions(options, mappings) {
+    const settings = {};
+    let notManaged = {};
+
+    Object.keys(options).forEach((key) => {
+        if (mappings[key]) {
+            const value = convert(options[key], mappings[key]);
+            set(settings, mappings[key].path, value);
+        } else {
+            // We did not find a match
+            notManaged = {
+                ...notManaged,
+                [key]: options[key]
+            };
+        }
+    });
+
+    return {
+        settings,
+        notManaged
+    };
+}
+
+function parseCommandOptions(command, notManaged) {
+    const infoOptions = [];
+    let possibleCommandOptions = [];
+    let possibleCommandOptionsShort = [];
+    const parsedOptions = {
+        options: {},
+        rest: {}
+    };
+
+    const getName = (name) => name.length === 1 ? '-' + name : '--' + name;
+
+    if (command && command.options) {
+        possibleCommandOptions = command.options.map((option) => option.name);
+        possibleCommandOptionsShort = command.options.reduce((previous, option) => {
+            if (option.shortname) {
+                return previous.concat(option.shortname);
+            }
+
+            return previous;
+        }, []);
+
+        command.options.forEach((option) => {
+            let value;
+            let name;
+
+            // See if we can match the option against anything.
+            if (notManaged[option.name]) {
+                value = notManaged[option.name];
+                delete notManaged[option.name];
+                name = option.name;
+            } else if (notManaged[option.shortname]) {
+                value = notManaged[option.shortname];
+                delete notManaged[option.shortname];
+                name = option.shortname;
+            }
+
+            // The option is required but no value was found
+            if (option.required && !value) {
+                const getOptions = () => {
+                    const shortOption = option.shortname ? ' or ' + chalk.bold('-' + option.shortname) : '';
+                    return chalk.bold('--' + option.name) + shortOption;
+                };
+
+                infoOptions.push(`Required option ${getOptions()} was not provided.`);
+            }
+
+            // If we have a value and a validator
+            if (value && option.validation) {
+                const validationResult = isValid(value, option.validation);
+                if (validationResult !== true) {
+                    try {
+                        throwError(getName(name), validationResult, value, 'option');
+                    } catch (err) {
+                        /* eslint-disable no-process-exit */
+                        console.log(errorLabel('Command options problem') + ' A option was not valid.\n');
+                        console.log(err.message);
+                        process.exit(1);
+                        /* eslint-enable */
+                    }
+                }
+            }
+
+            parsedOptions.options[option.name] = value;
+        });
+    }
+
+    parsedOptions.rest = notManaged;
+
+    return {
+        possibleCommandOptions,
+        possibleCommandOptionsShort,
+        infoOptions,
+        parsedOptions,
+        finalNotManaged: notManaged
     };
 }
 

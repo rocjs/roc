@@ -84,11 +84,11 @@ export function runCli(info = {version: 'Unknown', name: 'Unknown'}, initalConfi
         documentationObject = buildDocumentationObject(configObject.settings, metaObject.settings, filter);
     }
 
-    const { configuration, parsedOptions } =
+    const { settings, parsedOptions } =
         parseOptions(restOptions, getMappings(documentationObject), metaObject.commands[command]);
 
     configObject = merge(configObject, {
-        settings: configuration
+        settings
     });
 
     // Validate configuration

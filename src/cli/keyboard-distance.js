@@ -24,19 +24,16 @@ export default function keyboardDistance(char, possible) {
     ];
 
     const getPosition = (c) => {
-        let val = {};
-        qwerty.forEach((row, rowIndex) => {
-            row.forEach((column, columnIndex) => {
-                if (c.toLowerCase() === column) {
-                    val = {
-                        row: rowIndex + 1,
-                        column: columnIndex + 1
+        for (const rowIndex in qwerty) {
+            for (const columnIndex in qwerty[rowIndex]) {
+                if (c.toLowerCase() === qwerty[rowIndex][columnIndex]) {
+                    return {
+                        row: parseInt(rowIndex, 10) + 1,
+                        column: parseInt(columnIndex, 10) + 1
                     };
                 }
-            });
-        });
-
-        return val;
+            }
+        }
     };
 
     const map = possible.map((p) => {

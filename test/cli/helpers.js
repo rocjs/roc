@@ -88,7 +88,7 @@ describe('roc', () => {
                             required: true
                         }]
                     })).toEqual({
-                        configuration: {},
+                        settings: {},
                         parsedOptions: {
                             options: { list: 'hello', test: true },
                             rest: {}
