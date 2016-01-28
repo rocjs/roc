@@ -5,12 +5,12 @@ describe('roc', () => {
         describe('helpers', () => {
             describe('github', () => {
                 let github;
-                let get;
+                let stream;
                 let mkdir;
                 let tar;
 
                 before(() => {
-                    get = expect.spyOn(require('request'), 'get');
+                    stream = expect.spyOn(require('got'), 'stream');
                     mkdir = expect.spyOn(require('temp'), 'mkdir');
                     tar = expect.spyOn(require('tar'), 'Extract')
                     .andReturn({
@@ -21,13 +21,13 @@ describe('roc', () => {
                 });
 
                 afterEach(() => {
-                    get.calls = [];
+                    stream.calls = [];
                     mkdir.calls = [];
                     tar.calls = [];
                 });
 
                 after(() => {
-                    get.restore();
+                    stream.restore();
                     mkdir.restore();
                     tar.restore();
                 });
@@ -41,44 +41,6 @@ describe('roc', () => {
                     it('should throw if no package is given', () => {
                         expect(github.getVersions)
                         .toThrow();
-                    });
-
-                    it('should reject promise upon request error', () => {
-                        get.andCall((fetchObject, cb) => {
-                            cb('Error');
-                        });
-
-                        return github
-                        .getVersions('roc')
-                        .catch((err) => {
-                            expect(err).toEqual('Error');
-                        });
-                    });
-
-                    it('should reject promise upon non 200 status code', () => {
-                        get.andCall((fetchObject, cb) => {
-                            cb(null, { statusCode: 500 });
-                        });
-
-                        return github
-                        .getVersions('roc')
-                        .catch((err) => {
-                            expect(err.message).toInclude('returned 500');
-                        });
-                    });
-
-                    it('should resolve when reciving 200 as status code', () => {
-                        const body = { a: 1 };
-                        get.andCall((fetchObject, cb) => {
-                            cb(null, { statusCode: 200 }, JSON.stringify(body));
-                        });
-
-                        return github
-                        .getVersions('roc')
-                        .then((result) => {
-                            expect(get.calls[0].arguments[0].url).toBe('https://api.github.com/repos/roc/tags');
-                            expect(result).toEqual(body);
-                        });
                     });
                 });
 
@@ -111,7 +73,7 @@ describe('roc', () => {
                         });
 
                         // Mocked stream
-                        get.andCall(() => {
+                        stream.andCall(() => {
                             return {
                                 on: () =>
                                 ({ pipe: () =>
