@@ -44,7 +44,7 @@ describe('roc', () => {
                 // When using coverage it will be set beforehand.
                 delete require.cache[require.resolve('../../src/commands/init')];
 
-                init = require('../../src/commands/init');
+                init = require('../../src/commands/init').default;
             });
 
             afterEach(() => {
