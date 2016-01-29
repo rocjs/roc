@@ -20,7 +20,9 @@ import onProperty from '../helpers/on-property';
  */
 export default function markdownCommands(config, metaConfig, { name }, args) {
     const rows = [];
-    const allSettingGroups = Object.keys(config.settings).sort();
+    const allSettingGroups = config.settings ?
+        Object.keys(config.settings).sort() :
+        [];
 
     const printGroup = (group) => {
         const groupName = args['settings-link'] ?
