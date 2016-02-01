@@ -177,7 +177,7 @@ describe('roc', () => {
 
                         expect(log.calls[0].arguments[0]).toInclude('The available versions are:');
                         expect(log.calls[1].arguments[0]).toBe(' 1.0\n master');
-                        expect(exit).toHaveBeenCalledWith(1);
+                        expect(exit).toHaveBeenCalledWith(0);
                     });
                 });
             });
