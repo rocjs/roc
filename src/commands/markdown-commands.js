@@ -41,7 +41,7 @@ export default function markdownCommands(config, metaConfig, { name }, args) {
 
         rows.push('## General Information');
         rows.push(redent(trimNewlines(`
-            All commands can be called with some addtional options as can be seen below.`)));
+            All commands can be called with some additional options as can be seen below.`)));
 
         // Table with default options
         const header = {
