@@ -1,9 +1,11 @@
 {
-    "stage": 0,
-    "loose": "all",
-    "env": {
-        "test": {
-            "plugins": ["babel-plugin-rewire"]
-        }
-    }
+    "plugins": [
+        "babel-plugin-transform-object-rest-spread",
+        "babel-plugin-transform-es2015-function-name",
+        "babel-plugin-transform-es2015-sticky-regex",
+        "babel-plugin-transform-es2015-unicode-regex",
+        "babel-plugin-transform-es2015-parameters",
+        "babel-plugin-transform-es2015-destructuring",
+        "babel-plugin-transform-es2015-modules-commonjs"
+    ]
 }

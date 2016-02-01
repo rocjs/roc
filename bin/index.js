@@ -3,8 +3,8 @@
 const runCli = require('../lib/cli').runCli;
 const validators = require('../lib/validation/validators');
 
-const init = require('../lib/commands/init');
-const markdownCommands = require('../lib/commands/markdown-commands');
+const init = require('../lib/commands/init').default;
+const markdownCommands = require('../lib/commands/markdown-commands').default;
 
 const pkg = require('../package.json');
 
