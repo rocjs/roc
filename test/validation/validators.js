@@ -31,7 +31,7 @@ describe('roc', () => {
 
                     expect(isArray(validator)(null, true))
                         .toEqual({
-                            type: '[ Type ]',
+                            type: '[Type]',
                             required: false
                         });
                 });
@@ -68,7 +68,7 @@ describe('roc', () => {
 
                     expect(isObject(validator)(null, true))
                         .toEqual({
-                            type: '{ Type }',
+                            type: '{Type}',
                             required: false
                         });
                 });
@@ -110,7 +110,7 @@ describe('roc', () => {
 
                     expect(isArrayOrSingle(validator)(null, true))
                         .toEqual({
-                            type: 'Type / [ Type ]',
+                            type: 'Type / [Type]',
                             required: false
                         });
                 });

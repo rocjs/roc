@@ -3,6 +3,7 @@ import 'source-map-support/register';
 import { isPlainObject, isFunction } from 'lodash';
 
 import { toCliOption } from './helpers';
+import onProperty from '../helpers/on-property';
 
 const defaultValidation = (input, info) => info ? {type: 'Unknown'} : true;
 
@@ -12,10 +13,11 @@ const defaultValidation = (input, info) => info ? {type: 'Unknown'} : true;
  * @param {Object} initalObject - The object to create a {@link rocDocumentationObject} of.
  * @param {rocMetaSettings} meta - The meta object to use.
  * @param {string[]} [initalFilter=[]] - The groups that should be used, will default to all groups.
+ * @param {number}  [initalLevel=0] - The level that the groups should be based on.
  *
  * @returns {rocDocumentationObject} - The completed documentation object.
  */
-export default function buildDocumentationObject(initalObject, meta = {}, initalFilter = []) {
+export default function buildDocumentationObject(initalObject, meta = {}, initalFilter = [], initalLevel = 0) {
     const allObjects = (object, callback) => {
         return Object.keys(object).map(callback).filter((value) => value !== undefined);
     };
@@ -27,9 +29,9 @@ export default function buildDocumentationObject(initalObject, meta = {}, inital
             parentNames,
             level,
             description: groupDescription,
-            objects: recursiveHelper(object, group, description, validation, [], parents, level + 1,
+            objects: recursiveHelper(object, group, description, validation, [], level + 1, parents,
                 parentNames.concat(name), true),
-            children: recursiveHelper(object, group, description, validation, [], parents, level + 1,
+            children: recursiveHelper(object, group, description, validation, [], level + 1, parents,
                 parentNames.concat(name))
         };
     };
@@ -52,7 +54,7 @@ export default function buildDocumentationObject(initalObject, meta = {}, inital
     };
 
     function recursiveHelper(object, groups = {}, descriptions = {}, validations = {}, filter = [],
-        initalParents = [], level = 0, parentNames = [], leaves = false) {
+        level = 0, initalParents = [], parentNames = [], leaves = false) {
         return allObjects(object, (key) => {
             // Make sure that we either have no filter or that there is a match
             if (filter.length === 0 || filter.indexOf(key) !== -1) {
@@ -69,20 +71,19 @@ export default function buildDocumentationObject(initalObject, meta = {}, inital
         });
     }
 
-    return recursiveHelper(initalObject, meta.groups, meta.descriptions, meta.validations, initalFilter);
+    return recursiveHelper(initalObject, meta.groups, meta.descriptions, meta.validations, initalFilter, initalLevel);
 }
 
+/**
+ * Sort a documentationObject on a specific property.
+ *
+ * @param {string} property - The property to sort on.
+ * @param {rocDocumentationObject} documentationObject - The documentationObject to sort.
+ *
+ * @returns {rocDocumentationObject} - The sorted documentationObject.
+ */
 export function sortOnProperty(property, documentationObject = []) {
-    documentationObject.sort(function(a, b) {
-        if (a[property] > b[property]) {
-            return 1;
-        }
-        if (a[property] < b[property]) {
-            return -1;
-        }
-
-        return 0;
-    });
+    documentationObject.sort(onProperty(property));
     return documentationObject.map((group) => {
         return {
             ...group,

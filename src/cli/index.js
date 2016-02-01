@@ -107,6 +107,7 @@ export function runCli(info = {version: 'Unknown', name: 'Unknown'}, initalConfi
     // Run the command
     return configObject.commands[command]({
         debug: debugEnabled,
+        info,
         configObject,
         metaObject,
         extensionConfig,

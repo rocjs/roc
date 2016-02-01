@@ -29,6 +29,7 @@ A string command is a string that will managed as if it was typed into the termi
 The function will be invoked with an object with the following properties.
 ```
 debug               If debug mode has been enabled
+info                The object that is passed to the runCli function with version and name
 configObject        The final configuration object where everything has been merged
 metaObject          The final meta configuration object where everything has been merged
 extensionConfig     The configuration object where all extensions has been merged
@@ -38,6 +39,13 @@ parsedOptions       The parsed options given to the cli
 
 ### debug
 Debug will be set to `true` if `-d, --debug` was set. Should be used to print extra information when running the command. Otherwise it will be `false`.
+
+### info
+The same information object as `runCli` was invoked with, meaning it should have two properties.
+```
+version             The version of the running cli
+name                The name of the running cli
+```
 
 ### configObject
 Will contain the final configuration object. This means that the application configuration will have been merged with the configuration from the extensions as well as the settings that was defined in the cli at runtime.
@@ -72,6 +80,7 @@ Meta for commands are used to better define what they should do and describe wha
 ```
 description         Describes the command
 help                Additional information used when printing help for a single command
+markdown            Markdown formatted text that will be used, if available, when using "markdown-commands"
 options             Command line options that the command uses that are not part of the settings
 arguments           Arguments object that define what arguments the command uses
 settings            What roc settings the command uses, can either be true or an array with groups
@@ -81,7 +90,10 @@ settings            What roc settings the command uses, can either be true or an
 A string that describes what the command does. Used when printing general information about all the possible commands.
 
 ### help
-Used when printing information about a specific command. The input is reindented and starting/ending newlines are trimmed which means you can use a template literal without having to care about using the correct amount of indent. If no help is provided the description will be used instead.
+Used when printing information about a specific command. The input is reindented and starting/ending newlines are trimmed which means you can use a template literal without having to care about using the correct amount of indent. If no `help` is provided the `description` will be used instead.
+
+### markdown
+Used when generating documentation for the commands.  The input is reindented and starting/ending newlines are trimmed which means you can use a template literal without having to care about using the correct amount of indent. If no `markdown` is provided the `help` will be used instead.
 
 ### arguments
 An array of objects that can have the following properties:

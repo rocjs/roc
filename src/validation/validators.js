@@ -19,7 +19,7 @@ import { isValid } from './index.js';
 export function isArray(validator) {
     return (input, info) => {
         if (info) {
-            return infoObject(validator, (wrap) => (`[ ${wrap} ]`));
+            return infoObject(validator, (wrap) => (`[${wrap}]`));
         }
 
         if (!lodashIsArray(input)) {
@@ -39,7 +39,7 @@ export function isArray(validator) {
 export function isObject(validator) {
     return (input, info) => {
         if (info) {
-            return infoObject(validator, (wrap) => `{ ${wrap} }`);
+            return infoObject(validator, (wrap) => `{${wrap}}`);
         }
 
         if (!lodashIsPlainObject(input)) {
@@ -66,7 +66,7 @@ export function isObject(validator) {
 export function isArrayOrSingle(validator) {
     return (input, info) => {
         if (info) {
-            return infoObject(validator, (wrap) => (`${wrap} / [ ${wrap} ]`));
+            return infoObject(validator, (wrap) => (`${wrap} / [${wrap}]`));
         }
 
         const array = [].concat(input);

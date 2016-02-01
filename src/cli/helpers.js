@@ -13,6 +13,7 @@ import buildDocumentationObject, { sortOnProperty } from '../documentation/build
 import generateTable from '../documentation/generate-table';
 import { getDefaultValue } from '../documentation/helpers';
 import { fileExists, getRocDependencies, getPackageJson } from '../helpers';
+import onProperty from '../helpers/on-property';
 import { throwError } from '../validation';
 import { isValid } from '../validation';
 import { warning, importantLabel, errorLabel, warningLabel } from '../helpers/style';
@@ -187,12 +188,13 @@ export function generateCommandsDocumentation({ commands }, { commands: commands
     const noCommands = {'No commands available.': ''};
     commandsMeta = commandsMeta || {};
 
+    // We will sort the commands
     let body = [{
         name: 'Commands',
         level: 0,
-        objects: Object.keys(commands || noCommands).map((command) => {
+        objects: Object.keys(commands || noCommands).sort().map((command) => {
             const options = commandsMeta[command] ?
-                ' ' + getCommandArgumentsAsString(commandsMeta[command]) :
+                getCommandArgumentsAsString(commandsMeta[command]) :
                 '';
             const description = commandsMeta[command] && commandsMeta[command].description ?
                 commandsMeta[command].description :
@@ -208,10 +210,16 @@ export function generateCommandsDocumentation({ commands }, { commands: commands
     return generateCommandDocsHelper(body, header, 'General options', 'name');
 }
 
-function getCommandArgumentsAsString(command = {}) {
+/**
+ * Generates arguments as a information string.
+ *
+ * @param {rocCommandMeta} command - The command meta object.
+ * @returns {string} - The arguments as a string.
+ */
+export function getCommandArgumentsAsString(command = {}) {
     let args = '';
     (command.arguments || []).forEach((argument) => {
-        args += argument.required ? `<${argument.name}> ` : `[${argument.name}] `;
+        args += argument.required ? ` <${argument.name}> ` : ` [${argument.name}]`;
     });
 
     return args;
@@ -229,7 +237,7 @@ function getCommandArgumentsAsString(command = {}) {
   */
 export function generateCommandDocumentation({ settings }, { commands = {}, settings: meta }, command, name) {
     const rows = [];
-    rows.push('Usage: ' + name + ' ' + command + ' ' + getCommandArgumentsAsString(commands[command]));
+    rows.push('Usage: ' + name + ' ' + command + getCommandArgumentsAsString(commands[command]));
     rows.push('');
 
     if (commands[command] && (commands[command].description || commands[command].help)) {
@@ -266,7 +274,7 @@ export function generateCommandDocumentation({ settings }, { commands = {}, sett
 
     // Generate the options table
     if (commands[command] && commands[command].options) {
-        const objects = commands[command].options.map((option) => {
+        const objects = commands[command].options.sort(onProperty('name')).map((option) => {
             return {
                 cli: option.shortname ? `-${option.shortname}, --${option.name}` : `--${option.name}`,
                 description: `${option.description && option.description + '  ' || ''}` +
@@ -336,24 +344,7 @@ function generateCommandDocsHelper(body, header, options, name) {
     body.push({
         name: options,
         level: 0,
-        objects: [{
-            [name]: '-h, --help',
-            description: 'Output usage information.'
-        }, {
-            [name]: '-v, --version',
-            description: 'Output version number.'
-        }, {
-            [name]: '-d, --debug',
-            description: 'Enable debug mode.'
-        }, {
-            [name]: '-c, --config',
-            description: `Path to configuration file, will default to ${chalk.bold('roc.config.js')} in current ` +
-                `working directory.`
-        }, {
-            [name]: '-D, --directory',
-            description: 'Path to working directory, will default to the current working directory. Can be either ' +
-                'absolute or relative.'
-        }]
+        objects: getDefaultOptions(name)
     });
 
     return generateTable(body, header, {
@@ -364,6 +355,35 @@ function generateCommandDocsHelper(body, header, options, name) {
         header: false,
         groupTitleWrapper: (input) => input + ':'
     });
+}
+
+/**
+ * Gets and array with the default options for the cli.
+ * Will be formatted to work with {@link generateTable}
+ *
+ * @param {string} name - What property the option/flag name should be set.
+ *
+ * @returns {Object[]} - Array with the default options formatted for {@link generateTable}.
+ */
+export function getDefaultOptions(name) {
+    return [{
+        [name]: '-c, --config',
+        description: `Path to configuration file, will default to ${chalk.bold('roc.config.js')} in current ` +
+            `working directory.`
+    }, {
+        [name]: '-d, --debug',
+        description: 'Enable debug mode.'
+    }, {
+        [name]: '-D, --directory',
+        description: 'Path to working directory, will default to the current working directory. Can be either ' +
+            'absolute or relative.'
+    }, {
+        [name]: '-h, --help',
+        description: 'Output usage information.'
+    }, {
+        [name]: '-v, --version',
+        description: 'Output version number.'
+    }];
 }
 
 /**

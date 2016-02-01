@@ -11,9 +11,11 @@
  *
  * @typedef {Object} rocCommandObject
  * @property {boolean} debug - If debug mode has been enabled.
+ * @property {{version: string, name: string}} info - The object passed to runCli function with version and name.
  * @property {rocConfig} configObject - The final configuration object where everything has been merged.
  * @property {rocMetaConfig} metaObject - The final meta configuration object where everything has been merged.
  * @property {rocConfig} extensionConfig - The configuration object where all extensions has been merged.
+ * @property {rocArguments} parsedArguments - The parsed arguments given to the cli.
  * @property {rocOptions} parsedOptions - The parsed options given to the cli.
  */
 
@@ -35,6 +37,14 @@
  * @property {Object} commands
  * @property {Object} plugins
  */
+
+ /**
+  * Roc parsed arguments.
+  *
+  * @typedef {Object} rocArguments
+  * @property {Object} arguments
+  * @property {Object} rest
+  */
 
 /**
  * Roc parsed options.
@@ -103,4 +113,16 @@
  * @property {Object} descriptions
  * @property {Object} groups
  * @property {Object} validations
+ */
+
+/**
+ * Roc command meta object.
+ *
+ * @typedef {Object} rocCommandMeta
+ * @property {string} description
+ * @property {string} help
+ * @property {string} markdown
+ * @property {Object[]} options
+ * @property {Object[]} arguments
+ * @property {boolean|string[]} settings
  */
