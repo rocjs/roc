@@ -51,7 +51,7 @@ describe('roc', () => {
                         # Commands for \`roc-test\`
 
                         ## General Information
-                        All commands can be called with some addtional options as can be seen below.
+                        All commands can be called with some additional options as can be seen below.
 
                         ### General options
 
@@ -121,7 +121,7 @@ describe('roc', () => {
                         # Commands for \`roc-test\`
 
                         ## General Information
-                        All commands can be called with some addtional options as can be seen below.
+                        All commands can be called with some additional options as can be seen below.
 
                         ### General options
 
