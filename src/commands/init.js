@@ -36,6 +36,13 @@ export default function init({ parsedArguments, parsedOptions }) {
     const { list, force } = parsedOptions.options;
     const { name, template, version } = parsedArguments.arguments;
 
+    // Get versions first
+    if (template && list) {
+        const toFetch = getTemplate(template);
+
+        return getTemplateVersion(toFetch, list);
+    }
+
     // Make sure the directory is empty!
     return checkFolder(force, name).then((directory) => {
         if (!template) {
@@ -49,19 +56,8 @@ export default function init({ parsedArguments, parsedOptions }) {
 /*
  * Helpers
  */
-function fetchTemplate(toFetch, selectVersion, directory, list) {
-    if (toFetch.indexOf('/') === -1) {
-        const selectedTemplate = templates.find((elem) => elem.identifier === toFetch);
-        if (!selectedTemplate) {
-            console.log(styleError('Invalid template name given.'));
-            /* eslint-disable no-process-exit */
-            process.exit(1);
-            /* eslint-enable */
-        }
 
-        toFetch = selectedTemplate.repo;
-    }
-
+function getTemplateVersion(toFetch, list) {
     return getVersions(toFetch)
         .then((versions) => {
             // Add master so we always have a way to install it
@@ -75,6 +71,31 @@ function fetchTemplate(toFetch, selectVersion, directory, list) {
                 /* eslint-enable */
             }
 
+            return Promise.resolve(versions);
+        });
+}
+
+function getTemplate(template) {
+    if (template.indexOf('/') === -1) {
+        const selectedTemplate = templates.find((elem) => elem.identifier === template);
+        if (!selectedTemplate) {
+            console.log(styleError('Invalid template name given.'));
+            /* eslint-disable no-process-exit */
+            process.exit(1);
+            /* eslint-enable */
+        }
+
+        return selectedTemplate.repo;
+    }
+
+    return template;
+}
+
+function fetchTemplate(toFetch, selectVersion, directory, list) {
+    toFetch = getTemplate(toFetch);
+
+    return getTemplateVersion(toFetch, list)
+        .then((versions) => {
             // If the name starts with a number we will automatically add 'v' infront of it to match Github default
             if (selectVersion && !isNaN(Number(selectVersion.charAt(0))) && selectVersion.charAt(0) !== 'v') {
                 selectVersion = `v${selectVersion}`;
