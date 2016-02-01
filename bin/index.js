@@ -23,11 +23,11 @@ const initOptions = [{
 const initArguments = [{
     name: 'template',
     validation: validators.isPath,
-    description: 'What template to use. Matches Github structure with Username/Repo.'
+    description: 'The template to use. Matches Github structure with Username/Repo.'
 }, {
     name: 'version',
     validation: validators.isString,
-    description: 'What version to use.'
+    description: 'The version to use.'
 }];
 
 runCli({

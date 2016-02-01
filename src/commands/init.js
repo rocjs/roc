@@ -46,7 +46,7 @@ export default function init({ parsedArguments, parsedOptions }) {
     // Make sure the directory is empty!
     return checkFolder(force, name).then((directory) => {
         if (!template) {
-            return interativeMenu(directory, list);
+            return interactiveMenu(directory, list);
         }
 
         return fetchTemplate(template, version, directory, list);
@@ -203,7 +203,7 @@ function npmInstall(dirPath) {
     });
 }
 
-function interativeMenu(directory, list) {
+function interactiveMenu(directory, list) {
     return new Promise((resolve) => {
         const choices = templates.map((elem) => ({ name: elem.name, value: elem.identifier }));
 

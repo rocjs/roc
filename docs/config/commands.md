@@ -44,7 +44,7 @@ Debug will be set to `true` if `-d, --debug` was set. Should be used to print ex
 The same information object as `runCli` was invoked with, meaning it should have two properties.
 ```
 version             The version of the running cli
-named               The name of the running cli
+name                The name of the running cli
 ```
 
 ### configObject
