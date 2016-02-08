@@ -42,7 +42,7 @@ export function runCli(info = {version: 'Unknown', name: 'Unknown'}, initalConfi
         return console.log(info.version);
     }
 
-    // Possibe to set a command in debug mode
+    // Possible to set a command in debug mode
     const debugEnabled = (debug || d) ? true : false;
 
     // Get the application configuration path
@@ -53,6 +53,7 @@ export function runCli(info = {version: 'Unknown', name: 'Unknown'}, initalConfi
 
     // Build the complete config object
     const applicationConfig = getApplicationConfig(applicationConfigPath, directoryPath, debugEnabled);
+
     let { extensionConfig, config: configObject, meta: metaObject } =
         buildCompleteConfig(debugEnabled, initalConfig, initalMeta, applicationConfig, undefined, directoryPath);
 

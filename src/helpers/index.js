@@ -21,7 +21,7 @@ export function getAbsolutePath(filepath, directory = process.cwd()) {
 }
 
 /**
-* Verifys if a file exists.
+* Verifies if a file exists.
 *
 * @param {string} filepath - The filepath to check. Will make it absolute if not already using {@link getAbsolutePath}.
 * @param {string} [directory] - The directory to base the filepath on.
@@ -49,7 +49,7 @@ export function getRocDependencies(packageJson) {
         ...Object.keys(packageJson.dependencies || {}),
         ...Object.keys(packageJson.devDependencies || {})
     ]
-    .filter(dependecy => /^roc(-.+)/.test(dependecy));
+    .filter((dependency) => /^roc(-.+)/.test(dependency));
 }
 
 /**
