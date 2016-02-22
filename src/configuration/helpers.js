@@ -1,5 +1,3 @@
-import 'source-map-support/register';
-
 import fs from 'fs';
 import chalk from 'chalk';
 

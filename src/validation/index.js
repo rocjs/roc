@@ -1,5 +1,3 @@
-import 'source-map-support/register';
-
 import chalk from 'chalk';
 import { isPlainObject, isFunction, isRegExp } from 'lodash';
 
@@ -13,6 +11,11 @@ import { errorLabel } from '../helpers/style';
  * @return {boolean} - If valid or not.
  */
 export function isValid(value, validator) {
+    // If we have no validator we assume the value to be valid
+    if (!validator) {
+        return true;
+    }
+
     if (isFunction(validator)) {
         return validator(value);
     } else if (isRegExp(validator)) {

@@ -1,5 +1,3 @@
-import 'source-map-support/register';
-
 import fs from 'fs-extra';
 import path from 'path';
 import { spawn } from 'child_process';

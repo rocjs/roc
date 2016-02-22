@@ -1,5 +1,3 @@
-import 'source-map-support/register';
-
 import got from 'got';
 import tar from 'tar';
 import zlib from 'zlib';

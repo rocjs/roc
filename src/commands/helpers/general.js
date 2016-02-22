@@ -1,5 +1,3 @@
-import 'source-map-support/register';
-
 import { isObject } from 'lodash';
 import { fileExists, getRocDependencies, getPackageJson } from '../../helpers';
 

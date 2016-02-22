@@ -1,5 +1,3 @@
-import 'source-map-support/register';
-
 import minimist from 'minimist';
 import { isString } from 'lodash';
 
@@ -24,12 +22,13 @@ import { error as styleError } from '../helpers/style';
  * Invokes the Roc cli.
  *
  * @param {{version: string, name: string}} info - Information about the cli.
- * @param {rocConfig} initalConfig - The inital configuration, will be merged with the selected extensions and
+ * @param {rocConfig} initalConfig - The inital configuration, will be merged with the selected packages and
  *  application.
- * @param {rocMetaConfig} initalMeta - The inital meta configuration, will be merged with the selected extensions.
+ * @param {rocMetaConfig} initalMeta - The inital meta configuration, will be merged with the selected packages.
  * @param {string[]} [argv=process.argv] - From where it should parse the arguments.
  *
- * @returns {undefined}
+ * @returns {object} - Returns what the command is returning. If the command is a string command a promise will be
+ *  returned that is resolved when the command has been completed.
  */
 export function runCli(info = {version: 'Unknown', name: 'Unknown'}, initalConfig, initalMeta, argv = process.argv) {
     const {_, h, help, d, debug, v, version, c, config, D, directory, ...restOptions} = minimist(argv.slice(2));
@@ -54,25 +53,25 @@ export function runCli(info = {version: 'Unknown', name: 'Unknown'}, initalConfi
     // Build the complete config object
     const applicationConfig = getApplicationConfig(applicationConfigPath, directoryPath, debugEnabled);
 
-    let { extensionConfig, config: configObject, meta: metaObject } =
-        buildCompleteConfig(debugEnabled, initalConfig, initalMeta, applicationConfig, undefined, directoryPath);
+    let { packageConfig, config: configObject, meta: metaObject } =
+        buildCompleteConfig(debugEnabled, applicationConfig, undefined, initalConfig, initalMeta, directoryPath);
 
     // If we have no command we will display some help information about all possible commands
     if (!command) {
-        return console.log(generateCommandsDocumentation(extensionConfig, metaObject));
+        return console.log(generateCommandsDocumentation(packageConfig, metaObject));
     }
 
     // If the command does not exist show error
     // Will ignore application configuration
-    if (!extensionConfig.commands || !extensionConfig.commands[command]) {
+    if (!packageConfig.commands || !packageConfig.commands[command]) {
         console.log(styleError('Invalid command'), '\n');
-        return console.log(getSuggestions([command], Object.keys(extensionConfig.commands)), '\n');
+        return console.log(getSuggestions([command], Object.keys(packageConfig.commands)), '\n');
     }
 
     // Show command help information if requested
     // Will ignore application configuration
     if (help || h) {
-        return console.log(generateCommandDocumentation(extensionConfig, metaObject, command, info.name));
+        return console.log(generateCommandDocumentation(packageConfig, metaObject, command, info.name));
     }
 
     const parsedArguments = parseArguments(command, metaObject.commands, args);
@@ -111,8 +110,26 @@ export function runCli(info = {version: 'Unknown', name: 'Unknown'}, initalConfi
         info,
         configObject,
         metaObject,
-        extensionConfig,
+        packageConfig,
         parsedArguments,
         parsedOptions
+    });
+}
+
+/**
+ * Small helper for convenience to init the Roc cli, wraps {@link runCli}.
+ *
+ * @param {string} version - The version to be used when requested for information.
+ * @param {string} name - The name to be used when display feedback to the user.
+ *
+ * @returns {object} - Returns what the command is returning. If the command is a string command a promise will be
+ *  returned that is resolved when the command has been completed.
+ */
+export function initCli(version, name) {
+    require('source-map-support').install();
+
+    return runCli({
+        version: version,
+        name: name
     });
 }

@@ -1,5 +1,3 @@
-import 'source-map-support/register';
-
 import { escape } from 'lodash';
 
 import buildDocumentationObject, { sortOnProperty } from '../documentation/build-documentation-object';
@@ -52,9 +50,15 @@ export function generateMarkdownDocumentation({ settings }, { settings: meta }, 
         }
     };
 
-    return generateTable(documentationObject, header, {
+    const text = generateTable(documentationObject, header, {
         groupTitleWrapper: (name, level) => pad(level + 1, '#') + ' ' + name.charAt(0).toUpperCase() + name.slice(1)
     });
+
+    if (text.length === 0) {
+        return 'No settings available.';
+    }
+
+    return text;
 }
 
 /**
@@ -109,7 +113,13 @@ export function generateTextDocumentation({ settings }, { settings: meta }, filt
         }
     };
 
-    return generateTable(documentationObject, header, {
+    const text = generateTable(documentationObject, header, {
         groupTitleWrapper: (name, level, parentNames) => parentNames.concat(name).join(' > ')
     });
+
+    if (text.length === 0) {
+        return 'No settings available.';
+    }
+
+    return text;
 }

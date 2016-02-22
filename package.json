@@ -39,10 +39,12 @@
   "devDependencies": {
     "babel-cli": "~6.4.5",
     "babel-eslint": "5.0.0-beta10",
+    "babel-plugin-transform-export-extensions": "~6.5.0",
     "babel-plugin-transform-es2015-destructuring": "~6.4.0",
     "babel-plugin-transform-es2015-function-name": "~6.4.0",
     "babel-plugin-transform-es2015-modules-commonjs": "~6.4.5",
     "babel-plugin-transform-es2015-parameters": "~6.4.5",
+    "babel-plugin-transform-es2015-spread": "~6.5.0",
     "babel-plugin-transform-es2015-sticky-regex": "~6.3.13",
     "babel-plugin-transform-es2015-unicode-regex": "~6.4.3",
     "babel-plugin-transform-object-rest-spread": "~6.3.13",

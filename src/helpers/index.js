@@ -1,5 +1,3 @@
-import 'source-map-support/register';
-
 import path from 'path';
 import fs from 'fs';
 
@@ -42,7 +40,7 @@ export function fileExists(filepath, directory) {
  *
  * @param {Object} packageJson - A package.json file to fetch Roc dependencies from.
  *
- * @returns {string[]} - An array with Roc extensions that exists in the `package.json`.
+ * @returns {string[]} - An array with Roc packages that exists in the `package.json`.
  */
 export function getRocDependencies(packageJson) {
     return [

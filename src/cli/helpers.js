@@ -1,5 +1,3 @@
-import 'source-map-support/register';
-
 import chalk from 'chalk';
 import { isPlainObject, isBoolean, isString, set, difference } from 'lodash';
 import resolve from 'resolve';
@@ -17,55 +15,56 @@ import onProperty from '../helpers/on-property';
 import { throwError } from '../validation';
 import { isValid } from '../validation';
 import { warning, importantLabel, errorLabel, warningLabel } from '../helpers/style';
+import { toArray } from '../convertors';
 
 /**
  * Builds the complete configuration objects.
  *
  * @param {boolean} debug - If debug mode should be enabled, logs some extra information.
- * @param {rocConfig} config - The base configuration.
- * @param {rocMetaConfig} meta - The base meta configuration.
  * @param {rocConfig} newConfig - The new configuration to base the merge on.
  * @param {rocMetaConfig} newMeta - The new meta configuration to base the merge on.
+ * @param {rocConfig} config - The base configuration.
+ * @param {rocMetaConfig} meta - The base meta configuration.
  * @param {string} [directory=process.cwd()] - The directory to resolve relative paths from.
  * @param {boolean} [validate=true] - If the newConfig and the newMeta structure should be validated.
  *
  * @returns {Object} - The result of with the built configurations.
- * @property {rocConfig} extensionConfig - The extensions merged configurations
+ * @property {rocConfig} packageConfig - The packages merged configurations
  * @property {rocConfig} config - The final configuration, with application configuration.
  * @property {rocMetaConfig} meta - The merged meta configuration.
  */
 export function buildCompleteConfig(
-    debug, config = {}, meta = {}, newConfig = {}, newMeta = {}, directory = process.cwd(), validate = true
+    debug, newConfig = {}, newMeta = {}, config = {}, meta = {}, directory = process.cwd(), validate = true
 ) {
     let finalConfig = { ...config };
     let finalMeta = { ...meta };
 
-    let usedExtensions = [];
-    const mergeExtension = (extensionName) => {
-        const { baseConfig, metaConfig = {} } = getExtension(extensionName, directory);
+    let usedPackages = [];
+    const mergedPackages = (packageName) => {
+        const { rocPackageConfig, rocPackageMetaConfig = {} } = getPackage(packageName, directory);
 
-        if (baseConfig) {
-            usedExtensions.push(extensionName);
-            finalConfig = merge(finalConfig, baseConfig);
-            finalMeta = merge(finalMeta, metaConfig);
+        if (rocPackageConfig) {
+            usedPackages.push(packageName);
+            finalConfig = merge(finalConfig, rocPackageConfig);
+            finalMeta = merge(finalMeta, rocPackageMetaConfig);
         }
     };
 
     if (fileExists('package.json', directory)) {
-        // If extensions are defined we will use them to merge the configurations
-        if (newConfig.extensions && newConfig.extensions.length) {
-            newConfig.extensions.forEach(mergeExtension);
+        // If packages are defined we will use them to merge the configurations
+        if (newConfig.packages && newConfig.packages.length) {
+            newConfig.packages.forEach(mergedPackages);
         } else {
             const packageJson = getPackageJson(directory);
             getRocDependencies(packageJson)
-                .forEach(mergeExtension);
+                .forEach(mergedPackages);
         }
 
-        if (usedExtensions.length && debug) {
-            console.log(importantLabel('The following Roc extensions will be used:'), usedExtensions);
+        if (usedPackages.length && debug) {
+            console.log(importantLabel('The following Roc packages will be used:'), usedPackages);
         }
 
-        // Check for a mismatch between application configuration and extensions.
+        // Check for a mismatch between application configuration and packages.
         if (validate) {
             if (Object.keys(newConfig).length) {
                 console.log(validateConfigurationStructure(finalConfig, newConfig));
@@ -77,24 +76,32 @@ export function buildCompleteConfig(
     }
 
     return {
-        extensionConfig: finalConfig,
+        packageConfig: finalConfig,
         config: merge(finalConfig, newConfig),
         meta: merge(finalMeta, newMeta)
     };
 }
 
-function getExtension(extensionName, directory) {
+function getPackage(packageName, directory) {
     try {
-        const { baseConfig, metaConfig } = require(resolve.sync(extensionName, { basedir: directory }));
-        return { baseConfig, metaConfig };
+        const { rocPackageConfig, rocPackageMetaConfig } = require(resolve.sync(packageName, { basedir: directory }));
+        return {
+            rocPackageConfig,
+            rocPackageMetaConfig
+        };
     } catch (err) {
+        if (!/^Cannot find module/.test(err.message)) {
+            throw err;
+        }
+
         console.log(
-            errorLabel(
-                'Failed to load Roc extension ' + chalk.bold(extensionName) + '. ' +
+            warningLabel(
+                'Failed to load Roc package ' + chalk.bold(packageName) + '. ' +
                 'Make sure you have it installed. Try running:'
             ) + ' ' +
-            chalk.underline('npm install --save ' + extensionName)
+            chalk.underline('npm install --save ' + packageName)
         , '\n');
+
         return {};
     }
 }
@@ -257,9 +264,7 @@ export function generateCommandDocumentation({ settings }, { commands = {}, sett
         const objects = commands[command].arguments.map((argument) => {
             return {
                 cli: `${argument.name}`,
-                description: `${argument.description && argument.description + '  ' || ''}` +
-                    `${argument.required && chalk.green('Required') + '  ' || ''}` +
-                    `${argument.validation ? chalk.dim('(' + argument.validation(null, true).type + ')') : ''}`
+                description: createDescription(argument)
             };
         });
 
@@ -277,9 +282,7 @@ export function generateCommandDocumentation({ settings }, { commands = {}, sett
         const objects = commands[command].options.sort(onProperty('name')).map((option) => {
             return {
                 cli: option.shortname ? `-${option.shortname}, --${option.name}` : `--${option.name}`,
-                description: `${option.description && option.description + '  ' || ''}` +
-                    `${option.required && chalk.green('Required') + '  ' || ''}` +
-                    `${option.validation ? chalk.dim('(' + option.validation(null, true).type + ')') : ''}`
+                description: createDescription(option)
             };
         });
 
@@ -338,6 +341,13 @@ export function generateCommandDocumentation({ settings }, { commands = {}, sett
     rows.push(generateCommandDocsHelper(body, header, 'General options', 'cli'));
 
     return rows.join('\n');
+}
+
+function createDescription(param) {
+    return `${param.description && param.description + '  ' || ''}` +
+        `${param.required && chalk.green('Required') + '  ' || ''}` +
+        `${param.default && chalk.cyan(JSON.stringify(param.default)) + '  ' || ''}` +
+        `${!param.default && param.validation ? chalk.dim('(' + param.validation(null, true).type + ')') : ''}`;
 }
 
 function generateCommandDocsHelper(body, header, options, name) {
@@ -402,9 +412,13 @@ export function parseArguments(command, commands, args) {
     if (commands[command] && commands[command].arguments) {
         let parsedArguments = {};
         commands[command].arguments.forEach((argument, index) => {
-            const value = args[index];
+            let value = args[index];
 
-            if (argument.required && !value) {
+            if (value === undefined && argument.default) {
+                value = argument.default;
+            }
+
+            if (value === undefined && argument.required) {
                 /* eslint-disable no-process-exit */
                 console.log(errorLabel('Arguments problem') +
                     ` Required argument ${chalk.bold(argument.name)} was not provided.\n`);
@@ -412,7 +426,11 @@ export function parseArguments(command, commands, args) {
                 /* eslint-enable */
             }
 
-            if (value && argument.validation) {
+            if (value !== undefined && argument.convertor) {
+                value = argument.convertor(value);
+            }
+
+            if (value !== undefined && argument.validation) {
                 const validationResult = isValid(value, argument.validation);
                 if (validationResult !== true) {
                     try {
@@ -493,20 +511,7 @@ function getConvertor(value, name) {
             return value;
         };
     } else if (Array.isArray(value)) {
-        return (input) => {
-            let parsed;
-            try {
-                parsed = JSON.parse(input);
-            } catch (err) {
-                // Ignore this case
-            }
-
-            if (Array.isArray(parsed)) {
-                return parsed;
-            }
-
-            return input.toString().split(',');
-        };
+        return toArray;
     } else if (Number.isInteger(value)) {
         return (input) => parseInt(input, 10);
     } else if (!isString(value) && (!value || Object.keys(value).length === 0)) {
@@ -629,8 +634,12 @@ function parseCommandOptions(command, notManaged) {
                 name = option.shortname;
             }
 
+            if (value === undefined && option.default) {
+                value = option.default;
+            }
+
             // The option is required but no value was found
-            if (option.required && !value) {
+            if (value === undefined && option.required) {
                 const getOptions = () => {
                     const shortOption = option.shortname ? ' or ' + chalk.bold('-' + option.shortname) : '';
                     return chalk.bold('--' + option.name) + shortOption;
@@ -639,8 +648,12 @@ function parseCommandOptions(command, notManaged) {
                 infoOptions.push(`Required option ${getOptions()} was not provided.`);
             }
 
+            if (value !== undefined && option.convertor) {
+                value = option.convertor(value);
+            }
+
             // If we have a value and a validator
-            if (value && option.validation) {
+            if (value !== undefined && option.validation) {
                 const validationResult = isValid(value, option.validation);
                 if (validationResult !== true) {
                     try {

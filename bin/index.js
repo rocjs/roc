@@ -1,5 +1,7 @@
 #! /usr/bin/env node
 
+require('source-map-support').install();
+
 const runCli = require('../lib/cli').runCli;
 const validators = require('../lib/validation/validators');
 
@@ -39,7 +41,7 @@ runCli({
         'new': init,
         'markdown-commands': (rocCommandObject) => {
             console.log(markdownCommands(
-                rocCommandObject.extensionConfig,
+                rocCommandObject.packageConfig,
                 rocCommandObject.metaObject,
                 rocCommandObject.info,
                 rocCommandObject.parsedArguments.arguments

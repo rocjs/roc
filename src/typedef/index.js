@@ -14,7 +14,7 @@
  * @property {{version: string, name: string}} info - The object passed to runCli function with version and name.
  * @property {rocConfig} configObject - The final configuration object where everything has been merged.
  * @property {rocMetaConfig} metaObject - The final meta configuration object where everything has been merged.
- * @property {rocConfig} extensionConfig - The configuration object where all extensions has been merged.
+ * @property {rocConfig} packageConfig - The configuration object where all packages has been merged.
  * @property {rocArguments} parsedArguments - The parsed arguments given to the cli.
  * @property {rocOptions} parsedOptions - The parsed options given to the cli.
  */
@@ -26,7 +26,7 @@
  * @property {rocSettings} settings
  * @property {Object} commands
  * @property {Object} plugins
- * @property {string[]} extensions
+ * @property {string[]} packages
  */
 
 /**
