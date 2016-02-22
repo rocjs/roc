@@ -7,7 +7,7 @@
 
 ## Overview
 
-Defined in the [Roc configuration object](/docs/config/README.md), often referred to as `roc.config.js`, and contains settings defined by the the different extensions.
+Defined in the [Roc configuration object](/docs/config/README.md), often referred to as `roc.config.js`, and contains settings defined by the the different packages.
 
 Expects that the first level of properties are setting groups that are used for [reading settings](#read-settings) and when defining [commands](/docs/config/commands.md#meta). See example below for a valid structure.
 
@@ -24,7 +24,7 @@ module.exports = {
 }
 ```
 
-The name of the groups and the values in them is entirely up to the extensions to define.
+The name of the groups and the values in them is entirely up to the packages to define.
 
 ## Interacting with `settings`
 

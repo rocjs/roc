@@ -58,7 +58,7 @@ export const prompt = [{
 ```
 
 ### template/
-A folder containing files needed for a normal application with `package.json` and potentially `roc.config.js` and more. Important to note here is that Roc requires that there exist a `package.json` file in this directory and that it either has at least one dependency on a Roc extension matching the `roc-*` pattern or it has a `roc.config.js` file that defines [extensions](/docs/config/extensions.md).
+A folder containing files needed for a normal application with `package.json` and potentially `roc.config.js` and more. Important to note here is that Roc requires that there exist a `package.json` file in this directory and that it either has at least one dependency on a Roc package matching the `roc-*` pattern or it has a `roc.config.js` file that defines [packages](/docs/config/packages.md).
 
 All files in the directory will be parsed using a Handlebars syntax: looks like this `{{ KEY }}`. All occurrences of this pattern will be replaced if there is a match with something from the prompt. That is the `KEY` will be based on the `name` from the prompt property that can be seen above. For instance will occurrences of `{{ rocAppName }}` be replaced with `my-roc-app` if no other value is given when the prompt asks.
 

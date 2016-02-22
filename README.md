@@ -18,18 +18,18 @@ Roc provides a __cli__ for managing development, building and runtime configurat
 - Application code is exactly that; not __boilerplate__ or __glue__-like operations
 - Consistent configuration and runtime management
 
-Several opinionated extensions exist that can save a lot of time if aligned with your preferences, for example providing [Webpack](https://github.com/webpack), [Babel](https://babeljs.io/) and [React](http://facebook.github.io/react/) ready to be used.
+Several opinionated packages exist that can save a lot of time if aligned with your preferences, for example providing [Webpack](https://github.com/webpack), [Babel](https://babeljs.io/) and [React](http://facebook.github.io/react/) ready to be used.
 
 ## Introduction
 Development toolkit that makes it easier to create web applications and components without the boilerplate fragmentation and complex setup processes. It does this in a modular and extendable way.  
 
-Makes it easy to; using existing extensions:
+Makes it easy to; using existing packages:
 * Create production ready [React](http://facebook.github.io/react/) applications featuring universal rendering.
 * Create general web applications running on a [Koa](http://koajs.com/) server.
 * First class developer experience with hot reloading and [Browsersync](http://browsersync.io).
 * Best in class build setup using [Webpack](http://webpack.github.io/) and [Babel](http://babeljs.io).  
 
-Basically Roc composes some great open source tools and make them easy to use with a streamlined command line interface and configuration/extension system. Roc allows for overriding of every aspect of it, so it does not limit you.
+Basically Roc composes some great open source tools and make them easy to use with a streamlined command line interface and configuration/package system. Roc allows for overriding of every aspect of it, so it does not limit you.
 
 ## Get started
 ### Install Roc
@@ -63,18 +63,18 @@ roc start
 ```
 
 ### Where to go from here
-Read the documentation for the particular extension that is used for more details on what it does. A very common use-case is to make modifications to your `roc.config.js`. To get a better understanding of all the possible options in the extension use the `roc list-settings` command or `--help` for a specific command.
+Read the documentation for the particular package that is used for more details on what it does. A very common use-case is to make modifications to your `roc.config.js`. To get a better understanding of all the possible options in the package use the `roc list-settings` command or `--help` for a specific command.
 
-## Extensions
-Roc is highly flexible and makes it easy to create new extensions. It does not enforce limits on what the extensions do or how they do it. It is trivial to both create new extensions and to extend existing ones. For example it would be possible to create a alternative to `roc-web` that uses [Browserify](http://browserify.org/) instead of [Webpack](http://webpack.github.io/).
+## Packages
+Roc is highly flexible and makes it easy to create new packages. It does not enforce limits on what the packages do or how they do it. It is trivial to both create new packages and to extend existing ones. For example it would be possible to create a alternative to `roc-web` that uses [Browserify](http://browserify.org/) instead of [Webpack](http://webpack.github.io/).
 
-### Current Extensions
+### Current Packages
 | Project | Github page |
 | ------- | ----------- |
 | Roc Web | https://github.com/vgno/roc-web |
 | Roc Web React | https://github.com/vgno/roc-web-react |
 
-#### Example of tasks handled by these extensions
+#### Example of tasks handled by these packages
 - Building and bundling through [Webpack](http://webpack.github.io/).
 - Web server through [Koa](http://koajs.com/).
 - [React](http://facebook.github.io/react/) (complete with [Redux](https://github.com/rackt/redux) and server side rendering).

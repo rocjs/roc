@@ -3,6 +3,6 @@
 * [Introduction](/docs/Introduction.md)
 * [Configuration](/docs/config/README.md)
 * [Commands](/docs/Commands.md)
-* [Extensions](/docs/Extensions.md)
+* [Packages](/docs/Packages.md)
 * [Templates](/docs/Templates.md)
 * [JSDocs](/docs/JSDocs.md)

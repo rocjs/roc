@@ -2,7 +2,7 @@
 
 **Table of Contents**
 * [Configuration in applications](#configuration-in-applications)
-* [Configuration in extensions](#configuration-in-extensions)
+* [Configuration in packages](#configuration-in-packages)
 * [Environment overrides](#environment-overrides)
 * [Merge behavior](#merge-behavior)
 * [Example](#example)
@@ -16,7 +16,7 @@ The file should export an object that can contain the following properties:
 * [`settings`](/docs/config/settings.md)
 * [`commands`](/docs/config/commands.md)
 * [`plugins`](/docs/config/plugins.md)
-* [`extensions`](/docs/config/extensions.md)
+* [`packages`](/docs/config/packages.md)
 
 ### Override working directory
 ```
@@ -30,8 +30,8 @@ roc COMMAND --config path/to/roc.config.js
 ```
 You can override the current the location and name for the `roc.config.js` file using the `-c, --config` option. The path can be either relative to the current working directory or absolute.
 
-## Configuration in extensions
-The section above talked about how configuration files are managed in applications but it holds mostly true for extensions as well. They follow the same structure in `roc.config.js`; however they must manually be managed, meaning they can basically be called anything and be located anywhere.
+## Configuration in packages
+The section above talked about how configuration files are managed in applications but it holds mostly true for packages as well. They follow the same structure in `roc.config.js`; however they must manually be managed, meaning they can basically be called anything and be located anywhere.
 
 They also have the option to export a meta configuration file, a `roc.config.meta.js` file. This file is important to add extra data that is non-existing in the `roc.config.js` file.
 
@@ -52,9 +52,9 @@ If a configuration file path is provided by environment variable `ROC_CONFIG_PAT
 Roc will append `ROC_CONFIG_SETTINGS` to the settings the first time someone reads the configuration if it's defined. It should be a stringified object that can be converted with `JSON.parse`.
 
 ## Merge behavior
-One big part of the configuration management in Roc is how configuration files are merged. Application configurations, and by default in extensions, are deeply merged using [deep-extend](https://www.npmjs.com/package/deep-extend).
+One big part of the configuration management in Roc is how configuration files are merged. Application configurations, and by default in package, are deeply merged using [deep-extend](https://www.npmjs.com/package/deep-extend).
 
-This results in that the merge is based on properties and values for those properties. Duplicated properties will overwrite each other. That means for instance that arrays will not be magically merged but rather overwrite the old value. A benefit of this is that it becomes trivial to override something defined in an extension.
+This results in that the merge is based on properties and values for those properties. Duplicated properties will overwrite each other. That means for instance that arrays will not be magically merged but rather overwrite the old value. A benefit of this is that it becomes trivial to override something defined in an package.
 
 ## Example
 
