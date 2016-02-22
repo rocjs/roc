@@ -1,8 +1,8 @@
 module.exports = {
-    baseConfig: {
+    rocPackageConfig: {
         settings: {}
     },
-    metaConfig: {
+    rocPackageMetaConfig: {
         settings: {}
     }
 };

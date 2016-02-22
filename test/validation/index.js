@@ -28,10 +28,15 @@ describe('roc', () => {
                     .toBeA('string');
             });
 
-            it('should throw if validator is not a function or RegExp', () => {
+            it('should throw if validator is defined but not a function or RegExp', () => {
                 expect(isValid)
-                    .withArgs('value')
+                    .withArgs('value', 2)
                     .toThrow();
+            });
+
+            it('should return true if validator is undefined', () => {
+                expect(isValid('value'))
+                    .toBe(true);
             });
         });
 

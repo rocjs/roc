@@ -24,7 +24,7 @@ describe('roc', () => {
 
             beforeEach(() => {
                 resolveSync = expect.spyOn(require('resolve'), 'sync')
-                    .andReturn(join(__dirname, 'data', 'mock-extension.js'));
+                    .andReturn(join(__dirname, 'data', 'mock-package.js'));
             });
 
             afterEach(() => {
@@ -34,12 +34,12 @@ describe('roc', () => {
 
             it('should correctly build configuration objects', () => {
                 return consoleMockWrapper((log) => {
-                    const result = buildCompleteConfig(true, {}, {}, {settings: {}, mismatch: {}}, {settings: {}},
+                    const result = buildCompleteConfig(true, {settings: {}, mismatch: {}}, {settings: {}}, {}, {},
                         join(__dirname, 'data', 'valid'), true);
 
-                    expect(log.calls[0].arguments[0]).toInclude('following Roc extensions will be');
+                    expect(log.calls[0].arguments[0]).toInclude('following Roc packages will be');
                     expect(result).toEqual({
-                        extensionConfig: {settings: {}},
+                        packageConfig: {settings: {}},
                         config: {settings: {}, mismatch: {}},
                         meta: {settings: {}}
                     });
@@ -325,11 +325,3 @@ General options:
         });
     });
 });
-
-/*
-    generateCommandsDocumentation
-    generateCommandDocumentation
-    parseOptions
-    parseArguments
-    buildCompleteConfig
-*/

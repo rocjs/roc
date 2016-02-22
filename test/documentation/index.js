@@ -10,12 +10,12 @@ import {
 describe('roc', () => {
     describe('documentation', () => {
         describe('generateMarkdownDocumentation', () => {
-            it('should return emptry string when reciving empty input', () => {
+            it('should return empty text string when receiving empty input', () => {
                 expect(generateMarkdownDocumentation({
                     settings: {}
                 }, {
                     settings: {}
-                })).toEqual('');
+                })).toEqual('No settings available.');
             });
 
             it('should return a simple markdown table given input', () => {
@@ -43,12 +43,12 @@ describe('roc', () => {
         });
 
         describe('generateTextDocumentation', () => {
-            it('should return emptry string when reciving empty input', () => {
+            it('should return info text when receiving empty input', () => {
                 expect(generateTextDocumentation({
                     settings: {}
                 }, {
                     settings: {}
-                })).toEqual('');
+                })).toEqual('No settings available.');
             });
 
             it('should return a simple markdown table given input', () => {

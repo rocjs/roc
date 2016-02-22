@@ -82,7 +82,7 @@ describe('roc', () => {
                         debug: false,
                         info: info,
                         configObject: config,
-                        extensionConfig: config,
+                        packageConfig: config,
                         metaObject: meta,
                         parsedArguments: { arguments: { artifact: undefined }, rest: [] },
                         parsedOptions: { options: { list: undefined }, rest: {} }
@@ -100,7 +100,7 @@ describe('roc', () => {
                         debug: true,
                         info: info,
                         configObject: config,
-                        extensionConfig: config,
+                        packageConfig: config,
                         metaObject: meta,
                         parsedArguments: { arguments: { artifact: undefined }, rest: [] },
                         parsedOptions: { options: { list: undefined }, rest: {} }
@@ -128,7 +128,7 @@ describe('roc', () => {
                         debug: false,
                         info: info,
                         configObject: newConfig,
-                        extensionConfig: config,
+                        packageConfig: config,
                         metaObject: meta,
                         parsedArguments: { arguments: { artifact: undefined }, rest: [] },
                         parsedOptions: { options: { list: undefined }, rest: {} }
