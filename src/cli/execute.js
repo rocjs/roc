@@ -1,4 +1,5 @@
-import { spawn } from 'child_process';
+import { join } from 'path';
+import { spawn, spawnSync } from 'child_process';
 
 /**
  * Executes a command string.
@@ -11,32 +12,91 @@ import { spawn } from 'child_process';
  */
 export function execute(command) {
     const parallelCommands = command.split(/ & /);
-    return executeNext(parallelCommands);
+    return executeParallel(parallelCommands);
 }
 
-function executeNext(parallelCommands) {
+function executeParallel(parallelCommands, path = process.cwd()) {
     const syncCommand = parallelCommands.shift();
     if (syncCommand) {
-        return Promise.all([runCommand(syncCommand), executeNext(parallelCommands)]);
+        return Promise.all([executeCommand(syncCommand, path), executeParallel(parallelCommands, path)]);
     }
     return Promise.resolve();
 }
 
-function runCommand(syncCommand) {
+function executeCommand(syncCommand, path = process.cwd()) {
     const syncCommands = syncCommand.split(/ && /);
+    return runCommand(syncCommands, path);
+}
+
+function runCommand(syncCommands, path = process.cwd()) {
     const command = syncCommands.shift();
-    const parts = command.split(/\s+/g);
-    const cmd = parts[0];
-    const args = parts.slice(1);
-    return new Promise((resolve) => {
-        spawn(cmd, args, { stdio: 'inherit' })
-            .on('exit', function(code) {
-                if (code) {
-                    /* eslint-disable no-process-exit */
-                    return process.exit(code);
-                    /* eslint-enable */
-                }
-                executeNext(syncCommands).then(resolve);
-            });
+
+    if (command) {
+        const parts = command.split(/\s+/g);
+        const cmd = parts[0];
+        const args = parts.slice(1);
+
+        // If the command is to change directory we will carry the path over to the next command.
+        if (cmd === 'cd') {
+            return runCommand(syncCommands, join(path, args[0]));
+        }
+
+        return new Promise((resolve, reject) => {
+            spawn(cmd, args, { stdio: 'inherit', cwd: path })
+                .on('exit', (code) => {
+                    if (code) {
+                        return reject(code);
+                    }
+
+                    return runCommand(syncCommands, path).then(resolve);
+                });
+        });
+    }
+    return Promise.resolve();
+}
+
+/**
+ * Executes a command string in a synchronous manner.
+ *
+ * Quite simple in its current state and should be expected to change in the future.
+ * Can manage multiple commands if they are divided by either & or &&. Important that there is spacing on both sides.
+ *
+ * @param {string} command - A command string that should run.
+ */
+export function executeSync(command) {
+    // Will run them in parallel anyway, nothing we can do about it currently
+    const parallelCommands = command.split(/ & /);
+    parallelCommands.forEach((syncCommand) => {
+        const syncCommands = syncCommand.split(/ && /);
+        const status = runCommandSync(syncCommands);
+
+        if (status) {
+            /* eslint-disable no-process-exit */
+            process.exit(status);
+            /* eslint-enable */
+        }
     });
+}
+
+function runCommandSync(syncCommands, path = process.cwd()) {
+    const command = syncCommands.shift();
+
+    if (command) {
+        const parts = command.split(/\s+/g);
+        const cmd = parts[0];
+        const args = parts.slice(1);
+
+        // If the command is to change directory we will carry the path over to the next command.
+        if (cmd === 'cd') {
+            return runCommandSync(syncCommands, join(path, args[0]));
+        }
+
+        const { status } = spawnSync(cmd, args, { stdio: 'inherit', cwd: path });
+
+        if (status) {
+            return status;
+        }
+
+        return runCommandSync(syncCommands, path);
+    }
 }
