@@ -44,11 +44,13 @@ function runCommand(syncCommands, path = process.cwd()) {
         return new Promise((resolve, reject) => {
             spawn(cmd, args, { stdio: 'inherit', cwd: path })
                 .on('exit', (code) => {
-                    if (code) {
+                    if (code !== 0) {
                         return reject(code);
                     }
 
-                    return runCommand(syncCommands, path).then(resolve);
+                    return runCommand(syncCommands, path)
+                        .then(resolve)
+                        .catch(reject);
                 });
         });
     }
