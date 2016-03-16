@@ -1,7 +1,7 @@
 # [Roc](http://www.getroc.org)
 Build __web applications__ and __components__ using modern JavaScript libraries easily.
 
-Quickly create products powered by libraries like [React](http://facebook.github.io/react/) and [Redux](https://github.com/rackt/redux) ready for deployment in production with minimal additional setup.  
+Quickly create products powered by libraries like [React](http://facebook.github.io/react/) and [Redux](https://github.com/rackt/redux) ready for deployment in production with minimal additional setup using tools like [Webpack](https://github.com/webpack) and [Babel](https://babeljs.io/) .  
 
 ![stability beta](https://img.shields.io/badge/stability-beta-yellow.svg)
 [![roc](https://img.shields.io/npm/v/roc.svg)](https://www.npmjs.com/package/roc)
@@ -13,12 +13,11 @@ Quickly create products powered by libraries like [React](http://facebook.github
 ## At a glance
 Roc provides a __cli__ for managing development, building and runtime configuration. It also boasts an architecture that sweeps complexity of __npm library compositions__ away from your application.
 
-
 - Orchestration complexity moved away from your applications or components
 - Application code is exactly that; not __boilerplate__ or __glue__-like operations
 - Consistent configuration and runtime management
 
-Several opinionated packages exist that can save a lot of time if aligned with your preferences, for example providing [Webpack](https://github.com/webpack), [Babel](https://babeljs.io/) and [React](http://facebook.github.io/react/) ready to be used.
+Several opinionated packages and plugins exist that can save a lot of time if aligned with your preferences, for example providing [Webpack](https://github.com/webpack), [Babel](https://babeljs.io/) and [React](http://facebook.github.io/react/) ready to be used.
 
 ## Introduction
 Development toolkit that makes it easier to create web applications and components without the boilerplate fragmentation and complex setup processes. It does this in a modular and extendable way.  
