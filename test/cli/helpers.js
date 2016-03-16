@@ -7,7 +7,6 @@ import { consoleMockWrapper } from '../utils';
 import { isString } from '../../src/validation/validators';
 import {
     buildCompleteConfig,
-    getSuggestions,
     getMappings,
     parseOptions,
     parseArguments,
@@ -33,11 +32,10 @@ describe('roc', () => {
             });
 
             it('should correctly build configuration objects', () => {
-                return consoleMockWrapper((log) => {
+                return consoleMockWrapper(() => {
                     const result = buildCompleteConfig(true, {settings: {}, mismatch: {}}, {settings: {}}, {}, {},
                         join(__dirname, 'data', 'valid'), true);
 
-                    expect(log.calls[0].arguments[0]).toInclude('following Roc packages will be');
                     expect(result).toEqual({
                         packageConfig: {settings: {}},
                         config: {settings: {}, mismatch: {}},
@@ -64,11 +62,13 @@ describe('roc', () => {
             it('should tell the user that a required option is missing', () => {
                 return consoleMockWrapper(() => {
                     expect(parseOptions).withArgs({
-                    }, {}, {
-                        options: [{
-                            name: 'list',
-                            required: true
-                        }]
+                    }, {}, 'command', {
+                        command: {
+                            options: [{
+                                name: 'list',
+                                required: true
+                            }]
+                        }
                     }).toThrow();
                 });
             });
@@ -78,15 +78,17 @@ describe('roc', () => {
                     expect(parseOptions({
                         list: 'hello',
                         t: true
-                    }, {}, {
-                        options: [{
-                            name: 'list',
-                            required: true
-                        }, {
-                            name: 'test',
-                            shortname: 't',
-                            required: true
-                        }]
+                    }, {}, 'command', {
+                        command: {
+                            options: [{
+                                name: 'list',
+                                required: true
+                            }, {
+                                name: 'test',
+                                shortname: 't',
+                                required: true
+                            }]
+                        }
                     })).toEqual({
                         settings: {},
                         parsedOptions: {
@@ -101,12 +103,14 @@ describe('roc', () => {
                 return consoleMockWrapper(() => {
                     expect(parseOptions).withArgs({
                         list: 123
-                    }, {}, {
-                        options: [{
-                            name: 'list',
-                            validation: isString,
-                            required: true
-                        }]
+                    }, {}, 'command', {
+                        command: {
+                            options: [{
+                                name: 'list',
+                                validation: isString,
+                                required: true
+                            }]
+                        }
                     }).toThrow();
                 });
             });
@@ -198,9 +202,9 @@ describe('roc', () => {
 
 General options:
  -c, --config     Path to configuration file, will default to roc.config.js in current working directory.
- -d, --debug      Enable debug mode.
- -D, --directory  Path to working directory, will default to the current working directory. Can be either absolute or relative.
+ -d, --directory  Path to working directory, will default to the current working directory. Can be either absolute or relative.
  -h, --help       Output usage information.
+ -V, --verbose    Enable verbose mode.
  -v, --version    Output version number.
 `
                     /* eslint-enable */
@@ -247,30 +251,13 @@ runtime:
 
 General options:
  -c, --config     Path to configuration file, will default to roc.config.js in current working directory.
- -d, --debug      Enable debug mode.
- -D, --directory  Path to working directory, will default to the current working directory. Can be either absolute or relative.
+ -d, --directory  Path to working directory, will default to the current working directory. Can be either absolute or relative.
  -h, --help       Output usage information.
+ -V, --verbose    Enable verbose mode.
  -v, --version    Output version number.
 `
                     /* eslint-enable */
                 ));
-            });
-        });
-
-        describe('getSuggestions', () => {
-            it('should suggest the best alternative spelling', () => {
-                const suggestion = getSuggestions(['te'], ['tea', 'test', 'testing']);
-                expect(stripAnsi(suggestion)).toEqual('Did not understand te - Did you mean tea');
-            });
-
-            it('should inform when there is no possible alternative', () => {
-                const suggestion = getSuggestions(['te'], ['testing']);
-                expect(stripAnsi(suggestion)).toEqual('Did not understand te');
-            });
-
-            it('should add -- infront of suggestions if command is enabled', () => {
-                const suggestion = getSuggestions(['te'], ['test', 'tea', 'testing'], '--');
-                expect(stripAnsi(suggestion)).toEqual('Did not understand --te - Did you mean --tea');
             });
         });
 

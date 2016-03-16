@@ -65,7 +65,7 @@ describe('roc', () => {
                 expect(spyBuild).toHaveBeenCalledWith('client');
             });
 
-            it('should manage execptions correctly', () => {
+            it('should manage exceptions correctly', () => {
                 const spyLog = expect.spyOn(console, 'log');
                 const spyExit = expect.spyOn(process, 'exit');
 

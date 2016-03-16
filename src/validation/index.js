@@ -1,7 +1,7 @@
 import chalk from 'chalk';
 import { isPlainObject, isFunction, isRegExp } from 'lodash';
 
-import { errorLabel } from '../helpers/style';
+import { feedbackMessage, errorLabel } from '../helpers/style';
 
 /**
  * Helper to use a validator.
@@ -47,9 +47,12 @@ export function validate(settings, metaSettings = {}, toValidate = true) {
             });
         }
     } catch (err) {
-        /* eslint-disable no-process-exit, no-console */
-        console.log(errorLabel('Validation problem') + ' Configuration was not valid.\n');
-        console.log(err.message);
+        console.log(feedbackMessage(
+            errorLabel('Error', 'Validation Problem'),
+            'Configuration was not valid.\n\n' +
+            err.message
+        ));
+        /* eslint-disable no-process-exit */
         process.exit(1);
         /* eslint-enable */
     }

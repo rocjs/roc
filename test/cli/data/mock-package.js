@@ -1,8 +1,11 @@
 module.exports = {
-    rocPackageConfig: {
-        settings: {}
-    },
-    rocPackageMetaConfig: {
-        settings: {}
+    roc: {
+        name: 'roc-package-web',
+        config: {
+            settings: {}
+        },
+        meta: {
+            settings: {}
+        }
     }
 };

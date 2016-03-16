@@ -1,6 +1,6 @@
 const stat = require('fs').stat;
 
-stat('lib', function(error, statResult) {
+stat('lib', (error, statResult) => {
     if (error || !statResult.isDirectory()) {
         console.warn(
             '-'.repeat(85) + '\n' +
@@ -12,7 +12,7 @@ stat('lib', function(error, statResult) {
         );
 
         try {
-            var execSync = require('child_process').execSync;
+            const execSync = require('child_process').execSync;
             execSync('npm run build', { stdio: 'inherit' });
         } catch (e) {
             console.error(

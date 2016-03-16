@@ -7,7 +7,7 @@ import chalk from 'chalk';
 
 import { get, getVersions } from './helpers/github';
 import { validRocProject } from './helpers/general';
-import { error as styleError, warning, important, ok } from '../helpers/style';
+import { error, warning, info, ok } from '../helpers/style';
 
 /* This should be fetched from a server!
  */
@@ -77,7 +77,7 @@ function getTemplate(template) {
     if (template.indexOf('/') === -1) {
         const selectedTemplate = templates.find((elem) => elem.identifier === template);
         if (!selectedTemplate) {
-            console.log(styleError('Invalid template name given.'));
+            console.log(error('Invalid template name given.'));
             /* eslint-disable no-process-exit */
             process.exit(1);
             /* eslint-enable */
@@ -109,7 +109,7 @@ function fetchTemplate(toFetch, selectVersion, directory, list) {
                     warning(`Selected template version not found, using ${chalk.bold(actualVersion)}`)
                 );
             } else if (!selectedVersion) {
-                console.log(important(`Using ${chalk.bold(actualVersion)} as template version`));
+                console.log(info(`Using ${chalk.bold(actualVersion)} as template version`));
             }
 
             return get(toFetch, actualVersion);
@@ -117,7 +117,7 @@ function fetchTemplate(toFetch, selectVersion, directory, list) {
         .then((dirPath) => {
             if (!validRocProject(path.join(dirPath, 'template'))) {
                 /* eslint-disable no-process-exit */
-                console.log(styleError('Seems like this is not a Roc template.'));
+                console.log(error('Seems like this is not a Roc template.'));
                 process.exit(1);
                 /* eslint-enable */
             } else {
@@ -138,9 +138,9 @@ function fetchTemplate(toFetch, selectVersion, directory, list) {
                 });
             });
         })
-        .catch((error) => {
-            console.log(styleError('\nAn error occured during init!\n'));
-            console.error(error.message);
+        .catch((err) => {
+            console.log(error('\nAn error occured during init!\n'));
+            console.error(err.message);
             /* eslint-disable no-process-exit */
             process.exit(1);
             /* eslint-enable */
@@ -150,7 +150,7 @@ function fetchTemplate(toFetch, selectVersion, directory, list) {
 function getPrompt(dirPath) {
     try {
         return require(path.join(dirPath, 'roc.setup.js')).prompt;
-    } catch (error) {
+    } catch (err) {
         return require('./helpers/default-prompt').defaultPrompt;
     }
 }
@@ -158,7 +158,7 @@ function getPrompt(dirPath) {
 function showCompletionMessage(dirPath) {
     try {
         console.log(require(path.join(dirPath, 'roc.setup.js')).completionMessage);
-    } catch (error) {
+    } catch (err) {
         // Do nothing
     }
 }

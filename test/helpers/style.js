@@ -7,8 +7,8 @@ import {
     warningLabel,
     ok,
     okLabel,
-    important,
-    importantLabel
+    info,
+    infoLabel
 } from '../../src/helpers/style';
 import { makeGetterSpy } from '../utils';
 
@@ -18,7 +18,9 @@ describe('roc', () => {
             const chalk = require('chalk');
 
             describe('error', () => {
-                let red, bgRed, white;
+                let red;
+                let bgRed;
+                let white;
 
                 beforeEach(() => {
                     red = makeGetterSpy(chalk, 'red');
@@ -51,18 +53,18 @@ describe('roc', () => {
             });
 
             describe('warning', () => {
-                let yellow, bgYellow, white;
+                let yellow, bgYellow, black;
 
                 beforeEach(() => {
                     yellow = makeGetterSpy(chalk, 'yellow');
                     bgYellow = makeGetterSpy(chalk, 'bgYellow');
-                    white = makeGetterSpy(chalk, 'white');
+                    black = makeGetterSpy(chalk, 'black');
                 });
 
                 afterEach(() => {
                     yellow.restore();
                     bgYellow.restore();
-                    white.restore();
+                    black.restore();
                 });
 
                 describe('default', () => {
@@ -74,9 +76,9 @@ describe('roc', () => {
                 });
 
                 describe('label', () => {
-                    it('should chalk text white and background yellow', () => {
+                    it('should chalk text black and background yellow', () => {
                         const result = warningLabel('test');
-                        expect(white.called()).toBe(true);
+                        expect(black.called()).toBe(true);
                         expect(bgYellow.called()).toBe(true);
                         expect(result).toInclude('test');
                     });
@@ -116,7 +118,7 @@ describe('roc', () => {
                 });
             });
 
-            describe('important', () => {
+            describe('info', () => {
                 let cyan, bgCyan, black;
 
                 beforeEach(() => {
@@ -133,7 +135,7 @@ describe('roc', () => {
 
                 describe('default', () => {
                     it('should chalk text cyan', () => {
-                        const result = important('test');
+                        const result = info('test');
                         expect(cyan.called()).toBe(true);
                         expect(result).toInclude('test');
                     });
@@ -141,7 +143,7 @@ describe('roc', () => {
 
                 describe('label', () => {
                     it('should chalk text black and background cyan', () => {
-                        const result = importantLabel('test');
+                        const result = infoLabel('test');
                         expect(black.called()).toBe(true);
                         expect(bgCyan.called()).toBe(true);
                         expect(result).toInclude('test');

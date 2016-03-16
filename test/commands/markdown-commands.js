@@ -45,7 +45,7 @@ describe('roc', () => {
             it('should correctly generate documentation for available commands', () => {
                 expect(markdownCommands(mockConfig, mockMetaConfig, {
                     name: 'roc-test'
-                }, {}))
+                }, {}, {'hide-commands': []}))
                     /* eslint-disable max-len */
                     .toEqual(redent(trimNewlines(`
                         # Commands for \`roc-test\`
@@ -58,9 +58,9 @@ describe('roc', () => {
                         | Name            | Description                                                                                                   | Required |
                         | --------------- | ------------------------------------------------------------------------------------------------------------- | -------- |
                         | -c, --config    | Path to configuration file, will default to roc.config.js in current working directory.                       | No       |
-                        | -d, --debug     | Enable debug mode.                                                                                            | No       |
-                        | -D, --directory | Path to working directory, will default to the current working directory. Can be either absolute or relative. | No       |
+                        | -d, --directory | Path to working directory, will default to the current working directory. Can be either absolute or relative. | No       |
                         | -h, --help      | Output usage information.                                                                                     | No       |
+                        | -V, --verbose   | Enable verbose mode.                                                                                          | No       |
                         | -v, --version   | Output version number.                                                                                        | No       |
 
                         ## Commands
@@ -90,15 +90,15 @@ describe('roc', () => {
 
                         ### Arguments
 
-                        | Name       | Description | Required | Type |
-                        | ---------- | ----------- | -------- | ---- |
-                        | test       |             | No       |      |
+                        | Name       | Description | Required | Type | Default |
+                        | ---------- | ----------- | -------- | ---- | ------- |
+                        | test       |             | No       |      |         |
 
                         ### Command options
 
-                        | Name       | Description | Required | Type |
-                        | ---------- | ----------- | -------- | ---- |
-                        | -l, --list |             | Yes      |      |
+                        | Name       | Description | Required | Type | Default |
+                        | ---------- | ----------- | -------- | ---- | ------- |
+                        | -l, --list |             | Yes      |      |         |
 
                         ### Settings options
                         * group1
@@ -115,7 +115,7 @@ describe('roc', () => {
             it('should correctly generate documentation for available commands with settings links', () => {
                 expect(markdownCommands(mockConfig, mockMetaConfig, {
                     name: 'roc-test'
-                }, {'settings-link': '/docs/Settings.md'}))
+                }, {'settings-link': '/docs/Settings.md'}, {'hide-commands': []}))
                     /* eslint-disable max-len */
                     .toEqual(redent(trimNewlines(`
                         # Commands for \`roc-test\`
@@ -128,9 +128,9 @@ describe('roc', () => {
                         | Name            | Description                                                                                                   | Required |
                         | --------------- | ------------------------------------------------------------------------------------------------------------- | -------- |
                         | -c, --config    | Path to configuration file, will default to roc.config.js in current working directory.                       | No       |
-                        | -d, --debug     | Enable debug mode.                                                                                            | No       |
-                        | -D, --directory | Path to working directory, will default to the current working directory. Can be either absolute or relative. | No       |
+                        | -d, --directory | Path to working directory, will default to the current working directory. Can be either absolute or relative. | No       |
                         | -h, --help      | Output usage information.                                                                                     | No       |
+                        | -V, --verbose   | Enable verbose mode.                                                                                          | No       |
                         | -v, --version   | Output version number.                                                                                        | No       |
 
                         ## Commands
@@ -160,15 +160,15 @@ describe('roc', () => {
 
                         ### Arguments
 
-                        | Name       | Description | Required | Type |
-                        | ---------- | ----------- | -------- | ---- |
-                        | test       |             | No       |      |
+                        | Name       | Description | Required | Type | Default |
+                        | ---------- | ----------- | -------- | ---- | ------- |
+                        | test       |             | No       |      |         |
 
                         ### Command options
 
-                        | Name       | Description | Required | Type |
-                        | ---------- | ----------- | -------- | ---- |
-                        | -l, --list |             | Yes      |      |
+                        | Name       | Description | Required | Type | Default |
+                        | ---------- | ----------- | -------- | ---- | ------- |
+                        | -l, --list |             | Yes      |      |         |
 
                         ### Settings options
                         * [group1](/docs/Settings.md#group1)

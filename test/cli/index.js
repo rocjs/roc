@@ -60,7 +60,7 @@ describe('roc', () => {
                 return consoleMockWrapper((log) => {
                     runCli({version: '1.0.1', name: 'roc-test' }, config, {},
                         ['node', '/some/path', 'command']);
-                    expect(log.calls[1].arguments[0]).toInclude('Did not understand');
+                    expect(log.calls[0].arguments[0]).toInclude('Did not understand');
                 });
             });
 
@@ -79,13 +79,15 @@ describe('roc', () => {
                         ['node', '/some/path', 'test']);
 
                     expect(spy.calls[0].arguments[0]).toEqual({
-                        debug: false,
+                        verbose: false,
                         info: info,
                         configObject: config,
                         packageConfig: config,
                         metaObject: meta,
                         parsedArguments: { arguments: { artifact: undefined }, rest: [] },
-                        parsedOptions: { options: { list: undefined }, rest: {} }
+                        parsedOptions: { options: { list: undefined }, rest: {} },
+                        hooks: {},
+                        actions: []
                     });
                 });
             });
@@ -94,16 +96,18 @@ describe('roc', () => {
                 return consoleMockWrapper(() => {
                     const info = {version: '1.0.1', name: 'roc-test' };
                     runCli(info, config, meta,
-                        ['node', '/some/path', 'test', '--debug']);
+                        ['node', '/some/path', 'test', '--verbose']);
 
                     expect(spy.calls[0].arguments[0]).toEqual({
-                        debug: true,
+                        verbose: true,
                         info: info,
                         configObject: config,
                         packageConfig: config,
                         metaObject: meta,
                         parsedArguments: { arguments: { artifact: undefined }, rest: [] },
-                        parsedOptions: { options: { list: undefined }, rest: {} }
+                        parsedOptions: { options: { list: undefined }, rest: {} },
+                        hooks: {},
+                        actions: []
                     });
                 });
             });
@@ -125,13 +129,15 @@ describe('roc', () => {
                     };
 
                     expect(spy.calls[0].arguments[0]).toEqual({
-                        debug: false,
+                        verbose: false,
                         info: info,
                         configObject: newConfig,
                         packageConfig: config,
                         metaObject: meta,
                         parsedArguments: { arguments: { artifact: undefined }, rest: [] },
-                        parsedOptions: { options: { list: undefined }, rest: {} }
+                        parsedOptions: { options: { list: undefined }, rest: {} },
+                        hooks: {},
+                        actions: []
                     });
                 });
             });

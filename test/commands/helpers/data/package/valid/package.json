@@ -1,5 +1,5 @@
 {
     "dependencies": {
-        "roc-x": "1.0"
+        "roc-package-x": "1.0"
     }
 }

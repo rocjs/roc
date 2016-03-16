@@ -1,4 +1,53 @@
 /**
+ * An object that contains everything that makes up a Roc extension.
+ *
+ * @typedef {Object} rocObject
+ * @property {rocConfig} config - Configuration object.
+ * @property {rocMetaConfig} meta - Meta configuration object.
+ * @property {rocBuildConfig} buildConfig - Function that takes the previous configuration and meta objects and returns
+    new ones.
+ * @property {Object<rocAction|function>} actions - An object with actions that should connect to the hooks.
+ * @property {Object<rocHook>} hooks - An object with hooks that should be registered, name of the key is the name of
+    the hook.
+ * @property {string[]} packages - The packages that the extensions builds on, should be something that Node can resolve
+    with `require`.
+ * @property {string[]} plugins - The plugins that the extensions builds on, should be something that Node can resolve
+    with `require`.
+ */
+
+/**
+ * A complete action object in Roc.
+ *
+ * @typedef {Object} rocAction
+ * @property {string} [extension] - For which extension this action should run.
+ * @property {string} [hook] - For which hook this action should run.
+ * @property {string} [description] -A description on what it does, used for documentation generation and can use
+    Markdowns.
+ * @property {function} action - The action function that does the actual work, see documentation for more info here.
+ */
+
+/**
+ * A complete hook object in Roc.
+ *
+ * @typedef {Object} rocHook
+ * @property {boolean} [hasCallback] - If the hook uses a callback to do something with what the action returns.
+ * @property {Object} [initialValue] - An initial value used for the hook.
+ * @property {function} [returns] - A Roc validation function that should verify the value that the action returns.
+ * @property {Object[]} arguments - The arguments that the hook will call the actions with.
+ * @property {string} [description] -A description on what it does, used for documentation generation and can use
+    Markdowns.
+ */
+
+/**
+ * Function that returns new configuration and meta configuration.
+ *
+ * @typedef {function} rocBuildConfig
+ * @param {rocConfig} config - Configuration object.
+ * @param {rocMetaConfig} meta - Meta configuration object.
+ * @returns {{config: rocConfig, meta: rocMetaConfig}} - The new configuration and meta configuration object.
+ */
+
+/**
  * Validator info object.
  *
  * @typedef {Object} infoObject
@@ -7,7 +56,7 @@
  */
 
 /**
- * Validator info object.
+ * Roc command object.
  *
  * @typedef {Object} rocCommandObject
  * @property {boolean} debug - If debug mode has been enabled.
@@ -17,6 +66,8 @@
  * @property {rocConfig} packageConfig - The configuration object where all packages has been merged.
  * @property {rocArguments} parsedArguments - The parsed arguments given to the cli.
  * @property {rocOptions} parsedOptions - The parsed options given to the cli.
+ * @property {Object} hooks - The registered hooks.
+ * @property {Object[]} actions - The registered actions.
  */
 
 /**
@@ -25,8 +76,8 @@
  * @typedef {Object} rocConfig
  * @property {rocSettings} settings
  * @property {Object} commands
- * @property {Object} plugins
  * @property {string[]} packages
+ * @property {function} action
  */
 
 /**
@@ -35,7 +86,6 @@
  * @typedef {Object} rocMetaConfig
  * @property {rocMetaSettings} settings
  * @property {Object} commands
- * @property {Object} plugins
  */
 
  /**

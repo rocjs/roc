@@ -1,5 +1,6 @@
 import expect from 'expect';
 import redent from 'redent';
+import trimNewlines from 'trim-newlines';
 import stripAnsi from 'strip-ansi';
 
 import {
@@ -11,7 +12,7 @@ describe('roc', () => {
     describe('documentation', () => {
         describe('generateMarkdownDocumentation', () => {
             it('should return empty text string when receiving empty input', () => {
-                expect(generateMarkdownDocumentation({
+                expect(generateMarkdownDocumentation('roc-test', {
                     settings: {}
                 }, {
                     settings: {}
@@ -19,7 +20,7 @@ describe('roc', () => {
             });
 
             it('should return a simple markdown table given input', () => {
-                expect(generateMarkdownDocumentation({
+                expect(generateMarkdownDocumentation('roc-test', {
                     settings: {
                         runtime: {
                             port: 80,
@@ -29,15 +30,17 @@ describe('roc', () => {
                 }, {
                     settings: {}
                 })).toEqual(
-                    redent(`
-                        # Runtime
+                    redent(trimNewlines(`
+                        # Settings for \`roc-test\`
+
+                        ## Runtime
 
                         | Name    | Description | Path            | CLI option | Default | Type      | Required |
                         | ------- | ----------- | --------------- | ---------- | ------- | --------- | -------- |
                         | enabled |             | runtime.enabled | --enabled  | \`false\` | \`Unknown\` | No       |
                         | port    |             | runtime.port    | --port     | \`80\`    | \`Unknown\` | No       |
                         `
-                    )
+                    ))
                 );
             });
         });
@@ -72,7 +75,7 @@ describe('roc', () => {
                 });
                 /* eslint-disable max-len */
                 expect(stripAnsi(table)).toEqual(
-                    redent(`
+                    redent(trimNewlines(`
                         runtime
 
                         | Description                                                                                           | Path         | Default | CLI option | Required |
@@ -80,7 +83,7 @@ describe('roc', () => {
                         | Short description                                                                                     | runtime.on   | false   | --on       | No       |
                         | Some really long description string that is over 100 characters long so we can test the cut off and … | runtime.port | 80      | --port     | No       |
                         `
-                    )
+                    ))
                 );
                 /* eslint-enable */
             });

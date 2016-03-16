@@ -1,6 +1,6 @@
 {
     "name": "roc-test",
     "dependencies": {
-        "roc-web": "1.0.0"
+        "roc-package-web": "1.0.0"
     }
 }
