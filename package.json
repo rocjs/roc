@@ -17,6 +17,7 @@
     "test:unit": "NODE_ENV=test mocha --compilers js:babel-register test --recursive",
     "test:unit:watch": "npm run test:unit -- --watch",
     "check": "ncu",
+    "docs": "node bin/index.js markdown-commands > docs/DefaultCommands.md",
     "esdocs": "esdoc -c esdoc.json",
     "prepublish": "npm test && npm run clean && npm run build && npm run esdocs",
     "postinstall": "node ./scripts/post-install.js"

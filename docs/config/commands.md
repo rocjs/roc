@@ -7,7 +7,7 @@
 * [Meta](#meta)
 
 ## Overview
-Defined in the [Roc configuration object](/docs/config/README.md), often referred to as `roc.config.js`, and contains commands defined by the the different packages and Roc itself.
+Defined in the [Roc configuration object](/docs/config/README.md), often referred to as `roc.config.js`, and contains commands defined by the the different extensions and Roc itself.
 
 This is a powerful feature of Roc that makes it easy to add new commands that can be used with the cli. Roc expects that the commands key have keys for each of the commands that is either a string or a function. See example below for a valid structure.
 
@@ -28,17 +28,19 @@ A string command is a string that will managed as if it was typed into the termi
 ## Function command
 The function will be invoked with an object with the following properties.
 ```
-debug               If debug mode has been enabled
+verbose             If verbose mode has been enabled
 info                The object that is passed to the runCli function with version and name
 configObject        The final configuration object where everything has been merged
 metaObject          The final meta configuration object where everything has been merged
 packageConfig       The configuration object where all packages has been merged
 parsedArguments     The parsed arguments given to the cli
 parsedOptions       The parsed options given to the cli
+hooks               The currently registered hooks
+actions             The currently registered actions
 ```
 
-### debug
-Debug will be set to `true` if `-d, --debug` was set. Should be used to print extra information when running the command. Otherwise it will be `false`.
+### verbose
+Debug will be set to `true` if `-V, --verbose` was set. Should be used to print extra information when running the command. Otherwise it will be `false`.
 
 ### info
 The same information object as `runCli` was invoked with, meaning it should have two properties.
@@ -73,6 +75,43 @@ rest                Options that was not matched with anything
 ```
 
 What options that are parsed is defined by the related meta object for the command. See below for more information.
+
+### hooks
+Will be an object where the key is the extension that the hook belongs to and the value is an object with the hooks definitions, [see what it can contain here](/docs/Extensions.md#hooks).
+
+```js
+/**
+ * A complete hook object in Roc.
+ *
+ * @typedef {Object} rocHook
+ * @property {boolean} [hasCallback] - If the hook uses a callback to do something with what the action returns.
+ * @property {Object} [initialValue] - An initial value used for the hook.
+ * @property {function} [returns] - A Roc validation function that should verify the value that the action returns.
+ * @property {Object[]} arguments - The arguments that the hook will call the actions with.
+ * @property {string} [description] -A description on what it does, used for documentation generation and can use Markdowns.
+ */
+```
+
+### actions
+Will be an array with objects with the following properties:
+```
+name                The extension that the actions belongs to.
+actions             Action objects.
+```
+
+[See definition of action object here.](/docs/Extensions.md#actions)
+
+```js
+/**
+ * A complete action object in Roc.
+ *
+ * @typedef {Object} rocAction
+ * @property {string} [extension] - For which extension this action should run.
+ * @property {string} [hook] - For which hook this action should run.
+ * @property {string} [description] -A description on what it does, used for documentation generation and can use Markdowns.
+ * @property {function} action - The action function that does the actual work, see documentation for more info here.
+ */
+```
 
 ## Meta
 

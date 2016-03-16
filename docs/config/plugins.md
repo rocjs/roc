@@ -1,10 +1,7 @@
 # `plugins`
 
-## Overview
+Defined in the [Roc configuration object](/docs/config/README.md), often referred to as `roc.config.js`, and contains what plugins to use.
 
-Defined in the [Roc configuration object](/docs/config/README.md), often referred to as `roc.config.js`, and contains "plugin" defined by the the different packages.
+By default will Roc search through the `dependencies` and `devDependencies` within the project `package.json` and find every dependency that matches `roc-plugin-*` and use that for the application. The order of them will be based on the order within `package.json` and is not guaranteed. External factors like `npm` can modify this.
 
-This should be an object but otherwise it's entirely up to the packages on how it should look. For more information please look at the different packages.
-
-## Meta
-Meta is used to add descriptions for the plugins and is expected to match the structure of the plugins. Currently this is not used anywhere, but still serves a purpose as a way to document the package plugins.
+If a specific order is needed, a subset of the Roc plugins should be used or if some plugins do not match the pattern mentioned above one can define exactly what should be used and in what order using `plugins`. This should be an array with names to installed modules. Roc will expect that these modules have a default export that exposes at least an object named `roc`.

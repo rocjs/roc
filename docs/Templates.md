@@ -7,6 +7,16 @@ Templates should be located on Github and use tags for versions, if no tags are 
 
 A recommendation is to use versions following this pattern `vX.Y.Z`.
 
+## Internal flow when installing a template using `init`/`new`
+
+1. Downloads the template and places it in a temporary directory.
+2. Installs setup dependencies using `npm install`.
+3. Shows prompt asking for basic data.
+4. Replaces values in template/.
+5. Renames the template `package.json` to `.roc` for history purposes, to know what template created the application.
+6. Moves the files to the current working directory.
+7. Runs `npm install` again but this time on the `package.json` that was in the template/ directory.
+
 ## Structure
 A standard structure of a template is:
 ```
