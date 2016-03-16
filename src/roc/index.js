@@ -1,7 +1,7 @@
-import { isBoolean, isPath, isArray, isString } from '../../lib/validation/validators';
-import { toArray } from '../../lib/convertors';
-import init from '../../lib/commands/init';
-import markdownCommands from '../../lib/commands/markdown-commands';
+import { isBoolean, isPath, isArray, isString } from '../validation/validators';
+import { toArray } from '../convertors';
+import init from '../commands/init';
+import markdownCommands from '../commands/markdown-commands';
 
 const { name } = require('../../package.json');
 
