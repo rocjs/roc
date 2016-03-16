@@ -79,7 +79,7 @@ export default function markdownCommands(config, metaConfig, { name }, args, opt
 
         rows.push('## Commands');
         commands.forEach((command) => {
-            rows.push(`* [${command}](#${command})`);
+            rows.push(`* [${command}](#${command.replace(':', '')})`);
         });
 
         rows.push('');
