@@ -1,4 +1,6 @@
 # [Roc](http://www.getroc.org)
+![logo](roc.png)
+
 Build __web applications__ and __components__ using modern JavaScript libraries easily.
 
 Quickly create products powered by libraries like [React](http://facebook.github.io/react/) and [Redux](https://github.com/rackt/redux) ready for deployment in production with minimal additional setup using tools like [Webpack](https://github.com/webpack) and [Babel](https://babeljs.io/) .  
