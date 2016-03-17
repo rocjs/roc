@@ -32,7 +32,7 @@ function runCommand(syncCommands, path = process.cwd()) {
     const command = syncCommands.shift();
 
     if (command) {
-        const parts = command.split(/\s+/g);
+        const parts = command.match(/(?:[^\s"]+|"[^"]*")+/g);
         const cmd = parts[0];
         const args = parts.slice(1);
 
@@ -84,7 +84,7 @@ function runCommandSync(syncCommands, path = process.cwd()) {
     const command = syncCommands.shift();
 
     if (command) {
-        const parts = command.split(/\s+/g);
+        const parts = command.match(/(?:[^\s"]+|"[^"]*")+/g);
         const cmd = parts[0];
         const args = parts.slice(1);
 
