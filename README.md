@@ -28,7 +28,7 @@ Makes it easy to; using existing packages:
 * First class developer experience with hot reloading and [Browsersync](http://browsersync.io).
 * Best in class build setup using [Webpack](http://webpack.github.io/) and [Babel](http://babeljs.io).  
 
-Basically Roc composes some great open source tools and make them easy to use with a streamlined command line interface and configuration/package system. Roc allows for overriding of every aspect of it, so it does not limit you.
+Basically Roc composes some great open source tools and make them easy to use with a streamlined command line interface and configuration/extension system. Roc allows for overriding of every aspect of it, so it does not limit you.
 
 ## Get started
 ### Install Roc
@@ -64,16 +64,21 @@ roc start
 ### Where to go from here
 Read the documentation for the particular package that is used for more details on what it does. A very common use-case is to make modifications to your `roc.config.js`. To get a better understanding of all the possible options in the package use the `roc list-settings` command or `--help` for a specific command.
 
-## Packages
-Roc is highly flexible and makes it easy to create new packages. It does not enforce limits on what the packages do or how they do it. It is trivial to both create new packages and to extend existing ones. For example it would be possible to create a alternative to `roc-web` that uses [Browserify](http://browserify.org/) instead of [Webpack](http://webpack.github.io/).
+## Extensions
+Roc is highly flexible and makes it easy to create new extensions. It does not enforce limits on what the extensions do or how they do it. It is trivial to both create new extensions in the form of packages and pluginsas well as to extend existing ones. For example it would be possible to create a alternative to `roc-web` that uses [Browserify](http://browserify.org/) instead of [Webpack](http://webpack.github.io/).
 
-### Current Packages
+### Current Official Packages
 | Project | Github page |
 | ------- | ----------- |
-| Roc Web | https://github.com/vgno/roc-web |
-| Roc Web React | https://github.com/vgno/roc-web-react |
+| _To be added_ |   &nbsp;  |
 
-#### Example of tasks handled by these packages
+### Current Offical Plugins
+| Project | Github page |
+| ------- | ----------- |
+| _To be added_ |   &nbsp;  |
+
+
+### Example of tasks handled by these extensions
 - Building and bundling through [Webpack](http://webpack.github.io/).
 - Web server through [Koa](http://koajs.com/).
 - [React](http://facebook.github.io/react/) (complete with [Redux](https://github.com/rackt/redux) and server side rendering).
