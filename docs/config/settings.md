@@ -35,7 +35,6 @@ To make it easy to read the settings `roc` exports a function named `getSettings
 See [commands documentation](/docs/config/commands.md#meta).
 
 ## Meta
-
 The meta settings, often referred to as `roc.config.meta.js` are used to add **descriptions** and **validations** to the settings as a way to both document them and make interaction with them better. See example below for a valid structure.
 
 ```js

@@ -4,7 +4,7 @@ import path from 'path';
 import {
     getAbsolutePath,
     fileExists,
-    getRocDependencies,
+    getRocPackageDependencies,
     getPackageJson
 } from '../../src/helpers';
 
@@ -41,15 +41,15 @@ describe('roc', () => {
                         'roc': '^1.0.0',
                         'koa': '^2.0.0',
                         'colors': '*',
-                        'roc-web': '^1.1.0'
+                        'roc-package-web': '^1.1.0'
                     },
                     devDependencies: {
                         'mocha': '2.3.4',
-                        'roc-test': '2.0.1'
+                        'roc-package-test': '2.0.1'
                     }
                 };
-                expect(getRocDependencies(packageJson))
-                    .toEqual(['roc-web', 'roc-test']);
+                expect(getRocPackageDependencies(packageJson))
+                    .toEqual(['roc-package-web', 'roc-package-test']);
             });
         });
 

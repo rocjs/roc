@@ -1,5 +1,3 @@
-import 'source-map-support/register';
-
 import path from 'path';
 import fs from 'fs';
 
@@ -38,18 +36,33 @@ export function fileExists(filepath, directory) {
 }
 
 /**
- * Gets the Roc dependencies from a `package.json`.
+ * Gets the Roc package dependencies from a `package.json`.
  *
- * @param {Object} packageJson - A package.json file to fetch Roc dependencies from.
+ * @param {Object} packageJson - A package.json file to fetch Roc package dependencies from.
  *
- * @returns {string[]} - An array with Roc extensions that exists in the `package.json`.
+ * @returns {string[]} - An array with Roc packages that exists in the `package.json`.
  */
-export function getRocDependencies(packageJson) {
+export function getRocPackageDependencies(packageJson) {
     return [
         ...Object.keys(packageJson.dependencies || {}),
         ...Object.keys(packageJson.devDependencies || {})
     ]
-    .filter((dependency) => /^roc(-.+)/.test(dependency));
+    .filter((dependency) => /^roc-package(-.+)/.test(dependency));
+}
+
+/**
+ * Gets the Roc plugin dependencies from a `package.json`.
+ *
+ * @param {Object} packageJson - A package.json file to fetch Roc plugin dependencies from.
+ *
+ * @returns {string[]} - An array with Roc plugins that exists in the `package.json`.
+ */
+export function getRocPluginDependencies(packageJson) {
+    return [
+        ...Object.keys(packageJson.dependencies || {}),
+        ...Object.keys(packageJson.devDependencies || {})
+    ]
+    .filter((dependency) => /^roc-plugin(-.+)/.test(dependency));
 }
 
 /**

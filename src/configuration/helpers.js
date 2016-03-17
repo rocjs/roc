@@ -1,10 +1,8 @@
-import 'source-map-support/register';
-
 import fs from 'fs';
 import chalk from 'chalk';
 
 import { getAbsolutePath } from '../helpers';
-import { error as styleError, warning } from '../helpers/style';
+import { feedbackMessage, errorLabel, warningLabel } from '../helpers/style';
 
 /* Make sure that we only print some feedback once */
 let onceApp = true;
@@ -24,21 +22,26 @@ let onceApp = true;
  * @param {string} applicationConfigPath - Path to application configuration file. Can be either relative or absolute.
  * @param {string} [directory=process.cwd()] - The directory to resolve relative paths to. By default will use the
  *     current working directory.
- * @param {boolean} [debug=false] - If extra information should be printed.
+ * @param {boolean} [verbose=false] - If extra information should be printed.
  *
  * @returns {object} - The application configuration object.
  * @throws {Error} - When an invalid path override is specified.
  */
-export function getApplicationConfig(applicationConfigPath, directory = process.cwd(), debug = false) {
+export function getApplicationConfig(applicationConfigPath, directory = process.cwd(), verbose = false) {
+    if (applicationConfigPath === false) {
+        return {};
+    }
+
     const configPath = getAbsolutePath(process.env.ROC_CONFIG_PATH || applicationConfigPath, directory);
 
     if (onceApp && applicationConfigPath && process.env.ROC_CONFIG_PATH) {
         onceApp = false;
-        console.log(
-            styleError('You have configured a location for the application configuration file but the ' +
+        console.log(feedbackMessage(
+            warningLabel('Warning', 'Configuration'),
+            'You have configured a location for the application configuration file but the ' +
             'environment variable ' + chalk.bold('ROC_CONFIG_PATH') + ' is set and that will be used instead. The ' +
-            'path that will be used is ' + configPath)
-        , '\n');
+            'path that will be used is ' + configPath
+        ));
     }
 
     try {
@@ -49,7 +52,7 @@ export function getApplicationConfig(applicationConfigPath, directory = process.
             }
         }
     } catch (err) {
-        throwUnaccessableFile(configPath);
+        manageUnaccessibleFile(configPath);
     }
 
     // Return correct project configuration with fallback to empty object
@@ -58,22 +61,37 @@ export function getApplicationConfig(applicationConfigPath, directory = process.
         const config = require(appConfigPath);
 
         if (Object.keys(config).length === 0) {
-            console.log(warning('The configuration file at ' + chalk.bold(appConfigPath) + ' was empty.'));
+            console.log(feedbackMessage(
+                warningLabel('Warning', 'Configuration'),
+                'The configuration file at ' + chalk.bold(appConfigPath) + ' was empty.'
+            ));
         }
 
         return config;
-    } catch (error) {
-        if (error.constructor === SyntaxError) {
-            console.log(warning('Something is wrong with the configuration file at ' + chalk.bold(appConfigPath) +
-                ' and it will be ignored. Received: ' + chalk.underline(error.message)));
-        } else if (debug) {
-            console.log(warning('Could not find the configuration file at ' + chalk.bold(appConfigPath)));
+    } catch (err) {
+        if (err.constructor === SyntaxError) {
+            console.log(feedbackMessage(
+                warningLabel('Warning', 'Configuration'),
+                'Something is wrong with the configuration file at ' + chalk.bold(appConfigPath) +
+                ' and it will be ignored. Received: ' + chalk.underline(err.message)
+            ));
+        } else if (verbose) {
+            console.log(feedbackMessage(
+                warningLabel('Warning', 'Configuration'),
+                `Could not find the configuration file at ${chalk.bold(appConfigPath)}.`
+            ));
         }
 
         return {};
     }
 }
 
-function throwUnaccessableFile(configPath) {
-    throw new Error(`Configuration path points to unaccessable file: ${configPath}`);
+function manageUnaccessibleFile(configPath) {
+    console.log(feedbackMessage(
+        errorLabel('Error', 'Configuration'),
+        `Configuration path points to unaccessible file: ${configPath}`
+    ));
+    /* eslint-disable no-process-exit */
+    process.exit(1);
+    /* eslint-enable */
 }

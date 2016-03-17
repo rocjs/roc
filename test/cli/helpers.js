@@ -7,7 +7,6 @@ import { consoleMockWrapper } from '../utils';
 import { isString } from '../../src/validation/validators';
 import {
     buildCompleteConfig,
-    getSuggestions,
     getMappings,
     parseOptions,
     parseArguments,
@@ -24,7 +23,7 @@ describe('roc', () => {
 
             beforeEach(() => {
                 resolveSync = expect.spyOn(require('resolve'), 'sync')
-                    .andReturn(join(__dirname, 'data', 'mock-extension.js'));
+                    .andReturn(join(__dirname, 'data', 'mock-package.js'));
             });
 
             afterEach(() => {
@@ -33,13 +32,12 @@ describe('roc', () => {
             });
 
             it('should correctly build configuration objects', () => {
-                return consoleMockWrapper((log) => {
-                    const result = buildCompleteConfig(true, {}, {}, {settings: {}, mismatch: {}}, {settings: {}},
+                return consoleMockWrapper(() => {
+                    const result = buildCompleteConfig(true, {settings: {}, mismatch: {}}, {settings: {}}, {}, {},
                         join(__dirname, 'data', 'valid'), true);
 
-                    expect(log.calls[0].arguments[0]).toInclude('following Roc extensions will be');
                     expect(result).toEqual({
-                        extensionConfig: {settings: {}},
+                        packageConfig: {settings: {}},
                         config: {settings: {}, mismatch: {}},
                         meta: {settings: {}}
                     });
@@ -64,11 +62,13 @@ describe('roc', () => {
             it('should tell the user that a required option is missing', () => {
                 return consoleMockWrapper(() => {
                     expect(parseOptions).withArgs({
-                    }, {}, {
-                        options: [{
-                            name: 'list',
-                            required: true
-                        }]
+                    }, {}, 'command', {
+                        command: {
+                            options: [{
+                                name: 'list',
+                                required: true
+                            }]
+                        }
                     }).toThrow();
                 });
             });
@@ -78,15 +78,17 @@ describe('roc', () => {
                     expect(parseOptions({
                         list: 'hello',
                         t: true
-                    }, {}, {
-                        options: [{
-                            name: 'list',
-                            required: true
-                        }, {
-                            name: 'test',
-                            shortname: 't',
-                            required: true
-                        }]
+                    }, {}, 'command', {
+                        command: {
+                            options: [{
+                                name: 'list',
+                                required: true
+                            }, {
+                                name: 'test',
+                                shortname: 't',
+                                required: true
+                            }]
+                        }
                     })).toEqual({
                         settings: {},
                         parsedOptions: {
@@ -101,12 +103,14 @@ describe('roc', () => {
                 return consoleMockWrapper(() => {
                     expect(parseOptions).withArgs({
                         list: 123
-                    }, {}, {
-                        options: [{
-                            name: 'list',
-                            validation: isString,
-                            required: true
-                        }]
+                    }, {}, 'command', {
+                        command: {
+                            options: [{
+                                name: 'list',
+                                validation: isString,
+                                required: true
+                            }]
+                        }
                     }).toThrow();
                 });
             });
@@ -198,9 +202,9 @@ describe('roc', () => {
 
 General options:
  -c, --config     Path to configuration file, will default to roc.config.js in current working directory.
- -d, --debug      Enable debug mode.
- -D, --directory  Path to working directory, will default to the current working directory. Can be either absolute or relative.
+ -d, --directory  Path to working directory, will default to the current working directory. Can be either absolute or relative.
  -h, --help       Output usage information.
+ -V, --verbose    Enable verbose mode.
  -v, --version    Output version number.
 `
                     /* eslint-enable */
@@ -247,30 +251,13 @@ runtime:
 
 General options:
  -c, --config     Path to configuration file, will default to roc.config.js in current working directory.
- -d, --debug      Enable debug mode.
- -D, --directory  Path to working directory, will default to the current working directory. Can be either absolute or relative.
+ -d, --directory  Path to working directory, will default to the current working directory. Can be either absolute or relative.
  -h, --help       Output usage information.
+ -V, --verbose    Enable verbose mode.
  -v, --version    Output version number.
 `
                     /* eslint-enable */
                 ));
-            });
-        });
-
-        describe('getSuggestions', () => {
-            it('should suggest the best alternative spelling', () => {
-                const suggestion = getSuggestions(['te'], ['tea', 'test', 'testing']);
-                expect(stripAnsi(suggestion)).toEqual('Did not understand te - Did you mean tea');
-            });
-
-            it('should inform when there is no possible alternative', () => {
-                const suggestion = getSuggestions(['te'], ['testing']);
-                expect(stripAnsi(suggestion)).toEqual('Did not understand te');
-            });
-
-            it('should add -- infront of suggestions if command is enabled', () => {
-                const suggestion = getSuggestions(['te'], ['test', 'tea', 'testing'], '--');
-                expect(stripAnsi(suggestion)).toEqual('Did not understand --te - Did you mean --tea');
             });
         });
 
@@ -290,46 +277,38 @@ General options:
                 it('boolean', () => {
                     const mappings = getMappings(complexDocumentObject);
                     return consoleMockWrapper((log) => {
-                        expect(mappings['build-useDefaultReduxMiddlewares'].convertor(true)).toBe(true);
-                        expect(mappings['build-useDefaultReduxMiddlewares'].convertor(false)).toBe(false);
+                        expect(mappings['build-useDefaultReduxMiddlewares'].converter(true)).toBe(true);
+                        expect(mappings['build-useDefaultReduxMiddlewares'].converter(false)).toBe(false);
 
-                        expect(mappings['build-useDefaultReduxMiddlewares'].convertor('true')).toBe(true);
-                        expect(mappings['build-useDefaultReduxMiddlewares'].convertor('false')).toBe(false);
+                        expect(mappings['build-useDefaultReduxMiddlewares'].converter('true')).toBe(true);
+                        expect(mappings['build-useDefaultReduxMiddlewares'].converter('false')).toBe(false);
 
-                        expect(mappings['build-useDefaultReduxMiddlewares'].convertor('asd')).toBe(true);
+                        expect(mappings['build-useDefaultReduxMiddlewares'].converter('asd')).toBe(true);
                         expect(log.calls[0].arguments[0]).toInclude('Invalid value given');
                     });
                 });
 
                 it('array', () => {
                     const mappings = getMappings(complexDocumentObject);
-                    expect(mappings['build-assets'].convertor('[1, 2, 3]')).toEqual([1, 2, 3]);
-                    expect(mappings['build-assets'].convertor('1,2,3')).toEqual(['1', '2', '3']);
+                    expect(mappings['build-assets'].converter('[1, 2, 3]')).toEqual([1, 2, 3]);
+                    expect(mappings['build-assets'].converter('1,2,3')).toEqual(['1', '2', '3']);
                 });
 
                 it('number', () => {
                     const mappings = getMappings(complexDocumentObject);
-                    expect(mappings['build-port'].convertor('1234')).toEqual(1234);
+                    expect(mappings['build-port'].converter('1234')).toEqual(1234);
                 });
 
                 it('object', () => {
                     const mappings = getMappings(complexDocumentObject);
-                    expect(mappings['build-obj'].convertor('{"value": 12}')).toEqual({ value: 12 });
+                    expect(mappings['build-obj'].converter('{"value": 12}')).toEqual({ value: 12 });
                 });
 
                 it('string', () => {
                     const mappings = getMappings(complexDocumentObject);
-                    expect(mappings['build-outputName'].convertor('some string')).toEqual('some string');
+                    expect(mappings['build-outputName'].converter('some string')).toEqual('some string');
                 });
             });
         });
     });
 });
-
-/*
-    generateCommandsDocumentation
-    generateCommandDocumentation
-    parseOptions
-    parseArguments
-    buildCompleteConfig
-*/

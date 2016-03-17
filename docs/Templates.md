@@ -7,6 +7,16 @@ Templates should be located on Github and use tags for versions, if no tags are 
 
 A recommendation is to use versions following this pattern `vX.Y.Z`.
 
+## Internal flow when installing a template using `init`/`new`
+
+1. Downloads the template and places it in a temporary directory.
+2. Installs setup dependencies using `npm install`.
+3. Shows prompt asking for basic data.
+4. Replaces values in template/.
+5. Renames the template `package.json` to `.roc` for history purposes, to know what template created the application.
+6. Moves the files to the current working directory.
+7. Runs `npm install` again but this time on the `package.json` that was in the template/ directory.
+
 ## Structure
 A standard structure of a template is:
 ```
@@ -58,7 +68,7 @@ export const prompt = [{
 ```
 
 ### template/
-A folder containing files needed for a normal application with `package.json` and potentially `roc.config.js` and more. Important to note here is that Roc requires that there exist a `package.json` file in this directory and that it either has at least one dependency on a Roc extension matching the `roc-*` pattern or it has a `roc.config.js` file that defines [extensions](/docs/config/extensions.md).
+A folder containing files needed for a normal application with `package.json` and potentially `roc.config.js` and more. Important to note here is that Roc requires that there exist a `package.json` file in this directory and that it either has at least one dependency on a Roc package matching the `roc-*` pattern or it has a `roc.config.js` file that defines [packages](/docs/config/packages.md).
 
 All files in the directory will be parsed using a Handlebars syntax: looks like this `{{ KEY }}`. All occurrences of this pattern will be replaced if there is a match with something from the prompt. That is the `KEY` will be based on the `name` from the prompt property that can be seen above. For instance will occurrences of `{{ rocAppName }}` be replaced with `my-roc-app` if no other value is given when the prompt asks.
 

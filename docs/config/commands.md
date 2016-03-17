@@ -28,17 +28,19 @@ A string command is a string that will managed as if it was typed into the termi
 ## Function command
 The function will be invoked with an object with the following properties.
 ```
-debug               If debug mode has been enabled
+verbose             If verbose mode has been enabled
 info                The object that is passed to the runCli function with version and name
 configObject        The final configuration object where everything has been merged
 metaObject          The final meta configuration object where everything has been merged
-extensionConfig     The configuration object where all extensions has been merged
+packageConfig       The configuration object where all packages has been merged
 parsedArguments     The parsed arguments given to the cli
 parsedOptions       The parsed options given to the cli
+hooks               The currently registered hooks
+actions             The currently registered actions
 ```
 
-### debug
-Debug will be set to `true` if `-d, --debug` was set. Should be used to print extra information when running the command. Otherwise it will be `false`.
+### verbose
+Debug will be set to `true` if `-V, --verbose` was set. Should be used to print extra information when running the command. Otherwise it will be `false`.
 
 ### info
 The same information object as `runCli` was invoked with, meaning it should have two properties.
@@ -48,13 +50,13 @@ name                The name of the running cli
 ```
 
 ### configObject
-Will contain the final configuration object. This means that the application configuration will have been merged with the configuration from the extensions as well as the settings that was defined in the cli at runtime.
+Will contain the final configuration object. This means that the application configuration will have been merged with the configuration from the packages as well as the settings that was defined in the cli at runtime.
 
 ### metaObject
-Will contain the final meta configuration object. This means that the application configuration will have been merged with the configuration from the extensions.
+Will contain the final meta configuration object. This means that the application configuration will have been merged with the configuration from the packages.
 
-### extensionConfig
-The configuration object where all extensions has been merged. This means that this does not contain the application configuration or settings set in the cli.
+### packageConfig
+The configuration object where all packages has been merged. This means that this does not contain the application configuration or settings set in the cli.
 
 ### parsedArguments
 An object with the following properties:
@@ -73,6 +75,43 @@ rest                Options that was not matched with anything
 ```
 
 What options that are parsed is defined by the related meta object for the command. See below for more information.
+
+### hooks
+Will be an object where the key is the extension that the hook belongs to and the value is an object with the hooks definitions, [see what it can contain here](/docs/Extensions.md#hooks).
+
+```js
+/**
+ * A complete hook object in Roc.
+ *
+ * @typedef {Object} rocHook
+ * @property {boolean} [hasCallback] - If the hook uses a callback to do something with what the action returns.
+ * @property {Object} [initialValue] - An initial value used for the hook.
+ * @property {function} [returns] - A Roc validation function that should verify the value that the action returns.
+ * @property {Object[]} arguments - The arguments that the hook will call the actions with.
+ * @property {string} [description] -A description on what it does, used for documentation generation and can use Markdowns.
+ */
+```
+
+### actions
+Will be an array with objects with the following properties:
+```
+name                The extension that the actions belongs to.
+actions             Action objects.
+```
+
+[See definition of action object here.](/docs/Extensions.md#actions)
+
+```js
+/**
+ * A complete action object in Roc.
+ *
+ * @typedef {Object} rocAction
+ * @property {string} [extension] - For which extension this action should run.
+ * @property {string} [hook] - For which hook this action should run.
+ * @property {string} [description] -A description on what it does, used for documentation generation and can use Markdowns.
+ * @property {function} action - The action function that does the actual work, see documentation for more info here.
+ */
+```
 
 ## Meta
 
@@ -102,6 +141,8 @@ name                The name of the option
 validation          A validation function that should return true if valid or false/error string if not
 required            If the option is required
 description         A text that describes how the option can be used
+default             A default value that should be used for the argument
+converter           A converter that should be used to convert the input to the correct format
 ```
 
 The order of the objects in the array matter, they are parsed in the same order.
@@ -120,6 +161,12 @@ Set to true if the option is required.
 #### description
 Describes what it can be used for.
 
+#### default
+The value that the argument will hold if nothing is provided by the user.
+
+#### converter
+A converter to be used to convert the input to some other format. Should match the following format `(input) => output`.
+
 ### options
 An array of objects that can have the following properties:
 ```
@@ -128,6 +175,8 @@ shortname           The shortname for the option, will be used as '-shortname' a
 validation          A validation function that should return true if valid or false/error string if not
 required            If the option is required
 description         A text that describes how the option can be used
+default             A default value that should be used for the argument
+converter           A converter that should be used to convert the input to the correct format
 ```
 
 #### name
@@ -146,6 +195,12 @@ Set to true if the option is required.
 
 #### description
 Describes what it can be used for.
+
+#### default
+The value that the option will hold if nothing is provided by the user.
+
+#### converter
+A converter to be used to convert the input to some other format. Should match the following format `(input) => output`.
 
 ### settings
 What roc settings the command uses, can either be true or an array with strings of the groups to use. Will determine what information the cli outputs, what it parses and what it validates.

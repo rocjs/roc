@@ -1,5 +1,3 @@
-import 'source-map-support/register';
-
 import deepExtend from 'deep-extend';
 import { isUndefined } from 'lodash';
 import stripAnsi from 'strip-ansi';
@@ -73,8 +71,8 @@ export default function generateTable(initalDocumentationObject, header, setting
         return rows;
     };
 
-    const recursiveHelper = (documentationObject = []) => {
-        const spacing = settings.compact ? [] : [''];
+    const recursiveHelper = (documentationObject = [], first = false) => {
+        const spacing = settings.compact || first ? [] : [''];
 
         return documentationObject.map((group) => {
             let rows = [];
@@ -100,7 +98,7 @@ export default function generateTable(initalDocumentationObject, header, setting
         }).reduce((a, b) => a.concat(b), spacing);
     };
 
-    return recursiveHelper(initalDocumentationObject).join('\n');
+    return recursiveHelper(initalDocumentationObject, true).join('\n');
 }
 
 function createLengthObject(initalElements, header, initalLengths, isHeader = false) {

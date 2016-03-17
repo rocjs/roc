@@ -1,8 +1,8 @@
 # Introduction
 
-Roc is a tool that assists with creating web applications. It has the ambitious goal of making it easier to work with modern web development, that at times can be quite complex and requires a lot of tooling and configuration.
+Roc is a tool that assists with creating JavaScript applications. It has the ambitious goal of making it easier to work with modern web development, that at times can be quite complex and requires a lot of tooling and configuration.
 
-Roc itself aims to be as agnostic as possible and uses opinionated extensions to provide different frameworks and libraries along with templates for easy and predictable initial setup. When putting all of this together you get an ecosystem that enables developers to focus on writing great software and away from tooling and juggling boilerplates that degrade over time.
+Roc itself aims to be as agnostic as possible and uses opinionated packages to provide different frameworks and libraries along with templates for easy and predictable initial setup. When putting all of this together you get an ecosystem that enables developers to focus on writing great software and away from tooling and juggling boilerplates that degrade over time.
 
 By design it will in most cases be trivial to migrate away from Roc _(based on extensions)_ because the code you write is the same code you would write without it; just with less boilerplate, setup and dependency management.
 
@@ -25,7 +25,7 @@ Roc itself serves multiple purposes in the ecosystem and will mainly manage the 
 You do not need to install Roc globally but it will make it easier to use the `init` command to easily setup new projects.
 
 ### Extensions
-Extensions are opinionated modules that add code and configuration needed to build a project as well as some application code in some instances to make it easier to write applications and remove boilerplate.
+Extensions are opinionated modules that add code and configuration needed to build a project as well as some application code in some instances to make it easier to write applications and remove boilerplate. They come in two forms, packages and plugins.
 
 A Roc application can use multiple extensions that together composes everything needed to create an application. That is both build management, testing,  application code, CLI commands and much more.
 

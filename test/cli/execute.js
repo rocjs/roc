@@ -3,50 +3,94 @@ import expect from 'expect';
 describe('execute', () => {
     let spawn;
     let execute;
+    let cwd;
 
-    before(() => {
-        spawn = expect.spyOn(require('child_process'), 'spawn')
-            .andReturn({
-                on: (name, cb) => {
-                    // To simulate that the commands take some time to complete.
-                    setTimeout(() => cb(), 1);
-                }
+    describe('unsuccessfully runs', () => {
+        const status = 5;
+        before(() => {
+            spawn = expect.spyOn(require('child_process'), 'spawn')
+                .andReturn({
+                    on: (name, cb) => {
+                        // To simulate that the commands take some time to complete.
+                        process.nextTick(() => cb(status));
+                    }
+                });
+            // Make sure it's empty otherwise the spy above will not work. When using coverage it will be set by default
+            delete require.cache[require.resolve('../../src/cli/execute')];
+
+            execute = require('../../src/cli/execute').execute;
+        });
+
+        afterEach(() => {
+            spawn.calls = [];
+        });
+
+        after(() => {
+            spawn.restore();
+        });
+
+        it('should fail correctly', () => {
+            return execute('roc --help').catch((statusCode) => {
+                expect(statusCode).toEqual(status);
             });
-        // Make sure it's empty otherwise the spy above will not work. When using coverage it will be set beforehand.
-        delete require.cache[require.resolve('../../src/cli/execute')];
-
-        execute = require('../../src/cli/execute').execute;
-    });
-
-    afterEach(() => {
-        spawn.calls = [];
-    });
-
-    after(() => {
-        spawn.restore();
-    });
-
-    it('multiple commands are correctly passed through', () => {
-        return execute('roc -h & git log & npm view roc').then(() => {
-            expect(spawn.calls.length).toEqual(3);
-            expect(spawn.calls[0].arguments.slice(0, 2)).toEqual(['roc', ['-h']]);
-            expect(spawn.calls[1].arguments.slice(0, 2)).toEqual(['git', ['log']]);
-            expect(spawn.calls[2].arguments.slice(0, 2)).toEqual(['npm', ['view', 'roc']]);
         });
     });
 
-    it('single command is correctly passed through', () => {
-        return execute('roc --help').then(() => {
-            expect(spawn.calls.length).toEqual(1);
-            expect(spawn.calls[0].arguments.slice(0, 2)).toEqual(['roc', ['--help']]);
-        });
-    });
+    describe('successfully runs', () => {
+        before(() => {
+            cwd = expect.spyOn(process, 'cwd').andReturn('/');
+            spawn = expect.spyOn(require('child_process'), 'spawn')
+                .andReturn({
+                    on: (name, cb) => {
+                        // To simulate that the commands take some time to complete.
+                        process.nextTick(() => cb(0));
+                    }
+                });
+            // Make sure it's empty otherwise the spy above will not work. When using coverage it will be set by default
+            delete require.cache[require.resolve('../../src/cli/execute')];
 
-    it('should handle sync commands correctly and run in the correct order', () => {
-        return execute('npm view roc && roc -h & git log').then(() => {
-            expect(spawn.calls[0].arguments.slice(0, 1)).toEqual(['npm']);
-            expect(spawn.calls[1].arguments.slice(0, 1)).toEqual(['git']);
-            expect(spawn.calls[2].arguments.slice(0, 1)).toEqual(['roc']);
+            execute = require('../../src/cli/execute').execute;
+        });
+
+        afterEach(() => {
+            spawn.calls = [];
+            cwd.calls = [];
+        });
+
+        after(() => {
+            spawn.restore();
+            cwd.restore();
+        });
+
+        it('multiple commands are correctly passed through', () => {
+            return execute('roc -h & git log & npm view roc').then(() => {
+                expect(spawn.calls.length).toEqual(3);
+                expect(spawn.calls[0].arguments.slice(0, 2)).toEqual(['roc', ['-h']]);
+                expect(spawn.calls[1].arguments.slice(0, 2)).toEqual(['git', ['log']]);
+                expect(spawn.calls[2].arguments.slice(0, 2)).toEqual(['npm', ['view', 'roc']]);
+            });
+        });
+
+        it('single command is correctly passed through', () => {
+            return execute('roc --help').then(() => {
+                expect(spawn.calls.length).toEqual(1);
+                expect(spawn.calls[0].arguments.slice(0, 2)).toEqual(['roc', ['--help']]);
+            });
+        });
+
+        it('should handle sync commands correctly and run in the correct order', () => {
+            return execute('npm view roc && roc -h & git log').then(() => {
+                expect(spawn.calls[0].arguments.slice(0, 1)).toEqual(['npm']);
+                expect(spawn.calls[1].arguments.slice(0, 1)).toEqual(['git']);
+                expect(spawn.calls[2].arguments.slice(0, 1)).toEqual(['roc']);
+            });
+        });
+
+        it('should handle cd commands correctly', () => {
+            return execute('cd my/path && roc && cd other/path && roc').then(() => {
+                expect(spawn.calls[0].arguments[2].cwd).toEqual('/my/path');
+                expect(spawn.calls[1].arguments[2].cwd).toEqual('/my/path/other/path');
+            });
         });
     });
 });

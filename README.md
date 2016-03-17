@@ -1,7 +1,7 @@
 # [Roc](http://www.getroc.org)
 Build __web applications__ and __components__ using modern JavaScript libraries easily.
 
-Quickly create products powered by libraries like [React](http://facebook.github.io/react/) and [Redux](https://github.com/rackt/redux) ready for deployment in production with minimal additional setup.  
+Quickly create products powered by libraries like [React](http://facebook.github.io/react/) and [Redux](https://github.com/rackt/redux) ready for deployment in production with minimal additional setup using tools like [Webpack](https://github.com/webpack) and [Babel](https://babeljs.io/) .  
 
 ![stability beta](https://img.shields.io/badge/stability-beta-yellow.svg)
 [![roc](https://img.shields.io/npm/v/roc.svg)](https://www.npmjs.com/package/roc)
@@ -13,17 +13,16 @@ Quickly create products powered by libraries like [React](http://facebook.github
 ## At a glance
 Roc provides a __cli__ for managing development, building and runtime configuration. It also boasts an architecture that sweeps complexity of __npm library compositions__ away from your application.
 
-
 - Orchestration complexity moved away from your applications or components
 - Application code is exactly that; not __boilerplate__ or __glue__-like operations
 - Consistent configuration and runtime management
 
-Several opinionated extensions exist that can save a lot of time if aligned with your preferences, for example providing [Webpack](https://github.com/webpack), [Babel](https://babeljs.io/) and [React](http://facebook.github.io/react/) ready to be used.
+Several opinionated packages and plugins exist that can save a lot of time if aligned with your preferences, for example providing [Webpack](https://github.com/webpack), [Babel](https://babeljs.io/) and [React](http://facebook.github.io/react/) ready to be used.
 
 ## Introduction
 Development toolkit that makes it easier to create web applications and components without the boilerplate fragmentation and complex setup processes. It does this in a modular and extendable way.  
 
-Makes it easy to; using existing extensions:
+Makes it easy to; using existing packages:
 * Create production ready [React](http://facebook.github.io/react/) applications featuring universal rendering.
 * Create general web applications running on a [Koa](http://koajs.com/) server.
 * First class developer experience with hot reloading and [Browsersync](http://browsersync.io).
@@ -63,18 +62,23 @@ roc start
 ```
 
 ### Where to go from here
-Read the documentation for the particular extension that is used for more details on what it does. A very common use-case is to make modifications to your `roc.config.js`. To get a better understanding of all the possible options in the extension use the `roc list-settings` command or `--help` for a specific command.
+Read the documentation for the particular package that is used for more details on what it does. A very common use-case is to make modifications to your `roc.config.js`. To get a better understanding of all the possible options in the package use the `roc list-settings` command or `--help` for a specific command.
 
 ## Extensions
-Roc is highly flexible and makes it easy to create new extensions. It does not enforce limits on what the extensions do or how they do it. It is trivial to both create new extensions and to extend existing ones. For example it would be possible to create a alternative to `roc-web` that uses [Browserify](http://browserify.org/) instead of [Webpack](http://webpack.github.io/).
+Roc is highly flexible and makes it easy to create new extensions. It does not enforce limits on what the extensions do or how they do it. It is trivial to both create new extensions in the form of packages and plugins as well as to extend existing ones. For example it would be possible to create a alternative to `roc-web` that uses [Browserify](http://browserify.org/) instead of [Webpack](http://webpack.github.io/).
 
-### Current Extensions
+### Current Official Packages
 | Project | Github page |
 | ------- | ----------- |
-| Roc Web | https://github.com/vgno/roc-web |
-| Roc Web React | https://github.com/vgno/roc-web-react |
+| _To be added_ |   &nbsp;  |
 
-#### Example of tasks handled by these extensions
+### Current Offical Plugins
+| Project | Github page |
+| ------- | ----------- |
+| _To be added_ |   &nbsp;  |
+
+
+### Example of tasks handled by these extensions
 - Building and bundling through [Webpack](http://webpack.github.io/).
 - Web server through [Koa](http://koajs.com/).
 - [React](http://facebook.github.io/react/) (complete with [Redux](https://github.com/rackt/redux) and server side rendering).

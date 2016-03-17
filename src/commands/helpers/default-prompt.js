@@ -1,5 +1,3 @@
-import 'source-map-support/register';
-
 /**
  * The default prompt options.
  */

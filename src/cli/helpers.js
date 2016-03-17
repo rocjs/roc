@@ -1,9 +1,6 @@
-import 'source-map-support/register';
-
 import chalk from 'chalk';
-import { isPlainObject, isBoolean, isString, set, difference } from 'lodash';
+import { isPlainObject, isBoolean, isString, set, difference, isFunction } from 'lodash';
 import resolve from 'resolve';
-import leven from 'leven';
 import trimNewlines from 'trim-newlines';
 import redent from 'redent';
 
@@ -12,90 +9,217 @@ import keyboardDistance from './keyboard-distance';
 import buildDocumentationObject, { sortOnProperty } from '../documentation/build-documentation-object';
 import generateTable from '../documentation/generate-table';
 import { getDefaultValue } from '../documentation/helpers';
-import { fileExists, getRocDependencies, getPackageJson } from '../helpers';
+import { fileExists, getRocPackageDependencies, getRocPluginDependencies, getPackageJson } from '../helpers';
 import onProperty from '../helpers/on-property';
-import { throwError } from '../validation';
-import { isValid } from '../validation';
-import { warning, importantLabel, errorLabel, warningLabel } from '../helpers/style';
+import { isValid, throwError } from '../validation';
+import { warning, infoLabel, errorLabel, warningLabel, feedbackMessage } from '../helpers/style';
+import { toArray } from '../converters';
+import { registerHooks } from '../hooks';
+import { registerActions, registerAction } from '../hooks/actions';
+import getSuggestions from '../helpers/get-suggestions';
 
 /**
  * Builds the complete configuration objects.
  *
- * @param {boolean} debug - If debug mode should be enabled, logs some extra information.
- * @param {rocConfig} config - The base configuration.
- * @param {rocMetaConfig} meta - The base meta configuration.
+ * @param {boolean} verbose - If verbose mode should be enabled, logs some extra information.
  * @param {rocConfig} newConfig - The new configuration to base the merge on.
  * @param {rocMetaConfig} newMeta - The new meta configuration to base the merge on.
+ * @param {rocConfig} baseConfig - The base configuration.
+ * @param {rocMetaConfig} baseMeta - The base meta configuration.
  * @param {string} [directory=process.cwd()] - The directory to resolve relative paths from.
  * @param {boolean} [validate=true] - If the newConfig and the newMeta structure should be validated.
  *
  * @returns {Object} - The result of with the built configurations.
- * @property {rocConfig} extensionConfig - The extensions merged configurations
+ * @property {rocConfig} packageConfig - The packages merged configurations
  * @property {rocConfig} config - The final configuration, with application configuration.
  * @property {rocMetaConfig} meta - The merged meta configuration.
  */
 export function buildCompleteConfig(
-    debug, config = {}, meta = {}, newConfig = {}, newMeta = {}, directory = process.cwd(), validate = true
+    verbose, newConfig = {}, newMeta = {}, baseConfig = {}, baseMeta = {}, directory = process.cwd(), validate = true
 ) {
-    let finalConfig = { ...config };
-    let finalMeta = { ...meta };
+    let finalConfig = { ...baseConfig };
+    let finalMeta = { ...baseMeta };
 
     let usedExtensions = [];
-    const mergeExtension = (extensionName) => {
-        const { baseConfig, metaConfig = {} } = getExtension(extensionName, directory);
+    const mergeExtensions = (type) => (extensionName) => {
+        const extension = getExtension(extensionName, directory, type);
+        if (extension) {
+            const { config, meta } = getCompleteExtension(extension, extensionName);
 
-        if (baseConfig) {
-            usedExtensions.push(extensionName);
-            finalConfig = merge(finalConfig, baseConfig);
-            finalMeta = merge(finalMeta, metaConfig);
+            usedExtensions.push(extension.name);
+            finalConfig = merge(finalConfig, config);
+            finalMeta = merge(finalMeta, meta);
         }
     };
 
     if (fileExists('package.json', directory)) {
-        // If extensions are defined we will use them to merge the configurations
-        if (newConfig.extensions && newConfig.extensions.length) {
-            newConfig.extensions.forEach(mergeExtension);
+        const packageJson = getPackageJson(directory);
+
+        // If packages are defined we will use them to merge the configurations
+        if (newConfig.packages && newConfig.packages.length) {
+            newConfig.packages.forEach(mergeExtensions('package'));
         } else {
-            const packageJson = getPackageJson(directory);
-            getRocDependencies(packageJson)
-                .forEach(mergeExtension);
+            getRocPackageDependencies(packageJson)
+                .forEach(mergeExtensions('package'));
         }
 
-        if (usedExtensions.length && debug) {
-            console.log(importantLabel('The following Roc extensions will be used:'), usedExtensions);
+        if (newConfig.plugins && newConfig.plugins.length) {
+            newConfig.plugins.forEach(mergeExtensions('plugin'));
+        } else {
+            getRocPluginDependencies(packageJson)
+                .forEach(mergeExtensions('plugin'));
         }
 
-        // Check for a mismatch between application configuration and extensions.
+        if (usedExtensions.length && verbose) {
+            console.log(feedbackMessage(
+                infoLabel('Info', 'Extensions Used'),
+                usedExtensions.join('\n')
+            ));
+        }
+
+        // Check for a mismatch between application configuration and packages.
         if (validate) {
             if (Object.keys(newConfig).length) {
-                console.log(validateConfigurationStructure(finalConfig, newConfig));
+                const validationFeedback = validateConfigurationStructure(finalConfig, newConfig);
+                if (validationFeedback) {
+                    console.log(validationFeedback);
+                }
+
+                // log(validateConfigurationStructure(finalConfig, newConfig));
             }
             if (Object.keys(newMeta).length) {
-                console.log(validateConfigurationStructure(finalMeta, newMeta));
+                const validationFeedback = validateConfigurationStructure(finalMeta, newMeta);
+                if (validationFeedback) {
+                    console.log(validationFeedback);
+                }
             }
+        }
+
+        // Add project action
+        if (isFunction(newConfig.action)) {
+            registerAction(newConfig.action, 'default', packageJson.name, true);
         }
     }
 
     return {
-        extensionConfig: finalConfig,
+        packageConfig: finalConfig,
         config: merge(finalConfig, newConfig),
         meta: merge(finalMeta, newMeta)
     };
 }
 
-function getExtension(extensionName, directory) {
+function validRocExtension(roc, path) {
+    if (!roc.name) {
+        console.log(feedbackMessage(
+            warningLabel('Warning', 'Roc Extension'),
+            `Will ignore extension. Expected it to have a ${chalk.underline('name')}.`,
+            path
+        ));
+
+        return false;
+    }
+
+    if (
+        !roc.packages &&
+        !roc.plugins &&
+        !roc.hooks &&
+        !roc.actions &&
+        !roc.buildConfig &&
+        !roc.config &&
+        !roc.meta
+    ) {
+        console.log(feedbackMessage(
+            warningLabel('Warning', 'Roc Extension'),
+            `Will ignore extension. Expected it to have at least one of the following:\n` +
+            ['- config', '- meta', '- buildConfig', '- actions', '- hooks', '- packages', '- plugins'].join('\n'),
+            path
+        ));
+
+        return false;
+    }
+
+    return true;
+}
+
+function getCompleteExtension(roc = {}, path) {
+    let config = {};
+    let meta = {};
+
+    const getParents = (parents = []) => {
+        parents.forEach((parent) => {
+            const result = getCompleteExtension(require(parent).roc, parent);
+            config = merge(
+                config,
+                result.config
+            );
+
+            meta = merge(
+                meta,
+                result.meta
+            );
+        });
+    };
+
+    if (validRocExtension(roc, path)) {
+        // Get all parent packages
+        getParents(roc.packages);
+
+        // Get all parent plugins
+        getParents(roc.plugins);
+
+        // Get possible hooks
+        if (roc.hooks) {
+            registerHooks(roc.hooks, roc.name);
+        }
+
+        // Get potential actions
+        if (roc.actions) {
+            registerActions(roc.actions, roc.name);
+        }
+
+        // Build the config object
+        if (roc.buildConfig) {
+            return roc.buildConfig(
+                config,
+                meta
+            );
+        }
+
+        if (roc.config) {
+            config = merge(
+                config,
+                roc.config
+            );
+        }
+
+        if (roc.meta) {
+            meta = merge(
+                meta,
+                roc.meta
+            );
+        }
+    }
+
+    return {
+        config,
+        meta
+    };
+}
+
+function getExtension(extensionName, directory, type) {
     try {
-        const { baseConfig, metaConfig } = require(resolve.sync(extensionName, { basedir: directory }));
-        return { baseConfig, metaConfig };
+        return require(resolve.sync(extensionName, { basedir: directory })).roc;
     } catch (err) {
-        console.log(
-            errorLabel(
-                'Failed to load Roc extension ' + chalk.bold(extensionName) + '. ' +
-                'Make sure you have it installed. Try running:'
-            ) + ' ' +
+        if (!/^Cannot find module/.test(err.message)) {
+            throw err;
+        }
+
+        console.log(feedbackMessage(
+            warningLabel('Warning', 'Roc Extension Loading Failed'),
+            `Failed to load Roc ${type} ` + chalk.bold(extensionName) +
+            '. Make sure you have it installed. Try running: ' +
             chalk.underline('npm install --save ' + extensionName)
-        , '\n');
-        return {};
+        ));
     }
 }
 
@@ -105,9 +229,7 @@ function validateConfigurationStructure(config, applicationConfig) {
             const value = obj[key];
             const newPath = oldPath + key;
 
-            // Handle plugins special since we can't predict how they will look.
-            // For example plugins.createBuilder can be an object with new keys or it might not be it.
-            if (isPlainObject(value) && oldPath !== 'plugins.') {
+            if (isPlainObject(value)) {
                 getKeys(value, newPath + '.', allKeys);
             } else {
                 allKeys.push(newPath);
@@ -120,54 +242,13 @@ function validateConfigurationStructure(config, applicationConfig) {
     const keys = getKeys(config);
     const diff = difference(getKeys(applicationConfig), keys);
     if (diff.length > 0) {
-        info.push(errorLabel('Configuration problem') +
-            ' There was a mismatch in the application configuration structure, make sure this is correct.\n');
-        info.push(getSuggestions(diff, keys));
-        info.push('');
+        info.push(feedbackMessage(
+            errorLabel('Error', 'Configuration'),
+            'There was a mismatch in the application configuration structure, make sure this is correct.\n' +
+            getSuggestions(diff, keys)
+        ));
     }
     // }
-    return info.join('\n');
-}
-
-/**
- * Will create a string with suggestions for possible typos.
- *
- * @param {string[]} current - The current values that might be incorrect.
- * @param {string[]} possible - All the possible correct values.
- * @param {string} [prefix=''] - Something that the suggestion should be prefixed with. Useful for CLI options.
- *
- * @returns {string} - A string with possible suggestions for typos.
- */
-export function getSuggestions(current, possible, prefix = '') {
-    const info = [];
-
-    current.forEach((currentKey) => {
-        let shortest = 0;
-        let closest;
-
-        for (let key of possible) {
-            let distance = leven(currentKey, key);
-
-            if (distance <= 0 || distance > 4) {
-                continue;
-            }
-
-            if (shortest && distance >= shortest) {
-                continue;
-            }
-
-            closest = key;
-            shortest = distance;
-        }
-
-        if (closest) {
-            info.push('Did not understand ' + chalk.underline(prefix + currentKey) +
-                ' - Did you mean ' + chalk.underline(prefix + closest));
-        } else {
-            info.push('Did not understand ' + chalk.underline(prefix + currentKey));
-        }
-    });
-
     return info.join('\n');
 }
 
@@ -186,7 +267,7 @@ export function generateCommandsDocumentation({ commands }, { commands: commands
     };
 
     const noCommands = {'No commands available.': ''};
-    commandsMeta = commandsMeta || {};
+    commandsMeta = commandsMeta || { };
 
     // We will sort the commands
     let body = [{
@@ -254,34 +335,30 @@ export function generateCommandDocumentation({ settings }, { commands = {}, sett
 
     // Generate the arguments table
     if (commands[command] && commands[command].arguments) {
-        const objects = commands[command].arguments.map((argument) => {
-            return {
+        const objects = commands[command].arguments.map((argument) => (
+            {
                 cli: `${argument.name}`,
-                description: `${argument.description && argument.description + '  ' || ''}` +
-                    `${argument.required && chalk.green('Required') + '  ' || ''}` +
-                    `${argument.validation ? chalk.dim('(' + argument.validation(null, true).type + ')') : ''}`
-            };
-        });
+                description: createDescription(argument)
+            }
+        ));
 
         if (objects.length > 0) {
             body = body.concat({
+                objects,
                 name: 'Arguments',
-                level: 0,
-                objects: objects
+                level: 0
             });
         }
     }
 
     // Generate the options table
     if (commands[command] && commands[command].options) {
-        const objects = commands[command].options.sort(onProperty('name')).map((option) => {
-            return {
+        const objects = commands[command].options.sort(onProperty('name')).map((option) => (
+            {
                 cli: option.shortname ? `-${option.shortname}, --${option.name}` : `--${option.name}`,
-                description: `${option.description && option.description + '  ' || ''}` +
-                    `${option.required && chalk.green('Required') + '  ' || ''}` +
-                    `${option.validation ? chalk.dim('(' + option.validation(null, true).type + ')') : ''}`
-            };
-        });
+                description: createDescription(option)
+            }
+        ));
 
         if (objects.length > 0) {
             body = body.concat({
@@ -340,6 +417,13 @@ export function generateCommandDocumentation({ settings }, { commands = {}, sett
     return rows.join('\n');
 }
 
+function createDescription(param) {
+    return `${param.description && param.description + '  ' || ''}` +
+        `${param.required && chalk.green('Required') + '  ' || ''}` +
+        `${param.default && chalk.cyan(JSON.stringify(param.default)) + '  ' || ''}` +
+        `${!param.default && param.validation ? chalk.dim('(' + param.validation(null, true).type + ')') : ''}`;
+}
+
 function generateCommandDocsHelper(body, header, options, name) {
     body.push({
         name: options,
@@ -371,15 +455,15 @@ export function getDefaultOptions(name) {
         description: `Path to configuration file, will default to ${chalk.bold('roc.config.js')} in current ` +
             `working directory.`
     }, {
-        [name]: '-d, --debug',
-        description: 'Enable debug mode.'
-    }, {
-        [name]: '-D, --directory',
+        [name]: '-d, --directory',
         description: 'Path to working directory, will default to the current working directory. Can be either ' +
             'absolute or relative.'
     }, {
         [name]: '-h, --help',
         description: 'Output usage information.'
+    }, {
+        [name]: '-V, --verbose',
+        description: 'Enable verbose mode.'
     }, {
         [name]: '-v, --version',
         description: 'Output version number.'
@@ -397,30 +481,43 @@ export function getDefaultOptions(name) {
  * @property {object[]} options - The parsed arguments that was matched against the meta configuration for the command.
  * @property {object[]} rest - The rest of the arguments that could not be matched against the configuration.
  */
-export function parseArguments(command, commands, args) {
+export function parseArguments(command, commands = {}, args) {
     // If the command supports options
     if (commands[command] && commands[command].arguments) {
         let parsedArguments = {};
         commands[command].arguments.forEach((argument, index) => {
-            const value = args[index];
+            let value = args[index];
 
-            if (argument.required && !value) {
+            if (value === undefined && argument.default) {
+                value = argument.default;
+            }
+
+            if (value === undefined && argument.required) {
+                console.log(feedbackMessage(
+                    errorLabel('Error', 'Arguments Problem'),
+                    `Required argument ${chalk.bold(argument.name)} was not provided.`
+                ));
                 /* eslint-disable no-process-exit */
-                console.log(errorLabel('Arguments problem') +
-                    ` Required argument ${chalk.bold(argument.name)} was not provided.\n`);
                 process.exit(1);
                 /* eslint-enable */
             }
 
-            if (value && argument.validation) {
+            if (value !== undefined && argument.converter) {
+                value = argument.converter(value);
+            }
+
+            if (value !== undefined && argument.validation) {
                 const validationResult = isValid(value, argument.validation);
                 if (validationResult !== true) {
                     try {
                         throwError(argument.name, validationResult, value, 'argument');
                     } catch (err) {
+                        console.log(feedbackMessage(
+                            errorLabel('Error', 'Arguments Problem'),
+                            'An argument was not valid.\n\n' +
+                            err.message
+                        ));
                         /* eslint-disable no-process-exit */
-                        console.log(errorLabel('Arguments problem') + ' An argument was not valid.\n');
-                        console.log(err.message);
                         process.exit(1);
                         /* eslint-enable */
                     }
@@ -444,7 +541,7 @@ export function parseArguments(command, commands, args) {
 
 /**
  * Creates mappings between cli commands to their "path" in the configuration structure, their validator and type
- * convertor.
+ * converter.
  *
  * @param {rocDocumentationObject} documentationObject - Documentation object to create mappings for.
  *
@@ -460,7 +557,7 @@ export function getMappings(documentationObject = []) {
                 mappings[element.cli.substr(2)] = {
                     name: element.cli,
                     path: element.path,
-                    convertor: getConvertor(element.defaultValue, element.cli),
+                    converter: getConverter(element.defaultValue, element.cli),
                     validator: element.validator
                 };
             });
@@ -475,7 +572,7 @@ export function getMappings(documentationObject = []) {
 }
 
 // Convert values based on their default value
-function getConvertor(value, name) {
+function getConverter(value, name) {
     if (isBoolean(value)) {
         return (input) => {
             if (isBoolean(input)) {
@@ -485,28 +582,15 @@ function getConvertor(value, name) {
                 return input === 'true';
             }
 
-            console.log(
-                warningLabel(`Invalid value given for ${chalk.bold(name)}.`),
-                `Will use the default ${chalk.bold(value)}.`
-            );
+            console.log(feedbackMessage(
+                warningLabel('Warning', 'Conversion Failed'),
+                `Invalid value given for ${chalk.bold(name)}. Will use the default ${chalk.bold(value)}.`
+            ));
 
             return value;
         };
     } else if (Array.isArray(value)) {
-        return (input) => {
-            let parsed;
-            try {
-                parsed = JSON.parse(input);
-            } catch (err) {
-                // Ignore this case
-            }
-
-            if (Array.isArray(parsed)) {
-                return parsed;
-            }
-
-            return input.toString().split(',');
-        };
+        return toArray;
     } else if (Number.isInteger(value)) {
         return (input) => parseInt(input, 10);
     } else if (!isString(value) && (!value || Object.keys(value).length === 0)) {
@@ -521,11 +605,12 @@ function getConvertor(value, name) {
  *
  * @param {Object} options - Options parsed from minimist.
  * @param {Object} mappings - Result from {@link getMappings}.
- * @param {Object} command - A command.
+ * @param {string} command - The command to parse arguments for.
+ * @param {Object} commands - commands from {@link rocMetaConfig}.
  *
  * @returns {{settings: rocConfigSettings, parseOptions: Object}} - The mapped Roc configuration settings object.
  */
-export function parseOptions(options, mappings, command) {
+export function parseOptions(options, mappings, command, commands = {}) {
     const infoSettings = [];
 
     const { settings, notManaged } = parseSettingsOptions(options, mappings);
@@ -536,10 +621,10 @@ export function parseOptions(options, mappings, command) {
         infoOptions,
         parsedOptions,
         finalNotManaged
-    } = parseCommandOptions(command, notManaged);
+    } = parseCommandOptions(commands[command], notManaged);
 
-    const defaultOptions = ['help', 'config', 'debug', 'directory', 'version'];
-    const defaultOptionsShort = ['h', 'd', 'c', 'D', 'v'];
+    const defaultOptions = ['help', 'config', 'verbose', 'directory', 'version'];
+    const defaultOptionsShort = ['h', 'c', 'V', 'd', 'v'];
 
     Object.keys(finalNotManaged).forEach((key) => {
         if (key.length > 1) {
@@ -552,13 +637,19 @@ export function parseOptions(options, mappings, command) {
     });
 
     if (infoSettings.length > 0) {
-        console.log(errorLabel('Option problem'), 'Some options were not understood.\n');
-        console.log(infoSettings.join('\n') + '\n');
+        console.log(feedbackMessage(
+            warningLabel('Warning', 'Option Problem'),
+            'Some options were not understood.\n\n' +
+            infoSettings.join('\n')
+        ));
     }
 
     if (infoOptions.length > 0) {
-        console.log(errorLabel('Command options problem'), 'Some command options were not provided.\n');
-        console.log(infoOptions.join('\n') + '\n');
+        console.log(feedbackMessage(
+            errorLabel('Error', 'Command Options Problem'),
+            'Some command options were not provided.\n\n' +
+            infoSettings.join('\n')
+        ));
         /* eslint-disable no-process-exit */
         process.exit(1);
         /* eslint-enable */
@@ -629,8 +720,12 @@ function parseCommandOptions(command, notManaged) {
                 name = option.shortname;
             }
 
+            if (value === undefined && option.default) {
+                value = option.default;
+            }
+
             // The option is required but no value was found
-            if (option.required && !value) {
+            if (value === undefined && option.required) {
                 const getOptions = () => {
                     const shortOption = option.shortname ? ' or ' + chalk.bold('-' + option.shortname) : '';
                     return chalk.bold('--' + option.name) + shortOption;
@@ -639,16 +734,23 @@ function parseCommandOptions(command, notManaged) {
                 infoOptions.push(`Required option ${getOptions()} was not provided.`);
             }
 
+            if (value !== undefined && option.converter) {
+                value = option.converter(value);
+            }
+
             // If we have a value and a validator
-            if (value && option.validation) {
+            if (value !== undefined && option.validation) {
                 const validationResult = isValid(value, option.validation);
                 if (validationResult !== true) {
                     try {
                         throwError(getName(name), validationResult, value, 'option');
                     } catch (err) {
+                        console.log(feedbackMessage(
+                            errorLabel('Error', 'Command Options Problem'),
+                            'A option was not valid..\n\n' +
+                            err.message
+                        ));
                         /* eslint-disable no-process-exit */
-                        console.log(errorLabel('Command options problem') + ' A option was not valid.\n');
-                        console.log(err.message);
                         process.exit(1);
                         /* eslint-enable */
                     }
@@ -671,7 +773,7 @@ function parseCommandOptions(command, notManaged) {
 }
 
 function convert(value, mapping) {
-    const val = mapping.convertor(value);
+    const val = mapping.converter(value);
     const validationResult = isValid(val, mapping.validator);
     if (validationResult === true) {
         return val;
@@ -683,9 +785,10 @@ function convert(value, mapping) {
             `${chalk.underline(JSON.stringify(val))}. ` :
         '';
 
-    console.log(
-        warning(`There was a problem when trying to automatically convert ${chalk.bold(mapping.name)}. This ` +
-        `value will be ignored.`)
-    );
-    console.log(message + validationResult, '\n');
+    console.log(feedbackMessage(
+        warningLabel('Warning', 'Conversion Problem'),
+        `There was a problem when trying to automatically convert ${chalk.bold(mapping.name)}. This ` +
+        `value will be ignored.\n\n` +
+        message + validationResult
+    ));
 }

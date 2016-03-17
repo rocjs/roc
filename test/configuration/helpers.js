@@ -8,12 +8,18 @@ describe('roc', () => {
     describe('configuration', () => {
         describe('getApplicationConfig', () => {
             let log;
+            let exit;
 
             beforeEach(() => {
                 log = expect.spyOn(console, 'log');
+                exit = expect.spyOn(process, 'exit').andCall(() => {
+                    throw new Error('process exit called');
+                });
             });
 
             afterEach(() => {
+                exit.calls = [];
+                exit.restore();
                 log.calls = [];
                 log.restore();
                 delete process.env.ROC_CONFIG_PATH;
@@ -26,19 +32,17 @@ describe('roc', () => {
             });
 
             it('should throw when file don´t exists', () => {
-                const expection = `Configuration path points to unaccessable file: ${path.join(__dirname, 'roc.js')}`;
                 expect(() => {
                     getApplicationConfig('roc.js', __dirname);
-                }).toThrow(expection);
+                }).toThrow();
 
                 log.restore();
             });
 
             it('should throw if it´s not a file', () => {
-                const expection = `Configuration path points to unaccessable file: ${path.join(__dirname)}`;
                 expect(() => {
                     getApplicationConfig(__dirname);
-                }).toThrow(expection);
+                }).toThrow();
 
                 log.restore();
             });
@@ -47,7 +51,7 @@ describe('roc', () => {
                 const result = getApplicationConfig('data/roc.empty.config.js', __dirname);
                 expect(result).toEqual({});
                 expect(stripAnsi(log.calls[0].arguments.slice(0, 1)[0]))
-                    .toEqual('The configuration file at ' +
+                    .toInclude('The configuration file at ' +
                         path.join(__dirname, 'data/roc.empty.config.js') + ' was empty.');
 
                 log.restore();
@@ -64,7 +68,7 @@ describe('roc', () => {
                 const result = getApplicationConfig(undefined, __dirname, true);
                 expect(result).toEqual({});
                 expect(stripAnsi(log.calls[0].arguments.slice(0, 1)[0]))
-                    .toEqual('Could not find the configuration file at ' + path.join(__dirname, 'roc.config.js'));
+                    .toInclude('Could not find the configuration file at ' + path.join(__dirname, 'roc.config.js'));
 
                 log.restore();
             });

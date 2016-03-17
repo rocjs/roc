@@ -1,5 +1,6 @@
 import expect from 'expect';
 import redent from 'redent';
+import trimNewlines from 'trim-newlines';
 
 import { validDocumentObject } from './data/documentation-object';
 import generateTable from '../../src/documentation/generate-table';
@@ -41,7 +42,7 @@ describe('roc', () => {
 
                 expect(generateTable(validDocumentObject, header))
                     .toEqual(
-                        redent(`
+                        redent(trimNewlines(`
                             runtime
                             Runtime configuration
 
@@ -55,7 +56,7 @@ describe('roc', () => {
                             | ------- | ------------ | --------------- | ------------- | ------- | ------ | -------- |
                             | option2 | description2 | dev.option2     | --dev-option2 |         | String | Yes      |
                             `
-                        )
+                        ))
                     );
             });
         });

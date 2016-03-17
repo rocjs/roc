@@ -14,7 +14,7 @@ describe('roc', () => {
                         expect(result).toBe(false);
                     });
 
-                    it('should return false if config and extension is missing', () => {
+                    it('should return false if config and package is missing', () => {
                         const validPath = path.join(__dirname, '/data/package/invalid');
                         const result = general.validRocProject(validPath);
                         expect(result).toBe(false);
@@ -26,7 +26,7 @@ describe('roc', () => {
                         expect(result).toBe(true);
                     });
 
-                    it('should return true if package.json exists with roc extension', () => {
+                    it('should return true if package.json exists with roc package', () => {
                         const validPath = path.join(__dirname, '/data/package/valid');
                         const result = general.validRocProject(validPath);
                         expect(result).toBe(true);

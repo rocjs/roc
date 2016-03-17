@@ -14,11 +14,12 @@ import onProperty from '../helpers/on-property';
  * @param {rocConfig} config - Roc configuration object.
  * @param {rocMetaConfig} metaConfig - Roc meta configuration object.
  * @param {{name: string}} info - Info object in {@link rocCommandObject} containing name of the cli.
- * @param {Object} args - The arguments from parsedArguments in {@link rocCommandObject}
+ * @param {Object} args - The arguments from parsedArguments in {@link rocCommandObject}.
+ * @param {Object} options - The options from parsedOptions in {@link rocCommandObject}.
  *
  * @returns {string} - Markdown documentation.
  */
-export default function markdownCommands(config, metaConfig, { name }, args) {
+export default function markdownCommands(config, metaConfig, { name }, args, options) {
     const rows = [];
     const allSettingGroups = config.settings ?
         Object.keys(config.settings).sort() :
@@ -32,7 +33,9 @@ export default function markdownCommands(config, metaConfig, { name }, args) {
     };
 
     if (config.commands) {
-        const commands = Object.keys(config.commands).sort();
+        const commands = Object.keys(config.commands)
+            .filter((element) => options['hide-commands'].indexOf(element) === -1)
+            .sort();
 
         // Header
         rows.push('# Commands for `' + name + '`');
@@ -41,7 +44,7 @@ export default function markdownCommands(config, metaConfig, { name }, args) {
 
         rows.push('## General Information');
         rows.push(redent(trimNewlines(`
-            All commands can be called with some additional options as can be seen below.`)));
+            All commands can be called with some additional options as can be seen below.`)), '');
 
         // Table with default options
         const header = {
@@ -76,7 +79,7 @@ export default function markdownCommands(config, metaConfig, { name }, args) {
 
         rows.push('## Commands');
         commands.forEach((command) => {
-            rows.push(`* [${command}](#${command})`);
+            rows.push(`* [${command}](#${command.replace(':', '')})`);
         });
 
         rows.push('');
@@ -113,7 +116,8 @@ export default function markdownCommands(config, metaConfig, { name }, args) {
                         name: argument.name,
                         description: argument.description || '',
                         required: argument.required,
-                        type: argument.validation && argument.validation(null, true).type
+                        type: argument.validation && argument.validation(null, true).type,
+                        default: argument.default !== undefined && JSON.stringify(argument.default)
                     };
                 });
 
@@ -133,7 +137,8 @@ export default function markdownCommands(config, metaConfig, { name }, args) {
                         name: option.shortname ? `-${option.shortname}, --${option.name}` : `--${option.name}`,
                         description: option.description || '',
                         required: option.required,
-                        type: option.validation && option.validation(null, true).type
+                        type: option.validation && option.validation(null, true).type,
+                        default: option.default !== undefined && JSON.stringify(option.default)
                     };
                 });
 
@@ -151,10 +156,19 @@ export default function markdownCommands(config, metaConfig, { name }, args) {
                 type: {
                     name: 'Type',
                     renderer: (input) => input && `\`${input}\``
+                },
+                default: {
+                    name: 'Default',
+                    renderer: (input) => input && `\`${input}\``
                 }
             };
 
-            rows.push(generateTable(body, newHeader, settings));
+            rows.push('');
+
+            const table = generateTable(body, newHeader, settings);
+            if (table) {
+                rows.push(table);
+            }
 
             if (commandMeta.settings) {
                 rows.push('### Settings options');

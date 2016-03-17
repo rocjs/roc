@@ -1,8 +1,8 @@
-import 'source-map-support/register';
-
 import deepExtend from 'deep-extend';
 
-import { warning } from '../helpers/style';
+import { getApplicationConfig } from './helpers';
+import { buildCompleteConfig } from '../cli/helpers';
+import { feedbackMessage, infoLabel } from '../helpers/style';
 
 /* Make sure that we only print some feedback once */
 let onceSettings = true;
@@ -10,7 +10,8 @@ let onceSettings = true;
 /* Using global variables here to make sure that we can access the values set from different projects.
  * This guarantees that the variables will live outside the require cache, something that we need for stability.
  */
-global.rocConfig = global.rocConfig || {};
+global.roc = global.roc || {};
+global.roc.config = global.roc.config || undefined;
 
 /**
  * Merges two configuration objects.
@@ -27,26 +28,42 @@ export function merge(a, b) {
 /**
  * Gets the current configuration object.
  *
+ * Will try to init the configuration if not done previously.
+ *
+ * @param {boolean} [tryInit=true] - If the function should try to init the configuration object
+ *
  * @returns {rocConfig} - The application configuration object.
  */
-export function getConfig() {
+export function getConfig(tryInit = true) {
+    // Try to load the configuration if we haven't at this point.
+    if (tryInit && global.roc.config === undefined && !process.env.ROC_CONFIG_SETTINGS) {
+        console.log(feedbackMessage(
+            infoLabel('Info', 'Configuration'),
+            'It seems that you are launching a Roc application without using the Roc CLI, we will now load ' +
+            'the configuration separately for you instead.'
+        ));
+        const { config } = buildCompleteConfig(false, getApplicationConfig());
+        global.roc.config = config;
+    }
+
     if (onceSettings && process.env.ROC_CONFIG_SETTINGS) {
         onceSettings = false;
 
-        if (global.rocConfig.settings && Object.keys(global.rocConfig.settings).length > 0 &&
+        if (global.roc.config && global.roc.config.settings && Object.keys(global.roc.config.settings).length > 0 &&
             process.env.ROC_CONFIG_SETTINGS
         ) {
-            console.log(
-                warning('You have settings defined on the environment variable ROC_CONFIG_SETTINGS ' +
+            console.log(feedbackMessage(
+                infoLabel('Info', 'Configuration'),
+                'You have settings defined on the environment variable ROC_CONFIG_SETTINGS ' +
                 'and they will be appended to the settings. Will append the following:\n' +
-                JSON.stringify(process.env.ROC_CONFIG_SETTINGS, null, 2))
-            , '\n');
+                JSON.stringify(process.env.ROC_CONFIG_SETTINGS, null, 2)
+            ));
         }
 
         appendSettings(JSON.parse(process.env.ROC_CONFIG_SETTINGS));
     }
 
-    return global.rocConfig;
+    return global.roc.config;
 }
 
 /**
@@ -74,7 +91,7 @@ export function getSettings(key) {
  * @returns {rocSettings} - The settings object.
  */
 export function appendSettings(settingsObject) {
-    global.rocConfig = merge(getConfig(), { settings: settingsObject });
+    global.roc.config = merge(getConfig(), { settings: settingsObject });
     return getSettings();
 }
 
@@ -89,6 +106,6 @@ export function appendSettings(settingsObject) {
  * @returns {rocConfig} - The configuration object.
  */
 export function appendConfig(configObject) {
-    global.rocConfig = merge(getConfig(), configObject);
+    global.roc.config = merge(getConfig(false), configObject);
     return getConfig();
 }

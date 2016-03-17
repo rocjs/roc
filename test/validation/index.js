@@ -28,10 +28,15 @@ describe('roc', () => {
                     .toBeA('string');
             });
 
-            it('should throw if validator is not a function or RegExp', () => {
+            it('should throw if validator is defined but not a function or RegExp', () => {
                 expect(isValid)
-                    .withArgs('value')
+                    .withArgs('value', 2)
                     .toThrow();
+            });
+
+            it('should return true if validator is undefined', () => {
+                expect(isValid('value'))
+                    .toBe(true);
             });
         });
 
@@ -60,7 +65,7 @@ describe('roc', () => {
                 expect(spyBuild).toHaveBeenCalledWith('client');
             });
 
-            it('should manage execptions correctly', () => {
+            it('should manage exceptions correctly', () => {
                 const spyLog = expect.spyOn(console, 'log');
                 const spyExit = expect.spyOn(process, 'exit');
 

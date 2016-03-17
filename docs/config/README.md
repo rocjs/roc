@@ -16,7 +16,10 @@ The file should export an object that can contain the following properties:
 * [`settings`](/docs/config/settings.md)
 * [`commands`](/docs/config/commands.md)
 * [`plugins`](/docs/config/plugins.md)
-* [`extensions`](/docs/config/extensions.md)
+* [`packages`](/docs/config/packages.md)
+* [`action`](/docs/config/packages.md)
+
+__Extensions should in practice only define `settings` and `commands` in their configuration__
 
 ### Override working directory
 ```
@@ -31,7 +34,7 @@ roc COMMAND --config path/to/roc.config.js
 You can override the current the location and name for the `roc.config.js` file using the `-c, --config` option. The path can be either relative to the current working directory or absolute.
 
 ## Configuration in extensions
-The section above talked about how configuration files are managed in applications but it holds mostly true for extensions as well. They follow the same structure in `roc.config.js`; however they must manually be managed, meaning they can basically be called anything and be located anywhere.
+The section above talked about how configuration files are managed in applications but it holds mostly true for extensions as well. They follow the same structure as `roc.config.js`, but does not generally define values for `plugins`, `packages` and `action`.
 
 They also have the option to export a meta configuration file, a `roc.config.meta.js` file. This file is important to add extra data that is non-existing in the `roc.config.js` file.
 
@@ -40,7 +43,6 @@ The meta configuration should mirror the normal configuration file to a large ex
 
 * [`settings`](/docs/config/settings.md#meta)
 * [`commands`](/docs/config/commands.md#meta)
-* [`plugins`](/docs/config/plugins.md#meta)
 
 ## Environment overrides
 Roc will look for two environment variables `ROC_CONFIG_PATH` and `ROC_CONFIG_SETTINGS`.
@@ -54,7 +56,7 @@ Roc will append `ROC_CONFIG_SETTINGS` to the settings the first time someone rea
 ## Merge behavior
 One big part of the configuration management in Roc is how configuration files are merged. Application configurations, and by default in extensions, are deeply merged using [deep-extend](https://www.npmjs.com/package/deep-extend).
 
-This results in that the merge is based on properties and values for those properties. Duplicated properties will overwrite each other. That means for instance that arrays will not be magically merged but rather overwrite the old value. A benefit of this is that it becomes trivial to override something defined in an extension.
+This results in that the merge is based on properties and values for those properties. Duplicated properties will overwrite each other. That means for instance that arrays will not be magically merged but rather overwrite the old value. A benefit of this is that it becomes trivial to override something defined in extensions.
 
 ## Example
 

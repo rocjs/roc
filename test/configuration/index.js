@@ -5,7 +5,7 @@ import { merge, appendConfig, getConfig, getSettings } from '../../src/configura
 describe('roc', () => {
     describe('configuration', () => {
         afterEach(() => {
-            global.rocConfig = {};
+            global.roc.config = {};
         });
 
         after(() => {
@@ -46,7 +46,7 @@ describe('roc', () => {
             });
 
             it('should manage settings defined using environment variable & warn if previous settings existed', () => {
-                global.rocConfig = { a: 2, settings: { a: 1 } };
+                global.roc.config = { a: 2, settings: { a: 1 } };
                 const testConfig = { b: 1 };
                 process.env.ROC_CONFIG_SETTINGS = JSON.stringify(testConfig);
                 expect(getConfig()).toEqual({ a: 2, settings: { a: 1, b: 1 } });
@@ -58,7 +58,7 @@ describe('roc', () => {
 
         describe('getSettings', () => {
             it('should get settings', () => {
-                global.rocConfig = { settings: { a: 1, b: 2 } };
+                global.roc.config = { settings: { a: 1, b: 2 } };
                 expect(getSettings('a')).toBe(1);
                 expect(getSettings()).toEqual({ a: 1, b: 2 });
             });
