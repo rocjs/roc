@@ -95,7 +95,7 @@ export function buildCompleteConfig(
             }
         }
 
-        // Add project hooks
+        // Add project action
         if (isFunction(newConfig.action)) {
             registerAction(newConfig.action, 'default', packageJson.name, true);
         }

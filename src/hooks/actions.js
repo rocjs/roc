@@ -1,5 +1,7 @@
 import isFunction from 'lodash/isFunction';
 
+import { getHooks } from './';
+
 // This needs to be global, same case as with configuration
 global.roc = global.roc || {};
 global.roc.actions = global.roc.actions || [];
@@ -18,8 +20,8 @@ export function registerActions(actions, extensionName) {
         let extensionActions = {};
         Object.keys(actions).forEach((key) => {
             const action = isFunction(actions[key]) ?
-                actions[key](global.roc.hooks, global.roc.actions) :
-                actions[key].action(global.roc.hooks, global.roc.actions);
+                actions[key](getHooks(), global.roc.actions) :
+                actions[key].action(getHooks(), global.roc.actions);
 
             extensionActions = {
                 ...extensionActions,
@@ -57,7 +59,7 @@ export function registerAction(action, actionName, extensionName, project = fals
         global.roc.actions[index].actions = {
             ...global.roc.actions[index].actions,
             [actionName]: {
-                ...createActionHelper(action(global.roc.hooks, global.roc.actions))
+                ...createActionHelper(action(getHooks(), global.roc.actions))
             }
         };
     } else {
@@ -66,7 +68,7 @@ export function registerAction(action, actionName, extensionName, project = fals
             name: extensionName,
             actions: {
                 [actionName]: {
-                    ...createActionHelper(action(global.roc.hooks, global.roc.actions))
+                    ...createActionHelper(action(getHooks(), global.roc.actions))
                 }
             }
         });
