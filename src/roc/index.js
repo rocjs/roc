@@ -1,5 +1,5 @@
 import { isBoolean, isPath, isArray, isString } from '../validation/validators';
-import { toArray } from '../convertors';
+import { toArray } from '../converters';
 import init from '../commands/init';
 import markdownCommands from '../commands/markdown-commands';
 
@@ -95,7 +95,7 @@ const roc = {
                     name: 'hide-commands',
                     default: [],
                     validation: isArray(isString),
-                    convertor: toArray,
+                    converter: toArray,
                     description: 'A list of commands that should be hidden form the generated markdown.'
                 }]
             }

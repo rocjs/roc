@@ -557,7 +557,7 @@ export function getMappings(documentationObject = []) {
                 mappings[element.cli.substr(2)] = {
                     name: element.cli,
                     path: element.path,
-                    converter: getConvertor(element.defaultValue, element.cli),
+                    converter: getConverter(element.defaultValue, element.cli),
                     validator: element.validator
                 };
             });
@@ -572,7 +572,7 @@ export function getMappings(documentationObject = []) {
 }
 
 // Convert values based on their default value
-function getConvertor(value, name) {
+function getConverter(value, name) {
     if (isBoolean(value)) {
         return (input) => {
             if (isBoolean(input)) {
