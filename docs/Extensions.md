@@ -3,13 +3,13 @@
 Extensions are a really important part of Roc that makes building applications possible. They are responsible for adding different libraries, frameworks and logic to the application. Extensions come in two types, Packages and Plugins. They are similar in a lot of ways, see below for more details.
 
 ## Packages
-Packages are the main building blocks for applications and will most often consist of two parts, a development package and a non-development package. Together they create something that can be used directly in a project and this is the difference from plugins, from a technical standpoint they are almost identical.
+Packages are the main building blocks for applications and will most often consist of two parts, a development package and a non-development package. Together they create something that can be used directly in a project and this is the difference from plugins. From a technical standpoint they are almost identical.
 
 ## Plugins
 Plugins are often smaller packages that are NOT to be used directly in a project but in conjunction with a package to add some additional functionality.
 
 ## General Structure
-Roc expects all extensions to export two a object named `roc` from the main file in a npm package. Other than this the packages themselves are quite free to do whatever they want to create what is needed to build an application.
+Roc expects all extensions to export an object named `roc` from the main file in a npm package. Other than this the packages themselves are quite free to do whatever they want to create what is needed to build an application.
 
 The object must contain a name (most likely the same as the `name` defined in `package.json`) and at least one of the following:
 ```
@@ -47,7 +47,7 @@ Function that takes the previous configuration and returns the new one.
 #### hooks
 Hooks are integration points where other extensions (or the extension itself) can run code. Used for running side effects like starting Browsersync or return some state; like for example redefining what plugins to use with Babel.
 
-Extensions can run hooks without needing to register them using this property, but when doing so they will not get the documentation generation and a helper function for easier management of hooks in the code.
+Extensions can run hooks without declaring them in the configuration using this property, but when doing so they will not get the documentation generation and a helper function for easier management of hooks in the code.
 
 An example of this hooks object:
 ```javascript

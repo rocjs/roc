@@ -56,7 +56,7 @@ Roc will append `ROC_CONFIG_SETTINGS` to the settings the first time someone rea
 ## Merge behavior
 One big part of the configuration management in Roc is how configuration files are merged. Application configurations, and by default in extensions, are deeply merged using [deep-extend](https://www.npmjs.com/package/deep-extend).
 
-This results in that the merge is based on properties and values for those properties. Duplicated properties will overwrite each other. That means for instance that arrays will not be magically merged but rather overwrite the old value. A benefit of this is that it becomes trivial to override something defined in an extensions.
+This results in that the merge is based on properties and values for those properties. Duplicated properties will overwrite each other. That means for instance that arrays will not be magically merged but rather overwrite the old value. A benefit of this is that it becomes trivial to override something defined in extensions.
 
 ## Example
 
