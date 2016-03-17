@@ -13,7 +13,7 @@ import { fileExists, getRocPackageDependencies, getRocPluginDependencies, getPac
 import onProperty from '../helpers/on-property';
 import { isValid, throwError } from '../validation';
 import { warning, infoLabel, errorLabel, warningLabel, feedbackMessage } from '../helpers/style';
-import { toArray } from '../convertors';
+import { toArray } from '../converters';
 import { registerHooks } from '../hooks';
 import { registerActions, registerAction } from '../hooks/actions';
 import getSuggestions from '../helpers/get-suggestions';
@@ -502,8 +502,8 @@ export function parseArguments(command, commands = {}, args) {
                 /* eslint-enable */
             }
 
-            if (value !== undefined && argument.convertor) {
-                value = argument.convertor(value);
+            if (value !== undefined && argument.converter) {
+                value = argument.converter(value);
             }
 
             if (value !== undefined && argument.validation) {
@@ -541,7 +541,7 @@ export function parseArguments(command, commands = {}, args) {
 
 /**
  * Creates mappings between cli commands to their "path" in the configuration structure, their validator and type
- * convertor.
+ * converter.
  *
  * @param {rocDocumentationObject} documentationObject - Documentation object to create mappings for.
  *
@@ -557,7 +557,7 @@ export function getMappings(documentationObject = []) {
                 mappings[element.cli.substr(2)] = {
                     name: element.cli,
                     path: element.path,
-                    convertor: getConvertor(element.defaultValue, element.cli),
+                    converter: getConvertor(element.defaultValue, element.cli),
                     validator: element.validator
                 };
             });
@@ -734,8 +734,8 @@ function parseCommandOptions(command, notManaged) {
                 infoOptions.push(`Required option ${getOptions()} was not provided.`);
             }
 
-            if (value !== undefined && option.convertor) {
-                value = option.convertor(value);
+            if (value !== undefined && option.converter) {
+                value = option.converter(value);
             }
 
             // If we have a value and a validator
@@ -773,7 +773,7 @@ function parseCommandOptions(command, notManaged) {
 }
 
 function convert(value, mapping) {
-    const val = mapping.convertor(value);
+    const val = mapping.converter(value);
     const validationResult = isValid(val, mapping.validator);
     if (validationResult === true) {
         return val;

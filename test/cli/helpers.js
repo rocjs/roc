@@ -277,36 +277,36 @@ General options:
                 it('boolean', () => {
                     const mappings = getMappings(complexDocumentObject);
                     return consoleMockWrapper((log) => {
-                        expect(mappings['build-useDefaultReduxMiddlewares'].convertor(true)).toBe(true);
-                        expect(mappings['build-useDefaultReduxMiddlewares'].convertor(false)).toBe(false);
+                        expect(mappings['build-useDefaultReduxMiddlewares'].converter(true)).toBe(true);
+                        expect(mappings['build-useDefaultReduxMiddlewares'].converter(false)).toBe(false);
 
-                        expect(mappings['build-useDefaultReduxMiddlewares'].convertor('true')).toBe(true);
-                        expect(mappings['build-useDefaultReduxMiddlewares'].convertor('false')).toBe(false);
+                        expect(mappings['build-useDefaultReduxMiddlewares'].converter('true')).toBe(true);
+                        expect(mappings['build-useDefaultReduxMiddlewares'].converter('false')).toBe(false);
 
-                        expect(mappings['build-useDefaultReduxMiddlewares'].convertor('asd')).toBe(true);
+                        expect(mappings['build-useDefaultReduxMiddlewares'].converter('asd')).toBe(true);
                         expect(log.calls[0].arguments[0]).toInclude('Invalid value given');
                     });
                 });
 
                 it('array', () => {
                     const mappings = getMappings(complexDocumentObject);
-                    expect(mappings['build-assets'].convertor('[1, 2, 3]')).toEqual([1, 2, 3]);
-                    expect(mappings['build-assets'].convertor('1,2,3')).toEqual(['1', '2', '3']);
+                    expect(mappings['build-assets'].converter('[1, 2, 3]')).toEqual([1, 2, 3]);
+                    expect(mappings['build-assets'].converter('1,2,3')).toEqual(['1', '2', '3']);
                 });
 
                 it('number', () => {
                     const mappings = getMappings(complexDocumentObject);
-                    expect(mappings['build-port'].convertor('1234')).toEqual(1234);
+                    expect(mappings['build-port'].converter('1234')).toEqual(1234);
                 });
 
                 it('object', () => {
                     const mappings = getMappings(complexDocumentObject);
-                    expect(mappings['build-obj'].convertor('{"value": 12}')).toEqual({ value: 12 });
+                    expect(mappings['build-obj'].converter('{"value": 12}')).toEqual({ value: 12 });
                 });
 
                 it('string', () => {
                     const mappings = getMappings(complexDocumentObject);
-                    expect(mappings['build-outputName'].convertor('some string')).toEqual('some string');
+                    expect(mappings['build-outputName'].converter('some string')).toEqual('some string');
                 });
             });
         });

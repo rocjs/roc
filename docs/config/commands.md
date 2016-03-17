@@ -142,7 +142,7 @@ validation          A validation function that should return true if valid or fa
 required            If the option is required
 description         A text that describes how the option can be used
 default             A default value that should be used for the argument
-convertor           A convertor that should be used to convert the input to the correct format
+converter           A converter that should be used to convert the input to the correct format
 ```
 
 The order of the objects in the array matter, they are parsed in the same order.
@@ -164,8 +164,8 @@ Describes what it can be used for.
 #### default
 The value that the argument will hold if nothing is provided by the user.
 
-#### convertor
-A convertor to be used to convert the input to some other format. Should match the following format `(input) => output`.
+#### converter
+A converter to be used to convert the input to some other format. Should match the following format `(input) => output`.
 
 ### options
 An array of objects that can have the following properties:
@@ -176,7 +176,7 @@ validation          A validation function that should return true if valid or fa
 required            If the option is required
 description         A text that describes how the option can be used
 default             A default value that should be used for the argument
-convertor           A convertor that should be used to convert the input to the correct format
+converter           A converter that should be used to convert the input to the correct format
 ```
 
 #### name
@@ -199,8 +199,8 @@ Describes what it can be used for.
 #### default
 The value that the option will hold if nothing is provided by the user.
 
-#### convertor
-A convertor to be used to convert the input to some other format. Should match the following format `(input) => output`.
+#### converter
+A converter to be used to convert the input to some other format. Should match the following format `(input) => output`.
 
 ### settings
 What roc settings the command uses, can either be true or an array with strings of the groups to use. Will determine what information the cli outputs, what it parses and what it validates.

@@ -110,7 +110,7 @@
  * @typedef {Object} rocMapObject
  * @property {string} name
  * @property {string} path
- * @property {function} convertor
+ * @property {function} converter
  * @property {function} validator
  */
 
