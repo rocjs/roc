@@ -32,7 +32,7 @@ function runCommand(syncCommands, path = process.cwd()) {
     const command = syncCommands.shift();
 
     if (command) {
-        const parts = command.match(/(?:[^\s"]+|"[^"]*")+/g);
+        const parts = getParts(command);
         const cmd = parts[0];
         const args = parts.slice(1);
 
@@ -84,7 +84,7 @@ function runCommandSync(syncCommands, path = process.cwd()) {
     const command = syncCommands.shift();
 
     if (command) {
-        const parts = command.match(/(?:[^\s"]+|"[^"]*")+/g);
+        const parts = getParts(command);
         const cmd = parts[0];
         const args = parts.slice(1);
 
@@ -101,4 +101,25 @@ function runCommandSync(syncCommands, path = process.cwd()) {
 
         return runCommandSync(syncCommands, path);
     }
+}
+
+/**
+ * Will take a command string an return an array with the different parts of the command.
+ *
+ * Will manage command parts that has been grouped with " or '.
+ *
+ * @param {string} commandString - The string to split up into parts.
+ *
+ * @returns {string[]} - An array with the different parts of the command.
+ */
+function getParts(commandString) {
+    const regex = /[^\s"']+|"([^"]*)"|'([^']*)'/g;
+    const parts = [];
+    let match;
+
+    while ((match = regex.exec(commandString))) {
+        parts.push(match[1] || match[2] || match[0]);
+    }
+
+    return parts;
 }
