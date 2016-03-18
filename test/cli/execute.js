@@ -78,6 +78,14 @@ describe('execute', () => {
             });
         });
 
+        it('should manage strings in commands', () => {
+            return execute('git commit -m "Version 1.0.0" -a\'Something else important\'').then(() => {
+                expect(spawn.calls.length).toEqual(1);
+                expect(spawn.calls[0].arguments.slice(0, 2))
+                    .toEqual(['git', ['commit', '-m', 'Version 1.0.0', '-a', 'Something else important']]);
+            });
+        });
+
         it('should handle sync commands correctly and run in the correct order', () => {
             return execute('npm view roc && roc -h & git log').then(() => {
                 expect(spawn.calls[0].arguments.slice(0, 1)).toEqual(['npm']);
