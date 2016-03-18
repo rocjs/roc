@@ -118,7 +118,8 @@ function getParts(commandString) {
     let match;
 
     while ((match = regex.exec(commandString))) {
-        parts.push(match[1] || match[2] || match[0]);
+        const [generalMatch, doubleQuotationMatch, singleQuotationMatch] = match;
+        parts.push(doubleQuotationMatch || singleQuotationMatch || generalMatch);
     }
 
     return parts;
