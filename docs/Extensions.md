@@ -85,7 +85,7 @@ Actions are expected to be an object that where the values are either functions 
 An example of this actions object can be seen here:
 ```javascript
 {
-    someAction: () => () => () => { /* A function */ },
+    someAction: () => () => () => () => { /* A function */ },
     otherAction: { // The name of the action is used for documentation and logging
         extension: 'roc-package-core-dev', // For which extension this action should run - optional
         hook: 'before-clean', // For which hook this action should run - optional
@@ -97,7 +97,7 @@ An example of this actions object can be seen here:
 
 The action function interface is the following (as touched on above):
 ```javascript
-(registeredHooks, registeredActions) => ({ extension, name, previousValue, description }) => (...args) => {}
+(registeredHooks, registeredActions) => ({ extension, name, previousValue, description }) => (...args) => () => {}
 ```
 
 ```
@@ -113,11 +113,14 @@ description         The hook description, can be used for logging what the calli
 ```
 
 __The call chain__
+
 1. The first function in the chain is run when the action is registering itself with Roc. Here it's possible to validate that the right hooks or actions are present and it's also possible to remove some of them using `removeActions` if they are not supposed to run.
 
 2. The second function will normally be invoked for every single action for every single hook. In this case it is up to the action to determine if it should process this and in that case return a new function. If one has registered the action with `extension` and/or `hook`  it will only be called if these match.
 
-3. The function that will process the hook will be run, the arguments at calltime will be whatever the hook defined. In some instances it might be expected that the action returns a value, in others not.
+3. The third function will be called with possible arguments and it might return another function if it should run.
+
+4. The fourth function will be invoked and in some instances it might be expected that it returns a value, in others not.
 
 
 

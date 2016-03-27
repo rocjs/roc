@@ -156,6 +156,25 @@ export function isPath(value, info) {
 }
 
 /**
+ * Validates an function.
+ *
+ * @param {object} value - Something to validate.
+ * @param {boolean} info - If type information should be returned.
+ * @return {infoObject|boolean|string} - Type information or if it is valid.
+ */
+export function isFunction(value, info) {
+    if (info) {
+        return infoObject('Function');
+    }
+
+    if (value !== null && !lodashIsFunction(value)) {
+        return 'Was not a function!';
+    }
+
+    return true;
+}
+
+/**
  * Validates against a list of validators.
  *
  * @param {...function} validators - Validators to validate against.

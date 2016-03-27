@@ -29,13 +29,13 @@ import { getActions } from '../hooks/actions';
  *  application.
  * @param {rocMetaConfig} initalMeta - The inital meta configuration, will be merged with the selected packages.
  * @param {string[]} [argv=process.argv] - From where it should parse the arguments.
- * @param {boolean} [invoke=false] - If the a command should be invoked after initing the configuration.
+ * @param {boolean} [invoke=true] - If the a command should be invoked after initing the configuration.
  *
  * @returns {object} - Returns what the command is returning. If the command is a string command a promise will be
  *  returned that is resolved when the command has been completed.
  */
 export function runCli(info = { version: 'Unknown', name: 'Unknown' }, initalConfig, initalMeta,
-    argv = process.argv, invoke = false) {
+    argv = process.argv, invoke = true) {
     const {
         _, h, help, V, verbose, v, version, c, config, d, directory, ...restOptions
     } = minimist(argv.slice(2));
@@ -109,7 +109,7 @@ export function runCli(info = { version: 'Unknown', name: 'Unknown' }, initalCon
     // Set the configuration object
     appendConfig(configObject);
 
-    if (!invoke) {
+    if (invoke) {
         // If string run as shell command
         if (isString(configObject.commands[command])) {
             return execute(configObject.commands[command])

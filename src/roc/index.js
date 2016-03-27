@@ -36,16 +36,16 @@ const roc = {
             'markdown-commands': ({
                 packageConfig,
                 metaObject,
-                info,
-                parsedArguments: { arguments: args },
-                parsedOptions: { options }
+                info: { name: cliName },
+                parsedArguments: { arguments: { 'settings-link': settingsLink } },
+                parsedOptions: { options: { 'hide-commands': hideCommands } }
             }) => {
                 console.log(markdownCommands(
+                    cliName,
                     packageConfig,
                     metaObject,
-                    info,
-                    args,
-                    options
+                    settingsLink,
+                    hideCommands
                 ));
             }
         }

@@ -84,9 +84,8 @@ export function buildCompleteConfig(
                 if (validationFeedback) {
                     console.log(validationFeedback);
                 }
-
-                // log(validateConfigurationStructure(finalConfig, newConfig));
             }
+
             if (Object.keys(newMeta).length) {
                 const validationFeedback = validateConfigurationStructure(finalMeta, newMeta);
                 if (validationFeedback) {
@@ -243,7 +242,7 @@ function validateConfigurationStructure(config, applicationConfig) {
     const diff = difference(getKeys(applicationConfig), keys);
     if (diff.length > 0) {
         info.push(feedbackMessage(
-            errorLabel('Error', 'Configuration'),
+            warningLabel('Warning', 'Configuration'),
             'There was a mismatch in the application configuration structure, make sure this is correct.\n' +
             getSuggestions(diff, keys)
         ));

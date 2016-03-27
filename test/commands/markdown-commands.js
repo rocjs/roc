@@ -43,9 +43,7 @@ describe('roc', () => {
     describe('commands', () => {
         describe('markdown-commands', () => {
             it('should correctly generate documentation for available commands', () => {
-                expect(markdownCommands(mockConfig, mockMetaConfig, {
-                    name: 'roc-test'
-                }, {}, {'hide-commands': []}))
+                expect(markdownCommands('roc-test', mockConfig, mockMetaConfig, undefined, []))
                     /* eslint-disable max-len */
                     .toEqual(redent(trimNewlines(`
                         # Commands for \`roc-test\`
@@ -113,9 +111,7 @@ describe('roc', () => {
             });
 
             it('should correctly generate documentation for available commands with settings links', () => {
-                expect(markdownCommands(mockConfig, mockMetaConfig, {
-                    name: 'roc-test'
-                }, {'settings-link': '/docs/Settings.md'}, {'hide-commands': []}))
+                expect(markdownCommands('roc-test', mockConfig, mockMetaConfig, '/docs/Settings.md', []))
                     /* eslint-disable max-len */
                     .toEqual(redent(trimNewlines(`
                         # Commands for \`roc-test\`

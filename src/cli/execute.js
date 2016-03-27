@@ -38,7 +38,10 @@ function runCommand(syncCommands, path = process.cwd()) {
 
         // If the command is to change directory we will carry the path over to the next command.
         if (cmd === 'cd') {
-            return runCommand(syncCommands, join(path, args[0]));
+            // If the path is absolute, starts with a /, we will not join in with the previous
+            const newPath = args[0].charAt(0) === '/' ?
+                args[0] : join(path, args[0]);
+            return runCommand(syncCommands, newPath);
         }
 
         return new Promise((resolve, reject) => {
@@ -90,7 +93,10 @@ function runCommandSync(syncCommands, path = process.cwd()) {
 
         // If the command is to change directory we will carry the path over to the next command.
         if (cmd === 'cd') {
-            return runCommandSync(syncCommands, join(path, args[0]));
+            // If the path is absolute, starts with a /, we will not join in with the previous
+            const newPath = args[0].charAt(0) === '/' ?
+                args[0] : join(path, args[0]);
+            return runCommandSync(syncCommands, newPath);
         }
 
         const { status } = spawnSync(cmd, args, { stdio: 'inherit', cwd: path });

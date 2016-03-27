@@ -5,6 +5,7 @@ import { isValid, throwError } from '../validation';
 import { isVerbose } from '../helpers/verbose';
 import getSuggestions from '../helpers/get-suggestions';
 import { getActions } from './actions';
+import { getSettings } from '../configuration';
 
 // This needs to be global, same case as with configuration
 global.roc = global.roc || {};
@@ -118,46 +119,52 @@ export function runHookDirectly({
             const action = actions[key];
 
             // Only run if no connection is made to a hook/extension or if they match
-            if (!action.extension || action.extension === extension &&
-                !action.hook || action.hook === name) {
-                const performAction = action.action({
+            if ((!action.extension || action.extension === extension) &&
+                (!action.hook || action.hook === name)) {
+                const createAction = action.action({
                     extension,
                     hook: name,
                     previousValue,
-                    description
+                    description,
+                    settings: getSettings()
                 });
 
-                if (performAction) {
-                    if (isVerbose()) {
-                        console.log(
-                            `${chalk.magenta.bold('Hook')} - ` +
-                            `Running hook defined in ${chalk.underline(extension)} named ${chalk.underline(name)} ` +
-                            `with ${chalk.underline(key)} added from ${chalk.underline(actionExtensionName)}`
-                        );
-                    }
+                if (createAction) {
+                    const performAction = createAction(...args);
 
-                    previousValue = performAction(...args);
+                    if (performAction) {
+                        previousValue = performAction();
 
-                    if (returns) {
-                        const validationResult = isValid(previousValue, returns);
-                        if (validationResult !== true) {
-                            try {
-                                throwError(key, validationResult, previousValue, 'return value of');
-                            } catch (err) {
-                                console.log(feedbackMessage(
-                                    errorLabel('Error', 'Hook problem'),
-                                    'A return value was not valid.\n\n' +
-                                    err.message
-                                ));
-                                /* eslint-disable no-process-exit */
-                                process.exit(1);
-                                /* eslint-enable */
+                        if (isVerbose()) {
+                            console.log(
+                                `${chalk.magenta.bold('Hook')} - ` +
+                                `Running hook defined in ${chalk.underline(extension)} ` +
+                                `named ${chalk.underline(name)} ` +
+                                `with ${chalk.underline(key)} added from ${chalk.underline(actionExtensionName)}`
+                            );
+                        }
+
+                        if (returns) {
+                            const validationResult = isValid(previousValue, returns);
+                            if (validationResult !== true) {
+                                try {
+                                    throwError(key, validationResult, previousValue, 'return value of');
+                                } catch (err) {
+                                    console.log(feedbackMessage(
+                                        errorLabel('Error', 'Hook problem'),
+                                        'A return value was not valid.\n\n' +
+                                        err.message
+                                    ));
+                                    /* eslint-disable no-process-exit */
+                                    process.exit(1);
+                                    /* eslint-enable */
+                                }
                             }
                         }
-                    }
 
-                    if (callback) {
-                        callback(previousValue);
+                        if (callback) {
+                            callback(previousValue);
+                        }
                     }
                 }
             }
