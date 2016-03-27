@@ -11,30 +11,30 @@ import onProperty from '../helpers/on-property';
  * Command used to generate markdown documentation for all the possible commands.
  * Can be piped to a file and uploaded somewhere easily.
  *
+ * @param {string} name - Name of the cli.
  * @param {rocConfig} config - Roc configuration object.
  * @param {rocMetaConfig} metaConfig - Roc meta configuration object.
- * @param {{name: string}} info - Info object in {@link rocCommandObject} containing name of the cli.
- * @param {Object} args - The arguments from parsedArguments in {@link rocCommandObject}.
- * @param {Object} options - The options from parsedOptions in {@link rocCommandObject}.
+ * @param {string} settingsLink - A possible link to the settings documentation.
+ * @param {string[]} hideCommands - An array with commands that should not be listed in the documentation.
  *
  * @returns {string} - Markdown documentation.
  */
-export default function markdownCommands(config, metaConfig, { name }, args, options) {
+export default function generateMarkdownCommands(name, config, metaConfig, settingsLink, hideCommands = []) {
     const rows = [];
     const allSettingGroups = config.settings ?
         Object.keys(config.settings).sort() :
         [];
 
     const printGroup = (group) => {
-        const groupName = args['settings-link'] ?
-            `[${group}](${args['settings-link']}#${group})` :
+        const groupName = settingsLink ?
+            `[${group}](${settingsLink}#${group})` :
             group;
         rows.push(`* ${groupName}`);
     };
 
     if (config.commands) {
         const commands = Object.keys(config.commands)
-            .filter((element) => options['hide-commands'].indexOf(element) === -1)
+            .filter((element) => hideCommands.indexOf(element) === -1)
             .sort();
 
         // Header

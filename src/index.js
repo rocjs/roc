@@ -10,7 +10,7 @@ export {
 
 export { generateMarkdownDocumentation, generateTextDocumentation } from './documentation';
 
-export { runCli, initCli, buildConfig } from './cli';
+export { runCli, initCli } from './cli';
 
 export { validate } from './validation';
 
@@ -33,3 +33,5 @@ export {
 
 export generateMarkdownHooks from './hooks/documentation/generate-markdown-hooks';
 export generateMarkdownActions from './hooks/documentation/generate-markdown-actions';
+
+export generateMarkdownCommands from './commands/markdown-commands';
