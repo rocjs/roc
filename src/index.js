@@ -35,3 +35,5 @@ export generateMarkdownHooks from './hooks/documentation/generate-markdown-hooks
 export generateMarkdownActions from './hooks/documentation/generate-markdown-actions';
 
 export generateMarkdownCommands from './commands/markdown-commands';
+
+export getConfiguration from './cli/get-configuration';
