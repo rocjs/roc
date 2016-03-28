@@ -185,5 +185,9 @@ export default function generateMarkdownCommands(name, config, metaConfig, setti
         });
     }
 
+    if (rows.length === 0) {
+        return 'No commands available.';
+    }
+
     return rows.join('\n');
 }
