@@ -533,7 +533,7 @@ export function parseArguments(command, commands = {}, args) {
     }
 
     return {
-        arguments: undefined,
+        arguments: {},
         rest: args
     };
 }

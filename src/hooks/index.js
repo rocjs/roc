@@ -126,7 +126,8 @@ export function runHookDirectly({
                     hook: name,
                     previousValue,
                     description,
-                    settings: getSettings()
+                    settings: getSettings(),
+                    verbose: isVerbose()
                 });
 
                 if (createAction) {
