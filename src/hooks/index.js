@@ -51,13 +51,12 @@ export function runHook(extensionName) {
         }
 
         if (hooks[name].hasCallback) {
-            return (callback) => {
-                return runHookDirectly({
+            return (callback) =>
+                runHookDirectly({
                     ...hooks[name],
                     extension: extensionName,
                     name
                 }, args, callback);
-            };
         }
 
         return runHookDirectly({
