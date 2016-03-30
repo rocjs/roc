@@ -22,6 +22,7 @@ export { defaultPrompt } from './commands/helpers/default-prompt';
 
 export {
     runHook,
+    runHookDirectly,
     registerHooks
 } from './hooks';
 
