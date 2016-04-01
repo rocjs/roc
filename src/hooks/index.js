@@ -89,7 +89,7 @@ export function runHookDirectly({
         returns,
         arguments: argumentsDefinitions,
         initialValue
-    }, args, callback) {
+    }, args = [], callback) {
     // Validate args
     if (argumentsDefinitions) {
         args.forEach((arg, i) => {
