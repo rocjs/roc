@@ -1,5 +1,10 @@
 import { isObject } from 'lodash';
-import { fileExists, getRocPackageDependencies, getPackageJson } from '../../helpers';
+import {
+    fileExists,
+    getRocPackageDependencies,
+    getRocNamespacedDependencies,
+    getPackageJson
+} from '../../helpers';
 
 /**
  * Validates if a directory seems to be a Roc application project.
@@ -13,6 +18,8 @@ import { fileExists, getRocPackageDependencies, getPackageJson } from '../../hel
 export function validRocProject(directory) {
     const packageJson = getPackageJson(directory);
 
-    return !(!isObject(packageJson) ||
-        !fileExists('roc.config.js', directory) && !getRocPackageDependencies(packageJson).length);
+    return isObject(packageJson) && (
+        fileExists('roc.config.js', directory) ||
+        getRocPackageDependencies(packageJson).length > 0 ||
+        getRocNamespacedDependencies(packageJson).length > 0);
 }

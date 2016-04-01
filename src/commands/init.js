@@ -1,5 +1,5 @@
 import fs from 'fs-extra';
-import path from 'path';
+import path, { join } from 'path';
 import { spawn } from 'child_process';
 import inquirer from 'inquirer';
 import replace from 'replace';
@@ -164,6 +164,7 @@ function showCompletionMessage(dirPath) {
 }
 
 function replaceTemplatedValues(answers, dirPath) {
+    // 1. Replace content
     Object.keys(answers).map((key) => {
         replace({
             regex: `{{\\s*${key}*\\s*}}`,
@@ -173,6 +174,34 @@ function replaceTemplatedValues(answers, dirPath) {
             silent: true
         });
     });
+
+    // 2. Replace filenames
+    replaceTemplatedValuesInDirectory(answers, join(dirPath, 'template'));
+}
+
+function replaceTemplatedValuesInDirectory(answers, dir) {
+    fs.readdirSync(dir)
+        .forEach((file) => {
+            let currentPath = join(dir, file);
+            // Get potential "key" from filenames
+            const match = file.match(/{{\s*([^\s]+)*\s*}}/);
+            // Try to replace key if one was found
+            if (match) {
+                const toReplace = answers[match[1]];
+
+                if (!toReplace) {
+                    console.log(`Could not find a value for the template value: {{ key }}`);
+                } else {
+                    const newFilename = file.replace(/{{\s*[^\s]+\s*}}/, toReplace);
+                    fs.renameSync(currentPath, join(dir, newFilename));
+                    currentPath = join(dir, newFilename);
+                }
+            }
+
+            if (fs.lstatSync(currentPath).isDirectory()) {
+                replaceTemplatedValuesInDirectory(answers, currentPath);
+            }
+        });
 }
 
 function configureFiles(dirPath, directory) {
