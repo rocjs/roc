@@ -180,11 +180,14 @@ function replaceTemplatedValues(answers, dirPath) {
 }
 
 function replaceTemplatedValuesInDirectory(answers, dir) {
+    const matchTemplate = /{{\s*([^\s]+)*\s*}}/;
+
     fs.readdirSync(dir)
         .forEach((file) => {
             let currentPath = join(dir, file);
             // Get potential "key" from filenames
-            const match = file.match(/{{\s*([^\s]+)*\s*}}/);
+            const match = file.match(matchTemplate);
+
             // Try to replace key if one was found
             if (match) {
                 const toReplace = answers[match[1]];
@@ -192,7 +195,7 @@ function replaceTemplatedValuesInDirectory(answers, dir) {
                 if (!toReplace) {
                     console.log(`Could not find a value for the template value: {{ key }}`);
                 } else {
-                    const newFilename = file.replace(/{{\s*[^\s]+\s*}}/, toReplace);
+                    const newFilename = file.replace(matchTemplate, toReplace);
                     fs.renameSync(currentPath, join(dir, newFilename));
                     currentPath = join(dir, newFilename);
                 }
