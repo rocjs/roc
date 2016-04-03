@@ -7,10 +7,10 @@ Quickly create products powered by libraries like [React](http://facebook.github
 
 ![stability beta](https://img.shields.io/badge/stability-beta-yellow.svg)
 [![roc](https://img.shields.io/npm/v/roc.svg)](https://www.npmjs.com/package/roc)
-[![build status](https://travis-ci.org/vgno/roc.svg)](https://travis-ci.org/vgno/roc)
-[![Coverage Status](https://coveralls.io/repos/vgno/roc/badge.svg?branch=master&service=github)](https://coveralls.io/github/vgno/roc?branch=master)
-[![Code Climate](https://codeclimate.com/github/vgno/roc/badges/gpa.svg)](https://codeclimate.com/github/vgno/roc)
-[![Dependency Status](https://david-dm.org/vgno/roc.svg)](https://david-dm.org/vgno/roc)
+[![build status](https://travis-ci.org/rocjs/roc.svg)](https://travis-ci.org/rocjs/roc)
+[![Coverage Status](https://coveralls.io/repos/rocjs/roc/badge.svg?branch=master&service=github)](https://coveralls.io/github/rocjs/roc?branch=master)
+[![Code Climate](https://codeclimate.com/github/rocjs/roc/badges/gpa.svg)](https://codeclimate.com/github/rocjs/roc)
+[![Dependency Status](https://david-dm.org/rocjs/roc.svg)](https://david-dm.org/rocjs/roc)
 
 ## At a glance
 Roc provides a __cli__ for managing development, building and runtime configuration. It also boasts an architecture that sweeps complexity of __npm library compositions__ away from your application.
