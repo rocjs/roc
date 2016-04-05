@@ -14,13 +14,13 @@ import { error, warning, info, ok } from '../helpers/style';
 const templates = [{
     name: 'Simple Roc App',
     description: 'A simple start on a generic web application',
-    identifier: 'web',
-    repo: 'vgno/roc-template-web'
+    identifier: 'web-app',
+    repo: 'rocjs/roc-template-web-app'
 }, {
     name: 'Simple Roc React App',
     description: 'A simple start on a React web application',
-    identifier: 'web-react',
-    repo: 'vgno/roc-template-web-react'
+    identifier: 'web-app-react',
+    repo: 'rocjs/roc-template-web-app-react'
 }];
 
 /**
