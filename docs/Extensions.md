@@ -140,3 +140,14 @@ plugins: [
     require.resolve('roc-plugin-start'),
 ]
 ```
+
+## Default Hooks
+
+Roc has one internal hook that can be used by extensions to modify the settings object before a command is started and after potential arguments from the command line and configuration file have been parsed. This is a good point to default to some value if no was given or modify something in the settings.
+
+```
+extension       roc
+hook            update-settings
+```
+
+The action that integrates with this hook is expected to return a settings object that should be merged with the existing one.

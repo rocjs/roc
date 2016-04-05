@@ -4,7 +4,7 @@ import { isString } from 'lodash';
 import { execute } from './execute';
 import { getAbsolutePath } from '../helpers';
 import { validate } from '../validation';
-import { merge, appendConfig } from '../configuration';
+import { merge, appendConfig, appendSettings } from '../configuration';
 import buildDocumentationObject from '../documentation/build-documentation-object';
 import { getApplicationConfig } from '../configuration/helpers';
 import {
@@ -18,7 +18,7 @@ import {
 import getSuggestions from '../helpers/get-suggestions';
 import { feedbackMessage, errorLabel } from '../helpers/style';
 import { setVerbose } from '../helpers/verbose';
-import { getHooks } from '../hooks';
+import { getHooks, runHookDirectly } from '../hooks';
 import { getActions } from '../hooks/actions';
 
 /**
@@ -108,6 +108,11 @@ export function runCli(info = { version: 'Unknown', name: 'Unknown' }, initalCon
 
     // Set the configuration object
     appendConfig(configObject);
+
+    // Run hook to make it possible for extensions to update the settings before anything other uses them
+    runHookDirectly({extension: 'roc', name: 'update-settings'}, [configObject.settings],
+        (newSettings) => appendSettings(newSettings)
+    );
 
     if (invoke) {
         // If string run as shell command
