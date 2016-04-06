@@ -1,7 +1,8 @@
-// This will in relity be effected by the same things as config and hooks/actions.
-// That means that it could have been global to make sure we have it defined everywhere but
-// if it does not carry over we only loose some output, that we will consider that fine.
-let verbose = false;
+/* Using global variables here to make sure that we can access the values set from different projects.
+ * This guarantees that the variables will live outside the require cache, something that we need for stability.
+ */
+global.roc = global.roc || {};
+global.roc.verbose = global.roc.verbose || false;
 
 /**
  * If verbose is enabled.
@@ -9,7 +10,7 @@ let verbose = false;
  * @returns {boolean} - If verbose is enabled.
  */
 export function isVerbose() {
-    return verbose;
+    return global.roc.verbose;
 }
 
 /**
@@ -18,5 +19,5 @@ export function isVerbose() {
  * @param {boolean} value - State to set verbose in.
  */
 export function setVerbose(value) {
-    verbose = value;
+    global.roc.verbose = value;
 }
