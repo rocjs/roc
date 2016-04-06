@@ -97,7 +97,7 @@ An example of this actions object can be seen here:
 
 The action function interface is the following (as touched on above):
 ```javascript
-(registeredHooks, registeredActions) => ({ extension, name, previousValue, description }) => (...args) => () => {}
+(registeredHooks, registeredActions) => ({ extension, name, previousValue, description, settings, verbose }) => (...args) => () => {}
 ```
 
 ```
@@ -110,6 +110,8 @@ extension           The calling extension name
 hook                The calling hook name
 previousValue       The previous value, will either be the initalValue defined for the hook or the return value from the action that run before the current one
 description         The hook description, can be used for logging what the calling hook is supposed to do
+settings            The settings from the Roc configuration object
+verbose             The verbose mode, either true or false
 ```
 
 __The call chain__
