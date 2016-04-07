@@ -5,7 +5,7 @@ Build __web applications__ and __components__ using modern JavaScript libraries 
 
 Quickly create products powered by libraries like [React](http://facebook.github.io/react/) and [Redux](https://github.com/rackt/redux) ready for deployment in production with minimal additional setup using tools like [Webpack](https://github.com/webpack) and [Babel](https://babeljs.io/) .  
 
-![stability beta](https://img.shields.io/badge/stability-beta-yellow.svg)
+![stability rc](https://img.shields.io/badge/stability-RC-green.svg)
 [![roc](https://img.shields.io/npm/v/roc.svg)](https://www.npmjs.com/package/roc)
 [![build status](https://travis-ci.org/rocjs/roc.svg)](https://travis-ci.org/rocjs/roc)
 [![Coverage Status](https://coveralls.io/repos/rocjs/roc/badge.svg?branch=master&service=github)](https://coveralls.io/github/rocjs/roc?branch=master)
@@ -41,10 +41,7 @@ This provides you with a really simple command line interface. Only Linux and OS
 
 ### Bootstrap React + Redux application
 ```
-mkdir react-app && cd react-app
-```
-```
-roc init web-react
+roc new react-app web-app-react && cd react-app
 ```
 ```
 roc dev
@@ -69,16 +66,8 @@ Read the documentation for the particular package that is used for more details 
 ## Extensions
 Roc is highly flexible and makes it easy to create new extensions. It does not enforce limits on what the extensions do or how they do it. It is trivial to both create new extensions in the form of packages and plugins as well as to extend existing ones. For example it would be possible to create a alternative to `roc-web` that uses [Browserify](http://browserify.org/) instead of [Webpack](http://webpack.github.io/).
 
-### Current Official Packages
-| Project | Github page |
-| ------- | ----------- |
-| _To be added_ |   &nbsp;  |
-
-### Current Offical Plugins
-| Project | Github page |
-| ------- | ----------- |
-| _To be added_ |   &nbsp;  |
-
+### Current Official Packages & Plugins
+[See the repositories under this organisation](https://github.com/rocjs)
 
 ### Example of tasks handled by these extensions
 - Building and bundling through [Webpack](http://webpack.github.io/).
