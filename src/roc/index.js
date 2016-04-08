@@ -59,10 +59,10 @@ const roc = {
                     Used to init new projects using special templates. If no template is given a prompt will ask for one.
                     The templates are fetched from Github and it's easy to create new ones.`,
                 markdown: `
-                    The __init__ command can be used to initiate a new Roc project and currently expects that it's run inside an empty directory. As can be seen above it takes two optional arguments, template and version. If no template is given a prompt will be shown with the possible alternatives that exists. Currently these alternatives are coded into Roc and matches \`web\` and \`web-react\`.
+                    The __init__ command can be used to initiate a new Roc project and currently expects that it's run inside an empty directory. As can be seen above it takes two optional arguments, template and version. If no template is given a prompt will be shown with the possible alternatives that exists. Currently these alternatives are coded into Roc and matches \`web-app\` and \`web-app-react\`.
 
                     __template__
-                    Template can either be a short name for a specific template, currently it accepts \`web\` and \`web-react\` that will be converted internally to \`vgno/roc-template-web\` and \`vgno/roc-template-web-react\`. As can be seen here the actual template reference is a Github repo and can be anything matching that pattern \`USERNAME/PROJECT\`.
+                    Template can either be a short name for a specific template, currently it accepts \`web-app\` and \`web-app-react\` that will be converted internally to \`rocjs/roc-template-web-app\` and \`rocjs/roc-template-web-app-react\`. As can be seen here the actual template reference is a Github repo and can be anything matching that pattern \`USERNAME/PROJECT\`.
 
                     It will also expect that the template has a folder named \`template\` and that inside of it there is \`package.json\` file with at least one dependency to a Roc module following the pattern \`roc-package-*\` or that it has a \`roc.config.js\` file (this file is then expected to have some [packages](/docs/config/packages.md) defined but this is not checked immediately).
 
