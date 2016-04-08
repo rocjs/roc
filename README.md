@@ -62,7 +62,7 @@ Official Roc extensions are semantically versioned and will include changelogs c
 ## Minimal lock-in
 Roc tries to stay out of your way as much as possible and most extensions will not introduce any Roc-specific interfaces. Your project will still use your favourite libraries in the same way as you normally would.
 
-### Current Official Packages & Plugins
+## Current Official Packages & Plugins
 [See the repositories under this organisation](https://github.com/rocjs)
 
 ## Documentation
