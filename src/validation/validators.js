@@ -3,7 +3,8 @@ import {
   isString as lodashIsString,
   isBoolean as lodashIsBoolean,
   isPlainObject as lodashIsPlainObject,
-  isFunction as lodashIsFunction
+  isFunction as lodashIsFunction,
+  isRegExp as lodashIsRegExp
 } from 'lodash';
 
 import isProm from 'is-promise';
@@ -82,7 +83,7 @@ export function isArrayOrSingle(validator) {
 }
 
 /**
- * Validates an string.
+ * Validates a promise.
  *
  * @param {object} value - Something to validate.
  * @param {boolean} info - If type information should be returned.
@@ -94,7 +95,26 @@ export function isPromise(value, info) {
     }
 
     if (!isProm(value)) {
-        return 'Was not a promise!';
+        return 'Was not a Promise!';
+    }
+
+    return true;
+}
+
+/**
+ * Validates a RegExp.
+ *
+ * @param {object} value - Something to validate.
+ * @param {boolean} info - If type information should be returned.
+ * @return {infoObject|boolean|string} - Type information or if it is valid.
+ */
+export function isRegExp(value, info) {
+    if (info) {
+        return infoObject('RegExp');
+    }
+
+    if (!lodashIsRegExp(value)) {
+        return 'Was not a RegExp!';
     }
 
     return true;

@@ -52,6 +52,11 @@ describe('roc', () => {
                     expect(getDefaultValue({a: [1]}))
                         .toEqual('{"a":[1]}');
                 });
+
+                it('should return RegExp as string', () => {
+                    expect(getDefaultValue(/abc/))
+                        .toEqual('/abc/');
+                });
             });
         });
     });

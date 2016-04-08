@@ -1,5 +1,5 @@
 import chalk from 'chalk';
-import { isPlainObject, isBoolean, isString, set, difference, isFunction } from 'lodash';
+import { isPlainObject, isBoolean, isString, set, difference, isFunction, isRegExp } from 'lodash';
 import resolve from 'resolve';
 import trimNewlines from 'trim-newlines';
 import redent from 'redent';
@@ -13,7 +13,7 @@ import { fileExists, getRocPackageDependencies, getRocPluginDependencies, getPac
 import onProperty from '../helpers/on-property';
 import { isValid, throwError } from '../validation';
 import { warning, infoLabel, errorLabel, warningLabel, feedbackMessage } from '../helpers/style';
-import { toArray } from '../converters';
+import { toArray, toRegExp } from '../converters';
 import { registerHooks } from '../hooks';
 import { registerActions, registerAction } from '../hooks/actions';
 import getSuggestions from '../helpers/get-suggestions';
@@ -588,6 +588,8 @@ function getConverter(value, name) {
 
             return value;
         };
+    } else if (isRegExp(value)) {
+        return (input) => toRegExp(input);
     } else if (Array.isArray(value)) {
         return toArray;
     } else if (Number.isInteger(value)) {
