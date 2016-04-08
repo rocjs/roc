@@ -1,7 +1,7 @@
 import { isRegExp } from 'lodash';
 
 /**
- * Given an input the function will return an RegExp.
+ * Given an input the function will return a RegExp.
  *
  * @param {object} input - The input to be converted.
  *
