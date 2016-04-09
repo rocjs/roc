@@ -146,12 +146,12 @@ describe('roc', () => {
                         });
                 });
 
-                it('should validate a RegExp correctly', () => {
+                it('should validate a Promise correctly', () => {
                     expect(isPromise(Promise.resolve()))
                         .toBe(true);
                 });
 
-                it('should return error if value is not a RegExp', () => {
+                it('should return error if value is not a Promise', () => {
                     expect(isPromise(() => {}))
                         .toInclude('not a Promise');
                 });
