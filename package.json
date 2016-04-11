@@ -90,6 +90,7 @@
     "strip-ansi": "~3.0.0",
     "tar": "~2.2.1",
     "temp": "~0.8.3",
-    "trim-newlines": "~1.0.0"
+    "trim-newlines": "~1.0.0",
+    "update-notifier": "0.6.3"
   }
 }
