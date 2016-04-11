@@ -8,6 +8,11 @@ Packages are the main building blocks for applications and will most often consi
 ## Plugins
 Plugins are often smaller packages that are NOT to be used directly in a project but in conjunction with a package to add some additional functionality.
 
+## Abstract Extensions
+Abstract extensions are not meant to be used directly inside a user project but rather to enhance and define something that other extensions can build on. They are from a technical standpoint identical to their non abstract counterparts. The only difference is the naming convention where `roc-abstract-*` is used over either `roc-package-*` or `roc-plugin-*`. It's up to the developer to select a fitting name for an abstract package that fits the naming convention. For an abstract package that might be `roc-abstract-package-*` and for an abstract plugin `roc-abstract-plugin-*`.
+
+The naming convention serves two purposes. Firstly it makes it clear for everyone that it's something to only use inside other extensions. Secondly it makes Roc ignore them if present inside a user projects `package.json`. If the user however wants to use one inside the project he can still add it to the `packages` or `plugins` properties inside the `roc.config.js` file.
+
 ## General Structure
 Roc expects all extensions to export an object named `roc` from the main file in a npm package. Other than this the packages themselves are quite free to do whatever they want to create what is needed to build an application.
 
