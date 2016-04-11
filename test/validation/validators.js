@@ -4,6 +4,8 @@ import {
     isArray,
     isObject,
     isArrayOrSingle,
+    isPromise,
+    isRegExp,
     isString,
     isBoolean,
     isInteger,
@@ -132,6 +134,46 @@ describe('roc', () => {
                     expect(isArrayOrSingle(spy)([1, 2, 3]))
                         .toBe(false);
                     expect(spy.calls.length).toBe(1);
+                });
+            });
+
+            describe('isPromise', () => {
+                it('should return info object if requested', () => {
+                    expect(isPromise(null, true))
+                        .toEqual({
+                            type: 'Promise',
+                            required: false
+                        });
+                });
+
+                it('should validate a Promise correctly', () => {
+                    expect(isPromise(Promise.resolve()))
+                        .toBe(true);
+                });
+
+                it('should return error if value is not a Promise', () => {
+                    expect(isPromise(() => {}))
+                        .toInclude('not a Promise');
+                });
+            });
+
+            describe('isRegExp', () => {
+                it('should return info object if requested', () => {
+                    expect(isRegExp(null, true))
+                        .toEqual({
+                            type: 'RegExp',
+                            required: false
+                        });
+                });
+
+                it('should validate a RegExp correctly', () => {
+                    expect(isRegExp(/abc/))
+                        .toBe(true);
+                });
+
+                it('should return error if value is not a RegExp', () => {
+                    expect(isRegExp('/abc/'))
+                        .toInclude('not a RegExp');
                 });
             });
 

@@ -1,5 +1,5 @@
 import stripAnsi from 'strip-ansi';
-import { isPlainObject, isString } from 'lodash';
+import { isPlainObject, isString, isRegExp } from 'lodash';
 
 /**
  * Returns a string to pad with.
@@ -53,6 +53,11 @@ export function getDefaultValue(object) {
         isString(object) && !object ||
         isPlainObject(object) && Object.keys(object).length === 0) {
         return null;
+    }
+
+    // Make sure we get something sensible when having a RegExp
+    if (isRegExp(object)) {
+        return object.toString();
     }
 
     return JSON.stringify(object);
