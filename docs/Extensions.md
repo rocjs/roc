@@ -16,19 +16,65 @@ The naming convention serves two purposes. Firstly it makes it clear for everyon
 ## General Structure
 Roc expects all extensions to export an object named `roc` from the main file in a npm package. Other than this the packages themselves are quite free to do whatever they want to create what is needed to build an application.
 
-The object must contain a name (most likely the same as the `name` defined in `package.json`) and at least one of the following:
+The object must contain a name (most likely the same as the `name` defined in `package.json`), optionally but highly recommended a `version`, and at least one of the following:
 ```
-buildConfig     Function that takes the previous configuration and meta objects and returns new ones
---- OR ---
-config          Configuration object
-meta            Meta configuration object
-
-actions         An object with actions that should connect to the hooks
-hooks           An object with the hooks that a package uses, not needed but useful for documentation and convenience
 packages        Array of packages that the extension inherits from
 plugins         Array of plugins that the extension inherits from
+
+init            A function will initialize the extension
+postInit        A function that will run after all extensions have been initialized in the reverse order as they was added
+
+buildConfig     Function that takes the previous configuration and meta objects and returns new ones
+config          Configuration object
+meta            Meta configuration object
+actions         An object with actions that should connect to the hooks
+hooks           An object with the hooks that a package uses, not needed but useful for documentation and convenience
 ```
 __If `buildConfig` is specified, config and meta will be ignored.__
+__If `init` is specified, buildConfig, config, meta, actions and hooks will be ignored.__
+
+
+#### packages
+An array of Roc packages that the extension uses. Classically this will look like this:
+```
+packages: [
+    require.resolve('roc-package-core-dev'),
+    require.resolve('roc-package-module')
+]
+```
+
+#### plugins
+An array of plugins that the extension uses. Classically this will look like this:
+```
+plugins: [
+    require.resolve('roc-plugin-start'),
+]
+```
+
+#### init
+Can be used to initialize the extension. Will get the following as an object:
+```
+config          The configuration object at this time
+meta            The meta configuration object at this time
+extensions      The registered extensions at this time, is an array with the following structure: [{name, version}]
+actions         The registered actions at this time
+hooks           The registered hooks at this time
+```
+If the extension should be processed the function need to return an object that can have one of the following from above; `buildConfig`, `config`, `meta`, `actions` and `hooks`. If the function returns nothing/undefined it will be managed as an error and the extension and all that depends on it will not be loaded. This is also the case if it returns a string, the string can be used for a more detailed error message.
+
+_This will soon be the only way for an extension to remove actions & hooks_
+
+#### postInit
+Can be used update the state after all other extensions has been initialized. Will get the following as an object:
+```
+config          The configuration object at this time
+meta            The meta configuration object at this time
+extensions      The registered extensions at this time, is an array with the following structure: [{name, version}]
+actions         The registered actions at this time
+hooks           The registered hooks at this time
+```
+
+_This will soon be the only way for an extension to remove actions & hooks_
 
 #### config
 The Roc configuration object.
@@ -102,12 +148,11 @@ An example of this actions object can be seen here:
 
 The action function interface is the following (as touched on above):
 ```javascript
-(registeredHooks, registeredActions) => ({ extension, name, previousValue, description, settings, verbose }) => (...args) => () => {}
+() => ({ extension, name, previousValue, description, settings, verbose }) => (...args) => () => {}
 ```
 
 ```
-registeredHooks     The registered hooks at the point when the action is instantiated, an object where the extension name is the key (Important to know that hooks might be added afterwards or added in a way where they are not registered in this way)
-registeredActions   The registered actions at the point when the action is instantiated, an array that contains objects `{ name, actions }` where name is the name of the extension and actions the actions as above
+// Nothing, this will soon be removed
 ```
 
 ```
@@ -121,7 +166,7 @@ verbose             The verbose mode, either true or false
 
 __The call chain__
 
-1. The first function in the chain is run when the action is registering itself with Roc. Here it's possible to validate that the right hooks or actions are present and it's also possible to remove some of them using `removeActions` if they are not supposed to run.
+1. *This will be removed soon* The first function in the chain is run when the action is registering itself with Roc.
 
 2. The second function will normally be invoked for every single action for every single hook. In this case it is up to the action to determine if it should process this and in that case return a new function. If one has registered the action with `extension` and/or `hook`  it will only be called if these match.
 
@@ -129,24 +174,6 @@ __The call chain__
 
 4. The fourth function will be invoked and in some instances it might be expected that it returns a value, in others not.
 
-
-
-#### packages
-An array of Roc packages that the extension uses. Classically this will look like this:
-```
-packages: [
-    require.resolve('roc-package-core-dev'),
-    require.resolve('roc-package-module')
-]
-```
-
-#### plugins
-An array of plugins that the extension uses. Classically this will look like this:
-```
-plugins: [
-    require.resolve('roc-plugin-start'),
-]
-```
 
 ## Default Hooks
 

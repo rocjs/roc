@@ -1,6 +1,5 @@
 import chalk from 'chalk';
 import { isPlainObject, isBoolean, isString, set, difference, isFunction, isRegExp } from 'lodash';
-import resolve from 'resolve';
 import trimNewlines from 'trim-newlines';
 import redent from 'redent';
 
@@ -14,14 +13,15 @@ import onProperty from '../helpers/on-property';
 import { isValid, throwError } from '../validation';
 import { warning, infoLabel, errorLabel, warningLabel, feedbackMessage } from '../helpers/style';
 import { toArray, toRegExp } from '../converters';
-import { registerHooks } from '../hooks';
-import { registerActions, registerAction } from '../hooks/actions';
+import { registerAction } from '../hooks/actions';
 import getSuggestions from '../helpers/get-suggestions';
+
+import buildExtensionTree from './extensions';
 
 /**
  * Builds the complete configuration objects.
  *
- * @param {boolean} verbose - If verbose mode should be enabled, logs some extra information.
+ * @param {boolean} [verbose=true] - If verbose mode should be enabled, logs some extra information.
  * @param {rocConfig} newConfig - The new configuration to base the merge on.
  * @param {rocMetaConfig} newMeta - The new meta configuration to base the merge on.
  * @param {rocConfig} baseConfig - The base configuration.
@@ -30,50 +30,40 @@ import getSuggestions from '../helpers/get-suggestions';
  * @param {boolean} [validate=true] - If the newConfig and the newMeta structure should be validated.
  *
  * @returns {Object} - The result of with the built configurations.
- * @property {rocConfig} packageConfig - The packages merged configurations
+ * @property {rocConfig} packageConfig - The packages merged configurations.
  * @property {rocConfig} config - The final configuration, with application configuration.
  * @property {rocMetaConfig} meta - The merged meta configuration.
  */
 export function buildCompleteConfig(
-    verbose, newConfig = {}, newMeta = {}, baseConfig = {}, baseMeta = {}, directory = process.cwd(), validate = true
+    verbose = false, newConfig = {}, newMeta = {}, baseConfig = {},
+    baseMeta = {}, directory = process.cwd(), validate = true
 ) {
     let finalConfig = { ...baseConfig };
     let finalMeta = { ...baseMeta };
 
-    let usedExtensions = [];
-    const mergeExtensions = (type) => (extensionName) => {
-        const extension = getExtension(extensionName, directory, type);
-        if (extension) {
-            const { config, meta } = getCompleteExtension(extension, extensionName);
-
-            usedExtensions.push(extension.name);
-            finalConfig = merge(finalConfig, config);
-            finalMeta = merge(finalMeta, meta);
-        }
-    };
-
     if (fileExists('package.json', directory)) {
         const packageJson = getPackageJson(directory);
 
-        // If packages are defined we will use them to merge the configurations
-        if (newConfig.packages && newConfig.packages.length) {
-            newConfig.packages.forEach(mergeExtensions('package'));
-        } else {
-            getRocPackageDependencies(packageJson)
-                .forEach(mergeExtensions('package'));
-        }
+        const packages = newConfig.packages && newConfig.packages.length ?
+            newConfig.packages :
+            getRocPackageDependencies(packageJson);
 
-        if (newConfig.plugins && newConfig.plugins.length) {
-            newConfig.plugins.forEach(mergeExtensions('plugin'));
-        } else {
-            getRocPluginDependencies(packageJson)
-                .forEach(mergeExtensions('plugin'));
-        }
+        const plugins = newConfig.plugins && newConfig.plugins.length ?
+            newConfig.plugins :
+            getRocPluginDependencies(packageJson);
 
-        if (usedExtensions.length && verbose) {
+        const {
+            projectExtensions,
+            config,
+            meta
+        } = buildExtensionTree(packages, plugins, baseConfig, baseMeta, directory, verbose);
+        finalConfig = merge(finalConfig, config);
+        finalMeta = merge(finalMeta, meta);
+
+        if (projectExtensions.length && verbose) {
             console.log(feedbackMessage(
                 infoLabel('Info', 'Extensions Used'),
-                usedExtensions.join('\n')
+                projectExtensions.map((extn) => `${extn.name}${extn.version ? ' - ' + extn.version : ''}`).join('\n')
             ));
         }
 
@@ -96,6 +86,7 @@ export function buildCompleteConfig(
 
         // Add project action
         if (isFunction(newConfig.action)) {
+            // TODO Update how action is used
             registerAction(newConfig.action, 'default', packageJson.name, true);
         }
     }
@@ -105,121 +96,6 @@ export function buildCompleteConfig(
         config: merge(finalConfig, newConfig),
         meta: merge(finalMeta, newMeta)
     };
-}
-
-function validRocExtension(roc, path) {
-    if (!roc.name) {
-        console.log(feedbackMessage(
-            warningLabel('Warning', 'Roc Extension'),
-            `Will ignore extension. Expected it to have a ${chalk.underline('name')}.`,
-            path
-        ));
-
-        return false;
-    }
-
-    if (
-        !roc.packages &&
-        !roc.plugins &&
-        !roc.hooks &&
-        !roc.actions &&
-        !roc.buildConfig &&
-        !roc.config &&
-        !roc.meta
-    ) {
-        console.log(feedbackMessage(
-            warningLabel('Warning', 'Roc Extension'),
-            `Will ignore extension. Expected it to have at least one of the following:\n` +
-            ['- config', '- meta', '- buildConfig', '- actions', '- hooks', '- packages', '- plugins'].join('\n'),
-            path
-        ));
-
-        return false;
-    }
-
-    return true;
-}
-
-function getCompleteExtension(roc = {}, path) {
-    let config = {};
-    let meta = {};
-
-    const getParents = (parents = []) => {
-        parents.forEach((parent) => {
-            const result = getCompleteExtension(require(parent).roc, parent);
-            config = merge(
-                config,
-                result.config
-            );
-
-            meta = merge(
-                meta,
-                result.meta
-            );
-        });
-    };
-
-    if (validRocExtension(roc, path)) {
-        // Get all parent packages
-        getParents(roc.packages);
-
-        // Get all parent plugins
-        getParents(roc.plugins);
-
-        // Get possible hooks
-        if (roc.hooks) {
-            registerHooks(roc.hooks, roc.name);
-        }
-
-        // Get potential actions
-        if (roc.actions) {
-            registerActions(roc.actions, roc.name);
-        }
-
-        // Build the config object
-        if (roc.buildConfig) {
-            return roc.buildConfig(
-                config,
-                meta
-            );
-        }
-
-        if (roc.config) {
-            config = merge(
-                config,
-                roc.config
-            );
-        }
-
-        if (roc.meta) {
-            meta = merge(
-                meta,
-                roc.meta
-            );
-        }
-    }
-
-    return {
-        config,
-        meta
-    };
-}
-
-function getExtension(extensionName, directory, type) {
-    try {
-        return require(resolve.sync(extensionName, { basedir: directory })).roc;
-    } catch (err) {
-        if (!/^Cannot find module/.test(err.message)) {
-            throw err;
-        }
-
-        console.log(feedbackMessage(
-            warningLabel('Warning', 'Roc Extension Loading Failed'),
-            `Failed to load Roc ${type} ` + chalk.bold(extensionName) +
-            '. Make sure you have it installed. Try running: ' +
-            chalk.underline('npm install --save ' + extensionName)
-        ));
-    }
 }
 
 function validateConfigurationStructure(config, applicationConfig) {

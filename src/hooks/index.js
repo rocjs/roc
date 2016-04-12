@@ -195,3 +195,12 @@ export function registerHooks(hooks, name) {
 export function getHooks() {
     return global.roc.hooks;
 }
+
+/**
+ * Sets the registered hooks.
+ *
+ * @param {Object} hooks - The hooks as an object where the key will be the extension they belong to.
+ */
+export function setHooks(hooks) {
+    global.roc.hooks = hooks;
+}
