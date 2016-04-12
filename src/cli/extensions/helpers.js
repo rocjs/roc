@@ -57,10 +57,9 @@ export function getExtensions(type) {
                     // Rest Actions & Hooks
                     setActions(state.actions);
                     setHooks(state.hooks);
-
-                    // Use the previous state
-                    return state;
                 }
+                // Use the previous state
+                return state;
             }
         , initialState);
     };
