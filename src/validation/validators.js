@@ -277,7 +277,7 @@ export function required(validator) {
     };
 }
 
-function infoObject(validator = () => ({type: ''}), wrapper, req = false) {
+export function infoObject(validator = () => ({type: ''}), wrapper, req = false) {
     const info = lodashIsFunction(validator) ? validator(null, true).type : validator.toString();
     const type = wrapper ? wrapper(info) : info;
     return {

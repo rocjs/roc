@@ -15,6 +15,7 @@ import {
  * @param {rocMetaConfig} baseMeta - The base meta configuration.
  * @param {string} [directory=process.cwd()] - The directory to resolve relative paths from.
  * @param {boolean} [verbose=true] - If verbose mode should be enabled, logs some extra information.
+ * @param {boolean} [checkDependencies=true] - If dependencies should be verified in extensions.
  *
  * @returns {Object} - The final state after loading all extensions.
  * @property {rocConfig} config - The final configuration, with application configuration.
