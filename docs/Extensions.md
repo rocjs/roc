@@ -22,7 +22,7 @@ packages        Array of packages that the extension inherits from
 plugins         Array of plugins that the extension inherits from
 
 init            A function will initialize the extension
-postInit        A function that will run after all extensions have been initialized in the reverse order as they was added
+postInit        A function that will run after all extensions have been initialized in the reverse order as they were added
 
 buildConfig     Function that takes the previous configuration and meta objects and returns new ones
 config          Configuration object
@@ -30,8 +30,8 @@ meta            Meta configuration object
 actions         An object with actions that should connect to the hooks
 hooks           An object with the hooks that a package uses, not needed but useful for documentation and convenience
 ```
-__If `buildConfig` is specified, config and meta will be ignored.__
-__If `init` is specified, buildConfig, config, meta, actions and hooks will be ignored.__
+__If `buildConfig` is specified, config and meta will be ignored.__  
+__If `init` is specified, `buildConfig`, `config`, `meta`, `actions` and `hooks` will be ignored.__
 
 
 #### packages
@@ -60,12 +60,12 @@ extensions      The registered extensions at this time, is an array with the fol
 actions         The registered actions at this time
 hooks           The registered hooks at this time
 ```
-If the extension should be processed the function need to return an object that can have one of the following from above; `buildConfig`, `config`, `meta`, `actions` and `hooks`. If the function returns nothing/undefined it will be managed as an error and the extension and all that depends on it will not be loaded. This is also the case if it returns a string, the string can be used for a more detailed error message.
+If the extension should be processed the function needs to return an object that can have one of the following from [above](#general-structure); `buildConfig`, `config`, `meta`, `actions` and `hooks`. If the function returns nothing/undefined it will be managed as an error and the extension and all that depends on it will not be loaded. This is also the case if it returns a string, the string can be used for a more detailed error message.
 
 _This will soon be the only way for an extension to remove actions & hooks_
 
 #### postInit
-Can be used update the state after all other extensions has been initialized. Will get the following as an object:
+Can be used update the state after all other extensions have been initialized. Will get the following as an object:
 ```
 config          The configuration object at this time
 meta            The meta configuration object at this time

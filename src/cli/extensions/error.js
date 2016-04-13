@@ -1,6 +1,3 @@
-/**
- * @ignore
- */
 export default class ExtensionError extends Error {
     constructor(message, extension, version, path) {
         super(message);
@@ -11,7 +8,7 @@ export default class ExtensionError extends Error {
 
     toString() {
         return this.message +
-            '\nHappened in: ' + `${this.extension}${this.version ? '@' + this.version : ''}`;
+            '\nOccurred in: ' + `${this.extension}${this.version ? '@' + this.version : ''}`;
     }
 
     getPath() {
