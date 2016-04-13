@@ -22,7 +22,9 @@ import {
  * @property {Object[]} projectExtensions - The extensions that was loaded successfully from the project.
  * @property {Object[]} usedExtensions - All of the loaded extensions.
  */
-export default function buildExtensionTree(packages, plugins, baseConfig, baseMeta, directory, verbose) {
+export default function buildExtensionTree(
+    packages, plugins, baseConfig, baseMeta, directory, verbose, checkDependencies
+) {
     return [
         getExtensions('package')(packages, directory),
         getExtensions('plugin')(plugins, directory),
@@ -31,6 +33,7 @@ export default function buildExtensionTree(packages, plugins, baseConfig, baseMe
         (state, process) => process(state),
         // Initial state
         {
+            checkDependencies,
             verbose,
             config: baseConfig,
             meta: baseMeta,

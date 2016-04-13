@@ -19,7 +19,7 @@ export default function getConfiguration(dirPath, applicationConfigPath) {
     const applicationConfig = getApplicationConfig(applicationConfigPath, path, false);
 
     let { packageConfig, config: configObject, meta: metaObject } =
-        buildCompleteConfig(false, applicationConfig, undefined, {}, {}, path, true);
+        buildCompleteConfig(false, applicationConfig, undefined, {}, {}, path, true, false);
 
     return {
         configObject,

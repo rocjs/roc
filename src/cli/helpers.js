@@ -28,6 +28,7 @@ import buildExtensionTree from './extensions';
  * @param {rocMetaConfig} baseMeta - The base meta configuration.
  * @param {string} [directory=process.cwd()] - The directory to resolve relative paths from.
  * @param {boolean} [validate=true] - If the newConfig and the newMeta structure should be validated.
+ * @param {boolean} [checkDependencies=true] - If dependencies should be verified in extensions.
  *
  * @returns {Object} - The result of with the built configurations.
  * @property {rocConfig} packageConfig - The packages merged configurations.
@@ -36,7 +37,7 @@ import buildExtensionTree from './extensions';
  */
 export function buildCompleteConfig(
     verbose = false, newConfig = {}, newMeta = {}, baseConfig = {},
-    baseMeta = {}, directory = process.cwd(), validate = true
+    baseMeta = {}, directory = process.cwd(), validate = true, checkDependencies = true
 ) {
     let finalConfig = { ...baseConfig };
     let finalMeta = { ...baseMeta };
@@ -56,7 +57,7 @@ export function buildCompleteConfig(
             projectExtensions,
             config,
             meta
-        } = buildExtensionTree(packages, plugins, baseConfig, baseMeta, directory, verbose);
+        } = buildExtensionTree(packages, plugins, baseConfig, baseMeta, directory, verbose, checkDependencies);
         finalConfig = merge(finalConfig, config);
         finalMeta = merge(finalMeta, meta);
 

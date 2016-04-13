@@ -109,7 +109,7 @@ function init(roc, state) {
 }
 
 function checkDependencies(roc, state) {
-    if (roc.dependencies) {
+    if (roc.dependencies && state.checkDependencies) {
         for (const dependency of Object.keys(roc.dependencies)) {
             const required = state.usedExtensions.find((used) => used.name === dependency);
             if (!required) {
