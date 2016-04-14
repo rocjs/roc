@@ -1,7 +1,5 @@
 import isFunction from 'lodash/isFunction';
 
-import { getHooks } from './';
-
 // This needs to be global, same case as with configuration
 global.roc = global.roc || {};
 global.roc.actions = global.roc.actions || [];
@@ -20,8 +18,8 @@ export function registerActions(actions, extensionName) {
         let extensionActions = {};
         Object.keys(actions).forEach((key) => {
             const action = isFunction(actions[key]) ?
-                actions[key](getHooks(), global.roc.actions) :
-                actions[key].action(getHooks(), global.roc.actions);
+                actions[key]() :
+                actions[key].action();
 
             extensionActions = {
                 ...extensionActions,
@@ -59,7 +57,7 @@ export function registerAction(action, actionName, extensionName, project = fals
         global.roc.actions[index].actions = {
             ...global.roc.actions[index].actions,
             [actionName]: {
-                ...createActionHelper(action(getHooks(), global.roc.actions))
+                ...createActionHelper(action())
             }
         };
     } else {
@@ -68,7 +66,7 @@ export function registerAction(action, actionName, extensionName, project = fals
             name: extensionName,
             actions: {
                 [actionName]: {
-                    ...createActionHelper(action(getHooks(), global.roc.actions))
+                    ...createActionHelper(action())
                 }
             }
         });
@@ -115,4 +113,14 @@ export function removeActions(extensionToRemove, actionToRemove) {
  */
 export function getActions() {
     return global.roc.actions;
+}
+
+/**
+ * Sets the registered actions.
+ *
+ * @param {Object[]} actions - The actions as an array where the order should be based on the order they registered
+ *  themselves with Roc.
+ */
+export function setActions(actions) {
+    global.roc.actions = actions;
 }

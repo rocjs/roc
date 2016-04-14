@@ -92,20 +92,22 @@ export function runHookDirectly({
     }, args = [], callback) {
     // Validate args
     if (argumentsDefinitions) {
-        args.forEach((arg, i) => {
-            const validationResult = isValid(arg, argumentsDefinitions[i].validation);
-            if (validationResult !== true) {
-                try {
-                    throwError(argumentsDefinitions[i].name, validationResult, arg, 'argument');
-                } catch (err) {
-                    console.log(feedbackMessage(
-                        errorLabel('Error', 'Hook problem'),
-                        'A argument was not valid.\n\n' +
-                        err.message
-                    ));
-                    /* eslint-disable no-process-exit */
-                    process.exit(1);
-                    /* eslint-enable */
+        args.forEach((value, i) => {
+            if (value !== undefined) {
+                const validationResult = isValid(value, argumentsDefinitions[i].validation);
+                if (validationResult !== true) {
+                    try {
+                        throwError(argumentsDefinitions[i].name, validationResult, value, 'argument');
+                    } catch (err) {
+                        console.log(feedbackMessage(
+                            errorLabel('Error', 'Hook problem'),
+                            'A argument was not valid.\n\n' +
+                            err.message
+                        ));
+                        /* eslint-disable no-process-exit */
+                        process.exit(1);
+                        /* eslint-enable */
+                    }
                 }
             }
         });
@@ -194,4 +196,13 @@ export function registerHooks(hooks, name) {
  */
 export function getHooks() {
     return global.roc.hooks;
+}
+
+/**
+ * Sets the registered hooks.
+ *
+ * @param {Object} hooks - The hooks as an object where the key will be the extension they belong to.
+ */
+export function setHooks(hooks) {
+    global.roc.hooks = hooks;
 }
