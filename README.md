@@ -71,7 +71,9 @@ See the [documentation](/docs/README.md).
 ## Motivation
 Roc was born out of the need to create modern applications following the correct conventions and using best practices consistently.
 
-We quickly realized that keeping boilerplate updated within each project over time was unmanageable. It seems natural to have this _repeated complexity managed by separated semantically versioned packages_.
+We quickly realized that keeping boilerplate updated within each project over time was unmanageable. It seems natural to have this _repeated complexity managed by separated semantically versioned packages_. 
+
+[See this article for a more in-depth overview of the reasoning behind Roc.](https://medium.com/@arsovik/rethinking-modern-javascript-development-6aee92b860aa)
 
 Development of Roc was started before these posts where created but they still describe what Roc aims to solve in a good way:
 
