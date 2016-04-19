@@ -59,6 +59,15 @@ Templates are very thin skeletons that depend on Roc extensions that manage the 
 
 Official Roc extensions are semantically versioned and will include changelogs compiling change summaries, making upgrade paths much simpler across your projects.
 
+## Is this not Yeoman?
+No.
+
+At first sight it might seem that Roc is similar to Yeoman but they do not address the same problem. Yeoman scaffolds a project for you based on a generator that might ask you some questions about how you want to setup your project. However after that has been performed there is no easy way to update the project if a new version of the generator is created. Yeoman will additionally add a lot of code into your project which is basically boilerplate code, that you will seldom touch. And if you manually fix some bug in the generated code you will have to manually do the same work in all other possible projects that are based on the same generator.
+
+Roc will push a lot of the code that you would normally get from a generator away from your project and into versioned packages that can be updated and interacted with through a common interface. This means that you do not get code inside our projects that you will not care about most of the time like configuration files and common boilerplate, making it possible to update it. This leaves you with only the most important code inside your project. Additionally Roc is a composable system making it easy to add additional functionality with minimal effort after the initial project setup.
+
+With that said you could definitely use Yeoman together with Roc if you so wish.
+
 ## Minimal lock-in
 Roc tries to stay out of your way as much as possible and most extensions will not introduce any Roc-specific interfaces. Your project will still use your favourite libraries in the same way as you normally would.
 
