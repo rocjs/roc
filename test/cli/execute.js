@@ -8,7 +8,7 @@ describe('execute', () => {
     describe('unsuccessfully runs', () => {
         const status = 5;
         before(() => {
-            spawn = expect.spyOn(require('child_process'), 'spawn')
+            spawn = expect.spyOn(require('cross-spawn'), 'spawn')
                 .andReturn({
                     on: (name, cb) => {
                         // To simulate that the commands take some time to complete.
@@ -39,7 +39,7 @@ describe('execute', () => {
     describe('successfully runs', () => {
         before(() => {
             cwd = expect.spyOn(process, 'cwd').andReturn('/');
-            spawn = expect.spyOn(require('child_process'), 'spawn')
+            spawn = expect.spyOn(require('cross-spawn'), 'spawn')
                 .andReturn({
                     on: (name, cb) => {
                         // To simulate that the commands take some time to complete.
