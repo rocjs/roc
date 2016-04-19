@@ -1,5 +1,5 @@
 import expect from 'expect';
-import path from 'path';
+import path, {sep} from 'path';
 
 import {
     getAbsolutePath,
@@ -13,7 +13,7 @@ describe('roc', () => {
         describe('getAbsolutePath', () => {
             it('should correctly append directory if not absolute', () => {
                 expect(getAbsolutePath('roc.config.js', '/some/dir'))
-                    .toBe('/some/dir/roc.config.js');
+                    .toBe(`${sep}some${sep}dir${sep}roc.config.js`);
             });
 
             it('should not touch an already absolute path', () => {
