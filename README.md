@@ -11,7 +11,7 @@ Quickly create products powered by libraries like [Koa](http://koajs.com/), [Rea
 [![Coverage Status](https://coveralls.io/repos/rocjs/roc/badge.svg?branch=master&service=github)](https://coveralls.io/github/rocjs/roc?branch=master)
 [![Code Climate](https://codeclimate.com/github/rocjs/roc/badges/gpa.svg)](https://codeclimate.com/github/rocjs/roc)
 [![Dependency Status](https://david-dm.org/rocjs/roc.svg)](https://david-dm.org/rocjs/roc)  
-_Currently supports Linux and OS X_
+_Currently supports Linux and OS X using Node4+ and npm3_
 
 ## Roc provides
 - Command Line Interface (CLI) for creating and managing your project
