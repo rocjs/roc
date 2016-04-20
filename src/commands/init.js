@@ -1,6 +1,6 @@
 import fs from 'fs-extra';
 import path, { join } from 'path';
-import { spawn } from 'child_process';
+import { spawn } from 'cross-spawn';
 import inquirer from 'inquirer';
 import replace from 'replace';
 import chalk from 'chalk';

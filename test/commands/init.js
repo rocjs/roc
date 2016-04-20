@@ -33,7 +33,7 @@ describe('roc', () => {
                 getVersions = expect.spyOn(require('../../src/commands/helpers/github'), 'getVersions');
                 get = expect.spyOn(require('../../src/commands/helpers/github'), 'get');
 
-                spawn = expect.spyOn(require('child_process'), 'spawn')
+                spawn = expect.spyOn(require('cross-spawn'), 'spawn')
                     .andReturn({
                         on: (name, cb) => {
                             cb(0);

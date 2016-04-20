@@ -1,4 +1,5 @@
 import expect from 'expect';
+import {sep} from 'path';
 
 describe('execute', () => {
     let spawn;
@@ -8,7 +9,7 @@ describe('execute', () => {
     describe('unsuccessfully runs', () => {
         const status = 5;
         before(() => {
-            spawn = expect.spyOn(require('child_process'), 'spawn')
+            spawn = expect.spyOn(require('cross-spawn'), 'spawn')
                 .andReturn({
                     on: (name, cb) => {
                         // To simulate that the commands take some time to complete.
@@ -39,7 +40,7 @@ describe('execute', () => {
     describe('successfully runs', () => {
         before(() => {
             cwd = expect.spyOn(process, 'cwd').andReturn('/');
-            spawn = expect.spyOn(require('child_process'), 'spawn')
+            spawn = expect.spyOn(require('cross-spawn'), 'spawn')
                 .andReturn({
                     on: (name, cb) => {
                         // To simulate that the commands take some time to complete.
@@ -96,8 +97,8 @@ describe('execute', () => {
 
         it('should handle cd commands correctly', () => {
             return execute('cd my/path && roc && cd other/path && roc').then(() => {
-                expect(spawn.calls[0].arguments[2].cwd).toEqual('/my/path');
-                expect(spawn.calls[1].arguments[2].cwd).toEqual('/my/path/other/path');
+                expect(spawn.calls[0].arguments[2].cwd).toEqual(`${sep}my${sep}path`);
+                expect(spawn.calls[1].arguments[2].cwd).toEqual(`${sep}my${sep}path${sep}other${sep}path`);
             });
         });
     });
