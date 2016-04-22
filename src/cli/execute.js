@@ -1,5 +1,5 @@
 import { join } from 'path';
-import { spawn, spawnSync } from 'cross-spawn';
+import { spawn, sync } from 'cross-spawn';
 
 /**
  * Executes a command string.
@@ -99,7 +99,7 @@ function runCommandSync(syncCommands, path = process.cwd()) {
             return runCommandSync(syncCommands, newPath);
         }
 
-        const { status } = spawnSync(cmd, args, { stdio: 'inherit', cwd: path });
+        const { status } = sync(cmd, args, { stdio: 'inherit', cwd: path });
 
         if (status) {
             return status;
