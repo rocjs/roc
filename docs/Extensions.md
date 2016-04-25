@@ -148,7 +148,7 @@ An example of this actions object can be seen here:
 
 The action function interface is the following (as touched on above):
 ```javascript
-() => ({ extension, name, previousValue, description, settings, verbose }) => (...args) => () => {}
+() => ({ extension, hook, previousValue, description, settings, verbose }) => (...args) => () => {}
 ```
 
 ```
