@@ -7,6 +7,8 @@ import { pad } from '../documentation/helpers';
 import { getCommandArgumentsAsString, getDefaultOptions } from '../cli/helpers';
 import onProperty from '../helpers/on-property';
 
+const debug = require('debug')('roc:core:commands');
+
 /**
  * Command used to generate markdown documentation for all the possible commands.
  * Can be piped to a file and uploaded somewhere easily.
@@ -20,6 +22,8 @@ import onProperty from '../helpers/on-property';
  * @returns {string} - Markdown documentation.
  */
 export default function generateMarkdownCommands(name, config, metaConfig, settingsLink, hideCommands = []) {
+    debug('Generating markdown commands.');
+
     const rows = [];
     const allSettingGroups = config.settings ?
         Object.keys(config.settings).sort() :

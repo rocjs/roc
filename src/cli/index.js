@@ -20,6 +20,7 @@ import { feedbackMessage, errorLabel } from '../helpers/style';
 import { setVerbose } from '../helpers/verbose';
 import { getHooks, runHookDirectly } from '../hooks';
 import { getActions } from '../hooks/actions';
+const debug = require('debug')('roc:core:cli');
 
 /**
  * Invokes the Roc cli.
@@ -36,6 +37,7 @@ import { getActions } from '../hooks/actions';
  */
 export function runCli(info = { version: 'Unknown', name: 'Unknown' }, initalConfig, initalMeta,
     argv = process.argv, invoke = true) {
+    debug('Getting commandline arguments.');
     const {
         _, h, help, V, verbose, v, version, c, config, d, directory, ...restOptions
     } = minimist(argv.slice(2));
@@ -59,8 +61,10 @@ export function runCli(info = { version: 'Unknown', name: 'Unknown' }, initalCon
     const dirPath = getAbsolutePath(directory || d);
 
     // Build the complete config object
+    debug('Building application config.');
     const applicationConfig = getApplicationConfig(applicationConfigPath, dirPath, verboseMode);
 
+    debug('Building complete context config.');
     let { packageConfig, config: configObject, meta: metaObject } =
         buildCompleteConfig(verboseMode, applicationConfig, undefined, initalConfig, initalMeta, dirPath, true);
 
@@ -84,6 +88,7 @@ export function runCli(info = { version: 'Unknown', name: 'Unknown' }, initalCon
         return console.log(generateCommandDocumentation(packageConfig, metaObject, command, info.name));
     }
 
+    debug('Parsing commandline arguments.');
     const parsedArguments = parseArguments(command, metaObject.commands, args);
 
     let documentationObject;
@@ -94,6 +99,7 @@ export function runCli(info = { version: 'Unknown', name: 'Unknown' }, initalCon
         documentationObject = buildDocumentationObject(configObject.settings, metaObject.settings, filter);
     }
 
+    debug('Parsing commandline options.');
     const { settings, parsedOptions } =
         parseOptions(restOptions, getMappings(documentationObject), command, metaObject.commands);
 
@@ -103,12 +109,15 @@ export function runCli(info = { version: 'Unknown', name: 'Unknown' }, initalCon
 
     // Validate configuration
     if (metaObject.commands && metaObject.commands[command] && metaObject.commands[command].settings) {
+        debug('Validating configuration.');
         validate(configObject.settings, metaObject.settings, metaObject.commands[command].settings);
     }
 
     // Set the configuration object
+    debug('Merging configuration to global context.');
     appendConfig(configObject);
 
+    debug('Running hook \'update-settings\'');
     // Run hook to make it possible for extensions to update the settings before anything other uses them
     runHookDirectly({extension: 'roc', name: 'update-settings'}, [configObject.settings],
         (newSettings) => appendSettings(newSettings)
@@ -117,10 +126,12 @@ export function runCli(info = { version: 'Unknown', name: 'Unknown' }, initalCon
     if (invoke) {
         // If string run as shell command
         if (isString(configObject.commands[command])) {
+            debug('Invoking shell command.');
             return execute(configObject.commands[command])
                 .catch(process.exit);
         }
 
+        debug('Running command \'%s\'', command);
         // Run the command
         return configObject.commands[command]({
             verbose: verboseMode,
@@ -150,6 +161,7 @@ export function runCli(info = { version: 'Unknown', name: 'Unknown' }, initalCon
 export function initCli(version, name) {
     require('source-map-support').install();
     require('loud-rejection')();
+    debug('CLI initialized programatically with source-map support and loud-rejection.');
 
     return runCli({
         version: version,

@@ -9,7 +9,10 @@ import { merge } from '../../configuration';
 import { warningLabel, feedbackMessage } from '../../helpers/style';
 import ExtensionError from './error';
 
+const debug = require('debug')('roc:core:cli:extensions');
+
 export function runPostInits(initialState) {
+    debug('Running post inits.');
     return initialState.postInits.reduce(
         (state, postInit) =>
             manageRocObject(
@@ -27,6 +30,8 @@ export function runPostInits(initialState) {
 
 export function getExtensions(type) {
     return (extensions, directory) => (initialState) => {
+        debug('Getting extensions for type \'%s\'', type);
+
         return extensions.reduce(
             (state, extensionPath) => {
                 // Get the extension
@@ -66,6 +71,7 @@ export function getExtensions(type) {
 }
 
 function getParents(type) {
+    debug('Getting parents for type \'%s\'', type);
     return (roc, state) => {
         let nextState = {...state};
         for (const parent of roc[type] || []) {
@@ -77,6 +83,8 @@ function getParents(type) {
 }
 
 function init(roc, state) {
+    debug('Running init.');
+
     if (roc.init) {
         const result = roc.init({
             config: state.config,
@@ -109,6 +117,8 @@ function init(roc, state) {
 }
 
 function checkDependencies(roc, state) {
+    debug('Running checkDependencies.');
+
     if (roc.dependencies && state.checkDependencies) {
         for (const dependency of Object.keys(roc.dependencies)) {
             const required = state.usedExtensions.find((used) => used.name === dependency);
@@ -220,6 +230,8 @@ function manageRocObject(roc, state) {
 }
 
 function getExtension(extensionName, directory, type) {
+    debug('Loading extension \'%s\'', extensionName);
+
     try {
         return require(resolve.sync(extensionName, { basedir: directory })).roc;
     } catch (err) {
@@ -237,6 +249,8 @@ Make sure you have it installed. Try running: ${chalk.underline('npm install --s
 
 function validRocExtension(path) {
     return (roc, state) => {
+        debug('Asserting extension validity for %s', path);
+
         if (!roc.name) {
             throw new ExtensionError(
                 `Will ignore extension. Expected it to have a ${chalk.underline('name')}.`,

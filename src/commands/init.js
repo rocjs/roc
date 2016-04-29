@@ -9,6 +9,8 @@ import { get, getVersions } from './helpers/github';
 import { validRocProject } from './helpers/general';
 import { error, warning, info, ok } from '../helpers/style';
 
+const debug = require('debug')('roc:core:commands');
+
 /* This should be fetched from a server!
  */
 const templates = [{
@@ -31,6 +33,7 @@ const templates = [{
  * @returns {Promise} - Promise for the command.
  */
 export default function init({ parsedArguments, parsedOptions }) {
+    debug('Running init.');
     const { list, force } = parsedOptions.options;
     const { name, template, version } = parsedArguments.arguments;
 
@@ -164,6 +167,8 @@ function showCompletionMessage(dirPath) {
 }
 
 function replaceTemplatedValues(answers, dirPath) {
+    debug('Replacing template variables.');
+
     // 1. Replace content
     Object.keys(answers).map((key) => {
         replace({
@@ -176,6 +181,7 @@ function replaceTemplatedValues(answers, dirPath) {
     });
 
     // 2. Replace filenames
+    debug('Replacing templated filenames.');
     replaceTemplatedValuesInDirectory(answers, join(dirPath, 'template'));
 }
 
@@ -216,6 +222,8 @@ function configureFiles(dirPath, directory) {
 }
 
 function npmInstall(dirPath) {
+    debug('Running npm install.');
+
     return new Promise((resolve, reject) => {
         // Run npm install
         const npm = spawn('npm', ['install', '--loglevel=error'], {
@@ -234,6 +242,8 @@ function npmInstall(dirPath) {
 }
 
 function interactiveMenu(directory, list) {
+    debug('Staring interactive menu');
+
     return new Promise((resolve) => {
         const choices = templates.map((elem) => ({ name: elem.name, value: elem.identifier }));
 
@@ -249,6 +259,8 @@ function interactiveMenu(directory, list) {
 }
 
 function checkFolder(force = false, directoryName = '') {
+    debug('Checking init directory.');
+
     return new Promise((resolve) => {
         const directoryPath = path.join(process.cwd(), directoryName);
         fs.mkdir(directoryPath, (err) => {

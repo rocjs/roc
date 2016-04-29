@@ -77,6 +77,7 @@
     "chalk": "~1.1.1",
     "colors": "~1.1.2",
     "cross-spawn": "2.2.3",
+    "debug": "^2.2.0",
     "deep-extend": "~0.4.0",
     "fs-extra": "~0.26.4",
     "got": "~6.1.1",
