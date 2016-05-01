@@ -2,6 +2,7 @@ import { isPlainObject, isFunction } from 'lodash';
 
 import { toCliOption } from './helpers';
 import onProperty from '../helpers/on-property';
+import automaticConverter from '../converters/automatic';
 
 const defaultValidation = (input, info) => info ? {type: 'Unknown'} : true;
 
@@ -20,38 +21,41 @@ export default function buildDocumentationObject(initalObject, meta = {}, inital
         return Object.keys(object).map(callback).filter((value) => value !== undefined);
     };
 
-    const manageGroup = (object, name, group = {}, description = {}, validation = {}, parents, level, parentNames) => {
+    const manageGroup = (object, name, group = {}, description = {}, validation = {}, converters = {},
+        parents, level, parentNames) => {
         const groupDescription = isPlainObject(group) ? group._description || undefined : group;
         return {
             name,
             parentNames,
             level,
             description: groupDescription,
-            objects: recursiveHelper(object, group, description, validation, [], level + 1, parents,
+            objects: recursiveHelper(object, group, description, validation, converters, [], level + 1, parents,
                 parentNames.concat(name), true),
-            children: recursiveHelper(object, group, description, validation, [], level + 1, parents,
+            children: recursiveHelper(object, group, description, validation, converters, [], level + 1, parents,
                 parentNames.concat(name))
         };
     };
 
-    const manageLeaf = (object, name, description, validation = defaultValidation, parents) => {
+    const manageLeaf = (object, name, description, validation = defaultValidation, converter, parents) => {
         const { type = 'Unknown', required = false } = isFunction(validation) ?
             validation(null, true) :
             ({type: validation.toString(), req: false });
 
+        const cli = toCliOption(parents);
         return {
             name,
             description,
             type,
             required,
+            cli,
             path: parents.join('.'),
-            cli: toCliOption(parents),
             defaultValue: object,
-            validator: validation
+            validator: validation,
+            converter: converter || automaticConverter(object, cli)
         };
     };
 
-    function recursiveHelper(object, groups = {}, descriptions = {}, validations = {}, filter = [],
+    function recursiveHelper(object, groups = {}, descriptions = {}, validations = {}, converters = {}, filter = [],
         level = 0, initalParents = [], parentNames = [], leaves = false) {
         return allObjects(object, (key) => {
             // Make sure that we either have no filter or that there is a match
@@ -60,16 +64,24 @@ export default function buildDocumentationObject(initalObject, meta = {}, inital
                 const value = object[key];
                 if (isPlainObject(value) && Object.keys(value).length > 0 && !leaves) {
                     const group = isPlainObject(groups) ? groups[key] : {};
-                    return manageGroup(value, key, group, descriptions[key], validations[key], parents, level,
-                        parentNames);
+                    return manageGroup(value, key, group, descriptions[key], validations[key], converters[key],
+                        parents, level, parentNames);
                 } else if ((!isPlainObject(value) || Object.keys(value).length === 0) && leaves) {
-                    return manageLeaf(value, key, descriptions[key], validations[key], parents);
+                    return manageLeaf(value, key, descriptions[key], validations[key], converters[key], parents);
                 }
             }
         });
     }
 
-    return recursiveHelper(initalObject, meta.groups, meta.descriptions, meta.validations, initalFilter, initalLevel);
+    return recursiveHelper(
+        initalObject,
+        meta.groups,
+        meta.descriptions,
+        meta.validations,
+        meta.converters,
+        initalFilter,
+        initalLevel
+    );
 }
 
 /**

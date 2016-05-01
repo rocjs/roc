@@ -35,10 +35,11 @@ export function addPadding(string, length) {
  */
 export function toCliOption(configPaths) {
     // Runtime should be added directly
-    if (configPaths[0] === 'runtime') {
-        configPaths.shift();
-    }
-    return '--' + configPaths.join('-');
+    const paths = configPaths[0] === 'runtime' ?
+        configPaths.slice(1) :
+        configPaths;
+
+    return '--' + paths.join('-');
 }
 
 /**

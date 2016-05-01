@@ -1,5 +1,5 @@
 import chalk from 'chalk';
-import { isPlainObject, isBoolean, isString, set, difference, isFunction, isRegExp } from 'lodash';
+import { isPlainObject, set, difference, isFunction } from 'lodash';
 import trimNewlines from 'trim-newlines';
 import redent from 'redent';
 
@@ -12,7 +12,6 @@ import { fileExists, getRocPackageDependencies, getRocPluginDependencies, getPac
 import onProperty from '../helpers/on-property';
 import { isValid, throwError } from '../validation';
 import { warning, infoLabel, errorLabel, warningLabel, feedbackMessage } from '../helpers/style';
-import { toArray, toRegExp } from '../converters';
 import { registerAction } from '../hooks/actions';
 import getSuggestions from '../helpers/get-suggestions';
 
@@ -433,7 +432,7 @@ export function getMappings(documentationObject = []) {
                 mappings[element.cli.substr(2)] = {
                     name: element.cli,
                     path: element.path,
-                    converter: getConverter(element.defaultValue, element.cli),
+                    converter: element.converter,
                     validator: element.validator
                 };
             });
@@ -445,37 +444,6 @@ export function getMappings(documentationObject = []) {
     };
 
     return recursiveHelper(documentationObject);
-}
-
-// Convert values based on their default value
-function getConverter(value, name) {
-    if (isBoolean(value)) {
-        return (input) => {
-            if (isBoolean(input)) {
-                return input;
-            }
-            if (input === 'true' || input === 'false') {
-                return input === 'true';
-            }
-
-            console.log(feedbackMessage(
-                warningLabel('Warning', 'Conversion Failed'),
-                `Invalid value given for ${chalk.bold(name)}. Will use the default ${chalk.bold(value)}.`
-            ));
-
-            return value;
-        };
-    } else if (isRegExp(value)) {
-        return (input) => toRegExp(input);
-    } else if (Array.isArray(value)) {
-        return toArray;
-    } else if (Number.isInteger(value)) {
-        return (input) => parseInt(input, 10);
-    } else if (!isString(value) && (!value || Object.keys(value).length === 0)) {
-        return (input) => JSON.parse(input);
-    }
-
-    return (input) => input;
 }
 
 /**
