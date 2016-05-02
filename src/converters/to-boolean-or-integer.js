@@ -9,7 +9,7 @@ import { toBoolean, toInteger } from '../converters';
  *
  * @returns {bool|number} - The converted result.
  */
-export default function toBooleanInteger(input, defaultValue, name) {
+export default function toBooleanOrInteger(input, defaultValue, name) {
     if (parseInt(input, 10)) {
         return toInteger(input);
     }
