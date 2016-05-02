@@ -54,8 +54,16 @@ module.exports = {
                 _description: 'Description for 2',
                 subgroup: 'Description for subgroup'
             },
-        }
+        },
         validations: {
+            group1: {
+                // …
+            },
+            group2: {
+                // …
+            }
+        },
+        converters: {
             group1: {
                 // …
             },
@@ -67,7 +75,7 @@ module.exports = {
 }
 ```
 
-As can be seen in the example above the Roc settings meta object can have 3 properties; `descriptions`, `groups`, `validations`.
+As can be seen in the example above the Roc settings meta object can have 4 properties; `descriptions`, `groups`, `validations`, `converters`.
 
 ### `descriptions`
 Should mirror the groups and general structure of the normal settings object adding description to the properties. These descriptions will be shown when using the cli and when generation documentation for the settings.
@@ -85,3 +93,10 @@ Roc assumes that the validators used is either a RegExp or a function that will 
 For convenience several types of validators exists in `roc` that can be imported from `roc/validators`. For a complete list of them please see [the JSDocs](/docs/JSDocs.md).
 
 See [roc.config.meta.js in roc-web for an example of how the configuration might look](https://github.com/vgno/roc-web/blob/master/src/roc/config/roc.config.meta.js#L62).
+
+### `converters`
+Roc will by default provide an automatic converter that will be based on the default value of the corresponding settings. In most cases will this be sufficient but in some instances a custom converter might be needed. This custom converter will in most cases get a string as input and be expected to return the correct type.
+
+Should mirror the groups and general structure of the normal settings object adding converters to the properties. These converters will be used by the cli to convert inputs given to the cli directly.
+
+For convenience several types of converters exists in `roc` that can be imported from `roc/converters`. For a complete list of them please see [the JSDocs](/docs/JSDocs.md).
