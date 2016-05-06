@@ -1,7 +1,7 @@
 #! /usr/bin/env node
 require('source-map-support').install();
 require('loud-rejection')();
-const debug = require('debug')('roc:core:bin');
+const debug = require('debug')('roc:bin');
 
 debug('Binary started with source-map support and loud-rejection.');
 

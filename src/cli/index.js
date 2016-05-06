@@ -20,7 +20,7 @@ import { feedbackMessage, errorLabel } from '../helpers/style';
 import { setVerbose } from '../helpers/verbose';
 import { getHooks, runHookDirectly } from '../hooks';
 import { getActions } from '../hooks/actions';
-const debug = require('debug')('roc:core:cli');
+const debug = require('debug')('roc:cli');
 
 /**
  * Invokes the Roc cli.
@@ -131,7 +131,7 @@ export function runCli(info = { version: 'Unknown', name: 'Unknown' }, initalCon
                 .catch(process.exit);
         }
 
-        debug('Running command \'%s\'', command);
+        debug(`Running command '${command}'.`);
         // Run the command
         return configObject.commands[command]({
             verbose: verboseMode,

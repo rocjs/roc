@@ -9,7 +9,7 @@ import { merge } from '../../configuration';
 import { warningLabel, feedbackMessage } from '../../helpers/style';
 import ExtensionError from './error';
 
-const debug = require('debug')('roc:core:cli:extensions');
+const debug = require('debug')('roc:cli:extensions');
 
 export function runPostInits(initialState) {
     debug('Running post inits.');
@@ -30,7 +30,7 @@ export function runPostInits(initialState) {
 
 export function getExtensions(type) {
     return (extensions, directory) => (initialState) => {
-        debug('Getting extensions for type \'%s\'', type);
+        debug(`Getting extensions for type '${type}'`);
 
         return extensions.reduce(
             (state, extensionPath) => {
@@ -71,7 +71,7 @@ export function getExtensions(type) {
 }
 
 function getParents(type) {
-    debug('Getting parents for type \'%s\'', type);
+    debug(`Getting parents for type '${type}'`);
     return (roc, state) => {
         let nextState = {...state};
         for (const parent of roc[type] || []) {
@@ -117,7 +117,7 @@ function init(roc, state) {
 }
 
 function checkDependencies(roc, state) {
-    debug('Running checkDependencies.');
+    debug('Checking dependencies.');
 
     if (roc.dependencies && state.checkDependencies) {
         for (const dependency of Object.keys(roc.dependencies)) {
@@ -154,6 +154,8 @@ function addPostInit(roc, state) {
 }
 
 function registerExtension(roc, state) {
+    debug('Registering extension.');
+
     const fromBefore = state.usedExtensions.find((extension) => extension.name === roc.name);
     if (fromBefore) {
         if (fromBefore.version !== roc.version) {
@@ -171,6 +173,8 @@ function registerExtension(roc, state) {
 }
 
 function getCompleteExtensionTree(roc, path, initialState) {
+    debug('Getting complete extension tree.');
+
     return [
         validRocExtension(path),
         getParents('packages'),
@@ -230,7 +234,7 @@ function manageRocObject(roc, state) {
 }
 
 function getExtension(extensionName, directory, type) {
-    debug('Loading extension \'%s\'', extensionName);
+    debug(`Loading extension '${extensionName}'`);
 
     try {
         return require(resolve.sync(extensionName, { basedir: directory })).roc;
@@ -249,7 +253,7 @@ Make sure you have it installed. Try running: ${chalk.underline('npm install --s
 
 function validRocExtension(path) {
     return (roc, state) => {
-        debug('Asserting extension validity for %s', path);
+        debug(`Asserting extension validity for ${path}`);
 
         if (!roc.name) {
             throw new ExtensionError(

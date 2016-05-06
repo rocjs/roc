@@ -1,6 +1,6 @@
 import isFunction from 'lodash/isFunction';
 
-const debug = require('debug')('roc:core:hooks:actions');
+const debug = require('debug')('roc:hooks:actions');
 
 // This needs to be global, same case as with configuration
 global.roc = global.roc || {};
@@ -13,7 +13,7 @@ global.roc.actions = global.roc.actions || [];
  * @param {string} extensionName - Name of the extension to register the actions on.
  */
 export function registerActions(actions, extensionName) {
-    debug('Register actions to extension %s', extensionName);
+    debug(`Register actions to extension '${extensionName}'.`);
 
     // Look for the extensionName and only add if not already there
     const index = global.roc.actions.findIndex(({ name }) => extensionName === name);
@@ -54,7 +54,7 @@ export function registerActions(actions, extensionName) {
  * @param {boolean} [project=false] - If the action belongs to the project.
  */
 export function registerAction(action, actionName, extensionName, project = false) {
-    debug('Registering action %s on extension %s.', actionName, extensionName);
+    debug(`Registering action '${actionName}' on extension '${extensionName}'.`);
 
     // Look for the extensionName and update if it exists
     const index = global.roc.actions.findIndex(({ name }) => extensionName === name);
@@ -96,7 +96,7 @@ function createActionHelper(action, extension, hook, description) {
  *  be removed.
  */
 export function removeActions(extensionToRemove, actionToRemove) {
-    debug('Removing action % from extension %s', actionToRemove, extensionToRemove);
+    debug(`Removing action '${actionToRemove}' from extension '${extensionToRemove}'.`);
 
     if (!extensionToRemove) {
         throw new Error('You need to at least specify the extension to remove actions for.');

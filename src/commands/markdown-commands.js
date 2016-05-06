@@ -7,7 +7,7 @@ import { pad } from '../documentation/helpers';
 import { getCommandArgumentsAsString, getDefaultOptions } from '../cli/helpers';
 import onProperty from '../helpers/on-property';
 
-const debug = require('debug')('roc:core:commands');
+const debug = require('debug')('roc:commands');
 
 /**
  * Command used to generate markdown documentation for all the possible commands.

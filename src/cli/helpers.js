@@ -17,6 +17,8 @@ import getSuggestions from '../helpers/get-suggestions';
 
 import buildExtensionTree from './extensions';
 
+const debug = require('debug')('roc:cli');
+
 /**
  * Builds the complete configuration objects.
  *
@@ -38,6 +40,7 @@ export function buildCompleteConfig(
     verbose = false, newConfig = {}, newMeta = {}, baseConfig = {},
     baseMeta = {}, directory = process.cwd(), validate = true, checkDependencies = true
 ) {
+    debug('Building complete configuration.');
     let finalConfig = { ...baseConfig };
     let finalMeta = { ...baseMeta };
 
@@ -99,6 +102,7 @@ export function buildCompleteConfig(
 }
 
 function validateConfigurationStructure(config, applicationConfig) {
+    debug('Validating configuration structure.');
     const getKeys = (obj, oldPath = '', allKeys = []) => {
         Object.keys(obj).forEach((key) => {
             const value = obj[key];
@@ -136,6 +140,7 @@ function validateConfigurationStructure(config, applicationConfig) {
  * @returns {string} - A string with documentation based on the available commands.
  */
 export function generateCommandsDocumentation({ commands }, { commands: commandsMeta }) {
+    debug('Generating commands documentation.');
     const header = {
         name: true,
         description: true
@@ -357,6 +362,7 @@ export function getDefaultOptions(name) {
  * @property {object[]} rest - The rest of the arguments that could not be matched against the configuration.
  */
 export function parseArguments(command, commands = {}, args) {
+    debug('Parsing arguments.');
     // If the command supports options
     if (commands[command] && commands[command].arguments) {
         let parsedArguments = {};
@@ -423,6 +429,7 @@ export function parseArguments(command, commands = {}, args) {
  * @returns {Object} - Properties are the cli command without leading dashes that maps to a {@link rocMapObject}.
  */
 export function getMappings(documentationObject = []) {
+    debug('Creating mappings between cli commands to their respetive paths, validator and type.');
     const recursiveHelper = (groups) => {
         let mappings = {};
 
@@ -457,6 +464,7 @@ export function getMappings(documentationObject = []) {
  * @returns {{settings: rocConfigSettings, parseOptions: Object}} - The mapped Roc configuration settings object.
  */
 export function parseOptions(options, mappings, command, commands = {}) {
+    debug('Parsing options.');
     const infoSettings = [];
 
     const { settings, notManaged } = parseSettingsOptions(options, mappings);
@@ -508,6 +516,7 @@ export function parseOptions(options, mappings, command, commands = {}) {
 }
 
 function parseSettingsOptions(options, mappings) {
+    debug('Parsing settings options.');
     const settings = {};
     let notManaged = {};
 
@@ -531,6 +540,7 @@ function parseSettingsOptions(options, mappings) {
 }
 
 function parseCommandOptions(command, notManaged) {
+    debug('Parsing command options.');
     const infoOptions = [];
     let possibleCommandOptions = [];
     let possibleCommandOptionsShort = [];

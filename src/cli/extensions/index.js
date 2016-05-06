@@ -6,7 +6,7 @@ import {
     runPostInits
 } from './helpers';
 
-const debug = require('debug')('roc:core:cli:extensions');
+const debug = require('debug')('roc:cli:extensions');
 
 /**
  * Builds the complete configuration objects.

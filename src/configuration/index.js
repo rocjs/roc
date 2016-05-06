@@ -4,6 +4,8 @@ import { getApplicationConfig } from './helpers';
 import { buildCompleteConfig } from '../cli/helpers';
 import { feedbackMessage, infoLabel } from '../helpers/style';
 
+const debug = require('debug')('roc:configuration');
+
 /* Make sure that we only print some feedback once */
 let onceSettings = true;
 
@@ -91,6 +93,7 @@ export function getSettings(key) {
  * @returns {rocSettings} - The settings object.
  */
 export function appendSettings(settingsObject) {
+    debug('Appending settings to the configuration object.');
     global.roc.config = merge(getConfig(), { settings: settingsObject });
     return getSettings();
 }
@@ -106,6 +109,7 @@ export function appendSettings(settingsObject) {
  * @returns {rocConfig} - The configuration object.
  */
 export function appendConfig(configObject) {
+    debug('Appending to configuration object.');
     global.roc.config = merge(getConfig(false), configObject);
     return getConfig();
 }

@@ -3,7 +3,7 @@ import tar from 'tar';
 import zlib from 'zlib';
 import temp from 'temp';
 
-const debug = require('debug')('roc:core:commands');
+const debug = require('debug')('roc:commands');
 
 // Automatically track and cleanup files at exit
 temp.track();
@@ -16,7 +16,7 @@ temp.track();
  * @returns {object[]} - Array of tags/versions for the package
  */
 export function getVersions(packageName) {
-    debug('Fetching package versions from Github for package \'%s\'', packageName);
+    debug(`Fetching package versions from Github for package '${packageName}'.`);
 
     if (!packageName) {
         throw new Error('No packageName was given.');
@@ -36,7 +36,7 @@ export function getVersions(packageName) {
  * @returns {string} The path to the temporary directory where the unarchived tarball is located.
  */
 export function get(packageName, version = 'master') {
-    debug('Fetching package tarball from Github for package \'%s\'', packageName);
+    debug(`Fetching package tarball from Github for package '${packageName}'.`);
 
     if (!packageName) {
         throw new Error('No packageName was given.');

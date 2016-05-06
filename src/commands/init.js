@@ -9,7 +9,7 @@ import { get, getVersions } from './helpers/github';
 import { validRocProject } from './helpers/general';
 import { error, warning, info, ok } from '../helpers/style';
 
-const debug = require('debug')('roc:core:commands');
+const debug = require('debug')('roc:commands');
 
 /* This should be fetched from a server!
  */
