@@ -7,6 +7,8 @@ import getSuggestions from '../helpers/get-suggestions';
 import { getActions } from './actions';
 import { getSettings } from '../configuration';
 
+const debug = require('debug')('roc:hooks');
+
 // This needs to be global, same case as with configuration
 global.roc = global.roc || {};
 global.roc.hooks = global.roc.hooks || {};
@@ -25,6 +27,8 @@ global.roc.hooks = global.roc.hooks || {};
  * @returns {function} - Will return a function that takes in the name of the hook and potential arguments.
  */
 export function runHook(extensionName) {
+    debug(`Running hooks for extension '${extensionName}'.`);
+
     const hooks = global.roc.hooks[extensionName];
 
     if (!hooks) {
@@ -50,6 +54,7 @@ export function runHook(extensionName) {
             /* eslint-enable */
         }
 
+        debug(`Checking for callback on hook '${name}' for extension '${extensionName}'.`);
         if (hooks[name].hasCallback) {
             return (callback) =>
                 runHookDirectly({
@@ -59,6 +64,7 @@ export function runHook(extensionName) {
                 }, args, callback);
         }
 
+        debug(`Running hook '${name}' for extension '${extensionName}'.`);
         return runHookDirectly({
             ...hooks[name],
             extension: extensionName,

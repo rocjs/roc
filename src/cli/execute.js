@@ -1,6 +1,8 @@
 import { join } from 'path';
 import { spawn, sync } from 'cross-spawn';
 
+const debug = require('debug')('roc:cli:execute');
+
 /**
  * Executes a command string.
  *
@@ -11,6 +13,7 @@ import { spawn, sync } from 'cross-spawn';
  * @returns {Promise} - A promise that is resolved when all the commands are completed.
  */
 export function execute(command) {
+    debug('Executing command.');
     const parallelCommands = command.split(/ & /);
     return executeParallel(parallelCommands);
 }

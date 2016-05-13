@@ -4,6 +4,8 @@ import chalk from 'chalk';
 import { getAbsolutePath } from '../helpers';
 import { feedbackMessage, errorLabel, warningLabel } from '../helpers/style';
 
+const debug = require('debug')('roc:configuration');
+
 /* Make sure that we only print some feedback once */
 let onceApp = true;
 
@@ -28,6 +30,7 @@ let onceApp = true;
  * @throws {Error} - When an invalid path override is specified.
  */
 export function getApplicationConfig(applicationConfigPath, directory = process.cwd(), verbose = false) {
+    debug(`Getting application config for application path '${applicationConfigPath}' and directory '${directory}'`);
     if (applicationConfigPath === false) {
         return {};
     }

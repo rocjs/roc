@@ -4,6 +4,8 @@ import { buildCompleteConfig } from './helpers';
 import { getHooks } from '../hooks';
 import { getActions } from '../hooks/actions';
 
+const debug = require('debug')('roc:cli');
+
 /**
  * Builds the Roc configuration object without running the cli.
  *
@@ -13,6 +15,7 @@ import { getActions } from '../hooks/actions';
  * @returns {Object} - An object containing appConfig, config, meta, hooks and actions from {@link rocCommandObject}
  */
 export default function getConfiguration(dirPath, applicationConfigPath) {
+    debug(`Getting configuration for path ${dirPath} using application path ${applicationConfigPath}`);
     const path = getAbsolutePath(dirPath);
 
     // Build the complete config object

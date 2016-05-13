@@ -6,6 +6,8 @@ import {
     getPackageJson
 } from '../../helpers';
 
+const debug = require('debug')('roc:commands');
+
 /**
  * Validates if a directory seems to be a Roc application project.
  * A valid Roc project should have a package.json file that contains some dependency that match 'roc-package-*' or
@@ -16,6 +18,7 @@ import {
  * @returns {boolean} - Whether or not it is a valid Roc project.
  */
 export function validRocProject(directory) {
+    debug(`Validating '${directory}' as a Roc application project.`);
     const packageJson = getPackageJson(directory);
 
     return isObject(packageJson) && (

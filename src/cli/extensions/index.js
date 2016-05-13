@@ -6,6 +6,8 @@ import {
     runPostInits
 } from './helpers';
 
+const debug = require('debug')('roc:cli:extensions');
+
 /**
  * Builds the complete configuration objects.
  *
@@ -26,6 +28,12 @@ import {
 export default function buildExtensionTree(
     packages, plugins, baseConfig, baseMeta, directory, verbose, checkDependencies
 ) {
+    debug(
+        'Building Context Extension Tree (state) for packages [%s] and plugins [%s]',
+        packages.join(', ') || '<none>',
+        plugins.join(', ') || '<none>'
+    );
+
     return [
         getExtensions('package')(packages, directory),
         getExtensions('plugin')(plugins, directory),
