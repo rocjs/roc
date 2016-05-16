@@ -1,7 +1,7 @@
 import { isBoolean, isObject, isRegExp } from 'lodash';
 import { toArray, toRegExp, toBoolean, toInteger, toObject } from '../converters';
 
-export default function automaticConverter(value) {
+export default function automatic(value) {
     if (isBoolean(value)) {
         return (input) => toBoolean(input);
     } else if (isRegExp(value)) {
@@ -9,7 +9,7 @@ export default function automaticConverter(value) {
     } else if (Array.isArray(value)) {
         // Take the first value in the array to decide what converter to use
         const converter = value.length > 0 ?
-            automaticConverter(value[0]) : undefined;
+            automatic(value[0]) : undefined;
         return toArray(converter);
     } else if (Number.isInteger(value)) {
         return toInteger;

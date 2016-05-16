@@ -1,3 +1,4 @@
+export automatic from './automatic';
 export toArray from './to-array';
 export toRegExp from './to-regexp';
 export toBoolean from './to-boolean';

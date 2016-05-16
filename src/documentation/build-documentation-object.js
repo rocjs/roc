@@ -2,7 +2,7 @@ import { isPlainObject, isFunction } from 'lodash';
 
 import { toCliOption } from './helpers';
 import onProperty from '../helpers/on-property';
-import automaticConverter from '../converters/automatic';
+import automatic from '../converters/automatic';
 
 const defaultValidation = (input, info) => info ? {type: 'Unknown'} : true;
 
@@ -57,7 +57,7 @@ export default function buildDocumentationObject(initalObject, meta = {}, inital
             path: parents.join('.'),
             defaultValue: object,
             validator: validation,
-            converter: converterFunction || converter || automaticConverter(object)
+            converter: converterFunction || converter || automatic(object)
         };
     };
 
