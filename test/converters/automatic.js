@@ -6,18 +6,15 @@ describe('roc', () => {
     describe('converters', () => {
         describe('automaticConverter', () => {
             it('boolean', () => {
-                return consoleMockWrapper((log) => {
-                    const converter = automaticConverter(true);
+                const converter = automaticConverter(true);
 
-                    expect(converter(true)).toBe(true);
-                    expect(converter(false)).toBe(false);
+                expect(converter(true)).toBe(true);
+                expect(converter(false)).toBe(false);
 
-                    expect(converter('true')).toBe(true);
-                    expect(converter('false')).toBe(false);
+                expect(converter('true')).toBe(true);
+                expect(converter('false')).toBe(false);
 
-                    expect(converter('asd')).toBe(true);
-                    expect(log.calls[0].arguments[0]).toInclude('Invalid value given');
-                });
+                expect(converter('asd')).toBe(undefined);
             });
 
             describe('array', () => {

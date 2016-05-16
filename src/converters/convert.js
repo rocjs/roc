@@ -10,12 +10,12 @@ export default function convert(...converters) {
         throw new Error('You need to use at least one converter.');
     }
 
-    return (input, defaultValue, name) => {
+    return (input) => {
         for (let converter of converters) {
-            const res = converter(input, defaultValue, name);
+            const res = converter(input);
 
-            // toBoolean will return false as a valid value
-            if (!res && res !== false) {
+            // false and null is valid results
+            if (!res && res !== false && res !== null) {
                 continue;
             }
 

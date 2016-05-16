@@ -57,7 +57,7 @@ export default function buildDocumentationObject(initalObject, meta = {}, inital
             path: parents.join('.'),
             defaultValue: object,
             validator: validation,
-            converter: converterFunction || converter || automaticConverter(object, cli)
+            converter: converterFunction || converter || automaticConverter(object)
         };
     };
 
