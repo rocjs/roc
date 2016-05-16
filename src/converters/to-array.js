@@ -1,21 +1,26 @@
 /**
  * Given an input the function will return an array.
  *
- * @param {object} input - The input to be converted.
+ * @param {function} converter - The converter to use for the elements in the array.
  *
- * @returns {object[]} - The converted result.
+ * @returns {function} - A converter that will convert the input to an array.
  */
-export default function toArray(input) {
-    let parsed;
-    try {
-        parsed = JSON.parse(input);
-    } catch (err) {
-        // Ignore this case
-    }
+export default function toArray(converter = (input) => input) {
+    return (input) => {
+        let parsed;
+        try {
+            parsed = JSON.parse(input);
+        } catch (err) {
+            // Ignore this case
+        }
 
-    if (Array.isArray(parsed)) {
-        return parsed;
-    }
+        if (Array.isArray(parsed)) {
+            return parsed;
+        }
 
-    return input.toString().split(',');
+        return input
+            .toString()
+            .split(',')
+            .map((value) => converter(value.trim()));
+    };
 }

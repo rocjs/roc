@@ -97,7 +97,7 @@ const roc = {
                     name: 'hide-commands',
                     default: [],
                     validation: isArray(isString),
-                    converter: toArray,
+                    converter: toArray(),
                     description: 'A list of commands that should be hidden form the generated markdown.'
                 }]
             }

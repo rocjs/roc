@@ -20,6 +20,7 @@ describe('roc', () => {
             });
 
             it('should return a simple markdown table given input', () => {
+                /* eslint-disable max-len */
                 expect(generateMarkdownDocumentation('roc-test', {
                     settings: {
                         runtime: {
@@ -35,13 +36,14 @@ describe('roc', () => {
 
                         ## Runtime
 
-                        | Name    | Description | Path            | CLI option | Default | Type      | Required |
-                        | ------- | ----------- | --------------- | ---------- | ------- | --------- | -------- |
-                        | enabled |             | runtime.enabled | --enabled  | \`false\` | \`Unknown\` | No       |
-                        | port    |             | runtime.port    | --port     | \`80\`    | \`Unknown\` | No       |
+                        | Name    | Description | Path            | CLI option | Default | Type      | Required | Can be empty |
+                        | ------- | ----------- | --------------- | ---------- | ------- | --------- | -------- | ------------ |
+                        | enabled |             | runtime.enabled | --enabled  | \`false\` | \`Unknown\` | No       | Yes          |
+                        | port    |             | runtime.port    | --port     | \`80\`    | \`Unknown\` | No       | Yes          |
                         `
                     ))
                 );
+                /* eslint-enable */
             });
         });
 
@@ -78,10 +80,10 @@ describe('roc', () => {
                     redent(trimNewlines(`
                         runtime
 
-                        | Description                                                                                           | Path         | Default | CLI option | Required |
-                        | ----------------------------------------------------------------------------------------------------- | ------------ | ------- | ---------- | -------- |
-                        | Short description                                                                                     | runtime.on   | false   | --on       | No       |
-                        | Some really long description string that is over 100 characters long so we can test the cut off and … | runtime.port | 80      | --port     | No       |
+                        | Description                                                                                           | Path         | Default | CLI option | Required | Can be empty |
+                        | ----------------------------------------------------------------------------------------------------- | ------------ | ------- | ---------- | -------- | ------------ |
+                        | Short description                                                                                     | runtime.on   | false   | --on       | No       | Yes          |
+                        | Some really long description string that is over 100 characters long so we can test the cut off and … | runtime.port | 80      | --port     | No       | Yes          |
                         `
                     ))
                 );

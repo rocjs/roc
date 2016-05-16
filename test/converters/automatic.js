@@ -1,7 +1,5 @@
 import expect from 'expect';
 
-import { consoleMockWrapper } from '../utils';
-
 import automaticConverter from '../../src/converters/automatic';
 
 describe('roc', () => {
@@ -22,10 +20,18 @@ describe('roc', () => {
                 });
             });
 
-            it('array', () => {
-                const converter = automaticConverter([1, 2, 3]);
-                expect(converter('[1, 2, 3]')).toEqual([1, 2, 3]);
-                expect(converter('1,2,3')).toEqual(['1', '2', '3']);
+            describe('array', () => {
+                it('integers', () => {
+                    const converter = automaticConverter([1, 2, 3]);
+                    expect(converter('[1, 2, 3]')).toEqual([1, 2, 3]);
+                    expect(converter('1,2,3')).toEqual([1, 2, 3]);
+                });
+
+                it('integers', () => {
+                    const converter = automaticConverter(['a', 'b', 'c']);
+                    expect(converter('["d", "e", "f"]')).toEqual(['d', 'e', 'f']);
+                    expect(converter('d,e,f')).toEqual(['d', 'e', 'f']);
+                });
             });
 
             it('regexp', () => {
@@ -47,6 +53,19 @@ describe('roc', () => {
             it('string', () => {
                 const converter = automaticConverter('');
                 expect(converter('some string')).toEqual('some string');
+            });
+
+            it('null', () => {
+                const converter = automaticConverter(null);
+                const testFunction = () => {};
+                expect(converter(testFunction)).toEqual(testFunction);
+            });
+
+            it('undefined', () => {
+                const converter = automaticConverter(undefined);
+                // Define a function to test that it just passes the value through
+                const testFunction = () => {};
+                expect(converter(testFunction)).toEqual(testFunction);
             });
         });
     });

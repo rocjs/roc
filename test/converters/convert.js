@@ -16,9 +16,9 @@ describe('roc', () => {
             });
 
             it('should convert the value toArray', () => {
-                expect(convert(toBoolean, toArray)('100,100,100')).toEqual(['100', '100', '100']);
+                expect(convert(toBoolean, toArray())('100,100,100')).toEqual(['100', '100', '100']);
 
-                expect(convert(toBoolean, toArray)('[100, 100, 100]')).toEqual([100, 100, 100]);
+                expect(convert(toBoolean, toArray())('[100, 100, 100]')).toEqual([100, 100, 100]);
             });
 
             it('should convert the value toBoolean', () => {

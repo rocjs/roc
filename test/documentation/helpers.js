@@ -33,24 +33,14 @@ describe('roc', () => {
             });
 
             describe('getDefaultValue', () => {
-                it('should return null for emptry string', () => {
-                    expect(getDefaultValue(''))
-                        .toNotExist();
+                it('should return null for undefined', () => {
+                    expect(getDefaultValue(undefined))
+                        .toBe(undefined);
                 });
 
-                it('should return null for emptry array', () => {
-                    expect(getDefaultValue([]))
-                        .toNotExist();
-                });
-
-                it('should return null for emptry object', () => {
-                    expect(getDefaultValue({}))
-                        .toNotExist();
-                });
-
-                it('should return object as string', () => {
-                    expect(getDefaultValue({a: [1]}))
-                        .toEqual('{"a":[1]}');
+                it('should return null as string', () => {
+                    expect(getDefaultValue(null))
+                        .toBe('null');
                 });
 
                 it('should return RegExp as string', () => {

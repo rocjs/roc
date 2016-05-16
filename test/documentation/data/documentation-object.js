@@ -7,7 +7,7 @@ import {
     isObject,
     required
 } from '../../../src/validation/validators';
-import automaticConverter from '../../../src/converters/automatic';
+import toString from '../../../src/converters/to-string';
 
 export const validDocumentObject = [{
     name: 'runtime',
@@ -15,10 +15,11 @@ export const validDocumentObject = [{
     description: 'Runtime configuration',
     objects: [{
         cli: '--option1',
-        converter: automaticConverter('value1', '--option1'),
+        converter: toString,
         defaultValue: 'value1',
         description: 'description1',
         name: 'option1',
+        notEmpty: false,
         path: 'runtime.option1',
         required: false,
         type: 'String',
@@ -32,10 +33,11 @@ export const validDocumentObject = [{
     description: undefined,
     objects: [{
         cli: '--dev-option2',
-        converter: automaticConverter('', '--dev-option1'),
+        converter: toString,
         defaultValue: '',
         description: 'description2',
         name: 'option2',
+        notEmpty: true,
         path: 'dev.option2',
         required: true,
         type: 'String',

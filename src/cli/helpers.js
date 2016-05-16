@@ -262,11 +262,11 @@ export function generateCommandDocumentation({ settings }, { commands = {}, sett
         defaultValue: {
             padding: false,
             renderer: (input) => {
-                input = getDefaultValue(input);
-
                 if (input === undefined) {
                     return '';
                 }
+
+                input = getDefaultValue(input);
 
                 if (!input) {
                     return warning('No default value');
@@ -278,8 +278,18 @@ export function generateCommandDocumentation({ settings }, { commands = {}, sett
         required: {
             padding: false,
             renderer: (input, object) => {
-                if (input && !object.defaultValue) {
+                if (input && object.defaultValue === undefined) {
                     return chalk.green('Required');
+                }
+
+                return '';
+            }
+        },
+        notEmpty: {
+            padding: false,
+            renderer: (input) => {
+                if (input) {
+                    return chalk.yellow('Can not be empty');
                 }
 
                 return '';

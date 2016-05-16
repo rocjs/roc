@@ -48,6 +48,15 @@ export function generateMarkdownDocumentation(name, { settings }, { settings: me
                 }
                 return 'No';
             }
+        },
+        notEmpty: {
+            name: 'Can be empty',
+            renderer: (input) => {
+                if (input === false) {
+                    return 'Yes';
+                }
+                return 'No';
+            }
         }
     };
 
@@ -95,7 +104,7 @@ export function generateTextDocumentation({ settings }, { settings: meta }, filt
             name: 'Default',
             renderer: (input) => {
                 const defaultValue = getDefaultValue(input);
-                if (!defaultValue || input === null) {
+                if (!defaultValue) {
                     return warning('No default value');
                 }
                 return defaultValue;
@@ -108,6 +117,15 @@ export function generateTextDocumentation({ settings }, { settings: meta }, filt
             name: 'Required',
             renderer: (input) => {
                 if (input === true) {
+                    return ok('Yes');
+                }
+                return styleError('No');
+            }
+        },
+        notEmpty: {
+            name: 'Can be empty',
+            renderer: (input) => {
+                if (input !== true) {
                     return ok('Yes');
                 }
                 return styleError('No');

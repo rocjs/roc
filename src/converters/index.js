@@ -5,3 +5,4 @@ export toInteger from './to-integer';
 export toObject from './to-object';
 export convert from './convert';
 export automatic from './automatic';
+export toString from './to-string';

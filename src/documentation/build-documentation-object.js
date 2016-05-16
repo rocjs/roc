@@ -36,10 +36,15 @@ export default function buildDocumentationObject(initalObject, meta = {}, inital
         };
     };
 
-    const manageLeaf = (object, name, description, validation = defaultValidation, converter, parents) => {
-        const { type = 'Unknown', required = false } = isFunction(validation) ?
+    const manageLeaf = (object, name, description, validation = defaultValidation, converterFunction, parents) => {
+        const {
+            type = 'Unknown',
+            required = false,
+            notEmpty = false,
+            converter
+        } = isFunction(validation) ?
             validation(null, true) :
-            ({type: validation.toString(), req: false });
+            { type: validation.toString() };
 
         const cli = toCliOption(parents);
         return {
@@ -47,11 +52,12 @@ export default function buildDocumentationObject(initalObject, meta = {}, inital
             description,
             type,
             required,
+            notEmpty,
             cli,
             path: parents.join('.'),
             defaultValue: object,
             validator: validation,
-            converter: converter || automaticConverter(object, cli)
+            converter: converterFunction || converter || automaticConverter(object, cli)
         };
     };
 

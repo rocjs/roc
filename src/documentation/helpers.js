@@ -1,5 +1,5 @@
 import stripAnsi from 'strip-ansi';
-import { isPlainObject, isString, isRegExp } from 'lodash';
+import { isRegExp } from 'lodash';
 
 /**
  * Returns a string to pad with.
@@ -50,10 +50,8 @@ export function toCliOption(configPaths) {
  * @returns {string|null} - The converted object or null if the object is empty.
  */
 export function getDefaultValue(object) {
-    if (Array.isArray(object) && !object.length ||
-        isString(object) && !object ||
-        isPlainObject(object) && Object.keys(object).length === 0) {
-        return null;
+    if (object === undefined) {
+        return undefined;
     }
 
     // Make sure we get something sensible when having a RegExp

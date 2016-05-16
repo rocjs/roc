@@ -3,7 +3,6 @@ import expect from 'expect';
 import {
     isArray,
     isObject,
-    isArrayOrSingle,
     isPromise,
     isRegExp,
     isString,
@@ -13,6 +12,15 @@ import {
     oneOf,
     required
 } from '../../src/validation/validators';
+
+import {
+    toArray,
+    toObject,
+    toRegExp,
+    toBoolean,
+    toInteger,
+    toString
+} from '../../src/converters';
 
 describe('roc', () => {
     describe('validation', () => {
@@ -34,7 +42,9 @@ describe('roc', () => {
                     expect(isArray(validator)(null, true))
                         .toEqual({
                             type: '[Type]',
-                            required: false
+                            required: false,
+                            notEmpty: false,
+                            converter: toArray()
                         });
                 });
 
@@ -52,6 +62,11 @@ describe('roc', () => {
                     expect(isArray()([]))
                         .toBe(true);
                 });
+
+                it('should validate if value is undefined or null', () => {
+                    expect(isArray()(undefined))
+                        .toBe(true);
+                });
             });
 
             describe('isObject', () => {
@@ -64,14 +79,18 @@ describe('roc', () => {
                     const validator = () => {
                         return {
                             type: 'Type',
-                            required: false
+                            required: false,
+                            notEmpty: false,
+                            converter: toObject
                         };
                     };
 
                     expect(isObject(validator)(null, true))
                         .toEqual({
                             type: '{Type}',
-                            required: false
+                            required: false,
+                            notEmpty: false,
+                            converter: toObject
                         });
                 });
 
@@ -96,53 +115,14 @@ describe('roc', () => {
                 });
             });
 
-            describe('isArrayOrSingle', () => {
-                it('should return a wrapped validator', () => {
-                    expect(isArrayOrSingle())
-                        .toBeA('function');
-                });
-
-                it('should return info object if requested', () => {
-                    const validator = () => {
-                        return {
-                            type: 'Type',
-                            required: false
-                        };
-                    };
-
-                    expect(isArrayOrSingle(validator)(null, true))
-                        .toEqual({
-                            type: 'Type / [Type]',
-                            required: false
-                        });
-                });
-
-                it('should validate a single value correctly', () => {
-                    expect(isArrayOrSingle(() => true)(1))
-                        .toBe(true);
-                });
-
-                it('should validate an array correctly', () => {
-                    const spy = expect.createSpy().andReturn(true);
-                    expect(isArrayOrSingle(spy)([1, 2, 3]))
-                        .toBe(true);
-                    expect(spy.calls.length).toBe(3);
-                });
-
-                it('should fail fast if a single value in the array is invalid', () => {
-                    const spy = expect.createSpy().andCall((input) => input > 1);
-                    expect(isArrayOrSingle(spy)([1, 2, 3]))
-                        .toBe(false);
-                    expect(spy.calls.length).toBe(1);
-                });
-            });
-
             describe('isPromise', () => {
                 it('should return info object if requested', () => {
                     expect(isPromise(null, true))
                         .toEqual({
                             type: 'Promise',
-                            required: false
+                            required: false,
+                            notEmpty: false,
+                            converter: undefined
                         });
                 });
 
@@ -162,7 +142,9 @@ describe('roc', () => {
                     expect(isRegExp(null, true))
                         .toEqual({
                             type: 'RegExp',
-                            required: false
+                            required: false,
+                            notEmpty: false,
+                            converter: toRegExp
                         });
                 });
 
@@ -182,7 +164,9 @@ describe('roc', () => {
                     expect(isString(null, true))
                         .toEqual({
                             type: 'String',
-                            required: false
+                            required: false,
+                            notEmpty: false,
+                            converter: toString
                         });
                 });
 
@@ -195,6 +179,14 @@ describe('roc', () => {
                     expect(isString(123))
                         .toInclude('not a string');
                 });
+
+                it('should allow undefined and null', () => {
+                    expect(isString(null))
+                        .toBe(true);
+
+                    expect(isString(undefined))
+                        .toBe(true);
+                });
             });
 
             describe('isBoolean', () => {
@@ -202,7 +194,9 @@ describe('roc', () => {
                     expect(isBoolean(null, true))
                         .toEqual({
                             type: 'Boolean',
-                            required: false
+                            required: false,
+                            notEmpty: false,
+                            converter: toBoolean
                         });
                 });
 
@@ -211,14 +205,22 @@ describe('roc', () => {
                         .toBe(true);
                 });
 
-                it('should validate a boolean correctly when null', () => {
-                    expect(isBoolean(null))
+                it('should validate a boolean correctly when undefined', () => {
+                    expect(isBoolean(undefined))
                         .toBe(true);
                 });
 
                 it('should return error if value is not a boolean', () => {
                     expect(isBoolean(1))
                         .toInclude('not a boolean');
+                });
+
+                it('should allow undefined and null', () => {
+                    expect(isBoolean(null))
+                        .toBe(true);
+
+                    expect(isBoolean(undefined))
+                        .toBe(true);
                 });
             });
 
@@ -227,7 +229,9 @@ describe('roc', () => {
                     expect(isInteger(null, true))
                         .toEqual({
                             type: 'Integer',
-                            required: false
+                            required: false,
+                            notEmpty: false,
+                            converter: toInteger
                         });
                 });
 
@@ -240,6 +244,14 @@ describe('roc', () => {
                     expect(isInteger('1'))
                         .toInclude('not an integer');
                 });
+
+                it('should allow undefined and null', () => {
+                    expect(isInteger(null))
+                        .toBe(true);
+
+                    expect(isInteger(undefined))
+                        .toBe(true);
+                });
             });
 
             describe('isPath', () => {
@@ -247,7 +259,9 @@ describe('roc', () => {
                     expect(isPath(null, true))
                         .toEqual({
                             type: 'Filepath',
-                            required: false
+                            required: false,
+                            notEmpty: false,
+                            converter: toString
                         });
                 });
 
@@ -279,7 +293,9 @@ describe('roc', () => {
                     expect(oneOf(validator, validator, validator)(null, true))
                         .toEqual({
                             type: 'Type / Type / Type',
-                            required: false
+                            required: false,
+                            notEmpty: false,
+                            converter: undefined
                         });
                 });
 
@@ -324,7 +340,9 @@ describe('roc', () => {
                     expect(required(validator)(null, true))
                         .toEqual({
                             type: 'Type',
-                            required: true
+                            required: true,
+                            notEmpty: true,
+                            converter: undefined
                         });
                 });
 
@@ -345,13 +363,13 @@ describe('roc', () => {
 
                 it('should invalidate empty values', () => {
                     expect(required(isString)(''))
-                        .toInclude('value was required but none was given');
+                        .toInclude('value is required to not be empty');
 
-                    expect(required(isString)({}))
-                        .toInclude('value was required but none was given');
+                    expect(required(isObject)({}))
+                        .toInclude('value is required to not be empty');
 
-                    expect(required(isString)([]))
-                        .toInclude('value was required but none was given');
+                    expect(required(isArray)([]))
+                        .toInclude('value is required to not be empty');
                 });
             });
         });
