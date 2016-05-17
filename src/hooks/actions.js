@@ -18,8 +18,8 @@ export function registerActions(actions, extensionName) {
         let extensionActions = {};
         Object.keys(actions).forEach((key) => {
             const action = isFunction(actions[key]) ?
-                actions[key]() :
-                actions[key].action();
+                actions[key] :
+                actions[key].action;
 
             extensionActions = {
                 ...extensionActions,
@@ -57,7 +57,7 @@ export function registerAction(action, actionName, extensionName, project = fals
         global.roc.actions[index].actions = {
             ...global.roc.actions[index].actions,
             [actionName]: {
-                ...createActionHelper(action())
+                ...createActionHelper(action)
             }
         };
     } else {
@@ -66,7 +66,7 @@ export function registerAction(action, actionName, extensionName, project = fals
             name: extensionName,
             actions: {
                 [actionName]: {
-                    ...createActionHelper(action())
+                    ...createActionHelper(action)
                 }
             }
         });
