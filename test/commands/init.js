@@ -69,6 +69,19 @@ describe('roc', () => {
             after(() => {
             });
 
+            function setupMocks({ versions = [{ name: 'v1.0' }] } = {}) {
+                const dirPath = path.join(__dirname, 'data', 'valid-template');
+
+                prompt.andCall((options, cb) => {
+                    cb({option: 'web'});
+                });
+                readdirSync.andReturn([]);
+                getVersions.andReturn(Promise.resolve(versions));
+                get.andReturn(Promise.resolve(dirPath));
+
+                return dirPath;
+            }
+
             it('should give information about non empty directory and terminate process if selected', () => {
                 readdirSync.andReturn([1]);
 
@@ -133,14 +146,8 @@ describe('roc', () => {
             });
 
             it('should directly fetch template if provided by full name without version given', () => {
-                const dirPath = path.join(__dirname, 'data', 'valid-template');
+                const dirPath = setupMocks({ versions: ['1.0'] });
 
-                prompt.andCall((options, cb) => {
-                    cb({option: 'web'});
-                });
-                readdirSync.andReturn([]);
-                getVersions.andReturn(Promise.resolve(['1.0']));
-                get.andReturn(Promise.resolve(dirPath));
                 return consoleMockWrapper((log) => {
                     return init({
                         parsedArguments: { arguments: { template: 'vgno/roc-template-web' } },
@@ -159,6 +166,32 @@ describe('roc', () => {
                         expect(log.calls[1].arguments[0]).toInclude('Installing template dependencies');
                         expect(log.calls[2].arguments[0]).toInclude('Setup completed');
                     });
+                });
+            });
+
+            it('should use directory as install dir', () => {
+                const dirPath = setupMocks();
+
+                return init({
+                    directory: 'roc-directory',
+                    parsedArguments: { arguments: { template: 'vgno/roc-template-web' } },
+                    parsedOptions: { options: {} }
+                }).then(() => {
+                    expect(spawn.calls[0].arguments[2].cwd).toEqual(dirPath);
+                    expect(spawn.calls[1].arguments[2].cwd).toEqual(path.join(process.cwd(), 'roc-directory'));
+                });
+            });
+
+            it('should choose name over directory', () => {
+                const dirPath = setupMocks();
+
+                return init({
+                    directory: 'roc-directory',
+                    parsedArguments: { arguments: { template: 'vgno/roc-template-web', name: 'roc-name' } },
+                    parsedOptions: { options: {} }
+                }).then(() => {
+                    expect(spawn.calls[0].arguments[2].cwd).toEqual(dirPath);
+                    expect(spawn.calls[1].arguments[2].cwd).toEqual(path.join(process.cwd(), 'roc-name'));
                 });
             });
 
@@ -203,14 +236,8 @@ describe('roc', () => {
             });
 
             it('should manage the provided template version as expected', () => {
-                const dirPath = path.join(__dirname, 'data', 'valid-template');
+                const dirPath = setupMocks({ versions: [{ name: 'v1.0' }] });
 
-                prompt.andCall((options, cb) => {
-                    cb({option: 'web'});
-                });
-                readdirSync.andReturn([]);
-                getVersions.andReturn(Promise.resolve([{name: 'v1.0'}]));
-                get.andReturn(Promise.resolve(path.join(__dirname, 'data', 'valid-template')));
                 return consoleMockWrapper((log) => {
                     return init({
                         parsedArguments: { arguments:
