@@ -8,6 +8,7 @@ import chalk from 'chalk';
 import { get, getVersions } from './helpers/github';
 import { validRocProject } from './helpers/general';
 import { error, warning, info, ok } from '../helpers/style';
+import { getAbsolutePath } from '../helpers';
 import unzip from './helpers/unzip';
 
 /* This should be fetched from a server!
@@ -260,9 +261,7 @@ function interactiveMenu(directory, list) {
 
 function checkFolder(force = false, directory = '') {
     return new Promise((resolve) => {
-        const directoryPath = directory.indexOf('/') === 0 ?
-            directory :
-            path.join(process.cwd(), directory);
+        const directoryPath = getAbsolutePath(directory || process.cwd());
         fs.mkdir(directoryPath, (err) => {
             if (err) {
                 console.log(
@@ -291,7 +290,7 @@ function checkFolder(force = false, directory = '') {
                         process.exit(1);
                         /* eslint-enable */
                     } else if (selection === 'new') {
-                        askForDirectory(resolve);
+                        askForDirectory(directory, resolve);
                     } else if (selection === 'force') {
                         resolve(directoryPath);
                     }
@@ -303,13 +302,13 @@ function checkFolder(force = false, directory = '') {
     });
 }
 
-function askForDirectory(resolve) {
+function askForDirectory(directory, resolve) {
     inquirer.prompt([{
         type: 'input',
         name: 'name',
         message: 'What do you want to name the directory?'
     }], ({ name }) => {
-        const directoryPath = name.indexOf('/') === 0 ? name : path.join(process.cwd(), name);
+        const directoryPath = getAbsolutePath(name, directory);
         fs.mkdir(directoryPath, (err) => {
             if (err) {
                 console.log(warning('The directory did already exists or was not empty.'), '\n');
