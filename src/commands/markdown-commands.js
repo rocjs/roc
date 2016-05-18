@@ -97,7 +97,7 @@ export default function generateMarkdownCommands(name, config, metaConfig, setti
 
             rows.push('');
 
-            rows.push('```\n' + `${name} ${command}${getCommandArgumentsAsString(commandMeta)}` + '\n```');
+            rows.push('```\n' + `roc ${command}${getCommandArgumentsAsString(commandMeta)}` + '\n```');
 
             // If we have a markdown property we will use that over help
             if (commandMeta.markdown) {
