@@ -34,7 +34,7 @@ const templates = [{
  */
 export default function init({ parsedArguments, parsedOptions, directory }) {
     const { list, force } = parsedOptions.options;
-    const { template, version } = parsedArguments.arguments;
+    const { name, template, version } = parsedArguments.arguments;
 
     // Get versions first
     if (template && list) {
@@ -44,7 +44,7 @@ export default function init({ parsedArguments, parsedOptions, directory }) {
     }
 
     // Make sure the directory is empty!
-    return checkFolder(force, directory).then((dir) => {
+    return checkFolder(force, name || directory).then((dir) => {
         if (!template) {
             return interactiveMenu(dir, list);
         }
