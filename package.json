@@ -95,6 +95,7 @@
     "tar": "~2.2.1",
     "temp": "~0.8.3",
     "trim-newlines": "~1.0.0",
+    "unzip": "^0.1.11",
     "update-notifier": "0.6.3"
   }
 }

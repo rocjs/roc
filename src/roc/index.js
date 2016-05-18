@@ -20,7 +20,7 @@ const initOptions = [{
 const initArguments = [{
     name: 'template',
     validation: isPath,
-    description: 'The template to use. Matches Github structure with Username/Repo.'
+    description: 'The template to use. Matches Github structure with Username/Repo or a local zip file.'
 }, {
     name: 'version',
     validation: isString,
@@ -63,6 +63,8 @@ const roc = {
 
                     __template__
                     Template can either be a short name for a specific template, currently it accepts \`web-app\` and \`web-app-react\` that will be converted internally to \`rocjs/roc-template-web-app\` and \`rocjs/roc-template-web-app-react\`. As can be seen here the actual template reference is a Github repo and can be anything matching that pattern \`USERNAME/PROJECT\`.
+
+                    The template can also point to a local zip file (ending in \`.zip\`) of a template repository. This is useful if the template is on a private repo or not on GitHub.
 
                     It will also expect that the template has a folder named \`template\` and that inside of it there is \`package.json\` file with at least one dependency to a Roc module following the pattern \`roc-package-*\` or that it has a \`roc.config.js\` file (this file is then expected to have some [packages](/docs/config/packages.md) defined but this is not checked immediately).
 

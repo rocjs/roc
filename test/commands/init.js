@@ -80,7 +80,7 @@ describe('roc', () => {
                     return init({ parsedArguments: { arguments: {} }, parsedOptions: { options: {} } })
                         .catch((error) => {
                             expect(prompt.calls[0].arguments[0][0].message)
-                                .toBe('The directory is not empty, what do you want to do?');
+                                .toBe(`The directory '${process.cwd()}' is not empty, what do you want to do?`);
                             expect(error).toBeA(Error);
                         });
                 });
