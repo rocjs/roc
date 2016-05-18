@@ -247,6 +247,7 @@ function validRocExtension(path) {
         }
 
         if (
+            !isAbstract(roc.name) &&
             !roc.packages &&
             !roc.plugins &&
             !roc.hooks &&
@@ -278,4 +279,8 @@ function validRocExtension(path) {
 
         return state;
     };
+}
+
+function isAbstract(name) {
+    return /roc-abstract/.test(name);
 }
