@@ -47,7 +47,7 @@ export function getRocPackageDependencies(packageJson) {
         ...Object.keys(packageJson.dependencies || {}),
         ...Object.keys(packageJson.devDependencies || {})
     ]
-    .filter((dependency) => /^roc-package(-.+)/.test(dependency));
+    .filter((dependency) => /^(?:@.*\/)?roc-package(-.+)/.test(dependency));
 }
 
 /**
@@ -77,7 +77,7 @@ export function getRocPluginDependencies(packageJson) {
         ...Object.keys(packageJson.dependencies || {}),
         ...Object.keys(packageJson.devDependencies || {})
     ]
-    .filter((dependency) => /^roc-plugin(-.+)/.test(dependency));
+    .filter((dependency) => /^(?:@.*\/)?roc-plugin(-.+)/.test(dependency));
 }
 
 /**
