@@ -4,7 +4,7 @@ import {
     getRocPackageDependencies,
     getRocNamespacedDependencies,
     getPackageJson
-} from '../../helpers';
+} from './';
 
 /**
  * Validates if a directory seems to be a Roc application project.
@@ -15,7 +15,7 @@ import {
  *
  * @returns {boolean} - Whether or not it is a valid Roc project.
  */
-export function validRocProject(directory) {
+export default function validRocProject(directory) {
     const packageJson = getPackageJson(directory);
 
     return isObject(packageJson) && (

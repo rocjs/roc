@@ -15,6 +15,8 @@ import { warning, infoLabel, errorLabel, warningLabel, feedbackMessage } from '.
 import { registerAction } from '../hooks/actions';
 import getSuggestions from '../helpers/get-suggestions';
 
+import { getDefaultConfig, getDefaultMeta } from './get-default';
+
 import buildExtensionTree from './extensions';
 
 /**
@@ -38,8 +40,8 @@ export function buildCompleteConfig(
     verbose = false, newConfig = {}, newMeta = {}, baseConfig = {},
     baseMeta = {}, directory = process.cwd(), validate = true, checkDependencies = true
 ) {
-    let finalConfig = { ...baseConfig };
-    let finalMeta = { ...baseMeta };
+    let finalConfig = merge(getDefaultConfig(directory), baseConfig);
+    let finalMeta = merge(getDefaultMeta(directory), baseMeta);
 
     if (fileExists('package.json', directory)) {
         const packageJson = getPackageJson(directory);

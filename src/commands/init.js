@@ -6,7 +6,7 @@ import replace from 'replace';
 import chalk from 'chalk';
 
 import { get, getVersions } from './helpers/github';
-import { validRocProject } from './helpers/general';
+import { validRocProject } from '../helpers/valid-roc-project';
 import { error, warning, info, ok } from '../helpers/style';
 import { getAbsolutePath } from '../helpers';
 import unzip from './helpers/unzip';
