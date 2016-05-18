@@ -124,6 +124,7 @@ export function runCli(info = { version: 'Unknown', name: 'Unknown' }, initalCon
         // Run the command
         return configObject.commands[command]({
             verbose: verboseMode,
+            directory: dirPath,
             info,
             configObject,
             metaObject,
