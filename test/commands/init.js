@@ -172,26 +172,30 @@ describe('roc', () => {
             it('should use directory as install dir', () => {
                 const dirPath = setupMocks();
 
-                return init({
-                    directory: 'roc-directory',
-                    parsedArguments: { arguments: { template: 'vgno/roc-template-web' } },
-                    parsedOptions: { options: {} }
-                }).then(() => {
-                    expect(spawn.calls[0].arguments[2].cwd).toEqual(dirPath);
-                    expect(spawn.calls[1].arguments[2].cwd).toEqual(path.join(process.cwd(), 'roc-directory'));
+                return consoleMockWrapper(() => {
+                    return init({
+                        directory: 'roc-directory',
+                        parsedArguments: { arguments: { template: 'vgno/roc-template-web' } },
+                        parsedOptions: { options: {} }
+                    }).then(() => {
+                        expect(spawn.calls[0].arguments[2].cwd).toEqual(dirPath);
+                        expect(spawn.calls[1].arguments[2].cwd).toEqual(path.join(process.cwd(), 'roc-directory'));
+                    });
                 });
             });
 
             it('should choose name over directory', () => {
                 const dirPath = setupMocks();
 
-                return init({
-                    directory: 'roc-directory',
-                    parsedArguments: { arguments: { template: 'vgno/roc-template-web', name: 'roc-name' } },
-                    parsedOptions: { options: {} }
-                }).then(() => {
-                    expect(spawn.calls[0].arguments[2].cwd).toEqual(dirPath);
-                    expect(spawn.calls[1].arguments[2].cwd).toEqual(path.join(process.cwd(), 'roc-name'));
+                return consoleMockWrapper(() => {
+                    return init({
+                        directory: 'roc-directory',
+                        parsedArguments: { arguments: { template: 'vgno/roc-template-web', name: 'roc-name' } },
+                        parsedOptions: { options: {} }
+                    }).then(() => {
+                        expect(spawn.calls[0].arguments[2].cwd).toEqual(dirPath);
+                        expect(spawn.calls[1].arguments[2].cwd).toEqual(path.join(process.cwd(), 'roc-name'));
+                    });
                 });
             });
 
