@@ -22,17 +22,14 @@ export default function buildDocumentationObject(initalObject, meta = {}, inital
     };
 
     const manageGroup = (object, name, group = {}, description = {}, validation = {}, converters = {},
-        parents, level, parentNames) => {
+        parents, level) => {
         const groupDescription = isPlainObject(group) ? group._description || undefined : group;
         return {
             name,
-            parentNames,
             level,
             description: groupDescription,
-            objects: recursiveHelper(object, group, description, validation, converters, [], level + 1, parents,
-                parentNames.concat(name), true),
-            children: recursiveHelper(object, group, description, validation, converters, [], level + 1, parents,
-                parentNames.concat(name))
+            objects: recursiveHelper(object, group, description, validation, converters, [], level + 1, parents, true),
+            children: recursiveHelper(object, group, description, validation, converters, [], level + 1, parents)
         };
     };
 
@@ -62,7 +59,7 @@ export default function buildDocumentationObject(initalObject, meta = {}, inital
     };
 
     function recursiveHelper(object, groups = {}, descriptions = {}, validations = {}, converters = {}, filter = [],
-        level = 0, initalParents = [], parentNames = [], leaves = false) {
+        level = 0, initalParents = [], leaves = false) {
         return allObjects(object, (key) => {
             // Make sure that we either have no filter or that there is a match
             if (filter.length === 0 || filter.indexOf(key) !== -1) {
@@ -71,7 +68,7 @@ export default function buildDocumentationObject(initalObject, meta = {}, inital
                 if (isPlainObject(value) && Object.keys(value).length > 0 && !leaves) {
                     const group = isPlainObject(groups) ? groups[key] : {};
                     return manageGroup(value, key, group, descriptions[key], validations[key], converters[key],
-                        parents, level, parentNames);
+                        parents, level);
                 } else if ((!isPlainObject(value) || Object.keys(value).length === 0) && leaves) {
                     return manageLeaf(value, key, descriptions[key], validations[key], converters[key], parents);
                 }

@@ -4,14 +4,17 @@ import stripAnsi from 'strip-ansi';
 
 import { pad, addPadding } from './helpers';
 
+/* eslint-disable no-unused-vars */
 const defaultSettings = {
-    groupTitleWrapper: (name) => name,
+    titleWrapper: (name, level, parents) => name,
+    groupTitleWrapper: (name, level, parents) => name,
     cellDivider: '|',
-    rowWrapper: (input) => `|${input}|`,
+    rowWrapper: (input, level) => `|${input}|`,
     cellWrapper: (input) => ` ${input} `,
     header: true,
     compact: false
 };
+/* eslint-enable */
 
 /**
  * Creates a table based on a {@link rocDocumentationObject}.
@@ -39,18 +42,18 @@ export default function generateTable(initalDocumentationObject, header, setting
         return settings.cellWrapper(text);
     };
 
-    const printTableRow = (object, isHeader = false) => {
+    const printTableRow = (object, level, isHeader = false) => {
         return settings.rowWrapper(Object.keys(header).map((key) => {
             const { value, renderer } = getValueAndRenderer(isHeader, header[key], object[key]);
 
             return printTableCell(key, value, renderer, undefined, object);
-        }).join(settings.cellDivider));
+        }).join(settings.cellDivider), level);
     };
 
-    const printTableSplitter = () => {
+    const printTableSplitter = (level) => {
         return settings.rowWrapper(Object.keys(header).map((key) =>
             printTableCell(key, undefined, undefined, true)
-        ).join(settings.cellDivider));
+        ).join(settings.cellDivider), level);
     };
 
     const printTableHead = (name, parentNames, description, level = 0, printTableHeader = true) => {
@@ -64,14 +67,14 @@ export default function generateTable(initalDocumentationObject, header, setting
         if (settings.header && printTableHeader) {
             // Add a new empty row
             rows.push('');
-            rows.push(printTableRow(header, true));
-            rows.push(printTableSplitter());
+            rows.push(printTableRow(header, level, true));
+            rows.push(printTableSplitter(level));
         }
 
         return rows;
     };
 
-    const recursiveHelper = (documentationObject = [], first = false) => {
+    const recursiveHelper = (documentationObject = [], parentNames, first = false) => {
         const spacing = settings.compact || first ? [] : [''];
 
         return documentationObject.map((group) => {
@@ -81,14 +84,14 @@ export default function generateTable(initalDocumentationObject, header, setting
 
             if (level === 0 || !settings.compact) {
                 rows = rows.concat(
-                    printTableHead(group.name, group.parentNames, group.description, level, objects.length > 0)
+                    printTableHead(group.name, parentNames, group.description, level, objects.length > 0)
                 );
             }
 
             rows = rows.concat(objects.map((element) =>
-                printTableRow(element)));
+                printTableRow(element, level)));
 
-            rows = rows.concat(recursiveHelper(group.children));
+            rows = rows.concat(recursiveHelper(group.children, parentNames.concat(group.name)));
 
             if (group.level !== undefined && level === 0 && settings.compact) {
                 rows.push('');
@@ -98,7 +101,7 @@ export default function generateTable(initalDocumentationObject, header, setting
         }).reduce((a, b) => a.concat(b), spacing);
     };
 
-    return recursiveHelper(initalDocumentationObject, true).join('\n');
+    return recursiveHelper(initalDocumentationObject, [], true).join('\n');
 }
 
 function createLengthObject(initalElements, header, initalLengths, isHeader = false) {
