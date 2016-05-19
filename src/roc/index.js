@@ -95,6 +95,8 @@ const roc = {
                 }
             },
             meta: {
+                '__name': 'Meta commands',
+                '__description': 'Meta commands that can be used to generate meta data about the current project.',
                 'markdown-commands': {
                     description: 'Create markdown documentation for the commands.',
                     arguments: [{

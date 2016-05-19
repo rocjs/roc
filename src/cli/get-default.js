@@ -90,8 +90,6 @@ export const getDefaultMeta = (directory) => {
             ...meta,
             commands: {
                 meta: {
-                    '__name': 'Meta commands',
-                    '__description': 'Meta commands that can be used to generate meta data about the current project.',
                     'list-settings': {
                         description: 'Prints all the available settings that can be changed.'
                     },
