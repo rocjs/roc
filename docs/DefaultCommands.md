@@ -14,15 +14,28 @@ All commands can be called with some additional options as can be seen below.
 | -v, --version   | Output version number.                                                                                        | No       |
 
 ## Commands
-* [init](#init)
-* [markdown-commands](#markdown-commands)
-* [new](#new)
+* [create](#create)
+    * [init](#init)
+    * [new](#new)
+* [meta](#meta)
+    * [list-settings](#list-settings)
+    * [markdown-actions](#markdown-actions)
+    * [markdown-commands](#markdown-commands)
+    * [markdown-hooks](#markdown-hooks)
+    * [markdown-settings](#markdown-settings)
 
-## init
+## create
+__Commands that can be used to create new projects__
+
+```
+roc create <command>
+```
+
+### init
 __Init a new project.__
 
 ```
-roc init [template] [version]
+roc create init [template] [version]
 ```
 The __init__ command can be used to initiate a new Roc project and currently expects that it's run inside an empty directory. As can be seen above it takes two optional arguments, template and version. If no template is given a prompt will be shown with the possible alternatives that exists. Currently these alternatives are coded into Roc and matches `web-app` and `web-app-react`.
 
@@ -48,30 +61,11 @@ Versions should match a tag on the Github repo and will default to master if non
 | -f, --force | Ignore non empty directory warning.                               | No       | `Boolean`  |         |
 | -l, --list  | List the available versions of a template.                        | No       | `Boolean`  |         |
 
-## markdown-commands
-__Create markdown documentation for the commands.__
-
-```
-roc markdown-commands [settings-link]
-```
-
-### Arguments
-
-| Name            | Description                                                                  | Required | Type       | Default |
-| --------------- | ---------------------------------------------------------------------------- | -------- | ---------- | ------- |
-| settings-link   | A link that should be used when generation to link to the settings location. | No       | `String`   |         |
-
-### Command options
-
-| Name            | Description                                                                  | Required | Type       | Default |
-| --------------- | ---------------------------------------------------------------------------- | -------- | ---------- | ------- |
-| --hide-commands | A list of commands that should be hidden form the generated markdown.        | No       | `[String]` | `[]`    |
-
-## new
+### new
 __Create a new project.__
 
 ```
-roc new <name>  [template] [version]
+roc create new <name> [template] [version]
 ```
 Alias for "init" that always will try to create a new directory.
 
@@ -89,4 +83,59 @@ Alias for "init" that always will try to create a new directory.
 | ----------- | ----------------------------------------------------------------- | -------- | ---------- | ------- |
 | -f, --force | Ignore non empty directory warning.                               | No       | `Boolean`  |         |
 | -l, --list  | List the available versions of a template.                        | No       | `Boolean`  |         |
+
+## meta
+__Meta commands that can be used to generate meta data about the current project.__
+
+```
+roc meta <command>
+```
+
+### list-settings
+__Prints all the available settings that can be changed.__
+
+```
+roc meta list-settings
+```
+
+### markdown-actions
+__Prints all the registered actions in a markdown format.__
+
+```
+roc meta markdown-actions
+```
+
+### markdown-commands
+__Create markdown documentation for the commands.__
+
+```
+roc meta markdown-commands [settings-link]
+```
+
+### Arguments
+
+| Name            | Description                                                                  | Required | Type       | Default |
+| --------------- | ---------------------------------------------------------------------------- | -------- | ---------- | ------- |
+| settings-link   | A link that should be used when generation to link to the settings location. | No       | `String`   |         |
+
+### Command options
+
+| Name            | Description                                                                  | Required | Type       | Default |
+| --------------- | ---------------------------------------------------------------------------- | -------- | ---------- | ------- |
+| --hide-commands | A list of commands that should be hidden form the generated markdown.        | No       | `[String]` | `[]`    |
+
+### markdown-hooks
+__Prints all the registered hooks in a markdown format.__
+
+```
+roc meta markdown-hooks
+```
+
+### markdown-settings
+__Prints all the available settings that can be changed in a markdown format.__
+
+```
+roc meta markdown-settings
+```
+
 
