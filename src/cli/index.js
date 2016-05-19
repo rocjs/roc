@@ -20,6 +20,7 @@ import { feedbackMessage, errorLabel } from '../helpers/style';
 import { setVerbose } from '../helpers/verbose';
 import { getHooks, runHookDirectly } from '../hooks';
 import { getActions } from '../hooks/actions';
+import { checkGroup, generateAliases } from './utils';
 
 /**
  * Invokes the Roc cli.
@@ -41,7 +42,7 @@ export function runCli(info = { version: 'Unknown', name: 'Unknown' }, initalCon
     } = minimist(argv.slice(2));
 
     // The first should be our command if there is one
-    const [command, ...args] = _;
+    let [groupOrCommand, ...args] = _;
 
     // If version is selected output that and stop
     if (version || v) {
@@ -65,45 +66,72 @@ export function runCli(info = { version: 'Unknown', name: 'Unknown' }, initalCon
         buildCompleteConfig(verboseMode, applicationConfig, undefined, initalConfig, initalMeta, dirPath, true);
 
     // If we have no command we will display some help information about all possible commands
-    if (!command) {
-        return console.log(generateCommandsDocumentation(packageConfig, metaObject));
+    if (!groupOrCommand) {
+        return console.log(generateCommandsDocumentation(packageConfig.commands, metaObject.commands, info.name));
     }
 
-    // If the command does not exist show error
-    // Will ignore application configuration
-    if (!packageConfig.commands || !packageConfig.commands[command]) {
+    // Check if we are in a subgroup
+    const result = checkGroup(packageConfig.commands, metaObject.commands, groupOrCommand, args, info.name);
+    if (!result) {
+        return undefined;
+    }
+
+    let {
+        commands,
+        metaCommands,
+        command,
+        parents
+    } = result;
+
+    let suggestions = Object.keys(commands);
+
+    // If there is no direct match we will search through the tree after a match
+    if (!commands[command]) {
+        const aliases = generateAliases(commands, metaCommands, command, parents);
+        if (!aliases) {
+            return undefined;
+        } else if (aliases.commands) {
+            commands = aliases.commands;
+            metaCommands = aliases.metaCommands;
+            parents = aliases.parents;
+        }
+        suggestions = suggestions.concat(aliases.mappings);
+    }
+
+    if (!commands[command]) {
         return console.log(feedbackMessage(
-            errorLabel('Error', 'Invalid Command'),
-            getSuggestions([command], Object.keys(packageConfig.commands))
+            errorLabel('Error', 'Invalid command'),
+            getSuggestions([command], suggestions)
         ));
     }
 
     // Show command help information if requested
     // Will ignore application configuration
     if (help || h) {
-        return console.log(generateCommandDocumentation(packageConfig, metaObject, command, info.name));
+        return console.log(generateCommandDocumentation(packageConfig.settings, metaObject.settings, metaCommands,
+            command, info.name, parents));
     }
 
-    const parsedArguments = parseArguments(command, metaObject.commands, args);
+    const parsedArguments = parseArguments(command, metaCommands, args);
 
     let documentationObject;
     // Only parse arguments if the command accepts it
-    if (metaObject.commands && metaObject.commands[command] && metaObject.commands[command].settings) {
+    if (metaCommands && metaCommands[command] && metaCommands[command].settings) {
         // Get config from application and only parse options that this command cares about.
-        const filter = metaObject.commands[command].settings === true ? [] : metaObject.commands[command].settings;
+        const filter = metaCommands[command].settings === true ? [] : metaCommands[command].settings;
         documentationObject = buildDocumentationObject(configObject.settings, metaObject.settings, filter);
     }
 
     const { settings, parsedOptions } =
-        parseOptions(restOptions, getMappings(documentationObject), command, metaObject.commands);
+        parseOptions(restOptions, getMappings(documentationObject), command, metaCommands);
 
     configObject = merge(configObject, {
         settings
     });
 
     // Validate configuration
-    if (metaObject.commands && metaObject.commands[command] && metaObject.commands[command].settings) {
-        validate(configObject.settings, metaObject.settings, metaObject.commands[command].settings);
+    if (metaCommands && metaCommands[command] && metaCommands[command].settings) {
+        validate(configObject.settings, metaObject.settings, metaCommands[command].settings);
     }
 
     // Set the configuration object
@@ -116,13 +144,13 @@ export function runCli(info = { version: 'Unknown', name: 'Unknown' }, initalCon
 
     if (invoke) {
         // If string run as shell command
-        if (isString(configObject.commands[command])) {
-            return execute(configObject.commands[command])
+        if (isString(commands[command])) {
+            return execute(commands[command])
                 .catch(process.exit);
         }
 
         // Run the command
-        return configObject.commands[command]({
+        return commands[command]({
             verbose: verboseMode,
             directory: dirPath,
             info,

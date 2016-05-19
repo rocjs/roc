@@ -16,6 +16,7 @@ import { registerAction } from '../hooks/actions';
 import getSuggestions from '../helpers/get-suggestions';
 
 import { getDefaultConfig, getDefaultMeta } from './get-default';
+import { isCommandGroup } from './utils';
 
 import buildExtensionTree from './extensions';
 
@@ -132,25 +133,56 @@ function validateConfigurationStructure(config, applicationConfig) {
 /**
  * Generates a string with information about all the possible commands.
  *
- * @param {rocConfig} commands - The Roc config object, uses commands from it.
- * @param {rocMetaConfig} commandsmeta - The Roc meta config object, uses commands from it.
+ * @param {object} commands - Commands from @{link rocConfig}.
+ * @param {object} metaCommands - Meta commands from @{link rocMetaConfig}.
+ * @param {string} name - The name of the cli.
+ * @param {string[]} parents - The parents that the current scope has.
  *
  * @returns {string} - A string with documentation based on the available commands.
  */
-export function generateCommandsDocumentation({ commands }, { commands: commandsMeta }) {
+export function generateCommandsDocumentation(commands = {'No commands available.': ''},
+    commandsMeta = {}, name, parents = []) {
     const header = {
         name: true,
         description: true
     };
 
-    const noCommands = {'No commands available.': ''};
-    commandsMeta = commandsMeta || { };
-
-    // We will sort the commands
     let body = [{
         name: 'Commands',
         level: 0,
-        objects: Object.keys(commands || noCommands).sort().map((command) => {
+        objects: getObjects(commands, commandsMeta)
+    }];
+
+    body = body.concat(getGroups(commands, commandsMeta));
+
+    const rows = [];
+    rows.push('Usage: ' + name + ' ' + parents.concat('<command>').join(' '), null);
+
+    if (commandsMeta.__description) {
+        rows.push(commandsMeta.__description, null);
+    }
+
+    rows.push(generateCommandDocsHelper(body, header, 'General options', 'name'));
+    return rows.join('\n');
+}
+
+function getGroups(commands, commandsMeta = {}, parentNames = [], level = 1) {
+    return Object.keys(commands)
+        .filter(isCommandGroup(commands))
+        .sort()
+        .map((group) => ({
+            name: commandsMeta[group] && commandsMeta[group].__name ? commandsMeta[group].__name : group,
+            level,
+            objects: getObjects(commands[group], commandsMeta[group], parentNames.concat(group), level + 1),
+            children: getGroups(commands[group], commandsMeta[group], parentNames.concat(group), level + 1)
+        }));
+}
+
+function getObjects(commands, commandsMeta = {}, parentNames = [], level = 1) {
+    return Object.keys(commands)
+        .filter((command) => !isCommandGroup(commands)(command))
+        .sort()
+        .map((command) => {
             const options = commandsMeta[command] ?
                 getCommandArgumentsAsString(commandsMeta[command]) :
                 '';
@@ -159,13 +191,11 @@ export function generateCommandsDocumentation({ commands }, { commands: commands
                 '';
 
             return {
-                name: (command + options),
+                name: (parentNames.concat(command).join(' ') + options),
+                level,
                 description
             };
-        })
-    }];
-
-    return generateCommandDocsHelper(body, header, 'General options', 'name');
+        });
 }
 
 /**
@@ -177,7 +207,7 @@ export function generateCommandsDocumentation({ commands }, { commands: commands
 export function getCommandArgumentsAsString(command = {}) {
     let args = '';
     (command.arguments || []).forEach((argument) => {
-        args += argument.required ? ` <${argument.name}> ` : ` [${argument.name}]`;
+        args += argument.required ? ` <${argument.name}>` : ` [${argument.name}]`;
     });
 
     return args;
@@ -186,23 +216,26 @@ export function getCommandArgumentsAsString(command = {}) {
  /**
   * Generates a string with information about a specific command.
   *
-  * @param {rocConfig} settings - The Roc config object, uses settings from it.
-  * @param {rocMetaConfig} commands+meta - The Roc meta config object, uses commands and settings from it.
+  * @param {object} settings - Settings from @{link rocConfig}.
+  * @param {object} metaSettings - Meta settings from @{link rocMetaConfig}.
+  * @param {object} metaCommands - Meta commands from @{link rocMetaConfig}.
   * @param {string} command - The selected command.
   * @param {string} name - The name of the cli.
+  * @param {string[]} parents - The parents that the command has.
   *
   * @returns {string} - A string with documentation based on the selected commands.
   */
-export function generateCommandDocumentation({ settings }, { commands = {}, settings: meta }, command, name) {
+export function generateCommandDocumentation(settings, metaSettings, metaCommands, command, name, parents) {
     const rows = [];
-    rows.push('Usage: ' + name + ' ' + command + getCommandArgumentsAsString(commands[command]));
+    rows.push('Usage: ' + name + ' ' + parents.concat(command).join(' ') +
+        getCommandArgumentsAsString(metaCommands[command]));
     rows.push('');
 
-    if (commands[command] && (commands[command].description || commands[command].help)) {
-        if (commands[command].help) {
-            rows.push(redent(trimNewlines(commands[command].help)));
+    if (metaCommands[command] && (metaCommands[command].description || metaCommands[command].help)) {
+        if (metaCommands[command].help) {
+            rows.push(redent(trimNewlines(metaCommands[command].help)));
         } else {
-            rows.push(commands[command].description);
+            rows.push(metaCommands[command].description);
         }
 
         rows.push('');
@@ -211,8 +244,8 @@ export function generateCommandDocumentation({ settings }, { commands = {}, sett
     let body = [];
 
     // Generate the arguments table
-    if (commands[command] && commands[command].arguments) {
-        const objects = commands[command].arguments.map((argument) => (
+    if (metaCommands[command] && metaCommands[command].arguments) {
+        const objects = metaCommands[command].arguments.map((argument) => (
             {
                 cli: `${argument.name}`,
                 description: createDescription(argument)
@@ -229,8 +262,8 @@ export function generateCommandDocumentation({ settings }, { commands = {}, sett
     }
 
     // Generate the options table
-    if (commands[command] && commands[command].options) {
-        const objects = commands[command].options.sort(onProperty('name')).map((option) => (
+    if (metaCommands[command] && metaCommands[command].options) {
+        const objects = metaCommands[command].options.sort(onProperty('name')).map((option) => (
             {
                 cli: option.shortname ? `-${option.shortname}, --${option.name}` : `--${option.name}`,
                 description: createDescription(option)
@@ -247,12 +280,12 @@ export function generateCommandDocumentation({ settings }, { commands = {}, sett
     }
 
     // Generate the settings table
-    if (commands[command] && commands[command].settings) {
-        const filter = commands[command].settings === true ? [] : commands[command].settings;
+    if (metaCommands[command] && metaCommands[command].settings) {
+        const filter = metaCommands[command].settings === true ? [] : metaCommands[command].settings;
 
         body = body.concat({
             name: 'Settings options',
-            children: sortOnProperty('name', buildDocumentationObject(settings, meta, filter))
+            children: sortOnProperty('name', buildDocumentationObject(settings, metaSettings, filter))
         });
     }
 
@@ -319,10 +352,11 @@ function generateCommandDocsHelper(body, header, options, name) {
     });
 
     return generateTable(body, header, {
-        compact: true,
+        compact: false,
         titleWrapper: (input) => input + ':',
         cellDivider: '',
-        rowWrapper: (input) => `${input}`,
+        rowWrapper: (input) => ' ' + input,
+        cellWrapper: (input) => input + '  ',
         header: false,
         groupTitleWrapper: (input) => input + ':'
     });
@@ -605,7 +639,7 @@ function parseCommandOptions(command, notManaged) {
                     } catch (err) {
                         console.log(feedbackMessage(
                             errorLabel('Error', 'Command Options Problem'),
-                            'A option was not valid..\n\n' +
+                            'A option was not valid.\n\n' +
                             err.message
                         ));
                         /* eslint-disable no-process-exit */
