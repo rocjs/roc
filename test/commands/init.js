@@ -110,7 +110,7 @@ describe('roc', () => {
                     return init({ parsedArguments: { arguments: {} }, parsedOptions: { options: {} } })
                         .catch(() => {
                             expect(prompt.calls[1].arguments[0][0].message)
-                                .toBe('What do you want to name the directory?');
+                                .toBe(`What do you want to name the directory? (It will be created in '${process.cwd()}')`);
                         });
                 });
             });

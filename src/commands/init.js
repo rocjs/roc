@@ -306,7 +306,7 @@ function askForDirectory(directory, resolve) {
     inquirer.prompt([{
         type: 'input',
         name: 'name',
-        message: 'What do you want to name the directory?'
+        message: `What do you want to name the directory? (It will be created in '${directory || process.cwd()}')`,
     }], ({ name }) => {
         const directoryPath = getAbsolutePath(name, directory);
         fs.mkdir(directoryPath, (err) => {
