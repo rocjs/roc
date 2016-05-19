@@ -69,10 +69,12 @@ export const getDefaultConfig = (directory) => {
         config = {
             ...config,
             commands: {
-                'list-settings': listSettings,
-                'markdown-settings': markdownSettings,
-                'markdown-hooks': markdownHooks,
-                'markdown-actions': markdownActions
+                meta: {
+                    'list-settings': listSettings,
+                    'markdown-settings': markdownSettings,
+                    'markdown-hooks': markdownHooks,
+                    'markdown-actions': markdownActions
+                }
             }
         };
     }
@@ -87,17 +89,21 @@ export const getDefaultMeta = (directory) => {
         meta = {
             ...meta,
             commands: {
-                'list-settings': {
-                    description: 'Prints all the available settings that can be changed.'
-                },
-                'markdown-settings': {
-                    description: 'Prints all the available settings that can be changed in a markdown format.'
-                },
-                'markdown-hooks': {
-                    description: 'Prints all the registered hooks in a markdown format.'
-                },
-                'markdown-actions': {
-                    description: 'Prints all the registered actions in a markdown format.'
+                meta: {
+                    '__name': 'Meta commands',
+                    '__description': 'Meta commands that can be used to generate meta data about the current project.',
+                    'list-settings': {
+                        description: 'Prints all the available settings that can be changed.'
+                    },
+                    'markdown-settings': {
+                        description: 'Prints all the available settings that can be changed in a markdown format.'
+                    },
+                    'markdown-hooks': {
+                        description: 'Prints all the registered hooks in a markdown format.'
+                    },
+                    'markdown-actions': {
+                        description: 'Prints all the registered actions in a markdown format.'
+                    }
                 }
             }
         };
