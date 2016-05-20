@@ -44,7 +44,7 @@ export default function init({ parsedArguments, parsedOptions, directory }) {
     }
 
     // Make sure the directory is empty!
-    return checkFolder(force, name || directory).then((dir) => {
+    return checkFolder(force, name, directory).then((dir) => {
         if (!template) {
             return interactiveMenu(dir, list);
         }
@@ -259,9 +259,9 @@ function interactiveMenu(directory, list) {
     });
 }
 
-function checkFolder(force = false, directory = '') {
+function checkFolder(force = false, directoryName = '', directory = '') {
     return new Promise((resolve) => {
-        const directoryPath = getAbsolutePath(directory || process.cwd());
+        const directoryPath = getAbsolutePath(path.join(directory, directoryName));
         fs.mkdir(directoryPath, (err) => {
             if (err) {
                 console.log(
@@ -306,7 +306,7 @@ function askForDirectory(directory, resolve) {
     inquirer.prompt([{
         type: 'input',
         name: 'name',
-        message: `What do you want to name the directory? (It will be created in '${directory || process.cwd()}')`,
+        message: `What do you want to name the directory? (It will be created in '${directory || process.cwd()}')`
     }], ({ name }) => {
         const directoryPath = getAbsolutePath(name, directory);
         fs.mkdir(directoryPath, (err) => {

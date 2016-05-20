@@ -110,7 +110,8 @@ describe('roc', () => {
                     return init({ parsedArguments: { arguments: {} }, parsedOptions: { options: {} } })
                         .catch(() => {
                             expect(prompt.calls[1].arguments[0][0].message)
-                                .toBe(`What do you want to name the directory? (It will be created in '${process.cwd()}')`);
+                                .toBe('What do you want to name the directory? ' +
+                                    `(It will be created in '${process.cwd()}')`);
                         });
                 });
             });
@@ -194,7 +195,8 @@ describe('roc', () => {
                         parsedOptions: { options: {} }
                     }).then(() => {
                         expect(spawn.calls[0].arguments[2].cwd).toEqual(dirPath);
-                        expect(spawn.calls[1].arguments[2].cwd).toEqual(path.join(process.cwd(), 'roc-name'));
+                        expect(spawn.calls[1].arguments[2].cwd)
+                            .toEqual(path.join(process.cwd(), 'roc-directory', 'roc-name'));
                     });
                 });
             });
