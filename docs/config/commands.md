@@ -29,6 +29,7 @@ A string command is a string that will managed as if it was typed into the termi
 The function will be invoked with an object with the following properties.
 ```
 verbose             If verbose mode has been enabled
+directory           Path to working directory
 info                The object that is passed to the runCli function with version and name
 configObject        The final configuration object where everything has been merged
 metaObject          The final meta configuration object where everything has been merged
@@ -41,6 +42,9 @@ actions             The currently registered actions
 
 ### verbose
 Debug will be set to `true` if `-V, --verbose` was set. Should be used to print extra information when running the command. Otherwise it will be `false`.
+
+### directory
+If set it will be used as the current working directory. The path can be either relative to the current working directory or absolute.
 
 ### info
 The same information object as `runCli` was invoked with, meaning it should have two properties.

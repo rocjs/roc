@@ -80,6 +80,7 @@ describe('roc', () => {
 
                     expect(spy.calls[0].arguments[0]).toEqual({
                         verbose: false,
+                        directory: undefined,
                         info: info,
                         configObject: config,
                         packageConfig: config,
@@ -100,6 +101,7 @@ describe('roc', () => {
 
                     expect(spy.calls[0].arguments[0]).toEqual({
                         verbose: true,
+                        directory: undefined,
                         info: info,
                         configObject: config,
                         packageConfig: config,
@@ -130,6 +132,7 @@ describe('roc', () => {
 
                     expect(spy.calls[0].arguments[0]).toEqual({
                         verbose: false,
+                        directory: undefined,
                         info: info,
                         configObject: newConfig,
                         packageConfig: config,

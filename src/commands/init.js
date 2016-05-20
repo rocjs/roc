@@ -8,6 +8,8 @@ import chalk from 'chalk';
 import { get, getVersions } from './helpers/github';
 import { validRocProject } from './helpers/general';
 import { error, warning, info, ok } from '../helpers/style';
+import { getAbsolutePath } from '../helpers';
+import unzip from './helpers/unzip';
 
 /* This should be fetched from a server!
  */
@@ -30,7 +32,7 @@ const templates = [{
  *
  * @returns {Promise} - Promise for the command.
  */
-export default function init({ parsedArguments, parsedOptions }) {
+export default function init({ parsedArguments, parsedOptions, directory }) {
     const { list, force } = parsedOptions.options;
     const { name, template, version } = parsedArguments.arguments;
 
@@ -42,18 +44,22 @@ export default function init({ parsedArguments, parsedOptions }) {
     }
 
     // Make sure the directory is empty!
-    return checkFolder(force, name).then((directory) => {
+    return checkFolder(force, name, directory).then((dir) => {
         if (!template) {
-            return interactiveMenu(directory, list);
+            return interactiveMenu(dir, list);
         }
 
-        return fetchTemplate(template, version, directory, list);
+        return fetchTemplate(template, version, dir, list);
     });
 }
 
 /*
  * Helpers
  */
+
+function isLocalTemplate(template = '') {
+    return template.indexOf('.zip') === template.length - 4;
+}
 
 function getTemplateVersion(toFetch, list) {
     return getVersions(toFetch)
@@ -74,7 +80,9 @@ function getTemplateVersion(toFetch, list) {
 }
 
 function getTemplate(template) {
-    if (template.indexOf('/') === -1) {
+    if (isLocalTemplate(template)) {
+        return template;
+    } else if (template.indexOf('/') === -1) {
         const selectedTemplate = templates.find((elem) => elem.identifier === template);
         if (!selectedTemplate) {
             console.log(error('Invalid template name given.'));
@@ -92,8 +100,9 @@ function getTemplate(template) {
 function fetchTemplate(toFetch, selectVersion, directory, list) {
     toFetch = getTemplate(toFetch);
 
-    return getTemplateVersion(toFetch, list)
-        .then((versions) => {
+    const templateFetcher = isLocalTemplate(toFetch) ?
+        unzip(toFetch) :
+        getTemplateVersion(toFetch, list).then((versions) => {
             // If the name starts with a number we will automatically add 'v' infront of it to match Github default
             if (selectVersion && !isNaN(Number(selectVersion.charAt(0))) && selectVersion.charAt(0) !== 'v') {
                 selectVersion = `v${selectVersion}`;
@@ -113,7 +122,9 @@ function fetchTemplate(toFetch, selectVersion, directory, list) {
             }
 
             return get(toFetch, actualVersion);
-        })
+        });
+
+    return templateFetcher
         .then((dirPath) => {
             if (!validRocProject(path.join(dirPath, 'template'))) {
                 /* eslint-disable no-process-exit */
@@ -248,22 +259,21 @@ function interactiveMenu(directory, list) {
     });
 }
 
-function checkFolder(force = false, directoryName = '') {
+function checkFolder(force = false, directoryName = '', directory = '') {
     return new Promise((resolve) => {
-        const directoryPath = path.join(process.cwd(), directoryName);
+        const directoryPath = getAbsolutePath(path.join(directory, directoryName));
         fs.mkdir(directoryPath, (err) => {
-            if (directoryName && err) {
+            if (err) {
                 console.log(
-                    warning(`Found a folder named ${chalk.underline(directoryName)} at ` +
-                        `${chalk.underline(process.cwd())}, will try to use it.`)
-                , '\n');
+                    warning(`Found a folder named ${chalk.underline(directoryPath)}, will try to use it.`)
+                    , '\n');
             }
 
             if (!force && fs.readdirSync(directoryPath).length > 0) {
                 inquirer.prompt([{
                     type: 'list',
                     name: 'selection',
-                    message: 'The directory is not empty, what do you want to do?',
+                    message: `The directory '${directoryPath}' is not empty, what do you want to do?`,
                     choices: [{
                         name: 'Create new folder',
                         value: 'new'
@@ -280,7 +290,7 @@ function checkFolder(force = false, directoryName = '') {
                         process.exit(1);
                         /* eslint-enable */
                     } else if (selection === 'new') {
-                        askForDirectory(resolve);
+                        askForDirectory(directory, resolve);
                     } else if (selection === 'force') {
                         resolve(directoryPath);
                     }
@@ -292,13 +302,13 @@ function checkFolder(force = false, directoryName = '') {
     });
 }
 
-function askForDirectory(resolve) {
+function askForDirectory(directory, resolve) {
     inquirer.prompt([{
         type: 'input',
         name: 'name',
-        message: 'What do you want to name the directory?'
+        message: `What do you want to name the directory? (It will be created in '${directory || process.cwd()}')`
     }], ({ name }) => {
-        const directoryPath = path.join(process.cwd(), name);
+        const directoryPath = getAbsolutePath(name, directory);
         fs.mkdir(directoryPath, (err) => {
             if (err) {
                 console.log(warning('The directory did already exists or was not empty.'), '\n');
