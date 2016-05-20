@@ -8,6 +8,7 @@
         "babel-plugin-transform-es2015-parameters",
         "babel-plugin-transform-es2015-destructuring",
         "babel-plugin-transform-es2015-modules-commonjs",
-        "babel-plugin-transform-export-extensions"
+        "babel-plugin-transform-export-extensions",
+        "babel-plugin-transform-async-to-generator"
     ]
 }

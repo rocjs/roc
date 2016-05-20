@@ -1,6 +1,6 @@
 import { getAbsolutePath } from '../helpers';
 import { getApplicationConfig } from '../configuration/helpers';
-import { buildCompleteConfig } from './helpers';
+import buildCompleteConfig from './helpers';
 import { getHooks } from '../hooks';
 import { getActions } from '../hooks/actions';
 
@@ -18,14 +18,15 @@ export default function getConfiguration(dirPath, applicationConfigPath) {
     // Build the complete config object
     const applicationConfig = getApplicationConfig(applicationConfigPath, path, false);
 
-    let { packageConfig, config: configObject, meta: metaObject } =
-        buildCompleteConfig(false, applicationConfig, undefined, {}, {}, path, true, false);
-
-    return {
-        configObject,
-        metaObject,
-        packageConfig,
-        hooks: getHooks(),
-        actions: getActions()
-    };
+    return buildCompleteConfig(false, applicationConfig, undefined, {}, {}, path, true, false)
+        .then(({ packageConfig, config: configObject, meta: metaObject, dependencies }) => {
+            return {
+                configObject,
+                metaObject,
+                packageConfig,
+                hooks: getHooks(),
+                actions: getActions(),
+                dependencies
+            };
+        });
 }

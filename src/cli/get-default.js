@@ -2,7 +2,8 @@ import {
     generateTextDocumentation,
     generateMarkdownDocumentation,
     generateMarkdownHooks,
-    generateMarkdownActions
+    generateMarkdownActions,
+    generateMarkdownDependencies
 } from '../';
 
 import validRocProject from '../helpers/valid-roc-project';
@@ -52,6 +53,12 @@ function markdownActions({ info: { name }, actions }) {
     /* eslint-enable */
 }
 
+function markdownDependencies({ info: { name }, dependencies }) {
+    /* eslint-disable no-console */
+    console.log(generateMarkdownDependencies(name, dependencies));
+    /* eslint-enable */
+}
+
 export const getDefaultConfig = (directory) => {
     let config = {
         settings: {},
@@ -73,7 +80,8 @@ export const getDefaultConfig = (directory) => {
                     'list-settings': listSettings,
                     'markdown-settings': markdownSettings,
                     'markdown-hooks': markdownHooks,
-                    'markdown-actions': markdownActions
+                    'markdown-actions': markdownActions,
+                    'markdown-dependencies': markdownDependencies
                 }
             }
         };

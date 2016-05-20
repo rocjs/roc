@@ -3,7 +3,8 @@ import { getActions } from '../../hooks/actions';
 
 import {
     getExtensions,
-    runPostInits
+    runPostInits,
+    manageDevExports
 } from './helpers';
 
 /**
@@ -15,7 +16,7 @@ import {
  * @param {rocMetaConfig} baseMeta - The base meta configuration.
  * @param {string} [directory=process.cwd()] - The directory to resolve relative paths from.
  * @param {boolean} [verbose=true] - If verbose mode should be enabled, logs some extra information.
- * @param {boolean} [checkDependencies=true] - If dependencies should be verified in extensions.
+ * @param {boolean} [checkRequired=true] - If dependencies should be verified in extensions.
  *
  * @returns {Object} - The final state after loading all extensions.
  * @property {rocConfig} config - The final configuration, with application configuration.
@@ -24,17 +25,18 @@ import {
  * @property {Object[]} usedExtensions - All of the loaded extensions.
  */
 export default function buildExtensionTree(
-    packages, plugins, baseConfig, baseMeta, directory, verbose, checkDependencies
+    packages, plugins, baseConfig, baseMeta, directory, verbose, checkRequired
 ) {
     return [
         getExtensions('package')(packages, directory),
         getExtensions('plugin')(plugins, directory),
+        manageDevExports,
         runPostInits
     ].reduce(
         (state, process) => process(state),
         // Initial state
         {
-            checkDependencies,
+            checkRequired,
             verbose,
             config: baseConfig,
             meta: baseMeta,
@@ -42,6 +44,7 @@ export default function buildExtensionTree(
             projectExtensions: [],
             usedExtensions: [],
             actions: getActions(),
-            hooks: getHooks()
+            hooks: getHooks(),
+            dependencies: {}
         });
 }

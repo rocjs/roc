@@ -1,5 +1,6 @@
+import { join, dirname } from 'path';
 import chalk from 'chalk';
-import resolve from 'resolve';
+import { _findPath } from 'module';
 import { isString } from 'lodash';
 import semver from 'semver';
 
@@ -8,18 +9,28 @@ import { registerActions, getActions, setActions } from '../../hooks/actions';
 import { merge } from '../../configuration';
 import { warningLabel, feedbackMessage } from '../../helpers/style';
 import ExtensionError from './error';
+import { setDependencies, getDependencies, setDevExports, getDevExports } from './dependencies';
+import { fileExists } from '../../helpers';
+
+export function manageDevExports(initialState) {
+    initialState.usedExtensions.forEach((name) =>
+        getDevExports(name) && setDependencies(name, { exports: getDevExports(name) }));
+    return initialState;
+}
 
 export function runPostInits(initialState) {
     return initialState.postInits.reduce(
-        (state, postInit) =>
+        (state, { postInit, name }) =>
             manageRocObject(
                 postInit({
                     config: state.config,
                     meta: state.meta,
                     extensions: state.usedExtensions,
                     actions: state.actions,
-                    hooks: state.hooks
-                }), state
+                    hooks: state.hooks,
+                    currentDependencies: state.dependencies,
+                    localDependencies: getDependencies(name)
+                }), state, true
             ),
         initialState
     );
@@ -69,7 +80,7 @@ function getParents(type) {
     return (roc, state) => {
         let nextState = {...state};
         for (const parent of roc[type] || []) {
-            nextState = getCompleteExtensionTree(require(parent).roc, parent, { ...nextState});
+            nextState = getCompleteExtensionTree(getCompleteExtension(parent), parent, { ...nextState});
         }
 
         return nextState;
@@ -83,7 +94,9 @@ function init(roc, state) {
             meta: state.meta,
             extensions: state.usedExtensions,
             actions: state.actions,
-            hooks: state.hooks
+            hooks: state.hooks,
+            currentDependencies: state.dependencyContext,
+            localDependencies: getDependencies(roc.name)
         });
 
         if (!result || isString(result)) {
@@ -108,23 +121,23 @@ function init(roc, state) {
     return manageRocObject(roc, state);
 }
 
-function checkDependencies(roc, state) {
-    if (roc.dependencies && state.checkDependencies) {
-        for (const dependency of Object.keys(roc.dependencies)) {
+function checkRequired(roc, state) {
+    if (roc.required && state.checkRequired) {
+        for (const dependency of Object.keys(roc.required)) {
             const required = state.usedExtensions.find((used) => used.name === dependency);
             if (!required) {
                 throw new ExtensionError(
                     'Could not find required dependency.' +
-                    `Needs ${dependency}@${roc.dependencies[dependency]}`,
+                    `Needs ${dependency}@${roc.required[dependency]}`,
                     roc.name,
                     roc.version
                 );
             }
 
-            if (required.version && !semver.satisfies(required.version, roc.dependencies[dependency])) {
+            if (required.version && !semver.satisfies(required.version, roc.required[dependency])) {
                 throw new ExtensionError(
                     'Current dependency version does not satisfy required version.\n' +
-                    `Needs ${dependency}@${roc.dependencies[dependency]}`,
+                    `Needs ${dependency}@${roc.required[dependency]}`,
                     roc.name,
                     roc.version
                 );
@@ -137,7 +150,10 @@ function checkDependencies(roc, state) {
 
 function addPostInit(roc, state) {
     if (roc.postInit) {
-        state.postInits.push(roc.postInit);
+        state.postInits.push({
+            postInit: roc.postInit,
+            name: roc.name
+        });
     }
 
     return state;
@@ -165,7 +181,7 @@ function getCompleteExtensionTree(roc, path, initialState) {
         validRocExtension(path),
         getParents('packages'),
         getParents('plugins'),
-        checkDependencies,
+        checkRequired,
         init,
         addPostInit,
         registerExtension
@@ -175,8 +191,57 @@ function getCompleteExtensionTree(roc, path, initialState) {
     );
 }
 
-function manageRocObject(roc, state) {
+function updateDependencies(dependencies, name, path) {
+    const local = { ...dependencies };
+    Object.keys(local).forEach((dependency) => {
+        if (isString(local[dependency])) {
+            local[dependency] = {
+                version: local[dependency]
+            };
+        }
+        local[dependency] = {
+            ...local[dependency],
+            context: path,
+            extension: name
+        };
+    });
+
+    return local;
+}
+
+function setContext(dependencies, name, path) {
+    return {
+        ...dependencies,
+        exports: updateDependencies(dependencies.exports, name, path),
+        uses: updateDependencies(dependencies.uses, name, path),
+        requires: updateDependencies(dependencies.requires, name, path)
+    };
+}
+
+function manageRocObject(roc, state, post = false) {
     if (roc) {
+        // Get possible dependencies
+        if (!post) {
+            // FIXME This will mean that we can create a "newDependencies" directly on the roc object...
+            if (roc.newDependencies) {
+                state.dependencies = roc.newDependencies;
+            }
+
+            setDependencies(roc.name, state.dependencies, roc.pkg, roc.path);
+
+            if (roc.dependencies) {
+                state.dependencies = merge(
+                    state.dependencies,
+                    setContext(roc.dependencies, roc.name, roc.path)
+                );
+
+                // If dev module save the exports for the extension for later reuse
+                if (roc.dependencies.exports && /^.*-dev$/.test(roc.name)) {
+                    setDevExports(roc.name, updateDependencies(roc.dependencies.exports, roc.name, roc.path));
+                }
+            }
+        }
+
         // Get possible hooks
         if (roc.hooks) {
             registerHooks(roc.hooks, roc.name);
@@ -190,6 +255,7 @@ function manageRocObject(roc, state) {
         }
 
         // Build the config object
+        // FIXME Remove this and depend on using the init function instead!
         if (roc.buildConfig) {
             const { config, meta } = roc.buildConfig(
                 state.config,
@@ -219,9 +285,35 @@ function manageRocObject(roc, state) {
     return state;
 }
 
+function getCompleteExtension(extensionPath) {
+    const getPackageJsonAndPath = (path) => {
+        const dir = dirname(path);
+        if (dir === path) {
+            throw new Error('Could not find package.json for the extension at ' + extensionPath);
+        }
+
+        const pkg = join(dir, 'package.json');
+
+        if (fileExists(pkg)) {
+            return {
+                path: dir,
+                pkg: require(pkg)
+            };
+        }
+
+        return getPackageJsonAndPath(dir);
+    };
+
+    return {
+        ...require(extensionPath).roc,
+        ...getPackageJsonAndPath(extensionPath)
+    };
+}
+
 function getExtension(extensionName, directory, type) {
     try {
-        return require(resolve.sync(extensionName, { basedir: directory })).roc;
+        const path = _findPath(extensionName, [`${directory}/node_modules`]);
+        return getCompleteExtension(path);
     } catch (err) {
         if (!/^Cannot find module/.test(err.message)) {
             throw err;

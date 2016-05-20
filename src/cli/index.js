@@ -8,7 +8,7 @@ import { merge, appendConfig, appendSettings } from '../configuration';
 import buildDocumentationObject from '../documentation/build-documentation-object';
 import { getApplicationConfig } from '../configuration/helpers';
 import {
-    buildCompleteConfig,
+    default as buildCompleteConfig,
     generateCommandsDocumentation,
     generateCommandDocumentation,
     parseOptions,
@@ -62,107 +62,111 @@ export function runCli(info = { version: 'Unknown', name: 'Unknown' }, initalCon
     // Build the complete config object
     const applicationConfig = getApplicationConfig(applicationConfigPath, dirPath, verboseMode);
 
-    let { packageConfig, config: configObject, meta: metaObject } =
-        buildCompleteConfig(verboseMode, applicationConfig, undefined, initalConfig, initalMeta, dirPath, true);
+    return buildCompleteConfig(verboseMode, applicationConfig, undefined, initalConfig, initalMeta, dirPath, true)
+        .then(({ packageConfig, config: configObject, meta: metaObject, dependencies }) => {
+            // If we have no command we will display some help information about all possible commands
+            if (!groupOrCommand) {
+                return console.log(
+                    generateCommandsDocumentation(packageConfig.commands, metaObject.commands, info.name)
+                );
+            }
 
-    // If we have no command we will display some help information about all possible commands
-    if (!groupOrCommand) {
-        return console.log(generateCommandsDocumentation(packageConfig.commands, metaObject.commands, info.name));
-    }
+            // Check if we are in a subgroup
+            const result = checkGroup(packageConfig.commands, metaObject.commands, groupOrCommand, args, info.name);
+            if (!result) {
+                return undefined;
+            }
 
-    // Check if we are in a subgroup
-    const result = checkGroup(packageConfig.commands, metaObject.commands, groupOrCommand, args, info.name);
-    if (!result) {
-        return undefined;
-    }
+            let {
+                commands,
+                metaCommands,
+                command,
+                parents
+            } = result;
 
-    let {
-        commands,
-        metaCommands,
-        command,
-        parents
-    } = result;
+            let suggestions = Object.keys(commands);
 
-    let suggestions = Object.keys(commands);
+            // If there is no direct match we will search through the tree after a match
+            if (!commands[command]) {
+                const aliases = generateAliases(commands, metaCommands, command, parents);
+                if (!aliases) {
+                    return undefined;
+                } else if (aliases.commands) {
+                    commands = aliases.commands;
+                    metaCommands = aliases.metaCommands;
+                    parents = aliases.parents;
+                }
+                suggestions = suggestions.concat(aliases.mappings);
+            }
 
-    // If there is no direct match we will search through the tree after a match
-    if (!commands[command]) {
-        const aliases = generateAliases(commands, metaCommands, command, parents);
-        if (!aliases) {
-            return undefined;
-        } else if (aliases.commands) {
-            commands = aliases.commands;
-            metaCommands = aliases.metaCommands;
-            parents = aliases.parents;
-        }
-        suggestions = suggestions.concat(aliases.mappings);
-    }
+            if (!commands[command]) {
+                return console.log(feedbackMessage(
+                    errorLabel('Error', 'Invalid command'),
+                    getSuggestions([command], suggestions)
+                ));
+            }
 
-    if (!commands[command]) {
-        return console.log(feedbackMessage(
-            errorLabel('Error', 'Invalid command'),
-            getSuggestions([command], suggestions)
-        ));
-    }
+            // Show command help information if requested
+            // Will ignore application configuration
+            if (help || h) {
+                return console.log(generateCommandDocumentation(packageConfig.settings, metaObject.settings,
+                    metaCommands, command, info.name, parents));
+            }
 
-    // Show command help information if requested
-    // Will ignore application configuration
-    if (help || h) {
-        return console.log(generateCommandDocumentation(packageConfig.settings, metaObject.settings, metaCommands,
-            command, info.name, parents));
-    }
+            const parsedArguments = parseArguments(command, metaCommands, args);
 
-    const parsedArguments = parseArguments(command, metaCommands, args);
+            let documentationObject;
+            // Only parse arguments if the command accepts it
+            if (metaCommands && metaCommands[command] && metaCommands[command].settings) {
+                // Get config from application and only parse options that this command cares about.
+                const filter = metaCommands[command].settings === true ? [] : metaCommands[command].settings;
+                documentationObject = buildDocumentationObject(configObject.settings, metaObject.settings, filter);
+            }
 
-    let documentationObject;
-    // Only parse arguments if the command accepts it
-    if (metaCommands && metaCommands[command] && metaCommands[command].settings) {
-        // Get config from application and only parse options that this command cares about.
-        const filter = metaCommands[command].settings === true ? [] : metaCommands[command].settings;
-        documentationObject = buildDocumentationObject(configObject.settings, metaObject.settings, filter);
-    }
+            const { settings, parsedOptions } =
+                parseOptions(restOptions, getMappings(documentationObject), command, metaCommands);
 
-    const { settings, parsedOptions } =
-        parseOptions(restOptions, getMappings(documentationObject), command, metaCommands);
+            configObject = merge(configObject, {
+                settings
+            });
 
-    configObject = merge(configObject, {
-        settings
-    });
+            // Validate configuration
+            if (metaCommands && metaCommands[command] && metaCommands[command].settings) {
+                validate(configObject.settings, metaObject.settings, metaCommands[command].settings);
+            }
 
-    // Validate configuration
-    if (metaCommands && metaCommands[command] && metaCommands[command].settings) {
-        validate(configObject.settings, metaObject.settings, metaCommands[command].settings);
-    }
+            // Set the configuration object
+            appendConfig(configObject);
 
-    // Set the configuration object
-    appendConfig(configObject);
+            // Run hook to make it possible for extensions to update the settings before anything other uses them
+            runHookDirectly({extension: 'roc', name: 'update-settings'}, [configObject.settings],
+                (newSettings) => appendSettings(newSettings)
+            );
 
-    // Run hook to make it possible for extensions to update the settings before anything other uses them
-    runHookDirectly({extension: 'roc', name: 'update-settings'}, [configObject.settings],
-        (newSettings) => appendSettings(newSettings)
-    );
+            if (invoke) {
+                // If string run as shell command
+                if (isString(commands[command])) {
+                    return execute(commands[command])
+                        .catch(process.exit);
+                }
 
-    if (invoke) {
-        // If string run as shell command
-        if (isString(commands[command])) {
-            return execute(commands[command])
-                .catch(process.exit);
-        }
-
-        // Run the command
-        return commands[command]({
-            verbose: verboseMode,
-            directory: dirPath,
-            info,
-            configObject,
-            metaObject,
-            packageConfig,
-            parsedArguments,
-            parsedOptions,
-            hooks: getHooks(),
-            actions: getActions()
+                // Run the command
+                return commands[command]({
+                    verbose: verboseMode,
+                    directory: dirPath,
+                    info,
+                    configObject,
+                    metaObject,
+                    packageConfig,
+                    parsedArguments,
+                    parsedOptions,
+                    hooks: getHooks(),
+                    actions: getActions(),
+                    // TODO Document this
+                    dependencies
+                });
+            }
         });
-    }
 }
 
 /**

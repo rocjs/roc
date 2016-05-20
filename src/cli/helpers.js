@@ -20,6 +20,11 @@ import { isCommandGroup } from './utils';
 
 import buildExtensionTree from './extensions';
 
+import { setResolveRequest, getResolveRequest } from './manage-resolve-request';
+import patchRequire from '../require/patch-require';
+
+import verifyInstalledDependencies from '../require/verify-installed-dependencies';
+
 /**
  * Builds the complete configuration objects.
  *
@@ -37,12 +42,13 @@ import buildExtensionTree from './extensions';
  * @property {rocConfig} config - The final configuration, with application configuration.
  * @property {rocMetaConfig} meta - The merged meta configuration.
  */
-export function buildCompleteConfig(
+export default async function buildCompleteConfig(
     verbose = false, newConfig = {}, newMeta = {}, baseConfig = {},
     baseMeta = {}, directory = process.cwd(), validate = true, checkDependencies = true
 ) {
     let finalConfig = merge(getDefaultConfig(directory), baseConfig);
     let finalMeta = merge(getDefaultMeta(directory), baseMeta);
+    let finalDependencies = {};
 
     if (fileExists('package.json', directory)) {
         const packageJson = getPackageJson(directory);
@@ -58,10 +64,18 @@ export function buildCompleteConfig(
         const {
             projectExtensions,
             config,
-            meta
+            meta,
+            dependencies
         } = buildExtensionTree(packages, plugins, baseConfig, baseMeta, directory, verbose, checkDependencies);
+
+        await verifyProjectDependencies(directory, dependencies.requires);
+
         finalConfig = merge(finalConfig, config);
         finalMeta = merge(finalMeta, meta);
+        finalDependencies = dependencies;
+
+        setResolveRequest(dependencies.exports, directory);
+        initDependencyScope();
 
         if (projectExtensions.length && verbose) {
             console.log(feedbackMessage(
@@ -95,10 +109,29 @@ export function buildCompleteConfig(
     }
 
     return {
+        dependencies: finalDependencies,
         packageConfig: finalConfig,
         config: merge(finalConfig, newConfig),
         meta: merge(finalMeta, newMeta)
     };
+}
+
+async function verifyProjectDependencies(directory, required) {
+    const mismatch = await verifyInstalledDependencies(directory, required);
+    if (mismatch.length > 0) {
+        console.log('Some required dependencies was not found!');
+        // TODO Generate a small nice little table!
+        mismatch.forEach((nope) => {
+            console.log(JSON.stringify(nope, null, 2));
+        });
+        /* eslint-disable no-process-exit */
+        process.exit(1);
+        /* eslint-enable */
+    }
+}
+
+function initDependencyScope() {
+    patchRequire(getResolveRequest('Node'));
 }
 
 function validateConfigurationStructure(config, applicationConfig) {

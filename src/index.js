@@ -38,3 +38,9 @@ export generateMarkdownActions from './hooks/documentation/generate-markdown-act
 export generateMarkdownCommands from './commands/markdown-commands';
 
 export getConfiguration from './cli/get-configuration';
+
+export { getResolveRequest } from './cli/manage-resolve-request';
+
+export generateDependencies from './require/helpers/generate-dependencies';
+
+export generateMarkdownDependencies from './cli/extensions/generate-markdown-dependencies';
