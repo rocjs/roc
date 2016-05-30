@@ -7,6 +7,8 @@ import { getActions } from '../hooks/actions';
 /**
  * Builds the Roc configuration object without running the cli.
  *
+ * Will not manage overrides.
+ *
  * @param {string} dirPath - The directory path to create the configuration from.
  * @param {string} applicationConfigPath - The path to use to read configuration file.
  *

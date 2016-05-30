@@ -14,6 +14,7 @@ import { isValid, throwError } from '../validation';
 import { warning, infoLabel, errorLabel, warningLabel, feedbackMessage } from '../helpers/style';
 import { registerAction } from '../hooks/actions';
 import getSuggestions from '../helpers/get-suggestions';
+import { OVERRIDE } from '../configuration/override';
 
 import { getDefaultConfig, getDefaultMeta } from './get-default';
 import { isCommandGroup } from './utils';
@@ -90,6 +91,9 @@ export default async function buildCompleteConfig(
                 const validationFeedback = validateConfigurationStructure(finalConfig, newConfig);
                 if (validationFeedback) {
                     console.log(validationFeedback);
+                    /* eslint-disable no-process-exit */
+                    process.exit(1);
+                    /* eslint-enable */
                 }
             }
 
@@ -97,6 +101,9 @@ export default async function buildCompleteConfig(
                 const validationFeedback = validateConfigurationStructure(finalMeta, newMeta);
                 if (validationFeedback) {
                     console.log(validationFeedback);
+                    /* eslint-disable no-process-exit */
+                    process.exit(1);
+                    /* eslint-enable */
                 }
             }
         }
@@ -140,7 +147,7 @@ function validateConfigurationStructure(config, applicationConfig) {
             const value = obj[key];
             const newPath = oldPath + key;
 
-            if (isPlainObject(value)) {
+            if (isPlainObject(value) && key !== OVERRIDE) {
                 getKeys(value, newPath + '.', allKeys);
             } else {
                 allKeys.push(newPath);
@@ -154,12 +161,12 @@ function validateConfigurationStructure(config, applicationConfig) {
     const diff = difference(getKeys(applicationConfig), keys);
     if (diff.length > 0) {
         info.push(feedbackMessage(
-            warningLabel('Warning', 'Configuration'),
+            errorLabel('Error', 'Configuration'),
             'There was a mismatch in the application configuration structure, make sure this is correct.\n' +
             getSuggestions(diff, keys)
         ));
     }
-    // }
+
     return info.join('\n');
 }
 

@@ -21,6 +21,7 @@ import { setVerbose } from '../helpers/verbose';
 import { getHooks, runHookDirectly } from '../hooks';
 import { getActions } from '../hooks/actions';
 import { checkGroup, generateAliases } from './utils';
+import addOverrides from '../configuration/override';
 
 /**
  * Invokes the Roc cli.
@@ -134,6 +135,12 @@ export function runCli(info = { version: 'Unknown', name: 'Unknown' }, initalCon
             if (metaCommands && metaCommands[command] && metaCommands[command].settings) {
                 validate(configObject.settings, metaObject.settings, metaCommands[command].settings);
             }
+
+            // Does this after the validation so that things set by the CLI always will have the highest priority
+            configObject = addOverrides(configObject);
+            configObject = merge(configObject, {
+                settings
+            });
 
             // Set the configuration object
             appendConfig(configObject);

@@ -3,6 +3,7 @@ import { isPlainObject, isFunction } from 'lodash';
 import { toCliOption } from './helpers';
 import onProperty from '../helpers/on-property';
 import automatic from '../converters/automatic';
+import { OVERRIDE } from '../configuration/override';
 
 const defaultValidation = (input, info) => info ? {type: 'Unknown'} : true;
 
@@ -62,7 +63,7 @@ export default function buildDocumentationObject(initalObject, meta = {}, inital
         level = 0, initalParents = [], leaves = false) {
         return allObjects(object, (key) => {
             // Make sure that we either have no filter or that there is a match
-            if (filter.length === 0 || filter.indexOf(key) !== -1) {
+            if ((filter.length === 0 || filter.indexOf(key) !== -1) && key !== OVERRIDE) {
                 const parents = [].concat(initalParents, key);
                 const value = object[key];
                 if (isPlainObject(value) && Object.keys(value).length > 0 && !leaves) {
