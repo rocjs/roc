@@ -12,7 +12,7 @@ import { fileExists, getRocPackageDependencies, getRocPluginDependencies, getPac
 import onProperty from '../helpers/on-property';
 import { isValid, throwError } from '../validation';
 import { warning, infoLabel, errorLabel, warningLabel, feedbackMessage } from '../helpers/style';
-import { registerAction } from '../hooks/actions';
+import { registerAction, registerActions } from '../hooks/actions';
 import getSuggestions from '../helpers/get-suggestions';
 import { OVERRIDE } from '../configuration/override';
 
@@ -108,10 +108,10 @@ export default async function buildCompleteConfig(
             }
         }
 
-        // Add project action
-        if (isFunction(newConfig.action)) {
-            // TODO Update how action is used
-            registerAction(newConfig.action, 'default', packageJson.name, true);
+        if (isFunction(newConfig.actions)) {
+            registerAction(newConfig.actions, 'default', packageJson.name, true);
+        } else if (isPlainObject(newConfig.actions)) {
+            registerActions(newConfig.actions, packageJson.name, true);
         }
     }
 

@@ -69,7 +69,7 @@ export const getDefaultConfig = (directory) => {
 
         packages: [],
 
-        action: undefined
+        actions: undefined
     };
 
     if (validRocProject(directory)) {

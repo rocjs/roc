@@ -12,10 +12,7 @@ import trimNewlines from 'trim-newlines';
  */
 export default function genereateMarkdownActions(name, actions = []) {
     // Remove project actions if any
-    const lastExtension = actions[actions.length - 1];
-    if (lastExtension && lastExtension.project) {
-        actions.pop();
-    }
+    actions = actions.filter((extensionActions) => !extensionActions.project);
 
     if (actions.length === 0) {
         return 'No actions available.';

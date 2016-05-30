@@ -9,8 +9,9 @@ global.roc.actions = global.roc.actions || [];
  *
  * @param {Object<rocAction>} actions - Object with actions.
  * @param {string} extensionName - Name of the extension to register the actions on.
+ * @param {boolean} [project=false] - If the actions belongs to the project.
  */
-export function registerActions(actions, extensionName) {
+export function registerActions(actions, extensionName, project = false) {
     // Look for the extensionName and only add if not already there
     const index = global.roc.actions.findIndex(({ name }) => extensionName === name);
 
@@ -35,6 +36,7 @@ export function registerActions(actions, extensionName) {
         });
 
         global.roc.actions = [].concat(global.roc.actions, {
+            project,
             name: extensionName,
             actions: extensionActions
         });
