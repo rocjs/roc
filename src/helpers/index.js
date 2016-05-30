@@ -44,8 +44,8 @@ export function fileExists(filepath, directory) {
  */
 export function getRocPackageDependencies(packageJson) {
     return [
-        ...Object.keys(packageJson.dependencies || {}),
-        ...Object.keys(packageJson.devDependencies || {})
+        ...Object.keys(packageJson.devDependencies || {}),
+        ...Object.keys(packageJson.dependencies || {})
     ]
     .filter((dependency) => /^(?:@.*\/)?roc-package(-.+)/.test(dependency));
 }
@@ -59,8 +59,9 @@ export function getRocPackageDependencies(packageJson) {
  */
 export function getRocNamespacedDependencies(packageJson) {
     return [
-        ...Object.keys(packageJson.dependencies || {}),
-        ...Object.keys(packageJson.devDependencies || {})
+        ...Object.keys(packageJson.devDependencies || {}),
+        ...Object.keys(packageJson.dependencies || {})
+
     ]
     .filter((dependency) => /^@rocjs\/(.+)/.test(dependency));
 }
@@ -74,8 +75,8 @@ export function getRocNamespacedDependencies(packageJson) {
  */
 export function getRocPluginDependencies(packageJson) {
     return [
-        ...Object.keys(packageJson.dependencies || {}),
-        ...Object.keys(packageJson.devDependencies || {})
+        ...Object.keys(packageJson.devDependencies || {}),
+        ...Object.keys(packageJson.dependencies || {})
     ]
     .filter((dependency) => /^(?:@.*\/)?roc-plugin(-.+)/.test(dependency));
 }
@@ -83,7 +84,7 @@ export function getRocPluginDependencies(packageJson) {
 /**
  * Reads a `package.json` file.
  *
- * @param {string} [directory=processs.cwd()] - In what directory to look for the `package.json`.
+ * @param {string} [directory=process.cwd()] - In what directory to look for the `package.json`.
  *
  * @returns {Object|undefined} - The object in the `package.json` or undefined if it did not exists.
  */
