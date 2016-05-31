@@ -6,7 +6,6 @@ import { getAbsolutePath } from '../helpers';
 import { validate } from '../validation';
 import { merge, appendConfig, appendSettings } from '../configuration';
 import buildDocumentationObject from '../documentation/build-documentation-object';
-import { getApplicationConfig } from '../configuration/helpers';
 import {
     default as buildCompleteConfig,
     generateCommandsDocumentation,
@@ -61,9 +60,8 @@ export function runCli(info = { version: 'Unknown', name: 'Unknown' }, initalCon
     const dirPath = getAbsolutePath(directory || d);
 
     // Build the complete config object
-    const applicationConfig = getApplicationConfig(applicationConfigPath, dirPath, verboseMode);
-
-    return buildCompleteConfig(verboseMode, applicationConfig, undefined, initalConfig, initalMeta, dirPath, true)
+    return buildCompleteConfig(verboseMode, undefined, undefined, initalConfig,
+        initalMeta, dirPath, applicationConfigPath, true)
         .then(({ packageConfig, config: configObject, meta: metaObject, dependencies }) => {
             // If we have no command we will display some help information about all possible commands
             if (!groupOrCommand) {

@@ -15,6 +15,7 @@ import { warning, infoLabel, errorLabel, warningLabel, feedbackMessage } from '.
 import { registerAction, registerActions } from '../hooks/actions';
 import getSuggestions from '../helpers/get-suggestions';
 import { OVERRIDE } from '../configuration/override';
+import { getApplicationConfig } from '../configuration/helpers';
 
 import { getDefaultConfig, getDefaultMeta } from './get-default';
 import { isCommandGroup } from './utils';
@@ -45,7 +46,7 @@ import verifyInstalledDependencies from '../require/verify-installed-dependencie
  */
 export default async function buildCompleteConfig(
     verbose = false, newConfig = {}, newMeta = {}, baseConfig = {},
-    baseMeta = {}, directory = process.cwd(), validate = true, checkDependencies = true
+    baseMeta = {}, directory = process.cwd(), applicationConfigPath, validate = true, checkDependencies = true
 ) {
     let finalConfig = merge(getDefaultConfig(directory), baseConfig);
     let finalMeta = merge(getDefaultMeta(directory), baseMeta);
@@ -54,12 +55,12 @@ export default async function buildCompleteConfig(
     if (fileExists('package.json', directory)) {
         const packageJson = getPackageJson(directory);
 
-        const packages = newConfig.packages && newConfig.packages.length ?
-            newConfig.packages :
+        const packages = packageJson.roc && packageJson.roc.packages && packageJson.roc.packages.length ?
+            packageJson.roc.packages :
             getRocPackageDependencies(packageJson);
 
-        const plugins = newConfig.plugins && newConfig.plugins.length ?
-            newConfig.plugins :
+        const plugins = packageJson.roc && packageJson.roc.plugins && packageJson.roc.plugins.length ?
+            packageJson.roc.plugins :
             getRocPluginDependencies(packageJson);
 
         const {
@@ -84,6 +85,11 @@ export default async function buildCompleteConfig(
                 projectExtensions.map((extn) => `${extn.name}${extn.version ? ' - ' + extn.version : ''}`).join('\n')
             ));
         }
+
+        newConfig = merge(
+            newConfig,
+            getApplicationConfig(applicationConfigPath, directory, verbose)
+        );
 
         // Check for a mismatch between application configuration and packages.
         if (validate) {

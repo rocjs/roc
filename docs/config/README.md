@@ -15,9 +15,7 @@ The file should export an object that can contain the following properties:
 
 * [`settings`](/docs/config/settings.md)
 * [`commands`](/docs/config/commands.md)
-* [`plugins`](/docs/config/plugins.md)
-* [`packages`](/docs/config/packages.md)
-* [`action`](/docs/config/packages.md)
+* [`actions`](#)
 
 __Extensions should in practice only define `settings` and `commands` in their configuration__
 
@@ -34,7 +32,7 @@ roc COMMAND --config path/to/roc.config.js
 You can override the current the location and name for the `roc.config.js` file using the `-c, --config` option. The path can be either relative to the current working directory or absolute.
 
 ## Configuration in extensions
-The section above talked about how configuration files are managed in applications but it holds mostly true for extensions as well. They follow the same structure as `roc.config.js`, but does not generally define values for `plugins`, `packages` and `action`.
+The section above talked about how configuration files are managed in applications but it holds mostly true for extensions as well. They follow the same structure as `roc.config.js`, but does not define values for `actions`.
 
 They also have the option to export a meta configuration file, a `roc.config.meta.js` file. This file is important to add extra data that is non-existing in the `roc.config.js` file.
 

@@ -65,10 +65,6 @@ export const getDefaultConfig = (directory) => {
 
         commands: {},
 
-        plugins: [],
-
-        packages: [],
-
         actions: undefined
     };
 

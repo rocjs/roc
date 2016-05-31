@@ -1,6 +1,7 @@
 import { join, dirname } from 'path';
 import chalk from 'chalk';
 import { _findPath } from 'module';
+import resolve from 'resolve';
 import { isString } from 'lodash';
 import semver from 'semver';
 
@@ -312,7 +313,23 @@ function getCompleteExtension(extensionPath) {
 
 function getExtension(extensionName, directory, type) {
     try {
-        const path = _findPath(extensionName, [`${directory}/node_modules`]);
+        let path;
+        if (extensionName.charAt(0) === '.' || extensionName.charAt(0) === '/') { // FIXME Windows?
+            // We will use node-resolve if the path is relative or absolute
+            path = resolve.sync(extensionName, { basedir: directory });
+        } else {
+            // We want to use _findPath if it is a module since this will follow symlinks
+            path = _findPath(extensionName, [`${directory}/node_modules`]);
+
+            if (!path) {
+                path = _findPath(`roc-${type}-${extensionName}`, [`${directory}/node_modules`]);
+            }
+
+            if (!path) {
+                throw new Error(`Cannot find module ${extensionName}`);
+            }
+        }
+
         return getCompleteExtension(path);
     } catch (err) {
         if (!/^Cannot find module/.test(err.message)) {

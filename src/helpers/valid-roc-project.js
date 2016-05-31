@@ -1,6 +1,5 @@
 import { isObject } from 'lodash';
 import {
-    fileExists,
     getRocPackageDependencies,
     getRocNamespacedDependencies,
     getPackageJson
@@ -19,7 +18,7 @@ export default function validRocProject(directory) {
     const packageJson = getPackageJson(directory);
 
     return isObject(packageJson) && (
-        fileExists('roc.config.js', directory) ||
+        packageJson.roc ||
         getRocPackageDependencies(packageJson).length > 0 ||
         getRocNamespacedDependencies(packageJson).length > 0);
 }
