@@ -16,7 +16,7 @@ The naming convention serves two purposes. Firstly it makes it clear for everyon
 ## General Structure
 Roc expects all extensions to export an object named `roc` from the main file in a npm package. Other than this the packages themselves are quite free to do whatever they want to create what is needed to build an application.
 
-The object must contain a name (most likely the same as the `name` defined in `package.json`), optionally but highly recommended a `version`, and at least one of the following:
+It must contain at least one of the following:
 ```
 packages        Array of packages that the extension inherits from
 plugins         Array of plugins that the extension inherits from
@@ -33,6 +33,11 @@ hooks           An object with the hooks that a package uses, not needed but use
 __If `buildConfig` is specified, config and meta will be ignored.__  
 __If `init` is specified, `buildConfig`, `config`, `meta`, `actions` and `hooks` will be ignored.__
 
+You can also optionally define name and version. If not provided they will be taken from `package.json` if one exists.
+```
+name            The name of the extension
+version         The version for the extension
+```
 
 #### packages
 An array of Roc packages that the extension uses. Classically this will look like this:

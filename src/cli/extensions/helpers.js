@@ -20,7 +20,7 @@ export function manageDevExports(initialState) {
 }
 
 export function runPostInits(initialState) {
-    return initialState.postInits.reduce(
+    return initialState.postInits.reduceRight(
         (state, { postInit, name }) =>
             manageRocObject(
                 postInit({
@@ -150,7 +150,7 @@ function checkRequired(roc, state) {
 }
 
 function addPostInit(roc, state) {
-    if (roc.postInit) {
+    if (roc.postInit && !alreadyRegistered(roc.name, state)) {
         state.postInits.push({
             postInit: roc.postInit,
             name: roc.name
@@ -160,8 +160,12 @@ function addPostInit(roc, state) {
     return state;
 }
 
+function alreadyRegistered(name, state) {
+    return state.usedExtensions.find((extension) => extension.name === name);
+}
+
 function registerExtension(roc, state) {
-    const fromBefore = state.usedExtensions.find((extension) => extension.name === roc.name);
+    const fromBefore = alreadyRegistered(roc.name, state);
     if (fromBefore) {
         if (fromBefore.version !== roc.version) {
             console.log(feedbackMessage(
@@ -296,18 +300,40 @@ function getCompleteExtension(extensionPath) {
         const pkg = join(dir, 'package.json');
 
         if (fileExists(pkg)) {
+            const packageJson = require(pkg);
             return {
                 path: dir,
-                pkg: require(pkg)
+                pkg: packageJson,
+                version: packageJson.version,
+                name: packageJson.name
             };
         }
 
         return getPackageJsonAndPath(dir);
     };
 
+    const { standalone, ...roc } = require(extensionPath).roc;
+
+    /*
+     * roc.standalone can be used to avoid using the package.json
+     *
+     * This can be valuable if the extension not yet has become a real
+     * npm module or if the automatic calculation of path and pkg is wrong.
+     */
+    if (standalone) {
+        return {
+            path: dirname(extensionPath),
+            ...roc
+        };
+    }
+
+    const { name, version, ...rest } = getPackageJsonAndPath(extensionPath);
+
     return {
-        ...require(extensionPath).roc,
-        ...getPackageJsonAndPath(extensionPath)
+        name,
+        version,
+        ...roc,
+        ...rest
     };
 }
 
@@ -346,9 +372,10 @@ Make sure you have it installed. Try running: ${chalk.underline('npm install --s
 
 function validRocExtension(path) {
     return (roc, state) => {
-        if (!roc.name) {
+        if (!roc.name || !roc.version) {
             throw new ExtensionError(
-                `Will ignore extension. Expected it to have a ${chalk.underline('name')}.`,
+                `Will ignore extension. Expected it to have a ${chalk.underline('name')} and ` +
+                    `${chalk.underline('version')}.`,
                 roc.name,
                 roc.version,
                 path

@@ -81,7 +81,7 @@ function initGetCurrentModule() {
         if (matches) {
             return getDependencies(
                 matches[1].charAt(0) === '@' ?
-                    matches[2] :
+                    matches[1] + '/' + matches[2] :
                     matches[1]
             , 'exports');
         }
