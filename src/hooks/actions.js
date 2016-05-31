@@ -29,7 +29,8 @@ export function registerActions(actions, extensionName, project = false) {
                         action,
                         actions[key].extension,
                         actions[key].hook,
-                        actions[key].description
+                        actions[key].description,
+                        actions[key].post
                     )
                 }
             };
@@ -75,12 +76,13 @@ export function registerAction(action, actionName, extensionName, project = fals
     }
 }
 
-function createActionHelper(action, extension, hook, description) {
+function createActionHelper(action, extension, hook, description, post) {
     return {
         action,
         extension,
         hook,
-        description
+        description,
+        post
     };
 }
 

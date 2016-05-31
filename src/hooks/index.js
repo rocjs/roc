@@ -114,6 +114,7 @@ export function runHookDirectly({
     }
 
     let previousValue = initialValue;
+    const postActions = [];
 
     getActions().forEach(({ name: actionExtensionName, actions }) => {
         Object.keys(actions).map((key) => {
@@ -122,56 +123,67 @@ export function runHookDirectly({
             // Only run if no connection is made to a hook/extension or if they match
             if ((!action.extension || action.extension === extension) &&
                 (!action.hook || action.hook === name)) {
-                const createAction = action.action({
-                    extension,
-                    hook: name,
-                    previousValue,
-                    description,
-                    settings: getSettings(),
-                    verbose: isVerbose()
-                });
+                const initAction = (currentAction) => (post = false) => {
+                    const createAction = currentAction({
+                        extension,
+                        hook: name,
+                        previousValue,
+                        description,
+                        settings: getSettings(),
+                        verbose: isVerbose()
+                    });
 
-                if (createAction) {
-                    const performAction = createAction(...args);
+                    if (createAction) {
+                        const performAction = createAction(...args);
 
-                    if (performAction) {
-                        previousValue = performAction();
+                        if (performAction) {
+                            if (isVerbose()) {
+                                const isPost = post ? '[Post] ' : '';
+                                console.log(
+                                    `${chalk.magenta.bold('Hook')} - ` +
+                                    `${isPost}Running hook defined in ${chalk.underline(extension)} ` +
+                                    `named ${chalk.underline(name)} ` +
+                                    `with ${chalk.underline(key)} added from ${chalk.underline(actionExtensionName)}`
+                                );
+                            }
 
-                        if (isVerbose()) {
-                            console.log(
-                                `${chalk.magenta.bold('Hook')} - ` +
-                                `Running hook defined in ${chalk.underline(extension)} ` +
-                                `named ${chalk.underline(name)} ` +
-                                `with ${chalk.underline(key)} added from ${chalk.underline(actionExtensionName)}`
-                            );
-                        }
+                            previousValue = performAction();
 
-                        if (returns) {
-                            const validationResult = isValid(previousValue, returns);
-                            if (validationResult !== true) {
-                                try {
-                                    throwError(key, validationResult, previousValue, 'return value of');
-                                } catch (err) {
-                                    console.log(feedbackMessage(
-                                        errorLabel('Error', 'Hook problem'),
-                                        'A return value was not valid.\n\n' +
-                                        err.message
-                                    ));
-                                    /* eslint-disable no-process-exit */
-                                    process.exit(1);
-                                    /* eslint-enable */
+                            if (returns) {
+                                const validationResult = isValid(previousValue, returns);
+                                if (validationResult !== true) {
+                                    try {
+                                        throwError(key, validationResult, previousValue, 'return value of');
+                                    } catch (err) {
+                                        console.log(feedbackMessage(
+                                            errorLabel('Error', 'Hook problem'),
+                                            'A return value was not valid.\n\n' +
+                                            err.message
+                                        ));
+                                        /* eslint-disable no-process-exit */
+                                        process.exit(1);
+                                        /* eslint-enable */
+                                    }
                                 }
                             }
-                        }
 
-                        if (callback) {
-                            callback(previousValue);
+                            if (callback) {
+                                callback(previousValue);
+                            }
                         }
                     }
+                };
+
+                if (action.post) {
+                    postActions.unshift(initAction(action.post));
                 }
+
+                initAction(action.action)();
             }
         });
     });
+
+    postActions.forEach((runAction) => runAction(true));
 
     return previousValue;
 }
