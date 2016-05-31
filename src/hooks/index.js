@@ -5,7 +5,7 @@ import { isValid, throwError } from '../validation';
 import { isVerbose } from '../helpers/verbose';
 import getSuggestions from '../helpers/get-suggestions';
 import { getActions } from './actions';
-import { getSettings } from '../configuration';
+import { getSettings, getConfig } from '../configuration';
 
 // This needs to be global, same case as with configuration
 global.roc = global.roc || {};
@@ -130,6 +130,7 @@ export function runHookDirectly({
                         previousValue,
                         description,
                         settings: getSettings(),
+                        config: getConfig(),
                         verbose: isVerbose()
                     });
 

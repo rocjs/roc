@@ -157,6 +157,7 @@ hook                The calling hook name
 previousValue       The previous value, will either be the initalValue defined for the hook or the return value from the action that run before the current one
 description         The hook description, can be used for logging what the calling hook is supposed to do
 settings            The settings from the Roc configuration object
+config              The entire Roc configuration object
 verbose             The verbose mode, either true or false
 ```
 
