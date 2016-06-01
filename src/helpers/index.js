@@ -51,22 +51,6 @@ export function getRocPackageDependencies(packageJson) {
 }
 
 /**
- * Gets @rocjs dependencies from a `package.json`.
- *
- * @param {Object} packageJson - A package.json file to fetch @rocjs dependencies from.
- *
- * @returns {string[]} - An array with @rocjs dependencies that exists in the `package.json`.
- */
-export function getRocNamespacedDependencies(packageJson) {
-    return [
-        ...Object.keys(packageJson.devDependencies || {}),
-        ...Object.keys(packageJson.dependencies || {})
-
-    ]
-    .filter((dependency) => /^@rocjs\/(.+)/.test(dependency));
-}
-
-/**
  * Gets the Roc plugin dependencies from a `package.json`.
  *
  * @param {Object} packageJson - A package.json file to fetch Roc plugin dependencies from.

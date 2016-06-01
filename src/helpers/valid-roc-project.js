@@ -19,6 +19,5 @@ export default function validRocProject(directory) {
 
     return isObject(packageJson) && (
         packageJson.roc ||
-        getRocPackageDependencies(packageJson).length > 0 ||
-        getRocNamespacedDependencies(packageJson).length > 0);
+        getRocPackageDependencies(packageJson).length > 0);
 }
