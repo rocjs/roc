@@ -172,7 +172,7 @@ export function runCli({
                     info,
                     configObject,
                     metaObject,
-                    packageConfig: extensionConfig,
+                    extensionConfig,
                     parsedArguments,
                     parsedOptions,
                     hooks: getHooks(),

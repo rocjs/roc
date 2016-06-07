@@ -33,7 +33,7 @@ directory           Path to working directory
 info                The object that is passed to the runCli function with version and name
 configObject        The final configuration object where everything has been merged
 metaObject          The final meta configuration object where everything has been merged
-packageConfig       The configuration object where all packages has been merged
+extensionConfig     The configuration object where all extensions has been merged
 parsedArguments     The parsed arguments given to the cli
 parsedOptions       The parsed options given to the cli
 hooks               The currently registered hooks
@@ -59,8 +59,8 @@ Will contain the final configuration object. This means that the application con
 ### metaObject
 Will contain the final meta configuration object. This means that the application configuration will have been merged with the configuration from the packages.
 
-### packageConfig
-The configuration object where all packages has been merged. This means that this does not contain the application configuration or settings set in the cli.
+### extensionConfig
+The configuration object where all extensions has been merged. This means that this does not contain the application configuration or settings set in the cli.
 
 ### parsedArguments
 An object with the following properties:
