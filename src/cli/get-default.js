@@ -63,8 +63,6 @@ export const getDefaultConfig = (directory) => {
     let config = {
         settings: {},
 
-        commands: {},
-
         actions: undefined
     };
 

@@ -12,6 +12,7 @@ import { warningLabel, feedbackMessage } from '../../helpers/style';
 import ExtensionError from './error';
 import { setDependencies, getDependencies, setDevExports, getDevExports } from './dependencies';
 import { fileExists } from '../../helpers';
+import manageCommands from './commands';
 
 export function manageDevExports(initialState) {
     initialState.usedExtensions.forEach((name) =>
@@ -30,6 +31,7 @@ export function runPostInits(initialState) {
                     actions: state.actions,
                     hooks: state.hooks,
                     currentDependencies: state.dependencies,
+                    currentCommands: state.commands,
                     localDependencies: getDependencies(name)
                 }), state, true
             ),
@@ -96,7 +98,8 @@ function init(roc, state) {
             extensions: state.usedExtensions,
             actions: state.actions,
             hooks: state.hooks,
-            currentDependencies: state.dependencyContext,
+            currentDependencies: state.dependencies,
+            currentCommands: state.commands,
             localDependencies: getDependencies(roc.name)
         });
 
@@ -257,6 +260,23 @@ function manageRocObject(roc, state, post = false) {
         if (roc.actions) {
             registerActions(roc.actions, roc.name);
             state.actions = getActions();
+        }
+
+        // FIXME This will mean that we can create a "newDependencies" directly on the roc object...
+        if (roc.newCommands) {
+            state.commands = roc.newCommands;
+        }
+
+        // Get potential commands
+        if (roc.commands) {
+            const {
+                commands,
+                clearCommands
+            } = manageCommands(roc.name, roc.commands, state.commands);
+            state.commands = merge(
+                merge(state.commands, clearCommands),
+                commands
+            );
         }
 
         // Build the config object

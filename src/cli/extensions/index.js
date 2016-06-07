@@ -25,7 +25,7 @@ import {
  * @property {Object[]} usedExtensions - All of the loaded extensions.
  */
 export default function buildExtensionTree(
-    packages, plugins, baseConfig, baseMeta, directory, verbose, checkRequired
+    packages, plugins, baseConfig, baseMeta, baseCommands, directory, verbose, checkRequired
 ) {
     return [
         getExtensions('package')(packages, directory),
@@ -45,6 +45,7 @@ export default function buildExtensionTree(
             usedExtensions: [],
             actions: getActions(),
             hooks: getHooks(),
-            dependencies: {}
+            dependencies: {},
+            commands: baseCommands
         });
 }

@@ -18,9 +18,10 @@ import { OVERRIDE } from '../configuration/override';
 import { getApplicationConfig } from '../configuration/helpers';
 
 import { getDefaultConfig, getDefaultMeta } from './get-default';
-import { isCommandGroup } from './utils';
+import { isCommandGroup, isCommand } from './utils';
 
 import buildExtensionTree from './extensions';
+import { normalizeCommands } from './extensions/commands';
 
 import { setResolveRequest, getResolveRequest } from './manage-resolve-request';
 import patchRequire from '../require/patch-require';
@@ -45,12 +46,21 @@ import verifyInstalledDependencies from '../require/verify-installed-dependencie
  * @property {rocMetaConfig} meta - The merged meta configuration.
  */
 export default async function buildCompleteConfig(
-    verbose = false, newConfig = {}, newMeta = {}, baseConfig = {},
-    baseMeta = {}, directory = process.cwd(), applicationConfigPath, validate = true, checkDependencies = true
+    verbose = false,
+    baseConfig = {},
+    baseMeta = {},
+    baseCommands = {},
+    directory = process.cwd(),
+    applicationConfigPath,
+    validate = true,
+    checkDependencies = true
 ) {
     let finalConfig = merge(getDefaultConfig(directory), baseConfig);
     let finalMeta = merge(getDefaultMeta(directory), baseMeta);
+    let finalCommands = normalizeCommands('roc', baseCommands).commands;
+
     let finalDependencies = {};
+    let projectConfig = {};
 
     if (fileExists('package.json', directory)) {
         const packageJson = getPackageJson(directory);
@@ -67,13 +77,15 @@ export default async function buildCompleteConfig(
             projectExtensions,
             config,
             meta,
-            dependencies
-        } = buildExtensionTree(packages, plugins, baseConfig, baseMeta, directory, verbose, checkDependencies);
+            dependencies,
+            commands
+        } = buildExtensionTree(packages, plugins, finalConfig, finalMeta, finalCommands, directory, verbose, checkDependencies);
 
         await verifyProjectDependencies(directory, dependencies.requires);
 
         finalConfig = merge(finalConfig, config);
         finalMeta = merge(finalMeta, meta);
+        finalCommands = merge(finalCommands, commands);
         finalDependencies = dependencies;
 
         setResolveRequest(dependencies.exports, directory);
@@ -86,25 +98,12 @@ export default async function buildCompleteConfig(
             ));
         }
 
-        newConfig = merge(
-            newConfig,
-            getApplicationConfig(applicationConfigPath, directory, verbose)
-        );
+        projectConfig = getApplicationConfig(applicationConfigPath, directory, verbose);
 
         // Check for a mismatch between application configuration and packages.
         if (validate) {
-            if (Object.keys(newConfig).length) {
-                const validationFeedback = validateConfigurationStructure(finalConfig, newConfig);
-                if (validationFeedback) {
-                    console.log(validationFeedback);
-                    /* eslint-disable no-process-exit */
-                    process.exit(1);
-                    /* eslint-enable */
-                }
-            }
-
-            if (Object.keys(newMeta).length) {
-                const validationFeedback = validateConfigurationStructure(finalMeta, newMeta);
+            if (Object.keys(projectConfig).length) {
+                const validationFeedback = validateConfigurationStructure(finalConfig, projectConfig);
                 if (validationFeedback) {
                     console.log(validationFeedback);
                     /* eslint-disable no-process-exit */
@@ -114,18 +113,19 @@ export default async function buildCompleteConfig(
             }
         }
 
-        if (isFunction(newConfig.actions)) {
-            registerAction(newConfig.actions, 'default', packageJson.name, true);
-        } else if (isPlainObject(newConfig.actions)) {
-            registerActions(newConfig.actions, packageJson.name, true);
+        if (isFunction(projectConfig.actions)) {
+            registerAction(projectConfig.actions, 'default', packageJson.name, true);
+        } else if (isPlainObject(projectConfig.actions)) {
+            registerActions(projectConfig.actions, packageJson.name, true);
         }
     }
 
     return {
+        commands: finalCommands,
         dependencies: finalDependencies,
-        packageConfig: finalConfig,
-        config: merge(finalConfig, newConfig),
-        meta: merge(finalMeta, newMeta)
+        extensionConfig: finalConfig,
+        config: merge(finalConfig, projectConfig),
+        meta: finalMeta
     };
 }
 
@@ -186,8 +186,7 @@ function validateConfigurationStructure(config, applicationConfig) {
  *
  * @returns {string} - A string with documentation based on the available commands.
  */
-export function generateCommandsDocumentation(commands = {'No commands available.': ''},
-    commandsMeta = {}, name, parents = []) {
+export function generateCommandsDocumentation(commands = {'No commands available.': ''}, name, parents = []) {
     const header = {
         name: true,
         description: true
@@ -196,44 +195,44 @@ export function generateCommandsDocumentation(commands = {'No commands available
     let body = [{
         name: 'Commands',
         level: 0,
-        objects: getObjects(commands, commandsMeta)
+        objects: getObjects(commands)
     }];
 
-    body = body.concat(getGroups(commands, commandsMeta));
+    body = body.concat(getGroups(commands));
 
     const rows = [];
     rows.push('Usage: ' + name + ' ' + parents.concat('<command>').join(' '), null);
 
-    if (commandsMeta.__description) {
-        rows.push(commandsMeta.__description, null);
+    if (commands.__meta && commands.__meta.description) {
+        rows.push(commands.__meta.description, null);
     }
 
     rows.push(generateCommandDocsHelper(body, header, 'General options', 'name'));
     return rows.join('\n');
 }
 
-function getGroups(commands, commandsMeta = {}, parentNames = [], level = 1) {
+function getGroups(commands, parentNames = [], level = 1) {
     return Object.keys(commands)
         .filter(isCommandGroup(commands))
         .sort()
         .map((group) => ({
-            name: commandsMeta[group] && commandsMeta[group].__name ? commandsMeta[group].__name : group,
+            name: commands[group].__meta && commands[group].__meta.name ? commands[group].__meta.name : group,
             level,
-            objects: getObjects(commands[group], commandsMeta[group], parentNames.concat(group), level + 1),
-            children: getGroups(commands[group], commandsMeta[group], parentNames.concat(group), level + 1)
+            objects: getObjects(commands[group], parentNames.concat(group), level + 1),
+            children: getGroups(commands[group], parentNames.concat(group), level + 1)
         }));
 }
 
-function getObjects(commands, commandsMeta = {}, parentNames = [], level = 1) {
+function getObjects(commands, parentNames = [], level = 1) {
     return Object.keys(commands)
-        .filter((command) => !isCommandGroup(commands)(command))
+        .filter((command) => isCommand(commands)(command))
         .sort()
         .map((command) => {
-            const options = commandsMeta[command] ?
-                getCommandArgumentsAsString(commandsMeta[command]) :
+            const options = isPlainObject(commands[command]) && commands[command].arguments ?
+                getCommandArgumentsAsString(commands[command]) :
                 '';
-            const description = commandsMeta[command] && commandsMeta[command].description ?
-                commandsMeta[command].description :
+            const description = isPlainObject(commands[command]) && commands[command].description ?
+                commands[command].description :
                 '';
 
             return {

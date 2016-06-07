@@ -1,5 +1,3 @@
-export roc from './roc';
-
 export {
     merge,
     getConfig,

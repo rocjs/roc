@@ -1,19 +1,35 @@
-import { isPlainObject } from 'lodash';
+import { isFunction, isString, isPlainObject } from 'lodash';
 import { bold } from 'chalk';
 import { generateCommandsDocumentation } from './helpers';
 
+// The property "command" is special and can not be used as a command
 export function isCommandGroup(commandsObject) {
-    return (potentialGroup) => isPlainObject(commandsObject[potentialGroup]);
+    return (potentialGroup) =>
+        potentialGroup !== '__meta' &&
+        isPlainObject(commandsObject[potentialGroup]) &&
+        !commandsObject[potentialGroup].command;
 }
 
-export function checkGroup(commands = {}, metaCommands, potentialGroup, args, name, parents = []) {
+// The property "command" is special and can not be used as a command
+export function isCommand(commandsObject) {
+    return (potentialCommmand) =>
+        potentialCommmand !== '__meta' &&
+        (
+            isString(commandsObject[potentialCommmand]) ||
+            isFunction(commandsObject[potentialCommmand])
+        ) || (
+            isPlainObject(commandsObject[potentialCommmand]) &&
+            commandsObject[potentialCommmand].command
+        );
+}
+
+export function checkGroup(commands = {}, potentialGroup, args, name, parents = []) {
     if (isCommandGroup(commands)(potentialGroup)) {
         const newGroupOrCommand = args.shift();
 
         if (!newGroupOrCommand) {
             return console.log(generateCommandsDocumentation(
                 commands[potentialGroup],
-                metaCommands[potentialGroup],
                 name,
                 parents.concat(potentialGroup)
             ));
@@ -21,7 +37,6 @@ export function checkGroup(commands = {}, metaCommands, potentialGroup, args, na
 
         return checkGroup(
             commands[potentialGroup],
-            metaCommands[potentialGroup],
             newGroupOrCommand,
             args,
             name,
@@ -30,13 +45,12 @@ export function checkGroup(commands = {}, metaCommands, potentialGroup, args, na
     }
     return {
         commands,
-        metaCommands,
         command: potentialGroup,
         parents
     };
 }
 
-function getCommands(commands, metaCommands, parents, mappings = {}) {
+function getCommands(commands, parents, mappings = {}) {
     let collisions = {};
     let copyMappings = { ...mappings };
     Object.keys(commands)
@@ -52,7 +66,6 @@ function getCommands(commands, metaCommands, parents, mappings = {}) {
                     ...copyMappings,
                     [command]: {
                         commands,
-                        metaCommands,
                         parents
                     }
                 };
@@ -65,16 +78,15 @@ function getCommands(commands, metaCommands, parents, mappings = {}) {
     };
 }
 
-function generateAliasesHelper(commands, metaCommands, parents = [],
-    previous = getCommands(commands, metaCommands, parents)) {
+function generateAliasesHelper(commands, parents = [],
+    previous = getCommands(commands, parents)) {
     return Object.keys(commands)
         .filter(isCommandGroup(commands))
         .map((group) => {
             previous = generateAliasesHelper(
                 commands[group],
-                metaCommands[group],
                 parents.concat(group),
-                getCommands(commands[group], metaCommands[group], parents.concat(group), previous.mappings)
+                getCommands(commands[group], parents.concat(group), previous.mappings)
             );
 
             return previous;
@@ -93,8 +105,8 @@ function generateAliasesHelper(commands, metaCommands, parents = [],
         }, previous);
 }
 
-export function generateAliases(commands = {}, metaCommands, command, parents) {
-    const { mappings, collisions } = generateAliasesHelper(commands, metaCommands, parents);
+export function generateAliases(commands = {}, command, parents) {
+    const { mappings, collisions } = generateAliasesHelper(commands, parents);
 
     if (collisions[command]) {
         console.log(

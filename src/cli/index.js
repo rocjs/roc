@@ -1,5 +1,5 @@
 import minimist from 'minimist';
-import { isString } from 'lodash';
+import { isString, isFunction } from 'lodash';
 
 import { execute } from './execute';
 import { getAbsolutePath } from '../helpers';
@@ -35,8 +35,14 @@ import addOverrides from '../configuration/override';
  * @returns {object} - Returns what the command is returning. If the command is a string command a promise will be
  *  returned that is resolved when the command has been completed.
  */
-export function runCli(info = { version: 'Unknown', name: 'Unknown' }, initalConfig, initalMeta,
-    argv = process.argv, invoke = true) {
+export function runCli({
+    info = { version: 'Unknown', name: 'Unknown' },
+    config: initalConfig,
+    meta: initalMeta,
+    commands: initalCommands,
+    argv = process.argv,
+    invoke = true
+}) {
     const {
         _, h, help, V, verbose, v, version, c, config, d, directory, ...restOptions
     } = minimist(argv.slice(2));
@@ -60,25 +66,30 @@ export function runCli(info = { version: 'Unknown', name: 'Unknown' }, initalCon
     const dirPath = getAbsolutePath(directory || d);
 
     // Build the complete config object
-    return buildCompleteConfig(verboseMode, undefined, undefined, initalConfig,
-        initalMeta, dirPath, applicationConfigPath, true)
-        .then(({ packageConfig, config: configObject, meta: metaObject, dependencies }) => {
+    return buildCompleteConfig(
+        verboseMode,
+        initalConfig,
+        initalMeta,
+        initalCommands,
+        dirPath,
+        applicationConfigPath,
+        true
+    ).then(({ extensionConfig, config: configObject, meta: metaObject, dependencies, commands: completeCommands }) => {
             // If we have no command we will display some help information about all possible commands
             if (!groupOrCommand) {
                 return console.log(
-                    generateCommandsDocumentation(packageConfig.commands, metaObject.commands, info.name)
+                    generateCommandsDocumentation(completeCommands, info.name)
                 );
             }
 
             // Check if we are in a subgroup
-            const result = checkGroup(packageConfig.commands, metaObject.commands, groupOrCommand, args, info.name);
+            const result = checkGroup(completeCommands, groupOrCommand, args, info.name);
             if (!result) {
                 return undefined;
             }
 
             let {
                 commands,
-                metaCommands,
                 command,
                 parents
             } = result;
@@ -87,12 +98,11 @@ export function runCli(info = { version: 'Unknown', name: 'Unknown' }, initalCon
 
             // If there is no direct match we will search through the tree after a match
             if (!commands[command]) {
-                const aliases = generateAliases(commands, metaCommands, command, parents);
+                const aliases = generateAliases(commands, command, parents);
                 if (!aliases) {
                     return undefined;
                 } else if (aliases.commands) {
                     commands = aliases.commands;
-                    metaCommands = aliases.metaCommands;
                     parents = aliases.parents;
                 }
                 suggestions = suggestions.concat(aliases.mappings);
@@ -108,30 +118,30 @@ export function runCli(info = { version: 'Unknown', name: 'Unknown' }, initalCon
             // Show command help information if requested
             // Will ignore application configuration
             if (help || h) {
-                return console.log(generateCommandDocumentation(packageConfig.settings, metaObject.settings,
-                    metaCommands, command, info.name, parents));
+                return console.log(generateCommandDocumentation(extensionConfig.settings, metaObject.settings,
+                    commands, command, info.name, parents));
             }
 
-            const parsedArguments = parseArguments(command, metaCommands, args);
+            const parsedArguments = parseArguments(command, commands, args);
 
             let documentationObject;
             // Only parse arguments if the command accepts it
-            if (metaCommands && metaCommands[command] && metaCommands[command].settings) {
+            if (commands[command] && commands[command].settings) {
                 // Get config from application and only parse options that this command cares about.
-                const filter = metaCommands[command].settings === true ? [] : metaCommands[command].settings;
+                const filter = commands[command].settings === true ? [] : commands[command].settings;
                 documentationObject = buildDocumentationObject(configObject.settings, metaObject.settings, filter);
             }
 
             const { settings, parsedOptions } =
-                parseOptions(restOptions, getMappings(documentationObject), command, metaCommands);
+                parseOptions(restOptions, getMappings(documentationObject), commands[command]);
 
             configObject = merge(configObject, {
                 settings
             });
 
             // Validate configuration
-            if (metaCommands && metaCommands[command] && metaCommands[command].settings) {
-                validate(configObject.settings, metaObject.settings, metaCommands[command].settings);
+            if (commands[command] && commands[command].settings) {
+                validate(configObject.settings, metaObject.settings, commands[command].settings);
             }
 
             // Does this after the validation so that things set by the CLI always will have the highest priority
@@ -150,25 +160,26 @@ export function runCli(info = { version: 'Unknown', name: 'Unknown' }, initalCon
 
             if (invoke) {
                 // If string run as shell command
-                if (isString(commands[command])) {
-                    return execute(commands[command])
+                if (isString(commands[command].command)) {
+                    return execute(commands[command].command)
                         .catch(process.exit);
                 }
 
                 // Run the command
-                return commands[command]({
+                return commands[command].command({
                     verbose: verboseMode,
                     directory: dirPath,
                     info,
                     configObject,
                     metaObject,
-                    packageConfig,
+                    packageConfig: extensionConfig,
                     parsedArguments,
                     parsedOptions,
                     hooks: getHooks(),
                     actions: getActions(),
                     // TODO Document this
-                    dependencies
+                    dependencies,
+                    command: completeCommands
                 });
             }
         });
