@@ -40,10 +40,10 @@ export function isValid(value, validator) {
 export function validate(settings, metaSettings = {}, toValidate = true) {
     try {
         if (toValidate === true) {
-            validateMightThrow(settings, metaSettings.validations);
+            validateMightThrow(settings, metaSettings);
         } else {
             toValidate.forEach((group) => {
-                validateMightThrow(settings[group], metaSettings.validations && metaSettings.validations[group]);
+                validateMightThrow(settings[group], metaSettings && metaSettings[group]);
             });
         }
     } catch (err) {
@@ -65,24 +65,16 @@ export function validate(settings, metaSettings = {}, toValidate = true) {
  * @param {Object} validations - The meta configuration object that has information about how to validate.
  * @throws {Error} throws error if the configuration is invalid
  */
-export function validateMightThrow(settings, validations) {
-    // If no meta configuration or validation is provided it is valid
-    if (!validations) {
-        return;
-    }
-
-    // validation fields to process one by one
-    const validateKeys = Object.keys(validations);
+export function validateMightThrow(settings, meta) {
+    const validateKeys = Object.keys(meta);
 
     for (const validateKey of validateKeys) {
         const configValue = settings[validateKey];
-        const validator = validations[validateKey];
+        const validator = meta[validateKey].validator;
 
         // process validation nodes recursively
-        if (isPlainObject(validator) && isPlainObject(configValue)) {
-            validateMightThrow(configValue, {
-                ...validator
-            });
+        if (isPlainObject(configValue) && isPlainObject(meta[validateKey])) {
+            validateMightThrow(configValue, meta[validateKey]);
         } else {
             assertValid(configValue, validateKey, validator);
         }

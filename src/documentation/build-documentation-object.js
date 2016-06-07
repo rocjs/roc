@@ -22,19 +22,20 @@ export default function buildDocumentationObject(initalObject, meta = {}, inital
         return Object.keys(object).map(callback).filter((value) => value !== undefined);
     };
 
-    const manageGroup = (object, name, group = {}, description = {}, validation = {}, converters = {},
-        parents, level) => {
-        const groupDescription = isPlainObject(group) ? group._description || undefined : group;
+    const manageGroup = (object, name, meta = {}, parents, level) => {
         return {
             name,
             level,
-            description: groupDescription,
-            objects: recursiveHelper(object, group, description, validation, converters, [], level + 1, parents, true),
-            children: recursiveHelper(object, group, description, validation, converters, [], level + 1, parents)
+            description: meta.__description,
+            objects: recursiveHelper(object, meta, [], level + 1, parents, true),
+            children: recursiveHelper(object, meta, [], level + 1, parents)
         };
     };
 
-    const manageLeaf = (object, name, description, validation = defaultValidation, converterFunction, parents) => {
+    const manageLeaf = (object, name, meta = {}, parents) => {
+        const description = meta.description;
+        const validation = meta.validator || defaultValidation;
+        const converterFunction = meta.converter;
         const {
             type = 'Unknown',
             required = false,
@@ -59,19 +60,16 @@ export default function buildDocumentationObject(initalObject, meta = {}, inital
         };
     };
 
-    function recursiveHelper(object, groups = {}, descriptions = {}, validations = {}, converters = {}, filter = [],
-        level = 0, initalParents = [], leaves = false) {
+    function recursiveHelper(object, meta = {}, filter = [], level = 0, initalParents = [], leaves = false) {
         return allObjects(object, (key) => {
             // Make sure that we either have no filter or that there is a match
             if ((filter.length === 0 || filter.indexOf(key) !== -1) && key !== OVERRIDE) {
                 const parents = [].concat(initalParents, key);
                 const value = object[key];
                 if (isPlainObject(value) && Object.keys(value).length > 0 && !leaves) {
-                    const group = isPlainObject(groups) ? groups[key] : {};
-                    return manageGroup(value, key, group, descriptions[key], validations[key], converters[key],
-                        parents, level);
+                    return manageGroup(value, key, meta[key], parents, level);
                 } else if ((!isPlainObject(value) || Object.keys(value).length === 0) && leaves) {
-                    return manageLeaf(value, key, descriptions[key], validations[key], converters[key], parents);
+                    return manageLeaf(value, key, meta[key], parents);
                 }
             }
         });
@@ -79,10 +77,7 @@ export default function buildDocumentationObject(initalObject, meta = {}, inital
 
     return recursiveHelper(
         initalObject,
-        meta.groups,
-        meta.descriptions,
-        meta.validations,
-        meta.converters,
+        meta,
         initalFilter,
         initalLevel
     );
