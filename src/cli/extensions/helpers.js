@@ -273,13 +273,9 @@ function manageRocObject(roc, state, post = false) {
 
         // Get potential commands
         if (roc.commands) {
-            const {
-                commands,
-                clearCommands
-            } = manageCommands(roc.name, roc.commands, state.commands);
             state.commands = merge(
-                merge(state.commands, clearCommands),
-                commands
+                state.commands,
+                manageCommands(roc.name, roc.commands, state.commands)
             );
         }
 

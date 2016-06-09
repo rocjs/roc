@@ -57,7 +57,7 @@ export default async function buildCompleteConfig(
 ) {
     let finalConfig = merge(getDefaultConfig(directory), baseConfig);
     let finalMeta = merge(getDefaultMeta(directory), baseMeta);
-    let finalCommands = normalizeCommands('roc', baseCommands).commands;
+    let finalCommands = normalizeCommands('roc', baseCommands);
 
     let finalDependencies = {};
     let projectConfig = {};
