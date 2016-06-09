@@ -207,7 +207,7 @@ export function generateCommandsDocumentation(commands = {'No commands available
         rows.push(commands.__meta.description, null);
     }
 
-    rows.push(generateCommandDocsHelper(body, header, 'General options', 'name'));
+    rows.push(generateCommandDocsHelper(body, header, 'General options', 'name', false));
     return rows.join('\n');
 }
 
@@ -389,7 +389,7 @@ function createDescription(param) {
         `${!param.default && param.validation ? chalk.dim('(' + param.validation(null, true).type + ')') : ''}`;
 }
 
-function generateCommandDocsHelper(body, header, options, name) {
+function generateCommandDocsHelper(body, header, options, name, compact = true) {
     body.push({
         name: options,
         level: 0,
@@ -397,7 +397,7 @@ function generateCommandDocsHelper(body, header, options, name) {
     });
 
     return generateTable(body, header, {
-        compact: false,
+        compact,
         titleWrapper: (input) => input + ':',
         cellDivider: '',
         rowWrapper: (input) => ' ' + input,
