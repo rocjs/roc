@@ -3,6 +3,8 @@ import { isPlainObject, isFunction, isRegExp } from 'lodash';
 
 import { feedbackMessage, errorLabel } from '../helpers/style';
 
+import { REQUIRED_ERROR } from './validators/required';
+
 /**
  * Helper to use a validator.
  *
@@ -65,7 +67,7 @@ export function validate(settings, metaSettings = {}, toValidate = true) {
  * @param {Object} validations - The meta configuration object that has information about how to validate.
  * @throws {Error} throws error if the configuration is invalid
  */
-export function validateMightThrow(settings, meta) {
+export function validateMightThrow(settings = {}, meta = {}, allowRequiredFailure = false) {
     const validateKeys = Object.keys(meta);
 
     for (const validateKey of validateKeys) {
@@ -74,9 +76,9 @@ export function validateMightThrow(settings, meta) {
 
         // process validation nodes recursively
         if (isPlainObject(configValue) && isPlainObject(meta[validateKey])) {
-            validateMightThrow(configValue, meta[validateKey]);
+            validateMightThrow(configValue, meta[validateKey], allowRequiredFailure);
         } else {
-            assertValid(configValue, validateKey, validator);
+            assertValid(configValue, validateKey, validator, allowRequiredFailure);
         }
     }
 }
@@ -99,9 +101,12 @@ export function throwError(name, message, value, type = 'field') {
     );
 }
 
-function assertValid(value, validateKey, validator) {
+function assertValid(value, validateKey, validator, allowRequiredFailure = false) {
     const result = isValid(value, validator);
-    if (result !== true) {
+    if (
+        !(allowRequiredFailure && result === REQUIRED_ERROR) &&
+        result !== true
+    ) {
         throwError(validateKey, result, value);
     }
 }

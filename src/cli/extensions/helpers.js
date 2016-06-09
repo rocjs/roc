@@ -13,6 +13,8 @@ import ExtensionError from './error';
 import { setDependencies, getDependencies, setDevExports, getDevExports } from './dependencies';
 import { fileExists } from '../../helpers';
 import manageCommands from './commands';
+import manageConfig from './config';
+import { validateMightThrow } from '../../validation';
 
 export function manageDevExports(initialState) {
     initialState.usedExtensions.forEach((name) =>
@@ -51,7 +53,8 @@ export function getExtensions(type) {
                         const nextState = getCompleteExtensionTree(
                             roc,
                             extensionPath,
-                            state
+                            // Make sure no mutations are carried over
+                            merge({}, state)
                         );
 
                         nextState.projectExtensions.push({
@@ -64,11 +67,12 @@ export function getExtensions(type) {
                         console.log(feedbackMessage(
                             warningLabel('Warning', 'Roc Extension Failed'),
                             `Failed to load Roc ${type} ${chalk.bold(extensionPath)}\n\n` +
-                            (state.verbose ? err.stack : err.toString()),
+                            (state.verbose ? err.stack : err.message),
                             err.getPath && err.getPath()
                         ));
                     }
-                    // Rest Actions & Hooks
+
+                    // Reset Actions & Hooks
                     setActions(state.actions);
                     setHooks(state.hooks);
                 }
@@ -279,6 +283,19 @@ function manageRocObject(roc, state, post = false) {
             );
         }
 
+        const newState = manageConfig(roc.name,
+            {
+                config: roc.config,
+                meta: roc.meta
+            }, {
+                config: state.config,
+                meta: state.meta
+            }
+        );
+
+        state.config = newState.config;
+        state.meta = newState.meta;
+
         // Build the config object
         // FIXME Remove this and depend on using the init function instead!
         if (roc.buildConfig) {
@@ -304,6 +321,23 @@ function manageRocObject(roc, state, post = false) {
                     roc.meta
                 );
             }
+        }
+
+        // Validate the configuration
+        try {
+            const settings = state.config || {};
+            const metaSettings = state.meta || {};
+            validateMightThrow(settings.settings, metaSettings.settings, true);
+        } catch (error) {
+            if (!/^Validation failed for field/.test(error.message)) {
+                throw error;
+            }
+
+            throw new Error(
+                'The configuration validation failed for the extension.\n' +
+                `${error.message}\n` +
+                `Contact the developer of ${roc.name} for help.`
+            );
         }
     }
 

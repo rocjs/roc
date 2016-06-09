@@ -1,6 +1,8 @@
 import infoObject from '../info-object';
 import notEmpty from './not-empty';
 
+export const REQUIRED_ERROR = 'A value was required but none was given!';
+
 /**
  * Marks that the value is required, that is that it's not undefined.
  *
@@ -18,7 +20,7 @@ export default function required(validator, canBeEmpty = false) {
         }
 
         if (input === undefined) {
-            return 'A value was required but none was given!';
+            return REQUIRED_ERROR;
         }
 
         if (!validator) {
