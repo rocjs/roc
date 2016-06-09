@@ -7,6 +7,14 @@ global.roc.dependencies.devExports = global.roc.dependencies.devExports || {};
 global.roc.dependencies.dependencyContext = global.roc.dependencies.dependencyContext || {};
 global.roc.dependencies.pathMapping = global.roc.dependencies.pathMapping || {};
 
+export function getDependenciesObject() {
+    return global.roc.dependencies;
+}
+
+export function setDependenciesObject(dependencies) {
+    global.roc.dependencies = dependencies;
+}
+
 export function getDevExports(name) {
     return global.roc.dependencies.devExports[name + '-dev'];
 }

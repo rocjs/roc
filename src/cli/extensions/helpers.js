@@ -10,7 +10,14 @@ import { registerActions, getActions, setActions } from '../../hooks/actions';
 import { merge } from '../../configuration';
 import { warningLabel, feedbackMessage } from '../../helpers/style';
 import ExtensionError from './error';
-import { setDependencies, getDependencies, setDevExports, getDevExports } from './dependencies';
+import {
+    getDependenciesObject,
+    setDependenciesObject,
+    setDependencies,
+    getDependencies,
+    setDevExports,
+    getDevExports
+} from './dependencies';
 import { fileExists } from '../../helpers';
 import manageCommands from './commands';
 import manageConfig from './config';
@@ -49,6 +56,7 @@ export function getExtensions(type) {
                 const roc = getExtension(extensionPath, directory, type);
 
                 if (roc) {
+                    const previousDependencies = merge({}, getDependenciesObject());
                     try {
                         const nextState = getCompleteExtensionTree(
                             roc,
@@ -75,6 +83,9 @@ export function getExtensions(type) {
                     // Reset Actions & Hooks
                     setActions(state.actions);
                     setHooks(state.hooks);
+
+                    // Reset dependencies
+                    setDependenciesObject(previousDependencies);
                 }
                 // Use the previous state
                 return state;
