@@ -1,5 +1,5 @@
 import minimist from 'minimist';
-import { isString, isFunction } from 'lodash';
+import { isString } from 'lodash';
 
 import { execute } from './execute';
 import { getAbsolutePath } from '../helpers';
@@ -75,114 +75,114 @@ export function runCli({
         applicationConfigPath,
         true
     ).then(({ extensionConfig, config: configObject, meta: metaObject, dependencies, commands: completeCommands }) => {
-            // If we have no command we will display some help information about all possible commands
-            if (!groupOrCommand) {
-                return console.log(
-                    generateCommandsDocumentation(completeCommands, info.name)
-                );
-            }
-
-            // Check if we are in a subgroup
-            const result = checkGroup(completeCommands, groupOrCommand, args, info.name);
-            if (!result) {
-                return undefined;
-            }
-
-            let {
-                commands,
-                command,
-                parents
-            } = result;
-
-            let suggestions = Object.keys(commands);
-
-            // If there is no direct match we will search through the tree after a match
-            if (!commands[command]) {
-                const aliases = generateAliases(commands, command, parents);
-                if (!aliases) {
-                    return undefined;
-                } else if (aliases.commands) {
-                    commands = aliases.commands;
-                    parents = aliases.parents;
-                }
-                suggestions = suggestions.concat(aliases.mappings);
-            }
-
-            if (!commands[command]) {
-                return console.log(feedbackMessage(
-                    errorLabel('Error', 'Invalid command'),
-                    getSuggestions([command], suggestions)
-                ));
-            }
-
-            // Show command help information if requested
-            // Will ignore application configuration
-            if (help || h) {
-                return console.log(generateCommandDocumentation(extensionConfig.settings, metaObject.settings,
-                    commands, command, info.name, parents));
-            }
-
-            const parsedArguments = parseArguments(command, commands, args);
-
-            let documentationObject;
-            // Only parse arguments if the command accepts it
-            if (commands[command] && commands[command].settings) {
-                // Get config from application and only parse options that this command cares about.
-                const filter = commands[command].settings === true ? [] : commands[command].settings;
-                documentationObject = buildDocumentationObject(configObject.settings, metaObject.settings, filter);
-            }
-
-            const { settings, parsedOptions } =
-                parseOptions(restOptions, getMappings(documentationObject), commands[command]);
-
-            configObject = merge(configObject, {
-                settings
-            });
-
-            // Validate configuration
-            if (commands[command] && commands[command].settings) {
-                validate(configObject.settings, metaObject.settings, commands[command].settings);
-            }
-
-            // Does this after the validation so that things set by the CLI always will have the highest priority
-            configObject = addOverrides(configObject);
-            configObject = merge(configObject, {
-                settings
-            });
-
-            // Set the configuration object
-            appendConfig(configObject);
-
-            // Run hook to make it possible for extensions to update the settings before anything other uses them
-            runHookDirectly({extension: 'roc', name: 'update-settings'}, [configObject.settings],
-                (newSettings) => appendSettings(newSettings)
+        // If we have no command we will display some help information about all possible commands
+        if (!groupOrCommand) {
+            return console.log(
+                generateCommandsDocumentation(completeCommands, info.name)
             );
+        }
 
-            if (invoke) {
-                // If string run as shell command
-                if (isString(commands[command].command)) {
-                    return execute(commands[command].command)
-                        .catch(process.exit);
-                }
+        // Check if we are in a subgroup
+        const result = checkGroup(completeCommands, groupOrCommand, args, info.name);
+        if (!result) {
+            return undefined;
+        }
 
-                // Run the command
-                return commands[command].command({
-                    verbose: verboseMode,
-                    directory: dirPath,
-                    info,
-                    configObject,
-                    metaObject,
-                    extensionConfig,
-                    parsedArguments,
-                    parsedOptions,
-                    hooks: getHooks(),
-                    actions: getActions(),
-                    // TODO Document this
-                    dependencies,
-                    command: completeCommands
-                });
+        let {
+            commands,
+            command,
+            parents
+        } = result;
+
+        let suggestions = Object.keys(commands);
+
+        // If there is no direct match we will search through the tree after a match
+        if (!commands[command]) {
+            const aliases = generateAliases(commands, command, parents);
+            if (!aliases) {
+                return undefined;
+            } else if (aliases.commands) {
+                commands = aliases.commands;
+                parents = aliases.parents;
             }
+            suggestions = suggestions.concat(aliases.mappings);
+        }
+
+        if (!commands[command]) {
+            return console.log(feedbackMessage(
+                errorLabel('Error', 'Invalid command'),
+                getSuggestions([command], suggestions)
+            ));
+        }
+
+        // Show command help information if requested
+        // Will ignore application configuration
+        if (help || h) {
+            return console.log(generateCommandDocumentation(extensionConfig.settings, metaObject.settings,
+                commands, command, info.name, parents));
+        }
+
+        const parsedArguments = parseArguments(command, commands, args);
+
+        let documentationObject;
+        // Only parse arguments if the command accepts it
+        if (commands[command] && commands[command].settings) {
+            // Get config from application and only parse options that this command cares about.
+            const filter = commands[command].settings === true ? [] : commands[command].settings;
+            documentationObject = buildDocumentationObject(configObject.settings, metaObject.settings, filter);
+        }
+
+        const { settings, parsedOptions } =
+            parseOptions(restOptions, getMappings(documentationObject), commands[command]);
+
+        configObject = merge(configObject, {
+            settings
         });
+
+        // Validate configuration
+        if (commands[command] && commands[command].settings) {
+            validate(configObject.settings, metaObject.settings, commands[command].settings);
+        }
+
+        // Does this after the validation so that things set by the CLI always will have the highest priority
+        configObject = addOverrides(configObject);
+        configObject = merge(configObject, {
+            settings
+        });
+
+        // Set the configuration object
+        appendConfig(configObject);
+
+        // Run hook to make it possible for extensions to update the settings before anything other uses them
+        runHookDirectly({extension: 'roc', name: 'update-settings'}, [configObject.settings],
+            (newSettings) => appendSettings(newSettings)
+        );
+
+        if (invoke) {
+            // If string run as shell command
+            if (isString(commands[command].command)) {
+                return execute(commands[command].command)
+                    .catch(process.exit);
+            }
+
+            // Run the command
+            return commands[command].command({
+                verbose: verboseMode,
+                directory: dirPath,
+                info,
+                configObject,
+                metaObject,
+                extensionConfig,
+                parsedArguments,
+                parsedOptions,
+                hooks: getHooks(),
+                actions: getActions(),
+                // TODO Document this
+                dependencies,
+                command: completeCommands
+            });
+        }
+    });
 }
 
 /**

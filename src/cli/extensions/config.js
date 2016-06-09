@@ -2,38 +2,38 @@ import { bold, underline } from 'chalk';
 import { isPlainObject, intersection, get, update } from 'lodash';
 import { OVERRIDE } from '../../configuration/override';
 
-export default function manageConfig(name, project, state) {
-    const projectConfigPaths = getKeys(project.config, true);
-    const projectMetaPaths = getKeys(project.meta);
+export default function manageConfig(name, extension, state) {
+    const extensionConfigPaths = getKeys(extension.config, true);
+    const extensionMetaPaths = getKeys(extension.meta);
     const stateConfigPaths = getKeys(state.config, true);
     const stateMetaPaths = getKeys(state.meta);
 
     validateMetaStructure(
         name,
         intersection(
-            projectMetaPaths.paths,
+            extensionMetaPaths.paths,
             stateMetaPaths.paths
         ),
-        project.meta,
+        extension.meta,
         state.meta
     );
 
     validateConfigurationStructure(
         name,
         intersection(
-            projectConfigPaths.paths,
+            extensionConfigPaths.paths,
             stateConfigPaths.paths
         ),
-        projectConfigPaths,
+        extensionConfigPaths,
         stateConfigPaths,
-        project.meta,
+        extension.meta,
         state.meta
     );
 
     return updateStateMeta(
         name,
         state,
-        projectConfigPaths,
+        extensionConfigPaths,
         stateConfigPaths
     );
 }
@@ -76,10 +76,10 @@ function notInExtensions(extensions, extension) {
     return extensions.indexOf(extension) === -1;
 }
 
-function validateMetaStructure(name, intersections, projectMeta, stateMeta) {
+function validateMetaStructure(name, intersections, extensionMeta, stateMeta) {
     intersections.forEach((intersect) => {
         const extensions = get(stateMeta, intersect).__extensions || [];
-        const override = (get(projectMeta, intersect) || {}).override;
+        const override = (get(extensionMeta, intersect) || {}).override;
 
         if (
             notInExtensions(extensions, name) &&
@@ -101,14 +101,14 @@ function validateMetaStructure(name, intersections, projectMeta, stateMeta) {
 }
 
 function validateConfigurationStructure(
-    name, intersections, projectConfigPaths, stateConfigPaths, projectMeta, stateMeta
+    name, intersections, extensionConfigPaths, stateConfigPaths, extensionMeta, stateMeta
 ) {
     intersections.forEach((intersect) => {
         const wasGroup = getGroup(stateConfigPaths, intersect);
-        const isGroup = getGroup(projectConfigPaths, intersect);
+        const isGroup = getGroup(extensionConfigPaths, intersect);
         if (wasGroup !== isGroup) {
             const extensions = get(stateMeta, intersect).__extensions || [];
-            const override = get(projectMeta, intersect, {}).override;
+            const override = get(extensionMeta, intersect, {}).override;
 
             if (
                 notInExtensions(extensions, name) &&
@@ -127,10 +127,10 @@ function validateConfigurationStructure(
     });
 }
 
-function updateStateMeta(name, state, projectConfigPaths, stateConfigPaths) {
+function updateStateMeta(name, state, extensionConfigPaths, stateConfigPaths) {
     const newState = { ...state };
-    projectConfigPaths.paths.forEach((path, index) => {
-        const changed = getGroup(stateConfigPaths, path) !== projectConfigPaths.groups[index];
+    extensionConfigPaths.paths.forEach((path, index) => {
+        const changed = getGroup(stateConfigPaths, path) !== extensionConfigPaths.groups[index];
         update(newState.meta, path, (previous = {}) => {
             // If it has changed we will reset it
             const newValue = changed ?

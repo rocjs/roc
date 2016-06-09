@@ -69,7 +69,7 @@ export default {
         }
     },
     meta: {
-        __meta: {
+        '__meta': {
             name: 'Meta commands',
             description: 'Meta commands that can be used to generate meta data about the current project.'
         },

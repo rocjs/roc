@@ -17,7 +17,7 @@ const defaultValidation = (input, info) => info ? {type: 'Unknown'} : true;
  *
  * @returns {rocDocumentationObject} - The completed documentation object.
  */
-export default function buildDocumentationObject(initalObject, meta = {}, initalFilter = [], initalLevel = 0) {
+export default function buildDocumentationObject(initalObject, initalMeta = {}, initalFilter = [], initalLevel = 0) {
     const allObjects = (object = {}, callback) => {
         return Object.keys(object).map(callback).filter((value) => value !== undefined);
     };
@@ -77,7 +77,7 @@ export default function buildDocumentationObject(initalObject, meta = {}, inital
 
     return recursiveHelper(
         initalObject,
-        meta,
+        initalMeta,
         initalFilter,
         initalLevel
     );

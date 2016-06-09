@@ -390,7 +390,8 @@ function getCompleteExtension(extensionPath) {
 function getExtension(extensionName, directory, type) {
     try {
         let path;
-        if (extensionName.charAt(0) === '.' || extensionName.charAt(0) === '/') { // FIXME Windows?
+        // FIXME Windows?
+        if (extensionName.charAt(0) === '.' || extensionName.charAt(0) === '/') {
             // We will use node-resolve if the path is relative or absolute
             path = resolve.sync(extensionName, { basedir: directory });
         } else {

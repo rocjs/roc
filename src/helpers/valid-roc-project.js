@@ -1,7 +1,6 @@
 import { isObject } from 'lodash';
 import {
     getRocPackageDependencies,
-    getRocNamespacedDependencies,
     getPackageJson
 } from './';
 

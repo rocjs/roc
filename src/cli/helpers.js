@@ -32,11 +32,11 @@ import verifyInstalledDependencies from '../require/verify-installed-dependencie
  * Builds the complete configuration objects.
  *
  * @param {boolean} [verbose=true] - If verbose mode should be enabled, logs some extra information.
- * @param {rocConfig} newConfig - The new configuration to base the merge on.
- * @param {rocMetaConfig} newMeta - The new meta configuration to base the merge on.
  * @param {rocConfig} baseConfig - The base configuration.
  * @param {rocMetaConfig} baseMeta - The base meta configuration.
+ * @param {object} baseCommands - The base commands.
  * @param {string} [directory=process.cwd()] - The directory to resolve relative paths from.
+ * @param {string} applicationConfigPath - The path to the application configuration.
  * @param {boolean} [validate=true] - If the newConfig and the newMeta structure should be validated.
  * @param {boolean} [checkDependencies=true] - If dependencies should be verified in extensions.
  *
@@ -79,7 +79,8 @@ export default async function buildCompleteConfig(
             meta,
             dependencies,
             commands
-        } = buildExtensionTree(packages, plugins, finalConfig, finalMeta, finalCommands, directory, verbose, checkDependencies);
+        } = buildExtensionTree(packages, plugins, finalConfig,
+            finalMeta, finalCommands, directory, verbose, checkDependencies);
 
         await verifyProjectDependencies(directory, dependencies.requires);
 
@@ -180,7 +181,6 @@ function validateConfigurationStructure(config, applicationConfig) {
  * Generates a string with information about all the possible commands.
  *
  * @param {object} commands - Commands from @{link rocConfig}.
- * @param {object} metaCommands - Meta commands from @{link rocMetaConfig}.
  * @param {string} name - The name of the cli.
  * @param {string[]} parents - The parents that the current scope has.
  *
