@@ -26,7 +26,7 @@ export default function buildDocumentationObject(initalObject, meta = {}, inital
         return {
             name,
             level,
-            description: meta.__description,
+            description: meta.description,
             objects: recursiveHelper(object, meta, [], level + 1, parents, true),
             children: recursiveHelper(object, meta, [], level + 1, parents)
         };
