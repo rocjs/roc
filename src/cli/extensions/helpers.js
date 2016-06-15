@@ -59,6 +59,7 @@ export function getExtensions(type) {
                     const previousDependencies = merge({}, getDependenciesObject());
                     try {
                         const nextState = getCompleteExtensionTree(
+                            type,
                             roc,
                             extensionPath,
                             // Make sure no mutations are carried over
@@ -67,7 +68,9 @@ export function getExtensions(type) {
 
                         nextState.projectExtensions.push({
                             name: roc.name,
-                            version: roc.version
+                            version: roc.version,
+                            description: roc.description,
+                            type
                         });
 
                         return nextState;
@@ -97,8 +100,8 @@ export function getExtensions(type) {
 function getParents(type) {
     return (roc, state) => {
         let nextState = {...state};
-        for (const parent of roc[type] || []) {
-            nextState = getCompleteExtensionTree(getCompleteExtension(parent), parent, { ...nextState});
+        for (const parent of roc[type + 's'] || []) {
+            nextState = getCompleteExtensionTree(type, getCompleteExtension(parent), parent, { ...nextState});
         }
 
         return nextState;
@@ -182,32 +185,39 @@ function alreadyRegistered(name, state) {
     return state.usedExtensions.find((extension) => extension.name === name);
 }
 
-function registerExtension(roc, state) {
-    const fromBefore = alreadyRegistered(roc.name, state);
-    if (fromBefore) {
-        if (fromBefore.version !== roc.version) {
-            console.log(feedbackMessage(
-                warningLabel('Warning', 'Multiple versions'),
-                `Multiple versions for ${roc.name} was detected. (${roc.version} & ${fromBefore.version})\n` +
-                `This might be an error.`
-            ));
+function registerExtension(type) {
+    return (roc, state) => {
+        const fromBefore = alreadyRegistered(roc.name, state);
+        if (fromBefore) {
+            if (fromBefore.version !== roc.version) {
+                console.log(feedbackMessage(
+                    warningLabel('Warning', 'Multiple versions'),
+                    `Multiple versions for ${roc.name} was detected. (${roc.version} & ${fromBefore.version})\n` +
+                    `This might be an error.`
+                ));
+            }
+        } else {
+            state.usedExtensions.push({
+                name: roc.name,
+                version: roc.version,
+                description: roc.description,
+                type
+            });
         }
-    } else {
-        state.usedExtensions.push({ name: roc.name, version: roc.version });
-    }
 
-    return state;
+        return state;
+    };
 }
 
-function getCompleteExtensionTree(roc, path, initialState) {
+function getCompleteExtensionTree(type, roc, path, initialState) {
     return [
         validRocExtension(path),
-        getParents('packages'),
-        getParents('plugins'),
+        getParents('package'),
+        getParents('plugin'),
         checkRequired,
         init,
         addPostInit,
-        registerExtension
+        registerExtension(type)
     ].reduce(
         (state, process) => process(roc, state),
         initialState
