@@ -18,18 +18,17 @@ All commands can be called with some additional options as can be seen below.
     * [init](#init)
     * [new](#new)
 * [meta](#meta)
+    * [docs](#docs)
     * [list-settings](#list-settings)
-    * [markdown-actions](#markdown-actions)
-    * [markdown-commands](#markdown-commands)
-    * [markdown-hooks](#markdown-hooks)
-    * [markdown-settings](#markdown-settings)
 
 ## create
-__Commands that can be used to create new projects__
+__Project creation__
 
 ```
 roc create <command>
 ```
+Commands that can be used to create new projects.
+
 
 ### init
 __Init a new project.__
@@ -42,24 +41,26 @@ The __init__ command can be used to initiate a new Roc project and currently exp
 __template__
 Template can either be a short name for a specific template, currently it accepts `web-app` and `web-app-react` that will be converted internally to `rocjs/roc-template-web-app` and `rocjs/roc-template-web-app-react`. As can be seen here the actual template reference is a Github repo and can be anything matching that pattern `USERNAME/PROJECT`.
 
+The template can also point to a local zip file (ending in `.zip`) of a template repository. This is useful if the template is on a private repo or not on GitHub.
+
 It will also expect that the template has a folder named `template` and that inside of it there is `package.json` file with at least one dependency to a Roc module following the pattern `roc-package-*` or that it has a `roc.config.js` file (this file is then expected to have some [packages](/docs/config/packages.md) defined but this is not checked immediately).
 
 __version__
 Versions should match a tag on the Github repo and will default to master if none exists. When giving an input on the command line Roc will automatically add `v` in front of versions that starts with a number to match Github default that have versions tags that start with `v` like `v1.0.0`. `master` is also always available as an option.
 
-### Arguments
+#### Arguments
 
-| Name        | Description                                                       | Required | Type       | Default |
-| ----------- | ----------------------------------------------------------------- | -------- | ---------- | ------- |
-| template    | The template to use. Matches Github structure with Username/Repo. | No       | `Filepath` |         |
-| version     | The version to use.                                               | No       | `String`   |         |
+| Name        | Description                                                                           | Required | Type       | Default |
+| ----------- | ------------------------------------------------------------------------------------- | -------- | ---------- | ------- |
+| template    | The template to use. Matches Github structure with Username/Repo or a local zip file. | No       | `Filepath` |         |
+| version     | The version to use.                                                                   | No       | `String`   |         |
 
-### Command options
+#### Command options
 
-| Name        | Description                                                       | Required | Type       | Default |
-| ----------- | ----------------------------------------------------------------- | -------- | ---------- | ------- |
-| -f, --force | Ignore non empty directory warning.                               | No       | `Boolean`  |         |
-| -l, --list  | List the available versions of a template.                        | No       | `Boolean`  |         |
+| Name        | Description                                                                           | Required | Type       | Default |
+| ----------- | ------------------------------------------------------------------------------------- | -------- | ---------- | ------- |
+| -f, --force | Ignore non empty directory warning.                                                   | No       | `Boolean`  |         |
+| -l, --list  | List the available versions of a template.                                            | No       | `Boolean`  |         |
 
 ### new
 __Create a new project.__
@@ -69,27 +70,46 @@ roc create new <name> [template] [version]
 ```
 Alias for "init" that always will try to create a new directory.
 
-### Arguments
+#### Arguments
 
-| Name        | Description                                                       | Required | Type       | Default |
-| ----------- | ----------------------------------------------------------------- | -------- | ---------- | ------- |
-| name        | Name for a new directory to create the project in.                | Yes      | `String`   |         |
-| template    | The template to use. Matches Github structure with Username/Repo. | No       | `Filepath` |         |
-| version     | The version to use.                                               | No       | `String`   |         |
+| Name        | Description                                                                           | Required | Type       | Default |
+| ----------- | ------------------------------------------------------------------------------------- | -------- | ---------- | ------- |
+| name        | Name for a new directory to create the project in.                                    | Yes      | `String`   |         |
+| template    | The template to use. Matches Github structure with Username/Repo or a local zip file. | No       | `Filepath` |         |
+| version     | The version to use.                                                                   | No       | `String`   |         |
 
-### Command options
+#### Command options
 
-| Name        | Description                                                       | Required | Type       | Default |
-| ----------- | ----------------------------------------------------------------- | -------- | ---------- | ------- |
-| -f, --force | Ignore non empty directory warning.                               | No       | `Boolean`  |         |
-| -l, --list  | List the available versions of a template.                        | No       | `Boolean`  |         |
+| Name        | Description                                                                           | Required | Type       | Default |
+| ----------- | ------------------------------------------------------------------------------------- | -------- | ---------- | ------- |
+| -f, --force | Ignore non empty directory warning.                                                   | No       | `Boolean`  |         |
+| -l, --list  | List the available versions of a template.                                            | No       | `Boolean`  |         |
 
 ## meta
-__Meta commands that can be used to generate meta data about the current project.__
+__Meta commands__
 
 ```
 roc meta <command>
 ```
+Meta commands that can be used to generate meta data about the current project.
+
+
+### docs
+__Generates documentation for the current project.__
+
+```
+roc meta docs
+```
+
+#### Command options
+
+| Name            | Description | Required | Type | Default        |
+| --------------- | ----------- | -------- | ---- | -------------- |
+| --hide-commands |             | No       |      |                |
+| --html          |             | No       |      | `false`        |
+| --markdown      |             | No       |      | `true`         |
+| --mode          |             | No       |      | `"github.com"` |
+| --output        |             | No       |      | `"docs"`       |
 
 ### list-settings
 __Prints all the available settings that can be changed.__
@@ -97,45 +117,4 @@ __Prints all the available settings that can be changed.__
 ```
 roc meta list-settings
 ```
-
-### markdown-actions
-__Prints all the registered actions in a markdown format.__
-
-```
-roc meta markdown-actions
-```
-
-### markdown-commands
-__Create markdown documentation for the commands.__
-
-```
-roc meta markdown-commands [settings-link]
-```
-
-### Arguments
-
-| Name            | Description                                                                  | Required | Type       | Default |
-| --------------- | ---------------------------------------------------------------------------- | -------- | ---------- | ------- |
-| settings-link   | A link that should be used when generation to link to the settings location. | No       | `String`   |         |
-
-### Command options
-
-| Name            | Description                                                                  | Required | Type       | Default |
-| --------------- | ---------------------------------------------------------------------------- | -------- | ---------- | ------- |
-| --hide-commands | A list of commands that should be hidden form the generated markdown.        | No       | `[String]` | `[]`    |
-
-### markdown-hooks
-__Prints all the registered hooks in a markdown format.__
-
-```
-roc meta markdown-hooks
-```
-
-### markdown-settings
-__Prints all the available settings that can be changed in a markdown format.__
-
-```
-roc meta markdown-settings
-```
-
 

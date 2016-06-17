@@ -1,6 +1,8 @@
 import redent from 'redent';
 import trimNewlines from 'trim-newlines';
 
+import createStatefulAnchor from '../../helpers/stateful-anchor';
+
 /**
  * Function used to generate markdown documentation for all the registered actions.
  * Can be piped to a file and uploaded somewhere easily.
@@ -10,7 +12,7 @@ import trimNewlines from 'trim-newlines';
  *
  * @returns {string} - Markdown documentation.
  */
-export default function genereateMarkdownActions(name, actions = []) {
+export default function genereateMarkdownActions(name, actions = [], mode) {
     // Remove project actions if any
     actions = actions.filter((extensionActions) => !extensionActions.project);
 
@@ -27,11 +29,13 @@ export default function genereateMarkdownActions(name, actions = []) {
 
     rows.push('## Actions');
 
+    const statefulAnchor = createStatefulAnchor(mode);
+
     actions.forEach((extension) => {
         const sortedActions = Object.keys(extension.actions).sort();
-        rows.push(`* [${extension.name}](#${extension.name})`);
+        rows.push(`* ${statefulAnchor(extension.name)}`);
         sortedActions.forEach((action) => {
-            rows.push(`  * [${action}](#${action})`);
+            rows.push(`  * ${statefulAnchor(action)}`);
         });
     });
 

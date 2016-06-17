@@ -7,7 +7,7 @@ export function isCommandGroup(commandsObject) {
     return (potentialGroup) =>
         potentialGroup !== '__meta' &&
         isPlainObject(commandsObject[potentialGroup]) &&
-        !commandsObject[potentialGroup].command;
+        commandsObject[potentialGroup].command === undefined;
 }
 
 // The property "command" is special and can not be used as a command
@@ -19,7 +19,7 @@ export function isCommand(commandsObject) {
             isFunction(commandsObject[potentialCommmand])
         ) || (
             isPlainObject(commandsObject[potentialCommmand]) &&
-            commandsObject[potentialCommmand].command
+            commandsObject[potentialCommmand].command !== undefined
         );
 }
 

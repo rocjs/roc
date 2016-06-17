@@ -57,6 +57,10 @@ export function generateMarkdownDocumentation(name, { settings }, { settings: me
                 }
                 return 'No';
             }
+        },
+        extensions: {
+            name: 'Extensions',
+            renderer: (input) => input.join(', ')
         }
     };
 

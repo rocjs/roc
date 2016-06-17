@@ -26,7 +26,7 @@
     "test:unit": "cross-env NODE_ENV=test mocha --compilers js:babel-register test --recursive",
     "test:unit:watch": "npm run test:unit -- --watch",
     "check": "ncu",
-    "docs": "node bin/index.js markdown-commands > docs/DefaultCommands.md",
+    "docs": "node scripts/generate-commands.js",
     "esdocs": "esdoc -c esdoc.json",
     "prepublish": "npm test && npm run clean && npm run build && npm run esdocs",
     "postinstall": "node ./scripts/post-install.js"
@@ -75,6 +75,7 @@
     "rimraf": "~2.5.0"
   },
   "dependencies": {
+    "anchor-markdown-header": "0.5.5",
     "chalk": "~1.1.1",
     "colors": "~1.1.2",
     "cross-spawn": "2.2.3",

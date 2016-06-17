@@ -6,8 +6,6 @@ export {
     appendSettings
 } from './configuration';
 
-export { generateMarkdownDocumentation, generateTextDocumentation } from './documentation';
-
 export { runCli, initCli } from './cli';
 
 export { validate } from './validation';
@@ -30,15 +28,10 @@ export {
     removeActions
 } from './hooks/actions';
 
-export generateMarkdownHooks from './hooks/documentation/generate-markdown-hooks';
-export generateMarkdownActions from './hooks/documentation/generate-markdown-actions';
-
-export generateMarkdownCommands from './commands/markdown-commands';
-
 export getConfiguration from './cli/get-configuration';
 
 export { getResolveRequest } from './cli/manage-resolve-request';
 
 export generateDependencies from './require/helpers/generate-dependencies';
 
-export generateMarkdownDependencies from './cli/extensions/generate-markdown-dependencies';
+export generateDocs from './documentation/generate-docs';

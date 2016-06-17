@@ -1,7 +1,5 @@
-import { isBoolean, isPath, isArray, isString } from '../validation/validators';
-import { toArray } from '../converters';
+import { isBoolean, isPath, isString } from '../validation/validators';
 import init from '../commands/init';
-import markdownCommands from '../commands/markdown-commands';
 
 const initOptions = [{
     name: 'list',
@@ -66,42 +64,6 @@ export default {
                 description: 'Name for a new directory to create the project in.',
                 required: true
             }, initArguments)
-        }
-    },
-    meta: {
-        '__meta': {
-            name: 'Meta commands',
-            description: 'Meta commands that can be used to generate meta data about the current project.'
-        },
-        'markdown-commands': {
-            command: ({
-                packageConfig,
-                metaObject,
-                info: { name: cliName },
-                parsedArguments: { arguments: { 'settings-link': settingsLink } },
-                parsedOptions: { options: { 'hide-commands': hideCommands } }
-            }) => {
-                console.log(markdownCommands(
-                    cliName,
-                    packageConfig,
-                    metaObject,
-                    settingsLink,
-                    hideCommands
-                ));
-            },
-            description: 'Create markdown documentation for the commands.',
-            arguments: [{
-                name: 'settings-link',
-                validation: isString,
-                description: 'A link that should be used when generation to link to the settings location.'
-            }],
-            options: [{
-                name: 'hide-commands',
-                default: [],
-                validation: isArray(isString),
-                converter: toArray(),
-                description: 'A list of commands that should be hidden form the generated markdown.'
-            }]
         }
     }
 };

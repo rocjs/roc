@@ -6,8 +6,9 @@ import generateTable from '../documentation/generate-table';
 import { pad } from '../documentation/helpers';
 import { getCommandArgumentsAsString, getDefaultOptions } from '../cli/helpers';
 import onProperty from '../helpers/on-property';
+import createStatefulAnchor from '../helpers/stateful-anchor';
 
-import { isCommandGroup } from '../cli/utils';
+import { isCommandGroup, isCommand } from '../cli/utils';
 
 // Table with default options
 const header = {
@@ -46,7 +47,7 @@ const settings = {
  *
  * @returns {string} - Markdown documentation.
  */
-export default function generateMarkdownCommands(name, config, metaConfig, settingsLink, hideCommands = []) {
+export default function generateMarkdownCommands(name, config, commands, settingsLink, mode, hideCommands = [], cli = 'roc') {
     let rows = [];
     const allSettingGroups = config.settings ?
         Object.keys(config.settings).sort() :
@@ -60,7 +61,7 @@ export default function generateMarkdownCommands(name, config, metaConfig, setti
         return `* ${groupName}`;
     };
 
-    if (config.commands) {
+    if (commands) {
         // Header
         rows.push('# Commands for `' + name + '`', '');
 
@@ -76,7 +77,7 @@ export default function generateMarkdownCommands(name, config, metaConfig, setti
         rows.push('## Commands');
 
         const { tableOfContent, content } =
-            build(config.commands, metaConfig.commands, allSettingGroups, printGroup, hideCommands);
+            build(cli, commands, allSettingGroups, printGroup, hideCommands, createStatefulAnchor(mode));
 
         rows = rows.concat(tableOfContent, '', content, '');
     }
@@ -88,20 +89,21 @@ export default function generateMarkdownCommands(name, config, metaConfig, setti
     return rows.join('\n');
 }
 
-function build(commands, commandsMeta, allSettingGroups, printGroup, hideCommands, parents = [], level = 0) {
+function build(cli, commands, allSettingGroups, printGroup, hideCommands, statefulAnchor, parents = [], level = 0) {
     let tableOfContent = [];
     let content = [];
 
     Object.keys(commands)
         .filter((element) => hideCommands.indexOf(element) === -1)
-        .filter((potentialGroup) => !isCommandGroup(commands)(potentialGroup))
+        .filter((potentialGroup) => isCommand(commands)(potentialGroup))
         .sort()
         .forEach((command) => {
             const spacing = '  '.repeat(level === 0 ? 0 : level + 1);
-            tableOfContent.push(`${spacing}* [${command}](#${command.replace(':', '')})`);
+            tableOfContent.push(`${spacing}* ${statefulAnchor(command)}`);
             content.push(buildCommand(
+                cli,
                 command,
-                commandsMeta[command],
+                commands[command],
                 allSettingGroups,
                 printGroup,
                 parents,
@@ -116,8 +118,9 @@ function build(commands, commandsMeta, allSettingGroups, printGroup, hideCommand
         .forEach((group) => {
             const spacing = '  '.repeat(level);
             content.push(buildGroup(
+                cli,
                 group,
-                commandsMeta[group],
+                commands[group],
                 allSettingGroups,
                 printGroup,
                 parents,
@@ -125,11 +128,12 @@ function build(commands, commandsMeta, allSettingGroups, printGroup, hideCommand
             ).join('\n'));
             tableOfContent.push(`${spacing}* [${group}](#${group.replace(':', '')})`);
             const { tableOfContent: newTableOfContent, content: newContent } = build(
+                    cli,
                     commands[group],
-                    commandsMeta[group],
                     allSettingGroups,
                     printGroup,
                     hideCommands,
+                    statefulAnchor,
                     parents.concat(group),
                     level + 1
                 );
@@ -143,46 +147,50 @@ function build(commands, commandsMeta, allSettingGroups, printGroup, hideCommand
     };
 }
 
-function buildGroup(command, groupMeta = {}, allSettingGroups, printGroup, parents, level) {
+function buildGroup(cli, command, commandData, allSettingGroups, printGroup, parents, level) {
     const rows = [];
     rows.push(`##${'#'.repeat(level)} ${command}`);
-    if (groupMeta.__description) {
-        rows.push(`__${groupMeta.__description}__`);
+    if (commandData.__meta && commandData.__meta.name) {
+        rows.push(`__${commandData.__meta.name}__`);
         rows.push('');
     }
 
-    rows.push('```\n' + `roc ${parents.concat(command).join(' ')} <command>` + '\n```');
+    rows.push('```\n' + `${cli} ${parents.concat(command).join(' ')} <command>` + '\n```');
+    if (commandData.__meta && commandData.__meta.description) {
+        rows.push(commandData.__meta.description);
+        rows.push('');
+    }
     rows.push('');
     return rows;
 }
 
-function buildCommand(command, commandMeta = {}, allSettingGroups, printGroup, parents, level) {
+function buildCommand(cli, command, commandData, allSettingGroups, printGroup, parents, level) {
     let rows = [];
 
     rows.push(`##${'#'.repeat(level)} ${command}`);
 
-    if (commandMeta.description) {
-        rows.push(`__${commandMeta.description}__`);
+    if (commandData.description) {
+        rows.push(`__${commandData.description}__`);
     }
 
     rows.push('');
 
     rows.push('```\n' +
-        `roc ${parents.concat(command).join(' ')}${getCommandArgumentsAsString(commandMeta)}` + '\n```');
+        `${cli} ${parents.concat(command).join(' ')}${getCommandArgumentsAsString(commandData)}` + '\n```');
 
     // If we have a markdown property we will use that over help
-    if (commandMeta.markdown) {
-        rows.push(redent(trimNewlines(commandMeta.markdown)));
-    } else if (commandMeta.help) {
-        rows.push(redent(trimNewlines(commandMeta.help)));
+    if (commandData.markdown) {
+        rows.push(redent(trimNewlines(commandData.markdown)));
+    } else if (commandData.help) {
+        rows.push(redent(trimNewlines(commandData.help)));
     }
 
     // Create table will Arguments + Command Options
     let body = [];
 
     // Generate the arguments
-    if (commandMeta.arguments) {
-        const objects = commandMeta.arguments.map((argument) => {
+    if (commandData.arguments) {
+        const objects = commandData.arguments.map((argument) => {
             return {
                 name: argument.name,
                 description: argument.description || '',
@@ -195,15 +203,15 @@ function buildCommand(command, commandMeta = {}, allSettingGroups, printGroup, p
         if (objects.length > 0) {
             body = body.concat({
                 name: 'Arguments',
-                level: 0,
+                level,
                 objects: objects
             });
         }
     }
 
     // Generate the options
-    if (commandMeta.options) {
-        const objects = commandMeta.options.sort(onProperty('name')).map((option) => {
+    if (commandData.options) {
+        const objects = commandData.options.sort(onProperty('name')).map((option) => {
             return {
                 name: option.shortname ? `-${option.shortname}, --${option.name}` : `--${option.name}`,
                 description: option.description || '',
@@ -216,7 +224,7 @@ function buildCommand(command, commandMeta = {}, allSettingGroups, printGroup, p
         if (objects.length > 0) {
             body = body.concat({
                 name: 'Command options',
-                level: 0,
+                level,
                 objects: objects
             });
         }
@@ -259,18 +267,21 @@ function buildCommand(command, commandMeta = {}, allSettingGroups, printGroup, p
         rows.push(table);
     }
 
-    if (commandMeta.settings) {
-        rows.push('### Settings options');
-
-        if (commandMeta.settings === true) {
+    if (commandData.settings) {
+        rows.push(`###${'#'.repeat(level)}  Settings options`);
+        if (commandData.settings === true) {
             rows.push('_All groups are available._');
             rows = rows.concat(allSettingGroups.sort().map(printGroup));
             rows.push('');
         } else {
-            rows = rows.concat(commandMeta.settings.sort().map(printGroup));
+            rows = rows.concat(commandData.settings.sort().map(printGroup));
             rows.push('');
         }
+    }
 
+    if (commandData.__extensions) {
+        rows.push(`###${'#'.repeat(level)}  Defined by extensions`);
+        rows.push(commandData.__extensions.join(', '));
         rows.push('');
     }
 

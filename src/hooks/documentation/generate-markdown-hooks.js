@@ -4,6 +4,7 @@ import trimNewlines from 'trim-newlines';
 
 import generateTable from '../../documentation/generate-table';
 import { pad } from '../../documentation/helpers';
+import createStatefulAnchor from '../../helpers/stateful-anchor';
 
 /**
  * Command used to generate markdown documentation for all the registered hooks.
@@ -14,7 +15,7 @@ import { pad } from '../../documentation/helpers';
  *
  * @returns {string} - Markdown documentation.
  */
-export default function generateMarkdownHooks(name, hooks) {
+export default function generateMarkdownHooks(name, hooks, mode) {
     if (Object.keys(hooks).length === 0) {
         return 'No hooks available.';
     }
@@ -30,11 +31,13 @@ export default function generateMarkdownHooks(name, hooks) {
 
     rows.push('## Hooks');
 
+    const statefulAnchor = createStatefulAnchor(mode);
+
     extensions.forEach((extension) => {
         const extensionHooks = Object.keys(hooks[extension]).sort();
-        rows.push(`* [${extension}](#${extension})`);
+        rows.push(`* ${statefulAnchor(extension)}`);
         extensionHooks.forEach((hook) => {
-            rows.push(`  * [${hook}](#${hook})`);
+            rows.push(`  * ${statefulAnchor(hook)}`);
         });
     });
 

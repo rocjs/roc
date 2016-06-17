@@ -17,7 +17,7 @@ import getSuggestions from '../helpers/get-suggestions';
 import { OVERRIDE } from '../configuration/override';
 import { getApplicationConfig } from '../configuration/helpers';
 
-import { getDefaultConfig, getDefaultMeta } from './get-default';
+import { getDefaultConfig, getDefaultMeta, getDefaultCommands } from './get-default';
 import { isCommandGroup, isCommand } from './utils';
 
 import buildExtensionTree from './extensions';
@@ -55,25 +55,32 @@ export default async function buildCompleteConfig(
     validate = true,
     checkDependencies = true
 ) {
-    let finalConfig = merge(getDefaultConfig(directory), baseConfig);
-    let finalMeta = merge(getDefaultMeta(directory), baseMeta);
-    let finalCommands = normalizeCommands('roc', baseCommands);
+    let finalConfig = merge(getDefaultConfig(), baseConfig);
+    let finalMeta = merge(getDefaultMeta(), baseMeta);
+    let finalCommands = normalizeCommands(
+        'roc',
+        merge(baseCommands, getDefaultCommands(directory))
+    );
 
     let finalDependencies = {};
     let projectConfig = {};
+    let finalUsedExtensions;
+    let finalProjectExtensions;
+    let pkg = {};
 
     if (fileExists('package.json', directory)) {
-        const packageJson = getPackageJson(directory);
+        pkg = getPackageJson(directory);
 
-        const packages = packageJson.roc && packageJson.roc.packages && packageJson.roc.packages.length ?
-            packageJson.roc.packages :
-            getRocPackageDependencies(packageJson);
+        const packages = pkg.roc && pkg.roc.packages && pkg.roc.packages.length ?
+            pkg.roc.packages :
+            getRocPackageDependencies(pkg);
 
-        const plugins = packageJson.roc && packageJson.roc.plugins && packageJson.roc.plugins.length ?
-            packageJson.roc.plugins :
-            getRocPluginDependencies(packageJson);
+        const plugins = pkg.roc && pkg.roc.plugins && pkg.roc.plugins.length ?
+            pkg.roc.plugins :
+            getRocPluginDependencies(pkg);
 
         const {
+            usedExtensions,
             projectExtensions,
             config,
             meta,
@@ -88,6 +95,8 @@ export default async function buildCompleteConfig(
         finalMeta = merge(finalMeta, meta);
         finalCommands = merge(finalCommands, commands);
         finalDependencies = dependencies;
+        finalUsedExtensions = usedExtensions;
+        finalProjectExtensions = projectExtensions;
 
         setResolveRequest(dependencies.exports, directory);
         initDependencyScope();
@@ -115,9 +124,9 @@ export default async function buildCompleteConfig(
         }
 
         if (isFunction(projectConfig.actions)) {
-            registerAction(projectConfig.actions, 'default', packageJson.name, true);
+            registerAction(projectConfig.actions, 'default', pkg.name, true);
         } else if (isPlainObject(projectConfig.actions)) {
-            registerActions(projectConfig.actions, packageJson.name, true);
+            registerActions(projectConfig.actions, pkg.name, true);
         }
     }
 
@@ -126,7 +135,10 @@ export default async function buildCompleteConfig(
         dependencies: finalDependencies,
         extensionConfig: finalConfig,
         config: merge(finalConfig, projectConfig),
-        meta: finalMeta
+        meta: finalMeta,
+        usedExtensions: finalUsedExtensions,
+        projectExtensions: finalProjectExtensions,
+        pkg
     };
 }
 
@@ -385,8 +397,11 @@ export function generateCommandDocumentation(settings, metaSettings, metaCommand
 function createDescription(param) {
     return `${param.description && param.description + '  ' || ''}` +
         `${param.required && chalk.green('Required') + '  ' || ''}` +
-        `${param.default && chalk.cyan(JSON.stringify(param.default)) + '  ' || ''}` +
-        `${!param.default && param.validation ? chalk.dim('(' + param.validation(null, true).type + ')') : ''}`;
+        `${param.default !== undefined && chalk.cyan(JSON.stringify(param.default)) + '  ' || ''}` +
+        `${param.default === undefined && param.validation ?
+            chalk.dim('(' + param.validation(null, true).type + ')') :
+            ''
+        }`;
 }
 
 function generateCommandDocsHelper(body, header, options, name, compact = true) {
@@ -547,7 +562,7 @@ export function getMappings(documentationObject = []) {
  *
  * @returns {{settings: rocConfigSettings, parseOptions: Object}} - The mapped Roc configuration settings object.
  */
-export function parseOptions(options, mappings, command, commands = {}) {
+export function parseOptions(options, mappings, command) {
     const infoSettings = [];
 
     const { settings, notManaged } = parseSettingsOptions(options, mappings);
@@ -558,7 +573,7 @@ export function parseOptions(options, mappings, command, commands = {}) {
         infoOptions,
         parsedOptions,
         finalNotManaged
-    } = parseCommandOptions(commands[command], notManaged);
+    } = parseCommandOptions(command, notManaged);
 
     const defaultOptions = ['help', 'config', 'verbose', 'directory', 'version'];
     const defaultOptionsShort = ['h', 'c', 'V', 'd', 'v'];

@@ -74,7 +74,16 @@ export function runCli({
         dirPath,
         applicationConfigPath,
         true
-    ).then(({ extensionConfig, config: configObject, meta: metaObject, dependencies, commands: completeCommands }) => {
+    ).then(({
+        extensionConfig,
+        config: configObject,
+        meta: metaObject,
+        dependencies,
+        commands: completeCommands,
+        usedExtensions,
+        projectExtensions,
+        pkg
+    }) => {
         // If we have no command we will display some help information about all possible commands
         if (!groupOrCommand) {
             return console.log(
@@ -168,7 +177,7 @@ export function runCli({
             // Run the command
             return commands[command].command({
                 verbose: verboseMode,
-                directory: dirPath,
+                directory: dirPath || process.cwd(),
                 info,
                 configObject,
                 metaObject,
@@ -179,7 +188,10 @@ export function runCli({
                 actions: getActions(),
                 // TODO Document this
                 dependencies,
-                command: completeCommands
+                commands: completeCommands,
+                usedExtensions,
+                projectExtensions,
+                pkg
             });
         }
     });
