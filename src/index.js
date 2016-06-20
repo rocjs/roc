@@ -35,3 +35,5 @@ export { getResolveRequest } from './cli/manage-resolve-request';
 export generateDependencies from './require/helpers/generate-dependencies';
 
 export generateDocs from './documentation/generate-docs';
+
+export initLog from './logging';
