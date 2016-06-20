@@ -23,6 +23,8 @@ import manageCommands from './commands';
 import manageConfig from './config';
 import { validateMightThrow } from '../../validation';
 
+const pkg = require('../../../package.json');
+
 export function manageDevExports(initialState) {
     initialState.usedExtensions.forEach((name) =>
         getDevExports(name) && setDependencies(name, { exports: getDevExports(name) }));
@@ -146,10 +148,14 @@ function init(roc, state) {
 function checkRequired(roc, state) {
     if (roc.required && state.checkRequired) {
         for (const dependency of Object.keys(roc.required)) {
-            const required = state.usedExtensions.find((used) => used.name === dependency);
+            // Add roc to the usedExtensions to be able to require on that as well
+            const required = [
+                {name: 'roc', version: pkg.version },
+                ...state.usedExtensions
+            ].find((used) => used.name === dependency);
             if (!required) {
                 throw new ExtensionError(
-                    'Could not find required dependency.' +
+                    'Could not find required dependency. ' +
                     `Needs ${dependency}@${roc.required[dependency]}`,
                     roc.name,
                     roc.version
@@ -159,7 +165,7 @@ function checkRequired(roc, state) {
             if (required.version && !semver.satisfies(required.version, roc.required[dependency])) {
                 throw new ExtensionError(
                     'Current dependency version does not satisfy required version.\n' +
-                    `Needs ${dependency}@${roc.required[dependency]}`,
+                    `Needs ${dependency}@${roc.required[dependency]} and current version is ${required.version}`,
                     roc.name,
                     roc.version
                 );
