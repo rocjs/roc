@@ -1,4 +1,4 @@
-import { green, red } from 'chalk';
+import { green, red, underline } from 'chalk';
 import { isPlainObject, difference, isFunction } from 'lodash';
 
 import log from '../log/default/large';
@@ -15,6 +15,7 @@ import { setResolveRequest, getResolveRequest } from '../require/manageResolveRe
 import patchRequire from '../require/patchRequire';
 import verifyInstalledDependencies from '../require/verifyInstalledDependencies';
 import generateTable from '../documentation/generateTable';
+import verifyDependencies from '../dependencies/verifyDependencies';
 
 import buildExtensionTree from './extensions/buildExtensionTree';
 import { normalizeCommands } from './extensions/helpers/processCommands';
@@ -90,8 +91,9 @@ export default async function buildContext(
         finalUsedExtensions = usedExtensions;
         finalProjectExtensions = projectExtensions;
 
+        verifyDependencies(pkg, dependencies.exports);
         setResolveRequest(dependencies.exports, directory);
-        initDependencyScope();
+        patchRequire(getResolveRequest('Node'));
 
         if (projectExtensions.length && verbose) {
             log.info(
@@ -177,10 +179,6 @@ async function verifyProjectDependencies(directory, required) {
             'Missing dependencies'
         );
     }
-}
-
-function initDependencyScope() {
-    patchRequire(getResolveRequest('Node'));
 }
 
 function validateConfigurationStructure(config, applicationConfig) {
