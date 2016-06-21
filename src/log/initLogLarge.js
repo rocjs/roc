@@ -29,9 +29,9 @@ function logger(name, version) {
             const title = isString(args[1]) ? args[1] : args[2];
             const error = isString(args[1]) ? args[2] : args[1];
 
-            const _log = console[level];
+            const log = console[level];
 
-            _log(
+            log(
     `${labels[level](label, title)}
 
 ${redent(message, 2)}${getError(error)}

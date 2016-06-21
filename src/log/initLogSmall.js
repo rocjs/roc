@@ -21,16 +21,19 @@ function logger(level, color) {
     }
 
     return (message, error) => {
-        const _log = console[level];
+        const log = console[level];
 
-        _log(chalk[color](message));
+        log(chalk[color](message));
+        printError(error, log);
 
         if (level === 'error') {
-            if (isVerbose()) {
-                _log('\n', (error && (isVerbose() ? error.stack : error.message)));
-            }
-
             process.exit(1); // eslint-disable-line
         }
     };
+}
+
+function printError(error, log) {
+    if (error && error.message) {
+        return log('\n' + (isVerbose() ? error.stack : error.message));
+    }
 }
