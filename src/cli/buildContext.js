@@ -1,3 +1,4 @@
+import { green, red } from 'chalk';
 import { isPlainObject, difference, isFunction } from 'lodash';
 
 import log from '../log/default/large';
@@ -13,6 +14,7 @@ import { registerAction, registerActions } from '../hooks/manageActions';
 import { setResolveRequest, getResolveRequest } from '../require/manageResolveRequest';
 import patchRequire from '../require/patchRequire';
 import verifyInstalledDependencies from '../require/verifyInstalledDependencies';
+import generateTable from '../documentation/generateTable';
 
 import buildExtensionTree from './extensions/buildExtensionTree';
 import { normalizeCommands } from './extensions/helpers/processCommands';
@@ -112,7 +114,6 @@ export default async function buildContext(
                         validationFeedback,
                         'Configuration'
                     );
-                    console.log(validationFeedback);
                     /* eslint-disable no-process-exit */
                     process.exit(1);
                     /* eslint-enable */
@@ -142,14 +143,49 @@ export default async function buildContext(
 async function verifyProjectDependencies(directory, required) {
     const mismatches = await verifyInstalledDependencies(directory, required);
     if (mismatches.length > 0) {
-        console.log('Some required dependencies was not found!');
-        // TODO Generate a small nice little table!
-        mismatches.forEach((mismatch) => {
-            console.log(JSON.stringify(mismatch, null, 2));
-        });
-        /* eslint-disable no-process-exit */
-        process.exit(1);
-        /* eslint-enable */
+        const header = {
+            name: {
+                name: 'Dependency'
+            },
+            current: {
+                name: 'Installed version',
+                renderer: (input) => {
+                    if (input) {
+                        return input;
+                    }
+
+                    return red('Not installed');
+                }
+            },
+            requested: {
+                name: 'Requested version'
+            },
+            extension: {
+                name: 'Extension',
+                renderer: (input) => input.name
+            },
+            inPackageJson: {
+                name: 'In package.json',
+                renderer: (input) => {
+                    if (input) {
+                        return green('Yes') + ` - ${input}`;
+                    }
+
+                    return red('No');
+                }
+            }
+        };
+
+        const body = [{
+            objects: mismatches,
+            name: 'Some required dependencies was not found!',
+            level: 0
+        }];
+
+        log.error(
+            generateTable(body, header),
+            'Missing dependencies'
+        );
     }
 }
 

@@ -29,8 +29,12 @@ export default function verifyInstalledDependencies(directory, dependencies = {}
                     mismatches.push({
                         name: name,
                         current: installedVersion,
-                        requested: requested,
-                        inPackageJson: !!current
+                        requested: requested.version,
+                        extension: {
+                            name: requested.extension,
+                            path: requested.context
+                        },
+                        inPackageJson: current
                     });
                 }
             });
