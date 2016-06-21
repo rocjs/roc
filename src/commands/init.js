@@ -6,8 +6,7 @@ import replace from 'replace';
 import chalk from 'chalk';
 
 import { get, getVersions } from './helpers/github';
-import { validRocProject } from '../helpers/valid-roc-project';
-import { error, warning, info, ok } from '../helpers/style';
+import validRocProject from '../helpers/validRocProject';
 import { getAbsolutePath } from '../helpers';
 import unzip from './helpers/unzip';
 
@@ -85,7 +84,7 @@ function getTemplate(template) {
     } else if (template.indexOf('/') === -1) {
         const selectedTemplate = templates.find((elem) => elem.identifier === template);
         if (!selectedTemplate) {
-            console.log(error('Invalid template name given.'));
+            console.log(chalk.red('Invalid template name given.'));
             /* eslint-disable no-process-exit */
             process.exit(1);
             /* eslint-enable */
@@ -115,10 +114,10 @@ function fetchTemplate(toFetch, selectVersion, directory, list) {
 
             if (!selectedVersion && selectVersion) {
                 console.log(
-                    warning(`Selected template version not found, using ${chalk.bold(actualVersion)}`)
+                    chalk.yellow(`Selected template version not found, using ${chalk.bold(actualVersion)}`)
                 );
             } else if (!selectedVersion) {
-                console.log(info(`Using ${chalk.bold(actualVersion)} as template version`));
+                console.log(chalk.cyan(`Using ${chalk.bold(actualVersion)} as template version`));
             }
 
             return get(toFetch, actualVersion);
@@ -128,7 +127,7 @@ function fetchTemplate(toFetch, selectVersion, directory, list) {
         .then((dirPath) => {
             if (!validRocProject(path.join(dirPath, 'template'))) {
                 /* eslint-disable no-process-exit */
-                console.log(error('Seems like this is not a Roc template.'));
+                console.log(chalk.red('Seems like this is not a Roc template.'));
                 process.exit(1);
                 /* eslint-enable */
             } else {
@@ -144,13 +143,13 @@ function fetchTemplate(toFetch, selectVersion, directory, list) {
                 console.log(`\nInstalling template dependencies… ` +
                     `${chalk.dim('(If this fails you can try to run npm install directly)')}`);
                 return npmInstall(directory).then(() => {
-                    console.log(ok('\nSetup completed!\n'));
+                    console.log(chalk.green('\nSetup completed!\n'));
                     showCompletionMessage(dirPath);
                 });
             });
         })
         .catch((err) => {
-            console.log(error('\nAn error occured during init!\n'));
+            console.log(chalk.red('\nAn error occured during init!\n'));
             console.error(err.message);
             /* eslint-disable no-process-exit */
             process.exit(1);
@@ -162,7 +161,7 @@ function getPrompt(dirPath) {
     try {
         return require(path.join(dirPath, 'roc.setup.js')).prompt;
     } catch (err) {
-        return require('./helpers/default-prompt').defaultPrompt;
+        return require('./helpers/defaultPrompt').defaultPrompt;
     }
 }
 
@@ -265,7 +264,7 @@ function checkFolder(force = false, directoryName = '', directory = '') {
         fs.mkdir(directoryPath, (err) => {
             if (err) {
                 console.log(
-                    warning(`Found a folder named ${chalk.underline(directoryPath)}, will try to use it.`)
+                    chalk.yellow(`Found a folder named ${chalk.underline(directoryPath)}, will try to use it.`)
                     , '\n');
             }
 
@@ -278,7 +277,7 @@ function checkFolder(force = false, directoryName = '', directory = '') {
                         name: 'Create new folder',
                         value: 'new'
                     }, {
-                        name: 'Run anyway ' + warning('Warning: Some files might be overwritten.'),
+                        name: 'Run anyway ' + chalk.yellow('Warning: Some files might be overwritten.'),
                         value: 'force'
                     }, {
                         name: 'Abort',
@@ -311,7 +310,7 @@ function askForDirectory(directory, resolve) {
         const directoryPath = getAbsolutePath(name, directory);
         fs.mkdir(directoryPath, (err) => {
             if (err) {
-                console.log(warning('The directory did already exists or was not empty.'), '\n');
+                console.log(chalk.yellow('The directory did already exists or was not empty.'), '\n');
                 return askForDirectory(resolve);
             }
 

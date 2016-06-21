@@ -1,39 +1,45 @@
 export {
-    merge,
     getConfig,
-    appendConfig,
+    appendConfig
+} from './configuration/manageConfig';
+
+export {
     getSettings,
     appendSettings
-} from './configuration';
+} from './configuration/manageSettings';
 
-export { runCli, initCli } from './cli';
+export merge from './helpers/merge';
 
-export { validate } from './validation';
+export runCli from './cli/runCli';
+export initCli from './cli/initCli';
 
-export { execute, executeSync } from './cli/execute';
+export validateSettings from './validation/validateSettingsWrapper';
+
+export execute from './execute';
+export executeSync from './execute/executeSync';
 
 export { getAbsolutePath, fileExists } from './helpers';
 
-export { defaultPrompt } from './commands/helpers/default-prompt';
+export { defaultPrompt } from './commands/helpers/defaultPrompt';
 
-export {
-    runHook,
-    runHookDirectly,
-    registerHooks
-} from './hooks';
+export { registerHooks } from './hooks/manageHooks';
+
+export runHook from './hooks/runHook';
+
+export runHookDirectly from './hooks/runHookDirectly';
 
 export {
     registerAction,
     registerActions,
     removeActions
-} from './hooks/actions';
+} from './hooks/manageActions';
 
-export getConfiguration from './cli/get-configuration';
+export getConfiguration from './cli/getConfiguration';
 
-export { getResolveRequest } from './cli/manage-resolve-request';
+export { getResolveRequest } from './require/manageResolveRequest';
 
-export generateDependencies from './require/helpers/generate-dependencies';
+export generateDependencies from './require/utils/createDependencies';
 
-export generateDocs from './documentation/generate-docs';
+export generateDocs from './documentation/markdown/generateDocumentation';
 
-export initLog from './logging';
+export initLog from './log';
