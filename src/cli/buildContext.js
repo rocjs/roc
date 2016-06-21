@@ -107,17 +107,7 @@ export default async function buildContext(
         // Check for a mismatch between application configuration and packages.
         if (validate) {
             if (Object.keys(projectConfig).length) {
-                const validationFeedback = validateConfigurationStructure(finalConfig, projectConfig);
-                if (validationFeedback) {
-                    // FIXME Revert this to before
-                    log.warn(
-                        validationFeedback,
-                        'Configuration'
-                    );
-                    /* eslint-disable no-process-exit */
-                    process.exit(1);
-                    /* eslint-enable */
-                }
+                validateConfigurationStructure(finalConfig, projectConfig);
             }
         }
 
@@ -212,7 +202,10 @@ function validateConfigurationStructure(config, applicationConfig) {
     const diff = difference(getKeys(applicationConfig), keys);
 
     if (diff.length > 0) {
-        return 'There was a mismatch in the application configuration structure, make sure this is correct.\n' +
-            getSuggestions(diff, keys);
+        log.warn(
+            'There was a mismatch in the application configuration structure, make sure this is correct.\n' +
+                getSuggestions(diff, keys),
+            'Configuration'
+        );
     }
 }
