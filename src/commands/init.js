@@ -5,9 +5,11 @@ import inquirer from 'inquirer';
 import replace from 'replace';
 import chalk from 'chalk';
 
-import { get, getVersions } from './helpers/github';
+import log from '../log/default/small';
 import validRocProject from '../helpers/validRocProject';
 import { getAbsolutePath } from '../helpers';
+
+import { get, getVersions } from './helpers/github';
 import unzip from './helpers/unzip';
 
 /* This should be fetched from a server!
@@ -67,11 +69,9 @@ function getTemplateVersion(toFetch, list) {
             versions.push({name: 'master'});
 
             if (list) {
-                console.log('The available versions are:');
-                console.log(Object.keys(versions).map((index) => ` ${versions[index].name}`).join('\n'));
-                /* eslint-disable no-process-exit */
-                process.exit(0);
-                /* eslint-enable */
+                log.norm('The available versions are:');
+                log.norm(Object.keys(versions).map((index) => ` ${versions[index].name}`).join('\n'));
+                process.exit(0); // eslint-disable-line
             }
 
             return Promise.resolve(versions);
@@ -84,10 +84,7 @@ function getTemplate(template) {
     } else if (template.indexOf('/') === -1) {
         const selectedTemplate = templates.find((elem) => elem.identifier === template);
         if (!selectedTemplate) {
-            console.log(chalk.red('Invalid template name given.'));
-            /* eslint-disable no-process-exit */
-            process.exit(1);
-            /* eslint-enable */
+            log.error('Invalid template name given.');
         }
 
         return selectedTemplate.repo;
@@ -113,11 +110,9 @@ function fetchTemplate(toFetch, selectVersion, directory, list) {
                 'master';
 
             if (!selectedVersion && selectVersion) {
-                console.log(
-                    chalk.yellow(`Selected template version not found, using ${chalk.bold(actualVersion)}`)
-                );
+                log.warn(`Selected template version not found, using ${chalk.bold(actualVersion)}`);
             } else if (!selectedVersion) {
-                console.log(chalk.cyan(`Using ${chalk.bold(actualVersion)} as template version`));
+                log.info(`Using ${chalk.bold(actualVersion)} as template version`);
             }
 
             return get(toFetch, actualVersion);
@@ -126,12 +121,9 @@ function fetchTemplate(toFetch, selectVersion, directory, list) {
     return templateFetcher
         .then((dirPath) => {
             if (!validRocProject(path.join(dirPath, 'template'))) {
-                /* eslint-disable no-process-exit */
-                console.log(chalk.red('Seems like this is not a Roc template.'));
-                process.exit(1);
-                /* eslint-enable */
+                log.error('Seems like this is not a Roc template.');
             } else {
-                console.log('\nInstalling template setup dependencies…');
+                log.norm('\nInstalling template setup dependencies…');
                 return npmInstall(dirPath);
             }
         })
@@ -140,20 +132,16 @@ function fetchTemplate(toFetch, selectVersion, directory, list) {
                 replaceTemplatedValues(answers, dirPath);
                 configureFiles(dirPath, directory);
 
-                console.log(`\nInstalling template dependencies… ` +
+                log.norm(`\nInstalling template dependencies… ` +
                     `${chalk.dim('(If this fails you can try to run npm install directly)')}`);
                 return npmInstall(directory).then(() => {
-                    console.log(chalk.green('\nSetup completed!\n'));
+                    log.done('\nSetup completed!\n');
                     showCompletionMessage(dirPath);
                 });
             });
         })
         .catch((err) => {
-            console.log(chalk.red('\nAn error occured during init!\n'));
-            console.error(err.message);
-            /* eslint-disable no-process-exit */
-            process.exit(1);
-            /* eslint-enable */
+            log.error('An error occured during init!', err);
         });
 }
 
@@ -167,7 +155,7 @@ function getPrompt(dirPath) {
 
 function showCompletionMessage(dirPath) {
     try {
-        console.log(require(path.join(dirPath, 'roc.setup.js')).completionMessage);
+        log.norm(require(path.join(dirPath, 'roc.setup.js')).completionMessage);
     } catch (err) {
         // Do nothing
     }
@@ -203,7 +191,7 @@ function replaceTemplatedValuesInDirectory(answers, dir) {
                 const toReplace = answers[match[1]];
 
                 if (!toReplace) {
-                    console.log(`Could not find a value for the template value: {{ key }}`);
+                    log.warn(`Could not find a value for the template value: {{ ${match[1]} }}`);
                 } else {
                     const newFilename = file.replace(matchTemplate, toReplace);
                     fs.renameSync(currentPath, join(dir, newFilename));
@@ -262,10 +250,8 @@ function checkFolder(force = false, directoryName = '', directory = '') {
     return new Promise((resolve) => {
         const directoryPath = getAbsolutePath(path.join(directory, directoryName));
         fs.mkdir(directoryPath, (err) => {
-            if (err) {
-                console.log(
-                    chalk.yellow(`Found a folder named ${chalk.underline(directoryPath)}, will try to use it.`)
-                    , '\n');
+            if (err && directoryName) {
+                log.warn(`Found a folder named ${chalk.underline(directoryPath)}, will try to use it.\n`);
             }
 
             if (!force && fs.readdirSync(directoryPath).length > 0) {
@@ -285,9 +271,7 @@ function checkFolder(force = false, directoryName = '', directory = '') {
                     }]
                 }], ({ selection }) => {
                     if (selection === 'abort') {
-                        /* eslint-disable no-process-exit */
-                        process.exit(1);
-                        /* eslint-enable */
+                        process.exit(0); // eslint-disable-line
                     } else if (selection === 'new') {
                         askForDirectory(directory, resolve);
                     } else if (selection === 'force') {
@@ -310,7 +294,7 @@ function askForDirectory(directory, resolve) {
         const directoryPath = getAbsolutePath(name, directory);
         fs.mkdir(directoryPath, (err) => {
             if (err) {
-                console.log(chalk.yellow('The directory did already exists or was not empty.'), '\n');
+                log.warn('The directory did already exists or was not empty.\n');
                 return askForDirectory(resolve);
             }
 
