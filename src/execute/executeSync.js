@@ -2,6 +2,8 @@ import { join } from 'path';
 
 import { sync } from 'cross-spawn';
 
+import log from '../log/default/small';
+
 import getParts from './helpers/getParts';
 
 /**
@@ -17,13 +19,7 @@ export default function executeSync(command) {
     const parallelCommands = command.split(/ & /);
     parallelCommands.forEach((syncCommand) => {
         const syncCommands = syncCommand.split(/ && /);
-        const status = runCommandSync(syncCommands);
-
-        if (status) {
-            /* eslint-disable no-process-exit */
-            process.exit(status);
-            /* eslint-enable */
-        }
+        runCommandSync(syncCommands);
     });
 }
 
@@ -45,10 +41,14 @@ function runCommandSync(syncCommands, path = process.cwd()) {
 
         const { status } = sync(cmd, args, { stdio: 'inherit', cwd: path });
 
-        if (status) {
-            return status;
+        if (status !== 0) {
+            const error = new Error(`The following command returned exit status [${status}]: ${cmd} ${args.join(' ')}`);
+            error.command = cmd;
+            error.arguments = args;
+            error.exitStatus = status;
+            throw error;
         }
 
-        return runCommandSync(syncCommands, path);
+        runCommandSync(syncCommands, path);
     }
 }

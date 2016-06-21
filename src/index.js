@@ -17,6 +17,7 @@ export validateSettings from './validation/validateSettingsWrapper';
 
 export execute from './execute';
 export executeSync from './execute/executeSync';
+export executeSyncExit from './execute/executeSyncExit';
 
 export { getAbsolutePath, fileExists } from './helpers';
 
