@@ -1,1 +1,1 @@
-module.exports = require('../lib/log/default/large').default;
+module.exports = require('../../lib/log/default/large').default;
