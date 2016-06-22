@@ -69,8 +69,8 @@ function getTemplateVersion(toFetch, list) {
             versions.push({name: 'master'});
 
             if (list) {
-                log.norm('The available versions are:');
-                log.norm(Object.keys(versions).map((index) => ` ${versions[index].name}`).join('\n'));
+                log.info('The available versions are:');
+                log.info(Object.keys(versions).map((index) => ` ${versions[index].name}`).join('\n'));
                 process.exit(0); // eslint-disable-line
             }
 
@@ -112,7 +112,7 @@ function fetchTemplate(toFetch, selectVersion, directory, list) {
             if (!selectedVersion && selectVersion) {
                 log.warn(`Selected template version not found, using ${chalk.bold(actualVersion)}`);
             } else if (!selectedVersion) {
-                log.info(`Using ${chalk.bold(actualVersion)} as template version`);
+                log.note(`Using ${chalk.bold(actualVersion)} as template version`);
             }
 
             return get(toFetch, actualVersion);
@@ -123,7 +123,7 @@ function fetchTemplate(toFetch, selectVersion, directory, list) {
             if (!validRocProject(path.join(dirPath, 'template'))) {
                 log.error('Seems like this is not a Roc template.');
             } else {
-                log.norm('\nInstalling template setup dependencies…');
+                log.info('\nInstalling template setup dependencies…');
                 return npmInstall(dirPath);
             }
         })
@@ -132,7 +132,7 @@ function fetchTemplate(toFetch, selectVersion, directory, list) {
                 replaceTemplatedValues(answers, dirPath);
                 configureFiles(dirPath, directory);
 
-                log.norm(`\nInstalling template dependencies… ` +
+                log.info(`\nInstalling template dependencies… ` +
                     `${chalk.dim('(If this fails you can try to run npm install directly)')}`);
                 return npmInstall(directory).then(() => {
                     log.done('\nSetup completed!\n');
@@ -155,7 +155,7 @@ function getPrompt(dirPath) {
 
 function showCompletionMessage(dirPath) {
     try {
-        log.norm(require(path.join(dirPath, 'roc.setup.js')).completionMessage);
+        log.info(require(path.join(dirPath, 'roc.setup.js')).completionMessage);
     } catch (err) {
         // Do nothing
     }

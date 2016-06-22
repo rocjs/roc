@@ -4,8 +4,8 @@ import { isVerbose } from '../helpers/manageVerbose';
 
 export default function initLogSmall() {
     return {
-        norm: logger('log', 'white'),
-        info: logger('info', 'cyan'),
+        info: logger('log'),
+        note: logger('info', 'cyan'),
         warn: logger('warn', 'yellow'),
         error: logger('error', 'red'),
         ok: logger('log', 'green'),
@@ -21,9 +21,9 @@ function logger(level, color) {
     }
 
     return (message, error) => {
-        const log = console[level];
+        const log = console[level]; // eslint-disable-line
 
-        log(chalk[color](message));
+        log(color ? chalk[color](message) : message);
         printError(error, log);
 
         if (level === 'error') {

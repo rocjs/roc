@@ -9,6 +9,7 @@ import * as labels from './helpers/labels';
 export default function initLogLarge(name, version) {
     return {
         info: logger(name, version)('info', 'Info'),
+        note: logger(name, version)('info', 'Notice'),
         warn: logger(name, version)('warn', 'Warning'),
         error: logger(name, version)('error', 'Error'),
         ok: logger(name, version)('log', 'Ok'),
