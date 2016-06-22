@@ -2,7 +2,7 @@ import { underline } from 'chalk';
 
 import log from '../log/default/large';
 
-export default function verifyDependencies({ dependencies, devDependencies }, exports) {
+export default function verifyDependencies({ dependencies, devDependencies }, exports = {}) {
     const matches = [];
     const allDependencies = {
         ...dependencies,

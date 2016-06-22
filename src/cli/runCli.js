@@ -1,7 +1,7 @@
 import minimist from 'minimist';
 import { isString } from 'lodash';
 
-import { execute } from '../execute';
+import execute from '../execute';
 import getAbsolutePath from '../helpers/getAbsolutePath';
 import validateSettingsWrapper from '../validation/validateSettingsWrapper';
 import { appendConfig } from '../configuration/manageConfig';
