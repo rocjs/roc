@@ -1,4 +1,7 @@
 import { getAbsolutePath } from '../helpers';
+import runHook from '../hooks/runHook';
+import { appendSettings } from '../configuration/manageSettings';
+
 import initContext from './initContext';
 
 /**
@@ -21,6 +24,9 @@ export default function getContext(dirPath, projectConfigPath) {
     })
     // FIXME Temp
     .then((context) => {
+        runHook('roc')('update-settings', () => context.config.settings)(
+            (newSettings) => context.config.settings = appendSettings(newSettings, context.config)
+        );
         return {
             ...context,
             configObject: context.config,

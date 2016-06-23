@@ -23,9 +23,9 @@ global.roc.config = global.roc.config || undefined;
  *
  * @returns {rocConfig} - The application configuration object.
  */
-export function getConfig(fail = true) {
+export function getConfig(fail = true, state = global.roc.config) {
     // Try to load the configuration if we haven't at this point.
-    if (fail && global.roc.config === undefined && !process.env.ROC_CONFIG_SETTINGS) {
+    if (fail && state === undefined && !process.env.ROC_CONFIG_SETTINGS) {
         log.error(
             'It seems that you are launching a Roc application without using the Roc CLI.\n' +
             'Please use the CLI or add the Roc runtime to your application.\n\n' +
@@ -39,7 +39,7 @@ export function getConfig(fail = true) {
     if (onceSettings && process.env.ROC_CONFIG_SETTINGS) {
         onceSettings = false;
 
-        if (global.roc.config && global.roc.config.settings && Object.keys(global.roc.config.settings).length > 0 &&
+        if (state && state.settings && Object.keys(state.settings).length > 0 &&
             process.env.ROC_CONFIG_SETTINGS
         ) {
             log.info(
@@ -53,7 +53,7 @@ export function getConfig(fail = true) {
         appendSettings(JSON.parse(process.env.ROC_CONFIG_SETTINGS));
     }
 
-    return global.roc.config;
+    return state;
 }
 
 /**
@@ -71,6 +71,7 @@ export function appendConfig(config) {
     return getConfig();
 }
 
-export function setConfig(newConfig) {
-    global.roc.config = newConfig;
+export function setConfig(newConfig, state = global.roc.config) {
+    state = newConfig;
+    return state;
 }

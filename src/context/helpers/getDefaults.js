@@ -3,6 +3,9 @@ import settingsToText from '../../documentation/text/settingsToText';
 import generateDocumentation from '../../documentation/markdown/generateDocumentation';
 import validRocProject from '../../helpers/validRocProject';
 import { normalizeCommands } from '../extensions/helpers/processCommands';
+import { registerHooks } from '../../hooks/manageHooks';
+import isObject from '../../validation/validators/isObject';
+import isFunction from '../../validation/validators/isFunction';
 
 export default function getDefaults(context, name = 'roc', directory) {
     const newContext = merge(context, {
@@ -14,7 +17,24 @@ export default function getDefaults(context, name = 'roc', directory) {
 
     newContext.commands = normalizeCommands(name, newContext.commands);
 
+    newContext.hooks = registerHooks(getDefaultHooks(), 'roc', newContext.hooks);
+
     return newContext;
+}
+
+function getDefaultHooks() {
+    return {
+        'update-settings': {
+            description: 'Expected to return new settings that should be merged with the existing ones.',
+            arguments: [{
+                name: 'getSettings',
+                validation: isFunction,
+                description: 'A function that returns the settings after the context has been initialized.'
+            }],
+            returns: isObject(),
+            hasCallback: true
+        }
+    };
 }
 
 function getDefaultCommands(directory, override = false) {

@@ -10,7 +10,7 @@ import merge from '../helpers/merge';
 import buildDocumentationObject from '../documentation/buildDocumentationObject';
 import getSuggestions from '../helpers/getSuggestions';
 import { setVerbose } from '../helpers/manageVerbose';
-import runHookDirectly from '../hooks/runHookDirectly';
+import runHook from '../hooks/runHook';
 import checkGroup from './commands/helpers/checkGroup';
 import generateAliases from './commands/helpers/generateAliases';
 import addOverrides from '../configuration/addOverrides';
@@ -150,8 +150,8 @@ export default function runCli({
         appendConfig(context.config);
 
         // Run hook to make it possible for extensions to update the settings before anything other uses them
-        runHookDirectly({extension: 'roc', name: 'update-settings'}, [context.config.settings],
-            (newSettings) => appendSettings(newSettings)
+        runHook('roc')('update-settings', () => context.config.settings)(
+            (newSettings) => context.config.settings = appendSettings(newSettings, context.config)
         );
 
         if (invoke) {

@@ -11,8 +11,8 @@ import { getConfig, setConfig } from './manageConfig';
  *
  * @returns {rocSettings|Object} - The application settings object.
  */
-export function getSettings(key) {
-    const settings = getConfig().settings;
+export function getSettings(key, state) {
+    const settings = getConfig(state).settings;
     return key ? settings[key] : settings;
 }
 
@@ -26,7 +26,13 @@ export function getSettings(key) {
  *
  * @returns {rocSettings} - The settings object.
  */
-export function appendSettings(settingsObject) {
-    setConfig(merge(getConfig(), { settings: settingsObject }));
-    return getSettings();
+export function appendSettings(settingsObject, state) {
+    setConfig(
+        merge(
+            getConfig(true, state),
+            { settings: settingsObject }
+        ),
+        state
+    );
+    return getSettings(undefined, state);
 }
