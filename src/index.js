@@ -44,3 +44,5 @@ export generateDependencies from './require/utils/createDependencies';
 export generateDocs from './documentation/markdown/generateDocumentation';
 
 export initLog from './log';
+
+export initRuntime from './runtime';
