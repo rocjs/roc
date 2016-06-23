@@ -16,7 +16,9 @@ export default function initCli(version, name) {
     require('loud-rejection')();
 
     return runCli({
-        version: version,
-        name: name
+        info: {
+            version: version,
+            name: name
+        }
     });
 }

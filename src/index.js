@@ -35,7 +35,7 @@ export {
     removeActions
 } from './hooks/manageActions';
 
-export getConfiguration from './cli/getConfiguration';
+export getContext from './context/getContext';
 
 export { getResolveRequest } from './require/manageResolveRequest';
 

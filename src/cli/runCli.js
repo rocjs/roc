@@ -10,15 +10,13 @@ import merge from '../helpers/merge';
 import buildDocumentationObject from '../documentation/buildDocumentationObject';
 import getSuggestions from '../helpers/getSuggestions';
 import { setVerbose } from '../helpers/manageVerbose';
-import { getHooks } from '../hooks/manageHooks';
 import runHookDirectly from '../hooks/runHookDirectly';
-import { getActions } from '../hooks/manageActions';
 import checkGroup from './commands/helpers/checkGroup';
 import generateAliases from './commands/helpers/generateAliases';
 import addOverrides from '../configuration/addOverrides';
 import log from '../log/default/large';
+import initContext from '../context/initContext';
 
-import buildContext from './buildContext';
 import generateCommandsDocumentation from './commands/documentation/generateCommandsDocumentation';
 import generateCommandDocumentation from './commands/documentation/generateCommandDocumentation';
 import parseOptions from './commands/parseOptions';
@@ -40,8 +38,6 @@ import getMappings from './commands/getMappings';
  */
 export default function runCli({
     info = { version: 'Unknown', name: 'Unknown' },
-    config: initalConfig,
-    meta: initalMeta,
     commands: initalCommands,
     argv = process.argv,
     invoke = true
@@ -62,40 +58,29 @@ export default function runCli({
     const verboseMode = !!(verbose || V);
     setVerbose(verboseMode);
 
-    // Get the application configuration path
-    const applicationConfigPath = c || config;
+    // Get the project configuration path
+    const projectConfigPath = c || config;
 
     // Get the directory path
     const dirPath = getAbsolutePath(directory || d);
 
-    // Build the complete config object
-    return buildContext(
-        verboseMode,
-        initalConfig,
-        initalMeta,
-        initalCommands,
-        dirPath,
-        applicationConfigPath,
-        true
-    ).then(({
-        extensionConfig,
-        config: configObject,
-        meta: metaObject,
-        dependencies,
-        commands: completeCommands,
-        usedExtensions,
-        projectExtensions,
-        pkg
-    }) => {
+    // Initialize the complete context
+    return initContext({
+        verbose: verboseMode,
+        commands: initalCommands,
+        directory: dirPath,
+        projectConfigPath,
+        name: info.name
+    }).then((context) => {
         // If we have no command we will display some help information about all possible commands
         if (!groupOrCommand) {
             return console.log(
-                generateCommandsDocumentation(completeCommands, info.name)
+                generateCommandsDocumentation(context.commands, info.name)
             );
         }
 
         // Check if we are in a subgroup
-        const result = checkGroup(completeCommands, groupOrCommand, args, info.name);
+        const result = checkGroup(context.commands, groupOrCommand, args, info.name);
         if (!result) {
             return undefined;
         }
@@ -130,7 +115,7 @@ export default function runCli({
         // Show command help information if requested
         // Will ignore application configuration
         if (help || h) {
-            return console.log(generateCommandDocumentation(extensionConfig.settings, metaObject.settings,
+            return console.log(generateCommandDocumentation(context.extensionConfig.settings, context.meta.settings,
                 commands, command, info.name, parents));
         }
 
@@ -141,32 +126,31 @@ export default function runCli({
         if (commands[command] && commands[command].settings) {
             // Get config from application and only parse options that this command cares about.
             const filter = commands[command].settings === true ? [] : commands[command].settings;
-            documentationObject = buildDocumentationObject(configObject.settings, metaObject.settings, filter);
+            documentationObject = buildDocumentationObject(context.config.settings, context.meta.settings, filter);
         }
 
         const { settings, parsedOptions } =
             parseOptions(restOptions, getMappings(documentationObject), commands[command]);
 
-        configObject = merge(configObject, {
+        const configToValidate = merge(context.config, {
             settings
         });
 
         // Validate configuration
         if (commands[command] && commands[command].settings) {
-            validateSettingsWrapper(configObject.settings, metaObject.settings, commands[command].settings);
+            validateSettingsWrapper(configToValidate.settings, context.meta.settings, commands[command].settings);
         }
 
         // Does this after the validation so that things set by the CLI always will have the highest priority
-        configObject = addOverrides(configObject);
-        configObject = merge(configObject, {
+        context.config = merge(addOverrides(context.config), {
             settings
         });
 
         // Set the configuration object
-        appendConfig(configObject);
+        appendConfig(context.config);
 
         // Run hook to make it possible for extensions to update the settings before anything other uses them
-        runHookDirectly({extension: 'roc', name: 'update-settings'}, [configObject.settings],
+        runHookDirectly({extension: 'roc', name: 'update-settings'}, [context.config.settings],
             (newSettings) => appendSettings(newSettings)
         );
 
@@ -182,19 +166,15 @@ export default function runCli({
                 verbose: verboseMode,
                 directory: dirPath || process.cwd(),
                 info,
-                configObject,
-                metaObject,
-                extensionConfig,
                 parsedArguments,
                 parsedOptions,
-                hooks: getHooks(),
-                actions: getActions(),
-                // TODO Document this
-                dependencies,
-                commands: completeCommands,
-                usedExtensions,
-                projectExtensions,
-                pkg
+
+                // Roc Context
+                ...context,
+
+                // FIXME Temp
+                configObject: context.config,
+                metaObject: context.meta
             });
         }
     });

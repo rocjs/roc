@@ -11,9 +11,9 @@ global.roc.actions = global.roc.actions || [];
  * @param {string} extensionName - Name of the extension to register the actions on.
  * @param {boolean} [project=false] - If the actions belongs to the project.
  */
-export function registerActions(actions, extensionName, project = false) {
+export function registerActions(actions, extensionName, state = global.roc.actions, project = false) {
     // Look for the extensionName and only add if not already there
-    const index = global.roc.actions.findIndex(({ name }) => extensionName === name);
+    const index = state.findIndex(({ name }) => extensionName === name);
 
     if (index === -1) {
         let extensionActions = {};
@@ -36,12 +36,14 @@ export function registerActions(actions, extensionName, project = false) {
             };
         });
 
-        global.roc.actions = [].concat(global.roc.actions, {
+        state = [].concat(state, {
             project,
             name: extensionName,
             actions: extensionActions
         });
     }
+
+    return state;
 }
 
 /**
@@ -52,19 +54,19 @@ export function registerActions(actions, extensionName, project = false) {
  * @param {string} extensionName - Name of the extension to register the actions on.
  * @param {boolean} [project=false] - If the action belongs to the project.
  */
-export function registerAction(action, actionName, extensionName, project = false) {
+export function registerAction(action, actionName, extensionName, state = global.roc.actions, project = false) {
     // Look for the extensionName and update if it exists
-    const index = global.roc.actions.findIndex(({ name }) => extensionName === name);
+    const index = state.findIndex(({ name }) => extensionName === name);
 
     if (index !== -1) {
-        global.roc.actions[index].actions = {
-            ...global.roc.actions[index].actions,
+        state[index].actions = {
+            ...state[index].actions,
             [actionName]: {
                 ...createActionHelper(action)
             }
         };
     } else {
-        global.roc.actions.push({
+        state.push({
             project,
             name: extensionName,
             actions: {
@@ -74,6 +76,8 @@ export function registerAction(action, actionName, extensionName, project = fals
             }
         });
     }
+
+    return state;
 }
 
 function createActionHelper(action, extension, hook, description, post) {

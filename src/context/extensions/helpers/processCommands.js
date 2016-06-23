@@ -1,8 +1,8 @@
 import { bold, underline } from 'chalk';
 import { isPlainObject, intersection, get } from 'lodash';
 
-import isCommandGroup from '../../commands/helpers/isCommandGroup';
-import isCommand from '../../commands/helpers/isCommand';
+import isCommandGroup from '../../../cli/commands/helpers/isCommandGroup';
+import isCommand from '../../../cli/commands/helpers/isCommand';
 
 export default function processCommands(name, extensionCommands, stateCommands) {
     return manageCommandCollisions(

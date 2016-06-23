@@ -8,14 +8,7 @@ import semver from 'semver';
 
 import merge from '../../../helpers/merge';
 import { fileExists } from '../../../helpers';
-import { setHooks } from '../../../hooks/manageHooks';
-import { setActions } from '../../../hooks/manageActions';
 import log from '../../../log/default/large';
-import {
-    getDependenciesObject,
-    setDependenciesObject,
-    getDependencies
-} from '../../../dependencies/manageDependencies';
 import ExtensionError from '../helpers/ExtensionError';
 import processRocObject from '../helpers/processRocObject';
 
@@ -29,7 +22,6 @@ export default function getExtensions(type) {
                 const roc = getExtension(extensionPath, directory, type);
 
                 if (roc) {
-                    const previousDependencies = merge({}, getDependenciesObject());
                     try {
                         const nextState = getCompleteExtensionTree(
                             type,
@@ -39,7 +31,7 @@ export default function getExtensions(type) {
                             merge({}, state)
                         );
 
-                        nextState.projectExtensions.push({
+                        nextState.context.projectExtensions.push({
                             name: roc.name,
                             version: roc.version,
                             description: roc.description,
@@ -54,13 +46,6 @@ export default function getExtensions(type) {
                             err
                         );
                     }
-
-                    // Reset Actions & Hooks
-                    setActions(state.actions);
-                    setHooks(state.hooks);
-
-                    // Reset dependencies
-                    setDependenciesObject(previousDependencies);
                 }
                 // Use the previous state
                 return state;
@@ -182,12 +167,12 @@ function getParents(type) {
 }
 
 function checkRequired(roc, state) {
-    if (roc.required && state.checkRequired) {
+    if (roc.required && state.settings.checkRequired) {
         for (const dependency of Object.keys(roc.required)) {
             // Add roc to the usedExtensions to be able to require on that as well
             const required = [
                 {name: 'roc', version: rocPkg.version },
-                ...state.usedExtensions
+                ...state.context.usedExtensions
             ].find((used) => used.name === dependency);
             if (!required) {
                 throw new ExtensionError(
@@ -215,14 +200,15 @@ function checkRequired(roc, state) {
 function init(roc, state) {
     if (roc.init) {
         const result = roc.init({
-            config: state.config,
-            meta: state.meta,
-            extensions: state.usedExtensions,
-            actions: state.actions,
-            hooks: state.hooks,
-            currentDependencies: state.dependencies,
-            currentCommands: state.commands,
-            localDependencies: getDependencies(roc.name)
+            verbose: state.settings.verbose,
+            config: state.context.config,
+            meta: state.context.meta,
+            extensions: state.context.usedExtensions,
+            actions: state.context.actions,
+            hooks: state.context.hooks,
+            currentDependencies: state.context.dependencies,
+            currentCommands: state.context.commands,
+            localDependencies: state.dependencyContext.extensionsDependencies[roc.name]
         });
 
         if (!result || isString(result)) {
@@ -249,7 +235,7 @@ function init(roc, state) {
 
 function addPostInit(roc, state) {
     if (roc.postInit && !alreadyRegistered(roc.name, state)) {
-        state.postInits.push({
+        state.temp.postInits.push({
             postInit: roc.postInit,
             name: roc.name
         });
@@ -259,7 +245,7 @@ function addPostInit(roc, state) {
 }
 
 function alreadyRegistered(name, state) {
-    return state.usedExtensions.find((extension) => extension.name === name);
+    return state.context.usedExtensions.find((extension) => extension.name === name);
 }
 
 function registerExtension(type) {
@@ -274,7 +260,7 @@ function registerExtension(type) {
                 );
             }
         } else {
-            state.usedExtensions.push({
+            state.context.usedExtensions.push({
                 name: roc.name,
                 version: roc.version,
                 description: roc.description,

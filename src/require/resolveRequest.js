@@ -1,14 +1,17 @@
 import resolve from 'resolve';
 
-import { getDependencies, getDependenciesFromPath } from '../dependencies/manageDependencies';
+import { initSetDependencies, initGetDependenciesFromPath } from './manageDependencies';
 
-export default function resolveRequest(exports, directory) {
+export default function resolveRequest(exports, directory, dependencyContext) {
     const log = require('debug')(`roc:require`);
     const contextCache = {};
     const resolveCache = {};
     const pattern = /^([^\/]*)\/?([^\/]*)/;
     const inProject = initInProject(directory);
-    const getCurrentModule = initGetCurrentModule();
+    const getCurrentModule = initGetCurrentModule(
+        initSetDependencies(dependencyContext),
+        initGetDependenciesFromPath(dependencyContext)
+    );
 
     const getContext = (path) => {
         if (!contextCache[path]) {
@@ -74,7 +77,7 @@ function initInProject(directory) {
     };
 }
 
-function initGetCurrentModule() {
+function initGetCurrentModule(getDependencies, getDependenciesFromPath) {
     const pattern = /.*node_modules\/([^\/]*)\/?([^\/]*)/;
     return (path) => {
         const matches = pattern.exec(path);

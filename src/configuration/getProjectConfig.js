@@ -8,18 +8,18 @@ import log from '../log/default/large';
 let onceApp = true;
 
 /**
- * Gets the application configuration by reading a file.
+ * Gets the project configuration by reading a file.
  *
  * Will give a warning if ROC_CONFIG_PATH has been set since that will then be used as the path to get the configuration
  * file, even if one is provided to the function.
  *
  * Reads configuration files in this manner:
  * 1. Environment variable ROC_CONFIG_PATH.
- * 2. Path given as applicationConfigPath.
+ * 2. Path given as projectConfigPath.
  * 3. Default by trying to read "roc.config.js" in the current working directory.
  * 4. Return a empty object along with a warning.
  *
- * @param {string} applicationConfigPath - Path to application configuration file. Can be either relative or absolute.
+ * @param {string} projectConfigPath - Path to application configuration file. Can be either relative or absolute.
  * @param {string} [directory=process.cwd()] - The directory to resolve relative paths to. By default will use the
  *     current working directory.
  * @param {boolean} [verbose=false] - If extra information should be printed.
@@ -27,14 +27,14 @@ let onceApp = true;
  * @returns {object} - The application configuration object.
  * @throws {Error} - When an invalid path override is specified.
  */
-export default function getApplicationConfig(applicationConfigPath, directory = process.cwd(), verbose = false) {
-    if (applicationConfigPath === false) {
+export default function getProjectConfig(projectConfigPath, directory = process.cwd(), verbose = false) {
+    if (projectConfigPath === false) {
         return {};
     }
 
-    const configPath = getAbsolutePath(process.env.ROC_CONFIG_PATH || applicationConfigPath, directory);
+    let configPath = getAbsolutePath(process.env.ROC_CONFIG_PATH || projectConfigPath, directory);
 
-    if (onceApp && applicationConfigPath && process.env.ROC_CONFIG_PATH) {
+    if (onceApp && projectConfigPath && process.env.ROC_CONFIG_PATH) {
         onceApp = false;
         log.warn(
             'You have configured a location for the application configuration file but the ' +
@@ -59,13 +59,13 @@ export default function getApplicationConfig(applicationConfigPath, directory = 
     }
 
     // Return correct project configuration with fallback to empty object
-    const appConfigPath = configPath || getAbsolutePath('roc.config.js', directory);
+    configPath = configPath || getAbsolutePath('roc.config.js', directory);
     try {
-        const config = require(appConfigPath);
+        const config = require(configPath);
 
         if (Object.keys(config).length === 0) {
             log.warn(
-                'The configuration file at ' + chalk.bold(appConfigPath) + ' was empty.',
+                'The configuration file at ' + chalk.bold(configPath) + ' was empty.',
                 'Configuration'
             );
         }
@@ -74,13 +74,13 @@ export default function getApplicationConfig(applicationConfigPath, directory = 
     } catch (err) {
         if (err.constructor === SyntaxError) {
             log.warn(
-                'Something is wrong with the configuration file at ' + chalk.bold(appConfigPath) +
+                'Something is wrong with the configuration file at ' + chalk.bold(configPath) +
                 ' and it will be ignored. Received: ' + chalk.underline(err.message),
                 'Configuration'
             );
         } else if (verbose) {
             log.warn(
-                `Could not find the configuration file at ${chalk.bold(appConfigPath)}.`,
+                `Could not find the configuration file at ${chalk.bold(configPath)}.`,
                 'Configuration'
             );
         }

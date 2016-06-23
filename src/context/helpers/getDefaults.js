@@ -1,8 +1,23 @@
-import settingsToText from '../documentation/text/settingsToText';
-import generateDocumentation from '../documentation/markdown/generateDocumentation';
-import validRocProject from '../helpers/validRocProject';
+import merge from '../../helpers/merge';
+import settingsToText from '../../documentation/text/settingsToText';
+import generateDocumentation from '../../documentation/markdown/generateDocumentation';
+import validRocProject from '../../helpers/validRocProject';
+import { normalizeCommands } from '../extensions/helpers/processCommands';
 
-export function getDefaultCommands(directory, override = false) {
+export default function getDefaults(context, name = 'roc', directory) {
+    const newContext = merge(context, {
+        config: getDefaultConfig(),
+        meta: getDefaultMeta(),
+        // If it is undefined the existing commands will be overwritten.
+        commands: getDefaultCommands(directory) || {}
+    });
+
+    newContext.commands = normalizeCommands(name, newContext.commands);
+
+    return newContext;
+}
+
+function getDefaultCommands(directory, override = false) {
     if (override || validRocProject(directory)) {
         return {
             meta: {
@@ -47,7 +62,7 @@ export function getDefaultCommands(directory, override = false) {
     }
 }
 
-export function getDefaultConfig() {
+function getDefaultConfig() {
     return {
         settings: {},
 
@@ -55,6 +70,6 @@ export function getDefaultConfig() {
     };
 }
 
-export function getDefaultMeta() {
+function getDefaultMeta() {
     return {};
 }

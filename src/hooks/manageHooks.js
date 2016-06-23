@@ -8,11 +8,13 @@ global.roc.hooks = global.roc.hooks || {};
  * @param {Object} hooks - Object with hooks.
  * @param {string} name - Name of the extension that the hooks belongs to.
  */
-export function registerHooks(hooks, name) {
-    global.roc.hooks = {
-        ...global.roc.hooks,
+export function registerHooks(hooks, name, state = global.roc.hooks) {
+    state = {
+        ...state,
         [name]: hooks
     };
+
+    return state;
 }
 
 /**

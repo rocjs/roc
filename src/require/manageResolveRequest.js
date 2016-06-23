@@ -6,8 +6,8 @@ import resolveRequest from './resolveRequest';
 global.roc = global.roc || {};
 global.roc.resolveRequest = global.roc.resolveRequest || undefined;
 
-export function setResolveRequest(exports, directory) {
-    global.roc.resolveRequest = resolveRequest(exports, directory);
+export function setResolveRequest(exports, directory, dependencyContext) {
+    global.roc.resolveRequest = resolveRequest(exports, directory, dependencyContext);
 }
 
 export function getResolveRequest(identifier) {

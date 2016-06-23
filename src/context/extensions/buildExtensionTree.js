@@ -1,6 +1,3 @@
-import { getHooks } from '../../hooks/manageHooks';
-import { getActions } from '../../hooks/manageActions';
-
 import getExtensions from './steps/getExtensions';
 import processDevExports from './steps/processDevExports';
 import runPostInits from './steps/runPostInits';
@@ -23,9 +20,7 @@ import runPostInits from './steps/runPostInits';
  * @property {Object[]} projectExtensions - The extensions that was loaded successfully from the project.
  * @property {Object[]} usedExtensions - All of the loaded extensions.
  */
-export default function buildExtensionTree(
-    packages, plugins, baseConfig, baseMeta, baseCommands, directory, verbose, checkRequired
-) {
+export default function buildExtensionTree(context, packages, plugins, directory, verbose, checkRequired) {
     return [
         getExtensions('package')(packages, directory),
         getExtensions('plugin')(plugins, directory),
@@ -35,16 +30,21 @@ export default function buildExtensionTree(
         (state, process) => process(state),
         // Initial state
         {
-            checkRequired,
-            verbose,
-            config: baseConfig,
-            meta: baseMeta,
-            postInits: [],
-            projectExtensions: [],
-            usedExtensions: [],
-            actions: getActions(),
-            hooks: getHooks(),
-            dependencies: {},
-            commands: baseCommands
+            context,
+
+            settings: {
+                checkRequired,
+                verbose
+            },
+
+            temp: {
+                postInits: [],
+                extensionsDevelopmentExports: {}
+            },
+
+            dependencyContext: {
+                extensionsDependencies: {},
+                pathsToExtensions: {}
+            }
         });
 }

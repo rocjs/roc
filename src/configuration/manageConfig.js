@@ -1,8 +1,8 @@
-import buildContext from '../cli/buildContext';
+import { bold, yellow } from 'chalk';
+
 import log from '../log/default/large';
 import merge from '../helpers/merge';
 
-import getApplicationConfig from './getApplicationConfig';
 import { appendSettings } from './manageSettings';
 
 /* Make sure that we only print some feedback once */
@@ -19,21 +19,21 @@ global.roc.config = global.roc.config || undefined;
  *
  * Will try to init the configuration if not done previously.
  *
- * @param {boolean} [tryInit=true] - If the function should try to init the configuration object
+ * @param {boolean} [fail=true] - If the function should fail if no configuration exists
  *
  * @returns {rocConfig} - The application configuration object.
  */
-export function getConfig(tryInit = true) {
+export function getConfig(fail = true) {
     // Try to load the configuration if we haven't at this point.
-    if (tryInit && global.roc.config === undefined && !process.env.ROC_CONFIG_SETTINGS) {
-        log.info(
-            'It seems that you are launching a Roc application without using the Roc CLI, we will now load ' +
-            'the configuration separately for you instead.',
+    if (fail && global.roc.config === undefined && !process.env.ROC_CONFIG_SETTINGS) {
+        log.error(
+            'It seems that you are launching a Roc application without using the Roc CLI.\n' +
+            'Please use the CLI or add the Roc runtime to your application.\n\n' +
+            `${bold('Example:')}\n` +
+            `${yellow('import \'roc/runtime/init\';')} or ${yellow('require(\'roc/runtime/init\');')}\n\n` +
+            'See the documentation for more information.',
             'Configuration'
         );
-        // FIXME Verify this functionality!
-        const { config } = buildContext(false, getApplicationConfig());
-        global.roc.config = config;
     }
 
     if (onceSettings && process.env.ROC_CONFIG_SETTINGS) {
