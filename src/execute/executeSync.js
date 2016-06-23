@@ -2,8 +2,6 @@ import { join } from 'path';
 
 import { sync } from 'cross-spawn';
 
-import log from '../log/default/small';
-
 import getParts from './helpers/getParts';
 
 /**
