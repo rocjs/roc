@@ -19,19 +19,15 @@ export execute from './execute';
 export executeSync from './execute/executeSync';
 export executeSyncExit from './execute/executeSyncExit';
 
-export { getAbsolutePath, fileExists } from './helpers';
+export { getAbsolutePath, fileExists, folderExists } from './helpers';
 
 export { defaultPrompt } from './commands/helpers/defaultPrompt';
-
-export { registerHooks } from './hooks/manageHooks';
 
 export runHook from './hooks/runHook';
 
 export runHookDirectly from './hooks/runHookDirectly';
 
 export {
-    registerAction,
-    registerActions,
     removeActions
 } from './hooks/manageActions';
 

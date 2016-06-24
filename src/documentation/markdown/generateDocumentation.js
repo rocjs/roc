@@ -1,5 +1,10 @@
-import { writeFile } from 'fs';
+import { writeFile, mkdirSync } from 'fs';
 import { join } from 'path';
+
+import { underline } from 'chalk';
+
+import log from '../../log/default/small';
+import folderExists from '../../helpers/folderExists';
 
 import actionsToMarkdown from './actionsToMarkdown';
 import commandsToMarkdown from './commandsToMarkdown';
@@ -31,8 +36,13 @@ export default function generateDocumentation({
     extension = false
 }) {
     const dir = rocCommandObject.directory;
-    const subDir = join(dir, directory);
+    const documentationDir = join(dir, directory);
     const name = rocCommandObject.pkg.name;
+
+    // Create the folder if it does not exist.
+    if (!folderExists(documentationDir)) {
+        mkdirSync(documentationDir);
+    }
 
     const documentation = [
         {
@@ -40,40 +50,39 @@ export default function generateDocumentation({
             path: extension ? `${dir}/README.md` : `${dir}/ROC.md`
         }, {
             content: actionsToMarkdown(name, rocCommandObject.actions, mode),
-            // /docs || /roc-documentation
-            path: `${subDir}/Actions.md`
+            path: `${documentationDir}/Actions.md`
         }, {
             content: dependenciesToMarkdown(name, rocCommandObject.dependencies),
-            path: `${subDir}/Dependencies.md`
+            path: `${documentationDir}/Dependencies.md`
         }, {
             content: hooksToMarkdown(name, rocCommandObject.hooks, mode),
-            path: `${subDir}/Hooks.md`
+            path: `${documentationDir}/Hooks.md`
         }, {
             content: settingsToMarkdown(name, rocCommandObject.extensionConfig, rocCommandObject.metaObject),
-            path: `${subDir}/Settings.md`
+            path: `${documentationDir}/Settings.md`
         }, {
             content: commandsToMarkdown(
                 name,
                 rocCommandObject.extensionConfig,
                 rocCommandObject.commands,
-                `${subDir}/Settings.md`,
+                `${documentationDir}/Settings.md`,
                 mode
             ),
-            path: `${subDir}/Commands.md`
+            path: `${documentationDir}/Commands.md`
         }, {
             content: configurationToMarkdown(
                 rocCommandObject.extensionConfig,
                 rocCommandObject.metaObject,
                 rocCommandObject
             ),
-            path: `${subDir}/Configuration.md`
+            path: `${documentationDir}/Configuration.md`
         }, {
             content: extensionsToMarkdown(
                 rocCommandObject.usedExtensions,
                 rocCommandObject,
                 extension
             ),
-            path: `${subDir}/Extensions.md`
+            path: `${documentationDir}/Extensions.md`
         }
     ];
 
@@ -85,7 +94,8 @@ export default function generateDocumentation({
         documentations.push(generateHTML(documentation));
     }
 
-    return Promise.all(documentations);
+    return Promise.all(documentations)
+        .then(() => log.done(`Documentation has been generated in ${underline(documentationDir)}`));
 }
 
 function generateMarkdown(documentation) {
