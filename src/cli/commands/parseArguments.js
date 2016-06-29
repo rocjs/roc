@@ -3,6 +3,7 @@ import { bold } from 'chalk';
 import log from '../../log/default/large';
 import isValid from '../../validation/helpers/isValid';
 import throwValidationError from '../../validation/helpers/throwValidationError';
+import automatic from '../../converters/automatic';
 
 /**
  * Parses arguments and validates them.
@@ -26,18 +27,16 @@ export default function parseArguments(command, commands = {}, args) {
                 value = argument.default;
             }
 
-            if (value === undefined && argument.required) {
-                log.error(
-                    `Required argument ${bold(argument.name)} was not provided.`,
-                    'Arguments Problem'
-                );
+            const converter =
+                argument.converter ||
+                argument.validation(null, true).converter ||
+                argument.default !== undefined && automatic(argument.default);
+
+            if (value !== undefined && converter) {
+                value = converter(value);
             }
 
-            if (value !== undefined && argument.converter) {
-                value = argument.converter(value);
-            }
-
-            if (value !== undefined && argument.validation) {
+            if (argument.validation) {
                 const validationResult = isValid(value, argument.validation);
                 if (validationResult !== true) {
                     try {

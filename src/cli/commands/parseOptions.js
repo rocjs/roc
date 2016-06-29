@@ -6,6 +6,7 @@ import throwValidationError from '../../validation/helpers/throwValidationError'
 import log from '../../log/default/large';
 import getSuggestions from '../../helpers/getSuggestions';
 import keyboardDistance from '../../helpers/keyboardDistance';
+import automatic from '../../converters/automatic';
 
 /**
  * Converts a set of options to {@link rocConfigSettings} object and command specific options.
@@ -25,7 +26,6 @@ export default function parseOptions(options, mappings, command) {
     const {
         possibleCommandOptions,
         possibleCommandOptionsShort,
-        infoOptions,
         parsedOptions,
         finalNotManaged
     } = parseCommandOptions(command, notManaged);
@@ -48,14 +48,6 @@ export default function parseOptions(options, mappings, command) {
             'Some options were not understood.\n\n' +
                 infoSettings.join('\n'),
             'Option Problem'
-        );
-    }
-
-    if (infoOptions.length > 0) {
-        log.error(
-            'Some command options were not provided.\n\n' +
-                infoSettings.join('\n'),
-            'Command Options Problem'
         );
     }
 
@@ -89,7 +81,6 @@ function parseSettingsOptions(options, mappings) {
 }
 
 function parseCommandOptions(command, notManaged) {
-    const infoOptions = [];
     let possibleCommandOptions = [];
     let possibleCommandOptionsShort = [];
     const parsedOptions = {
@@ -97,7 +88,14 @@ function parseCommandOptions(command, notManaged) {
         rest: {}
     };
 
-    const getName = (name) => name.length === 1 ? '-' + name : '--' + name;
+    const getName = (name, option) => {
+        if (name) {
+            return name.length === 1 ? '-' + name : '--' + name;
+        }
+
+        const shortOption = option.shortname ? ' / ' + bold('-' + option.shortname) : '';
+        return '--' + option.name + shortOption;
+    };
 
     if (command && command.options) {
         possibleCommandOptions = command.options.map((option) => option.name);
@@ -128,26 +126,21 @@ function parseCommandOptions(command, notManaged) {
                 value = option.default;
             }
 
-            // The option is required but no value was found
-            if (value === undefined && option.required) {
-                const getOptions = () => {
-                    const shortOption = option.shortname ? ' or ' + bold('-' + option.shortname) : '';
-                    return bold('--' + option.name) + shortOption;
-                };
+            const converter =
+                option.converter ||
+                option.validation(null, true).converter ||
+                option.default !== undefined && automatic(option.default);
 
-                infoOptions.push(`Required option ${getOptions()} was not provided.`);
-            }
-
-            if (value !== undefined && option.converter) {
-                value = option.converter(value);
+            if (value !== undefined && converter) {
+                value = converter(value);
             }
 
             // If we have a value and a validator
-            if (value !== undefined && option.validation) {
+            if (option.validation) {
                 const validationResult = isValid(value, option.validation);
                 if (validationResult !== true) {
                     try {
-                        throwValidationError(getName(name), validationResult, value, 'option');
+                        throwValidationError(getName(name, option), validationResult, value, 'option');
                     } catch (err) {
                         log.error(
                             'A option was not valid.\n\n' +
@@ -167,7 +160,6 @@ function parseCommandOptions(command, notManaged) {
     return {
         possibleCommandOptions,
         possibleCommandOptionsShort,
-        infoOptions,
         parsedOptions,
         finalNotManaged: notManaged
     };
