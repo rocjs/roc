@@ -62,6 +62,9 @@ Versions should match a tag on the Github repo and will default to master if non
 | -f, --force | Ignore non empty directory warning.                                                   | No       | `Boolean`  |         |
 | -l, --list  | List the available versions of a template.                                            | No       | `Boolean`  |         |
 
+####  Defined by extensions
+roc
+
 ### new
 __Create a new project.__
 
@@ -84,6 +87,9 @@ Alias for "init" that always will try to create a new directory.
 | ----------- | ------------------------------------------------------------------------------------- | -------- | ---------- | ------- |
 | -f, --force | Ignore non empty directory warning.                                                   | No       | `Boolean`  |         |
 | -l, --list  | List the available versions of a template.                                            | No       | `Boolean`  |         |
+
+####  Defined by extensions
+roc
 
 ## meta
 __Meta commands__
@@ -111,10 +117,16 @@ roc meta docs
 | --mode          |             | No       |      | `"github.com"` |
 | --output        |             | No       |      | `"docs"`       |
 
+####  Defined by extensions
+roc
+
 ### list-settings
 __Prints all the available settings that can be changed.__
 
 ```
 roc meta list-settings
 ```
+
+####  Defined by extensions
+roc
 

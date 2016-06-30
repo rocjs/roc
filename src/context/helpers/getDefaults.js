@@ -37,8 +37,8 @@ function getDefaultHooks() {
     };
 }
 
-function getDefaultCommands(directory, override = false) {
-    if (override || validRocProject(directory)) {
+function getDefaultCommands(directory) {
+    if (directory === undefined || validRocProject(directory)) {
         return {
             meta: {
                 '__meta': {
@@ -86,7 +86,9 @@ function getDefaultConfig() {
     return {
         settings: {},
 
-        actions: undefined
+        actions: undefined,
+
+        init: undefined
     };
 }
 
