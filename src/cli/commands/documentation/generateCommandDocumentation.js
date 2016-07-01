@@ -134,11 +134,12 @@ export default function generateCommandDocumentation(settings, metaSettings, met
 }
 
 function createDescription(param) {
+    const required = param.validator ? param.validator(null, true).required : false;
     return `${param.description && param.description + '  ' || ''}` +
-        `${param.required && green('Required') + '  ' || ''}` +
+        `${required && green('Required') + '  ' || ''}` +
         `${param.default !== undefined && cyan(JSON.stringify(param.default)) + '  ' || ''}` +
-        `${param.default === undefined && param.validation ?
-            dim('(' + param.validation(null, true).type + ')') :
+        `${param.default === undefined && param.validator ?
+            dim('(' + param.validator(null, true).type + ')') :
             ''
         }`;
 }

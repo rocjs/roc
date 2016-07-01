@@ -5,7 +5,7 @@ import onProperty from '../helpers/onProperty';
 import automatic from '../converters/automatic';
 import { OVERRIDE } from '../configuration/addOverrides';
 
-const defaultValidation = (input, info) => info ? {type: 'Unknown'} : true;
+const defaultValidator = (input, info) => info ? {type: 'Unknown'} : true;
 
 /**
  * Creates a {@link rocDocumentationObject}.
@@ -26,7 +26,7 @@ export default function buildDocumentationObject(initalObject, initalMeta = {}, 
         return {
             name,
             level,
-            description: meta.description,
+            description: (meta.__meta || {}).description,
             objects: recursiveHelper(object, meta, [], level + 1, parents, true),
             children: recursiveHelper(object, meta, [], level + 1, parents)
         };
@@ -34,16 +34,16 @@ export default function buildDocumentationObject(initalObject, initalMeta = {}, 
 
     const manageLeaf = (object, name, meta = {}, parents) => {
         const description = meta.description;
-        const validation = meta.validator || defaultValidation;
+        const validator = meta.validator || defaultValidator;
         const converterFunction = meta.converter;
         const {
             type = 'Unknown',
             required = false,
             notEmpty = false,
             converter
-        } = isFunction(validation) ?
-            validation(null, true) :
-            { type: validation.toString() };
+        } = isFunction(validator) ?
+            validator(null, true) :
+            { type: validator.toString() };
 
         const cli = toCliOption(parents);
         return {
@@ -55,7 +55,7 @@ export default function buildDocumentationObject(initalObject, initalMeta = {}, 
             cli,
             path: parents.join('.'),
             defaultValue: object,
-            validator: validation,
+            validator: validator,
             converter: converterFunction || converter || automatic(object),
             extensions: meta.__extensions
         };

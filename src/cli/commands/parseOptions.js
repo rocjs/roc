@@ -128,7 +128,7 @@ function parseCommandOptions(command, notManaged) {
 
             const converter =
                 option.converter ||
-                option.validation(null, true).converter ||
+                option.validator && option.validator(null, true).converter ||
                 option.default !== undefined && automatic(option.default);
 
             if (value !== undefined && converter) {
@@ -136,8 +136,8 @@ function parseCommandOptions(command, notManaged) {
             }
 
             // If we have a value and a validator
-            if (option.validation) {
-                const validationResult = isValid(value, option.validation);
+            if (option.validator) {
+                const validationResult = isValid(value, option.validator);
                 if (validationResult !== true) {
                     try {
                         throwValidationError(getName(name, option), validationResult, value, 'option');

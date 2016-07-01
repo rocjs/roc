@@ -1,26 +1,26 @@
-import { isBoolean, isPath, isString } from '../validation/validators';
+import { isBoolean, isPath, isString, required } from '../validation/validators';
 
 import init from './init';
 
 const initOptions = [{
     name: 'list',
     shortname: 'l',
-    validation: isBoolean,
+    validator: isBoolean,
     description: 'List the available versions of a template.'
 }, {
     name: 'force',
     shortname: 'f',
-    validation: isBoolean,
+    validator: isBoolean,
     description: 'Ignore non empty directory warning.'
 }];
 
 const initArguments = [{
     name: 'template',
-    validation: isPath,
+    validator: isPath,
     description: 'The template to use. Matches Github structure with Username/Repo or a local zip file.'
 }, {
     name: 'version',
-    validation: isString,
+    validator: isString,
     description: 'The version to use.'
 }];
 
@@ -61,9 +61,8 @@ export default {
             options: initOptions,
             arguments: [].concat({
                 name: 'name',
-                validation: isString,
-                description: 'Name for a new directory to create the project in.',
-                required: true
+                validator: required(isString),
+                description: 'Name for a new directory to create the project in.'
             }, initArguments)
         }
     }

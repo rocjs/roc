@@ -29,15 +29,15 @@ export default function parseArguments(command, commands = {}, args) {
 
             const converter =
                 argument.converter ||
-                argument.validation(null, true).converter ||
+                argument.validator && argument.validator(null, true).converter ||
                 argument.default !== undefined && automatic(argument.default);
 
             if (value !== undefined && converter) {
                 value = converter(value);
             }
 
-            if (argument.validation) {
-                const validationResult = isValid(value, argument.validation);
+            if (argument.validator) {
+                const validationResult = isValid(value, argument.validator);
                 if (validationResult !== true) {
                     try {
                         throwValidationError(argument.name, validationResult, value, 'argument');

@@ -28,7 +28,7 @@ function getDefaultHooks() {
             description: 'Expected to return new settings that should be merged with the existing ones.',
             arguments: [{
                 name: 'getSettings',
-                validation: isFunction,
+                validator: isFunction,
                 description: 'A function that returns the settings after the context has been initialized.'
             }],
             returns: isObject(),
