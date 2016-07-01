@@ -64,14 +64,19 @@ export default function settingsToMarkdown(name, { settings }, { settings: meta 
         }
     };
 
-    const text = generateTable(documentationObject, header, {
+    const settingsTable = generateTable(documentationObject, header, {
         groupTitleWrapper: (title, level) => pad(level + 2, '#') + ' ' + title.charAt(0).toUpperCase() + title.slice(1)
     });
 
-    if (text.length === 0) {
-        return 'No settings available.';
+    const rows = [];
+
+    rows.push('# Settings for `' + name + '`', '');
+
+    if (settingsTable.length === 0) {
+        rows.push('__No settings available.__');
+    } else {
+        rows.push(settingsTable);
     }
 
-    return '# Settings for `' + name + '`' + '\n\n' +
-        text;
+    return rows.join('\n');
 }

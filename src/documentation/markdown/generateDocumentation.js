@@ -52,7 +52,7 @@ export default function generateDocumentation({
             content: actionsToMarkdown(name, rocCommandObject.actions, mode),
             path: `${documentationDir}/Actions.md`
         }, {
-            content: dependenciesToMarkdown(name, rocCommandObject.dependencies),
+            content: dependenciesToMarkdown(name, extension, rocCommandObject.dependencies),
             path: `${documentationDir}/Dependencies.md`
         }, {
             content: hooksToMarkdown(name, rocCommandObject.hooks, mode),
@@ -71,6 +71,7 @@ export default function generateDocumentation({
             path: `${documentationDir}/Commands.md`
         }, {
             content: configurationToMarkdown(
+                name,
                 rocCommandObject.extensionConfig,
                 rocCommandObject.metaObject,
                 rocCommandObject
@@ -78,6 +79,7 @@ export default function generateDocumentation({
             path: `${documentationDir}/Configuration.md`
         }, {
             content: extensionsToMarkdown(
+                name,
                 rocCommandObject.usedExtensions,
                 rocCommandObject,
                 extension

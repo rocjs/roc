@@ -16,16 +16,15 @@ export default function actionsToMarkdown(name, actions = [], mode) {
     // Remove project actions if any
     actions = actions.filter((extensionActions) => !extensionActions.project);
 
-    if (actions.length === 0) {
-        return 'No actions available.';
-    }
-
     const rows = [];
 
     // Header
-    rows.push('# Actions for `' + name + '`');
+    rows.push('# Actions for `' + name + '`', '');
 
-    rows.push('');
+    if (actions.length === 0) {
+        rows.push('__No actions available.__');
+        return rows.join('\n');
+    }
 
     rows.push('## Actions');
 

@@ -16,18 +16,16 @@ import createStatefulAnchor from './helpers/createStatefulAnchor';
  * @returns {string} - Markdown documentation.
  */
 export default function hooksToMarkdown(name, hooks, mode) {
-    if (Object.keys(hooks).length === 0) {
-        return 'No hooks available.';
-    }
-
     const rows = [];
 
+    rows.push('# Hooks for `' + name + '`', '');
+
+    if (Object.keys(hooks).length === 0) {
+        rows.push('__No hooks available.__');
+        return rows.join('\n');
+    }
+
     const extensions = Object.keys(hooks).sort();
-
-    // Header
-    rows.push('# Hooks for `' + name + '`');
-
-    rows.push('');
 
     rows.push('## Hooks');
 
@@ -82,10 +80,13 @@ export default function hooksToMarkdown(name, hooks, mode) {
             // Generate the arguments
             if (currentHook.arguments) {
                 const objects = currentHook.arguments.map((argument) => {
+                    const infoObject = argument.validator ? argument.validator(null, true) : {};
                     return {
                         name: argument.name,
                         description: argument.description || '',
-                        type: argument.validation && argument.validation(null, true).type
+                        type: infoObject.type,
+                        required: infoObject.required,
+                        notEmpty: infoObject.notEmpty
                     };
                 });
 
@@ -109,6 +110,24 @@ export default function hooksToMarkdown(name, hooks, mode) {
                 type: {
                     name: 'Type',
                     renderer: (input) => input && `\`${input}\``
+                },
+                required: {
+                    name: 'Required',
+                    renderer: (input) => {
+                        if (input === true) {
+                            return 'Yes';
+                        }
+                        return 'No';
+                    }
+                },
+                notEmpty: {
+                    name: 'Can be empty',
+                    renderer: (input) => {
+                        if (input === false) {
+                            return 'Yes';
+                        }
+                        return 'No';
+                    }
                 }
             };
 

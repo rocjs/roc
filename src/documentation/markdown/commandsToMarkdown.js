@@ -63,10 +63,9 @@ export default function commandsToMarkdown(name, config, commands, settingsLink,
         return `* ${groupName}`;
     };
 
-    if (commands) {
-        // Header
-        rows.push('# Commands for `' + name + '`', '');
+    rows.push('# Commands for `' + name + '`', '');
 
+    if (commands) {
         rows.push('## General Information');
         rows.push('All commands can be called with some additional options as can be seen below.', '');
 
@@ -82,10 +81,8 @@ export default function commandsToMarkdown(name, config, commands, settingsLink,
             build(cli, commands, allSettingGroups, printGroup, hideCommands, createStatefulAnchor(mode));
 
         rows = rows.concat(tableOfContent, '', content, '');
-    }
-
-    if (rows.length === 0) {
-        return 'No commands available.';
+    } else {
+        rows.push('__No commands available.__');
     }
 
     return rows.join('\n');
@@ -193,11 +190,13 @@ function buildCommand(cli, command, commandData, allSettingGroups, printGroup, p
     // Generate the arguments
     if (commandData.arguments) {
         const objects = commandData.arguments.map((argument) => {
+            const infoObject = argument.validator ? argument.validator(null, true) : {};
             return {
                 name: argument.name,
                 description: argument.description || '',
-                required: argument.required,
-                type: argument.validation && argument.validation(null, true).type,
+                type: infoObject.type,
+                required: infoObject.required,
+                notEmpty: infoObject.notEmpty,
                 default: argument.default !== undefined && JSON.stringify(argument.default)
             };
         });
@@ -214,11 +213,13 @@ function buildCommand(cli, command, commandData, allSettingGroups, printGroup, p
     // Generate the options
     if (commandData.options) {
         const objects = commandData.options.sort(onProperty('name')).map((option) => {
+            const infoObject = option.validator ? option.validator(null, true) : {};
             return {
                 name: option.shortname ? `-${option.shortname}, --${option.name}` : `--${option.name}`,
                 description: option.description || '',
-                required: option.required,
-                type: option.validation && option.validation(null, true).type,
+                type: infoObject.type,
+                required: infoObject.required,
+                notEmpty: infoObject.notEmpty,
                 default: option.default !== undefined && JSON.stringify(option.default)
             };
         });
@@ -240,6 +241,14 @@ function buildCommand(cli, command, commandData, allSettingGroups, printGroup, p
             name: 'Description',
             renderer: (input) => stripAnsi(input)
         },
+        default: {
+            name: 'Default',
+            renderer: (input) => input && `\`${input}\``
+        },
+        type: {
+            name: 'Type',
+            renderer: (input) => input && `\`${input}\``
+        },
         required: {
             name: 'Required',
             renderer: (input) => {
@@ -249,13 +258,14 @@ function buildCommand(cli, command, commandData, allSettingGroups, printGroup, p
                 return 'No';
             }
         },
-        type: {
-            name: 'Type',
-            renderer: (input) => input && `\`${input}\``
-        },
-        default: {
-            name: 'Default',
-            renderer: (input) => input && `\`${input}\``
+        notEmpty: {
+            name: 'Can be empty',
+            renderer: (input) => {
+                if (input === false) {
+                    return 'Yes';
+                }
+                return 'No';
+            }
         }
     };
 

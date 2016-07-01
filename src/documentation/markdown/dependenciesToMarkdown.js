@@ -1,11 +1,12 @@
-export default function dependenciesToMarkdown(name, dependencies) {
+export default function dependenciesToMarkdown(name, extension, dependencies) {
     if (Object.keys(dependencies).length === 0) {
         return 'No dependencies available.';
     }
 
     const rows = [];
 
-    rows.push('# Dependencies');
+    rows.push('# Dependencies for `' + name + '`', '');
+
     rows.push('The dependencies that are available in the project.');
 
     rows.push('');
@@ -19,8 +20,10 @@ export default function dependenciesToMarkdown(name, dependencies) {
             rows.push(`### [${module}](https://www.npmjs.com/package/${module})`);
             rows.push(`__Version__: ${dependencies.exports[module].version}  `);
             rows.push(`__Extension__: ${dependencies.exports[module].extension}  `);
-            rows.push(`__Context__:  ${dependencies.exports[module].context}  `);
-            rows.push(`__Custom resolve__:  ${dependencies.exports[module].resolve ? 'Yes' : 'No'}  `);
+            if (!extension) {
+                rows.push(`__Context__:  ${dependencies.exports[module].context}  `);
+            }
+            rows.push(`__Custom resolve function__:  ${dependencies.exports[module].resolve ? 'Yes' : 'No'}  `);
         });
     }
 
@@ -35,7 +38,9 @@ export default function dependenciesToMarkdown(name, dependencies) {
             rows.push(`### [${module}](https://www.npmjs.com/package/${module})`);
             rows.push(`__Version__: ${dependencies.uses[module].version}  `);
             rows.push(`__Extension__: ${dependencies.uses[module].extension}  `);
-            rows.push(`__Context__: ${dependencies.uses[module].context}  `);
+            if (!extension) {
+                rows.push(`__Context__: ${dependencies.uses[module].context}  `);
+            }
         });
     }
 
@@ -50,7 +55,9 @@ export default function dependenciesToMarkdown(name, dependencies) {
             rows.push(`### [${module}](https://www.npmjs.com/package/${module})`);
             rows.push(`__Version__: ${dependencies.requires[module].version}  `);
             rows.push(`__Extension__: ${dependencies.requires[module].extension}  `);
-            rows.push(`__Context__: ${dependencies.requires[module].context}  `);
+            if (!extension) {
+                rows.push(`__Context__: ${dependencies.requires[module].context}  `);
+            }
         });
     }
 

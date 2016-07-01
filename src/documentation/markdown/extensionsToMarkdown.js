@@ -1,6 +1,6 @@
 import { isFunction } from 'lodash';
 
-export default function extensionsToMarkdown(usedExtensions, rocCommandObject, extension) {
+export default function extensionsToMarkdown(name, usedExtensions, rocCommandObject, extension) {
     const rows = [];
 
     const packages = usedExtensions.filter((extn) => extn.type === 'package' &&
@@ -10,7 +10,8 @@ export default function extensionsToMarkdown(usedExtensions, rocCommandObject, e
         extn.name !== rocCommandObject.pkg.name);
         // FIXME
 
-    rows.push('# Extensions');
+    rows.push('# Extensions for `' + name + '`', '');
+
     rows.push('The extensions that are used in the project, indirect and direct.');
     rows.push('## Packages');
     if (packages.length > 0) {
