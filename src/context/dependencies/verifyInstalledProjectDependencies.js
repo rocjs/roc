@@ -1,4 +1,4 @@
-import { underline } from 'chalk';
+import { bold, dim, underline } from 'chalk';
 
 import log from '../../log/default/large';
 
@@ -12,7 +12,10 @@ export default function verifyInstalledProjectDependencies({ dependencies, devDe
     Object.keys(exports).forEach((name) => {
         // If the same dependency is in the project we want to warn the user
         if (allDependencies[name]) {
-            matches.push(name);
+            matches.push({
+                name: name,
+                ...exports[name]
+            });
         }
     });
 
@@ -24,7 +27,8 @@ ${underline('Roc will prioritize the ones exported by the extensions.')}
 You can override this by adding "¡" to the start of the require/import in the code, see documentation for more info.
 
 Dependencies that is both exported and in the projects package.json:
-${matches.map((match) => `- ${match}`).join('\n')}`,
+${matches.map((match) => `- ${bold(match.name)} ${dim('from')} ` +
+    `${bold(match.extension)} ${dim('with version')} ${bold(match.version)}`).join('\n')}`,
             'Dependencies'
         );
     }
