@@ -3,23 +3,23 @@
  */
 export default [{
     type: 'input',
-    name: 'rocAppName',
-    message: 'What\'s the name of your application?',
-    default: 'my-roc-app',
+    name: 'rocName',
+    message: 'What\'s the name of your project?',
+    default: 'my-roc-project',
     filter: (input) => input.toLowerCase().split(' ').join('-')
 }, {
     type: 'input',
-    name: 'rocAppDesc',
-    message: 'What\'s the description for the application?',
-    default: 'My Roc Application'
+    name: 'rocDescription',
+    message: 'What\'s the description for the project?',
+    default: 'My Roc Project'
 }, {
     type: 'input',
-    name: 'rocAppAuthor',
-    message: 'Who\'s the author of the application?',
+    name: 'rocAuthor',
+    message: 'Who\'s the author of the project?',
     default: 'John Doe'
 }, {
     type: 'input',
-    name: 'rocAppLicense',
-    message: 'What\'s the license for the application?',
+    name: 'rocLicense',
+    message: 'What\'s the license for the project?',
     default: 'MIT'
 }];
