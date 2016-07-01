@@ -36,7 +36,7 @@ export default function oneOf(...validators) {
             if (result === true) {
                 return true;
             }
-            invalid.push(validator(null, true).type);
+            invalid.push(validator(null, true).type || 'Unknown type');
         }
 
         return 'Was not any of the possible types:\n' +
