@@ -35,7 +35,7 @@ function logger(name, version) {
             log(
     `${labels[level](label, title)}
 
-${redent(message, 2)}${getError(error)}
+${redent(message, 2)}${redent(getError(error), 2)}
   ${getFromWhere(name, version, error)}`
     );
             if (level === 'error') {
@@ -60,7 +60,7 @@ function getFromWhere(name, version, error) {
 
 function getError(error) {
     if (error && error.message) {
-        return '\n\n  ' + (isVerbose() ? error.stack : error.message);
+        return '\n\n' + (isVerbose() ? error.stack : error.message);
     }
 
     return '';
