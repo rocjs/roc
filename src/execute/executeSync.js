@@ -39,7 +39,7 @@ function runCommandSync(syncCommands, path = process.cwd()) {
 
         const { status } = sync(cmd, args, { stdio: 'inherit', cwd: path });
 
-        if (status !== 0) {
+        if (status) {
             const error = new Error(`The following command returned exit status [${status}]: ${cmd} ${args.join(' ')}`);
             error.command = cmd;
             error.arguments = args;
