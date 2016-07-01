@@ -2,7 +2,7 @@ import { isArrayLike, isPlainObject } from 'lodash';
 import createInfoObject from '../helpers/createInfoObject';
 
 /**
- * Marks that the value can't be empty, undefined is allowed.
+ * Marks that the value can't be empty, undefined & null is allowed.
  *
  * Use together with {@link required} to also validate on undefined.
  *
@@ -18,7 +18,7 @@ export default function notEmpty(validator) {
             });
         }
 
-        if (input !== undefined && isEmpty(input)) {
+        if (input !== undefined && input !== null && isEmpty(input)) {
             return 'The value is required to not be empty!';
         }
 
@@ -31,10 +31,6 @@ export default function notEmpty(validator) {
 }
 
 function isEmpty(value) {
-    if (value === null) {
-        return true;
-    }
-
     if (isArrayLike(value)) {
         return !value.length;
     }
