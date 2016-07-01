@@ -54,7 +54,9 @@ export function normalizeCommands(name, extensionCommands, stateCommands = {}) {
                     localCommands[command], existingCommands[command], newPath + '.'
                 );
 
-                localCommands[command].__extensions = [ name ];
+                if (!localCommands[command].__extensions) {
+                    localCommands[command].__extensions = [ name ];
+                }
             }
         });
 
