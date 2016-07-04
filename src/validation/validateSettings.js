@@ -5,7 +5,7 @@ import throwValidationError from './helpers/throwValidationError';
 import { REQUIRED_ERROR } from './validators/required';
 
 /**
- * Validates the provided configuration object.
+ * Validates the provided settings object.
  *
  * @param {rocSettings} settings - The settings object to validate.
  * @param {Object} validations - The meta configuration object that has information about how to validate.
