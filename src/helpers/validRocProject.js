@@ -1,7 +1,7 @@
 import { isObject } from 'lodash';
 
 import getRocPackageDependencies from './getRocPackageDependencies';
-import getPackage from './getPackage';
+import getPackageJSON from './getPackageJSON';
 
 /**
  * Validates if a directory seems to be a Roc application project.
@@ -13,9 +13,9 @@ import getPackage from './getPackage';
  * @returns {boolean} - Whether or not it is a valid Roc project.
  */
 export default function validRocProject(directory) {
-    const pkg = getPackage(directory);
+    const packageJSON = getPackageJSON(directory);
 
-    return isObject(pkg) && (
-        pkg.roc ||
-        getRocPackageDependencies(pkg).length > 0);
+    return isObject(packageJSON) && (
+        packageJSON.roc ||
+        getRocPackageDependencies(packageJSON).length > 0);
 }

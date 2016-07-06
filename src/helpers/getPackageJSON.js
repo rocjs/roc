@@ -9,7 +9,7 @@ import fileExists from './fileExists';
  *
  * @returns {Object|undefined} - The object in the `package.json` or undefined if it did not exists.
  */
-export default function getPackage(directory = process.cwd()) {
+export default function getPackageJSON(directory = process.cwd()) {
     if (fileExists('package.json', directory)) {
         return require(path.join(directory, 'package.json'));
     }
