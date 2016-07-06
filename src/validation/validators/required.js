@@ -1,5 +1,4 @@
 import createInfoObject from '../helpers/createInfoObject';
-import notEmpty from './notEmpty';
 
 export const REQUIRED_ERROR = 'A value was required but none was given!';
 
@@ -9,11 +8,7 @@ export const REQUIRED_ERROR = 'A value was required but none was given!';
  * @param {function} validator - Validator to validate against.
  * @return {function} - A function that takes a value and that returns true or false if valid or not.
  */
-export default function required(validator, canBeEmpty = false) {
-    if (!canBeEmpty) {
-        validator = notEmpty(validator);
-    }
-
+export default function required(validator) {
     return (input, info) => {
         if (info) {
             return createInfoObject({ validator, required: true });
