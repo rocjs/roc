@@ -16,7 +16,7 @@ export default function validateSettingsWrapper(settings, metaSettings = {}, toV
             validateSettings(settings, metaSettings);
         } else {
             toValidate.forEach((group) => {
-                validateSettings(settings[group], metaSettings && metaSettings[group]);
+                validateSettings(settings[group], metaSettings && metaSettings[group], false, `settings.${group}`);
             });
         }
     } catch (err) {
