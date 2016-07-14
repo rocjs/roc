@@ -4,15 +4,15 @@ export default function createInfoObject({
     validator = () => ({type: ''}),
     wrapper,
     required = false,
-    notEmpty = false,
+    canBeEmpty,
     converter
 } = {}) {
-    const info = isFunction(validator) ? validator(null, true) : { type: validator.toString() };
+    const info = isFunction(validator) ? validator(null, true) : { type: validator.toString(), canBeEmpty: null };
     const type = wrapper ? wrapper(info.type) : info.type;
     const convert = converter ? converter(info.converter) : info.converter;
     return {
         type,
-        notEmpty: info.notEmpty || notEmpty,
+        canBeEmpty: canBeEmpty === undefined ? info.canBeEmpty : canBeEmpty,
         required: info.required || required,
         converter: convert
     };

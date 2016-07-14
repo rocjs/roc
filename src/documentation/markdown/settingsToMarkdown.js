@@ -49,13 +49,16 @@ export default function settingsToMarkdown(name, { settings }, { settings: meta 
                 return 'No';
             }
         },
-        notEmpty: {
+        canBeEmpty: {
             name: 'Can be empty',
             renderer: (input) => {
-                if (input === false) {
+                if (input === true) {
                     return 'Yes';
+                } else if (input === false) {
+                    return 'No';
                 }
-                return 'No';
+
+                return '';
             }
         },
         extensions: {

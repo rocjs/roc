@@ -13,7 +13,8 @@ export default function isString(value, info) {
     if (info) {
         return createInfoObject({
             validator: 'String',
-            converter: () => toString
+            converter: () => toString,
+            canBeEmpty: true
         });
     }
 

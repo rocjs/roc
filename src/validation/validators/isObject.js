@@ -15,7 +15,8 @@ export default function isObject(validator) {
             return createInfoObject({
                 validator,
                 converter: () => toObject,
-                wrapper: (wrap) => `{${wrap}}`
+                wrapper: (wrap) => `{${wrap}}`,
+                canBeEmpty: true
             });
         }
 

@@ -39,7 +39,7 @@ export default function buildDocumentationObject(initalObject, initalMeta = {}, 
         const {
             type = 'Unknown',
             required = false,
-            notEmpty = false,
+            canBeEmpty = true,
             converter
         } = isFunction(validator) ?
             validator(null, true) :
@@ -51,7 +51,7 @@ export default function buildDocumentationObject(initalObject, initalMeta = {}, 
             description,
             type,
             required,
-            notEmpty,
+            canBeEmpty,
             cli,
             path: parents.join('.'),
             defaultValue: object,

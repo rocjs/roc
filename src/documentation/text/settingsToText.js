@@ -54,13 +54,16 @@ export default function settingsToText({ settings }, { settings: meta }, filter 
                 return red('No');
             }
         },
-        notEmpty: {
+        canBeEmpty: {
             name: 'Can be empty',
             renderer: (input) => {
-                if (input !== true) {
+                if (input === true) {
                     return green('Yes');
+                } else if (input === false) {
+                    return red('No');
                 }
-                return red('No');
+
+                return '';
             }
         }
     };

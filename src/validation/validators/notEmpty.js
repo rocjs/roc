@@ -16,7 +16,7 @@ export default function notEmpty(validator) {
         if (info) {
             return createInfoObject({
                 validator,
-                notEmpty: true
+                canBeEmpty: false
             });
         }
 
