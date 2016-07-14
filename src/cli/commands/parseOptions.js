@@ -91,15 +91,15 @@ function parseCommandOptions(command, notManaged) {
             return name.length === 1 ? '-' + name : '--' + name;
         }
 
-        const shortOption = option.shortname ? ' / ' + bold('-' + option.shortname) : '';
+        const shortOption = option.alias ? ' / ' + bold('-' + option.alias) : '';
         return '--' + option.name + shortOption;
     };
 
     if (command && command.options) {
         possibleCommandOptions = command.options.map((option) => option.name);
         possibleCommandOptionsShort = command.options.reduce((previous, option) => {
-            if (option.shortname) {
-                return previous.concat(option.shortname);
+            if (option.alias) {
+                return previous.concat(option.alias);
             }
 
             return previous;
@@ -114,10 +114,10 @@ function parseCommandOptions(command, notManaged) {
                 value = notManaged[option.name];
                 delete notManaged[option.name];
                 name = option.name;
-            } else if (notManaged[option.shortname]) {
-                value = notManaged[option.shortname];
-                delete notManaged[option.shortname];
-                name = option.shortname;
+            } else if (notManaged[option.alias]) {
+                value = notManaged[option.alias];
+                delete notManaged[option.alias];
+                name = option.alias;
             }
 
             if (value === undefined && option.default) {

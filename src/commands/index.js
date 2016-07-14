@@ -5,12 +5,12 @@ const lazyRequire = lazyFunctionRequire(require);
 
 const initOptions = [{
     name: 'list',
-    shortname: 'l',
+    alias: 'l',
     validator: isBoolean,
     description: 'List the available versions of a template.'
 }, {
     name: 'force',
-    shortname: 'f',
+    alias: 'f',
     validator: isBoolean,
     description: 'Ignore non empty directory warning.'
 }];

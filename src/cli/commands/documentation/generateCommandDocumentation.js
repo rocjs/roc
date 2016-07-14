@@ -61,7 +61,7 @@ export default function generateCommandDocumentation(settings, metaSettings, met
     if (metaCommands[command] && metaCommands[command].options) {
         const objects = metaCommands[command].options.sort(onProperty('name')).map((option) => (
             {
-                cli: option.shortname ? `-${option.shortname}, --${option.name}` : `--${option.name}`,
+                cli: option.alias ? `-${option.alias}, --${option.name}` : `--${option.name}`,
                 description: createDescription(option)
             }
         ));
