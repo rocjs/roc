@@ -46,8 +46,8 @@ function getDefaultCommands(directory) {
                     description: 'Meta commands that can be used to generate meta data about the current project.'
                 },
                 'list-settings': {
-                    command: ({ extensionConfig, metaObject }) => {
-                        console.log(settingsToText(extensionConfig, metaObject));
+                    command: ({ context: { extensionConfig, meta }}) => {
+                        console.log(settingsToText(extensionConfig, meta));
                     },
                     description: 'Prints all the available settings that can be changed.'
                 },
