@@ -11,7 +11,7 @@ export function initGetDependencies({ extensionsDependencies }) {
 export function initGetDependenciesFromPath({ extensionsDependencies, pathsToExtensions }) {
     return (path, selector) =>
         initGetDependencies({ extensionsDependencies })(
-            Object.keys(pathsToExtensions).find((extensionPath) => path.startsWith(extensionPath)),
+            pathsToExtensions[Object.keys(pathsToExtensions).find((extensionPath) => path.startsWith(extensionPath))],
             selector
         );
 }

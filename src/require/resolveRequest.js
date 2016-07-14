@@ -1,34 +1,42 @@
 import resolve from 'resolve';
 
-import { initSetDependencies, initGetDependenciesFromPath } from './manageDependencies';
+import { initGetDependencies, initGetDependenciesFromPath } from './manageDependencies';
 
 export default function resolveRequest(exports, directory, dependencyContext) {
-    const log = require('debug')(`roc:require`);
+    const log = require('debug')(`roc:core:require`);
     const contextCache = {};
     const resolveCache = {};
     const pattern = /^([^\/]*)\/?([^\/]*)/;
     const inProject = initInProject(directory);
     const getCurrentModule = initGetCurrentModule(
-        initSetDependencies(dependencyContext),
+        initGetDependencies(dependencyContext),
         initGetDependenciesFromPath(dependencyContext)
     );
 
-    const getContext = (path) => {
-        if (!contextCache[path]) {
-            contextCache[path] = inProject(path) ?
+    const getContext = (path, fallback) => {
+        // Check if we already has the context in the cache and only create it if not
+        if (!contextCache[`${path}@@@@@${fallback}`]) {
+            contextCache[`${path}@@@@@${fallback}`] = inProject(path) ?
                 exports :
-                getCurrentModule(path);
+                getCurrentModule(path, fallback);
         }
 
-        return contextCache[path];
+        return contextCache[`${path}@@@@@${fallback}`];
     };
 
     return (identifier = 'No identifier') => {
-        const resolveRequestHelper = (request, context) => {
+        const resolveRequestHelper = (request, context, fallback = false) => {
+            // If we got an empty request we want to let Node handle it
+            if (!request) {
+                return request;
+            }
+
+            // Provides a way to opt-out of the Roc require system
             if (request.charAt(0) === '¡') {
                 return request.substring(1);
             }
-            const rocContext = getContext(context);
+
+            const rocContext = getContext(context, fallback);
             if (rocContext) {
                 log(`(${identifier}) : Checking [${request}] for [${context}]`);
 
@@ -55,14 +63,14 @@ export default function resolveRequest(exports, directory, dependencyContext) {
             return request;
         };
 
-        return (request, context) => {
-            if (!resolveCache[`${context}@@@@@${request}`]) {
-                resolveCache[`${context}@@@@@${request}`] = resolveRequestHelper(request, context);
-            } else {
-                // log(`(${identifier}) : Found [${request}] in the cache`);
+        return (request, context, fallback = false) => {
+            // Check if we already have the request in the cache and if so do nothing
+            if (!resolveCache[`${context}@@@@@${request}@@@@@${fallback}`]) {
+                resolveCache[`${context}@@@@@${request}@@@@@${fallback}`] =
+                    resolveRequestHelper(request, context, fallback);
             }
 
-            return resolveCache[`${context}@@@@@${request}`];
+            return resolveCache[`${context}@@@@@${request}@@@@@${fallback}`];
         };
     };
 }
@@ -78,16 +86,29 @@ function initInProject(directory) {
 }
 
 function initGetCurrentModule(getDependencies, getDependenciesFromPath) {
-    const pattern = /.*node_modules\/([^\/]*)\/?([^\/]*)/;
-    return (path) => {
-        const matches = pattern.exec(path);
+    const fallbackPattern = /roc-.*/;
+    const normalPattern = /.*node_modules\/([^\/]*)\/?([^\/]*)/;
+    return (path, fallback) => {
+        // Will match against the last roc-* in the path
+        if (fallback) {
+            const match = path
+                .split('/')
+                .reverse()
+                .find((name) => fallbackPattern.test(name));
 
-        if (matches) {
-            return getDependencies(
-                matches[1].charAt(0) === '@' ?
-                    matches[1] + '/' + matches[2] :
-                    matches[1]
-            , 'exports');
+            if (match) {
+                return getDependencies(match, 'exports');
+            }
+        } else {
+            const matches = normalPattern.exec(path);
+
+            if (matches) {
+                return getDependencies(
+                    matches[1].charAt(0) === '@' ?
+                        matches[1] + '/' + matches[2] :
+                        matches[1]
+                , 'exports');
+            }
         }
 
         // If we are using "npm link" we will probably end up here
