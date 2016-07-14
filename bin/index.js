@@ -1,6 +1,4 @@
 #! /usr/bin/env node
-require('source-map-support').install();
-require('loud-rejection')();
 
 const path = require('path');
 const updateNotifier = require('update-notifier');

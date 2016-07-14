@@ -10,6 +10,9 @@ import { bold } from 'chalk';
  */
 export default function getDefaultOptions(name) {
     return [{
+        [name]: '-b, --better-feedback',
+        description: 'Will enable source-map-support and loud-rejection for a better experience with better feedback.'
+    }, {
         [name]: '-c, --config',
         description: `Path to configuration file, will default to ${bold('roc.config.js')} in current ` +
             `working directory.`
@@ -28,3 +31,6 @@ export default function getDefaultOptions(name) {
         description: 'Output version number.'
     }];
 }
+
+export const defaultOptions = ['help', 'config', 'verbose', 'directory', 'version', 'better-feedback'];
+export const defaultOptionsAlias = ['h', 'c', 'V', 'd', 'v', 'b'];

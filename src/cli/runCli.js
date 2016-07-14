@@ -43,7 +43,8 @@ export default function runCli({
     invoke = true
 }) {
     const {
-        _, h, help, V, verbose, v, version, c, config, d, directory, ...restOptions
+        _, h, help, V, verbose, v, version, c, config, d, directory, b, ['better-feedback']: betterFeedback,
+        ...restOptions
     } = minimist(argv.slice(2));
 
     // The first should be our command if there is one
@@ -53,6 +54,12 @@ export default function runCli({
     if (version || v) {
         return console.log(info.version);
     }
+
+    if (betterFeedback || b) {
+        require('source-map-support').install();
+        require('loud-rejection')();
+    }
+
     // Possible to set a command in verbose mode
     const verboseMode = !!(verbose || V);
     setVerbose(verboseMode);

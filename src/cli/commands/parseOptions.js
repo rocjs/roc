@@ -8,6 +8,7 @@ import getSuggestions from '../../helpers/getSuggestions';
 import keyboardDistance from '../../helpers/keyboardDistance';
 import automatic from '../../converters/automatic';
 
+import { defaultOptions, defaultOptionsAlias } from './getDefaultOptions';
 /**
  * Converts a set of options to {@link rocConfigSettings} object and command specific options.
  *
@@ -30,16 +31,13 @@ export default function parseOptions(options, mappings, command) {
         finalNotManaged
     } = parseCommandOptions(command, notManaged);
 
-    const defaultOptions = ['help', 'config', 'verbose', 'directory', 'version'];
-    const defaultOptionsShort = ['h', 'c', 'V', 'd', 'v'];
-
     Object.keys(finalNotManaged).forEach((key) => {
         if (key.length > 1) {
             infoSettings.push(getSuggestions([key],
                 Object.keys(mappings).concat(defaultOptions, possibleCommandOptions), '--'));
         } else {
             infoSettings.push(getSuggestions([key],
-                [keyboardDistance(key, defaultOptionsShort.concat(possibleCommandOptionsShort))], '-'));
+                [keyboardDistance(key, defaultOptionsAlias.concat(possibleCommandOptionsShort))], '-'));
         }
     });
 
