@@ -1,13 +1,13 @@
 import { isPlainObject } from 'lodash';
 
-export const OVERRIDE = '__override';
+export const RAW = '__raw';
 
-export default function addOverrides(config) {
+export default function addRaw(config) {
     const manageSettings = (settingsSlice) => {
         let newSettings = {};
         Object.keys(settingsSlice).forEach((key) => {
             if (isPlainObject(settingsSlice[key])) {
-                if (key === OVERRIDE) {
+                if (key === RAW) {
                     newSettings = {
                         ...newSettings,
                         ...settingsSlice[key]

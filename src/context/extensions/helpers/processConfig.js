@@ -1,7 +1,7 @@
 import { bold, underline } from 'chalk';
-import { isPlainObject, intersection, get, update } from 'lodash';
+import { isPlainObject, intersection, get, update, union } from 'lodash';
 
-import { OVERRIDE } from '../../../configuration/addOverrides';
+import { RAW } from '../../../configuration/addRaw';
 
 export default function processConfig(name, extension, state) {
     const extensionConfigPaths = getKeys(extension.config, true);
@@ -15,6 +15,7 @@ export default function processConfig(name, extension, state) {
             extensionMetaPaths.paths,
             stateMetaPaths.paths
         ),
+        stateConfigPaths,
         extension.meta,
         state.meta
     );
@@ -45,7 +46,7 @@ function getKeys(obj = {}, flag = false, oldPath = '', allKeys = [], allGroups =
         const value = obj[key];
         const newPath = oldPath + key;
 
-        if (isPlainObject(value) && key !== OVERRIDE) {
+        if (isPlainObject(value) && key !== RAW && key !== '__meta') {
             isValue = true;
             if (newPath !== 'settings') {
                 allGroups.push(true);
@@ -56,7 +57,7 @@ function getKeys(obj = {}, flag = false, oldPath = '', allKeys = [], allGroups =
             if (x.value) {
                 allGroups[allGroups.length - 1] = false;
             }
-        } else if (flag) {
+        } else if (flag && key !== '__meta') {
             allKeys.push(newPath);
             allGroups.push(false);
         }
@@ -77,26 +78,43 @@ function notInExtensions(extensions, extension) {
     return extensions.indexOf(extension) === -1;
 }
 
-function validateMetaStructure(name, intersections, extensionMeta, stateMeta) {
-    intersections.forEach((intersect) => {
-        const extensions = get(stateMeta, intersect).__extensions || [];
-        const override = (get(extensionMeta, intersect) || {}).override;
+function validateMetaStructure(
+    name, intersections, stateConfigPaths, extensionMeta, stateMeta
+) {
+    const buildList = (elements) => {
+        return elements.map(
+            (element) => ` - ${element}`
+        ).join('\n') + '\n';
+    };
 
-        if (
-            notInExtensions(extensions, name) &&
-            override !== true &&
-            notInExtensions(extensions, override)
-        ) {
-            // Fail early, might be more errors after this
-            const overrideMessage = !override ?
-                `No override value was specified, it should probably be one of: ${extensions}\n` :
-                `The override did not match the possible values, it was: ${override}\n`;
-            throw new Error(
-                'Meta structure was changed without specifying override.\n' +
-                `Meta for ${bold(intersect)} was changed in ${name} that has been altered before by ${extensions}.\n` +
-                overrideMessage +
-                `Contact the developer of ${underline(name)} for help.`
-            );
+    intersections.forEach((intersect) => {
+        const wasGroup = getGroup(stateConfigPaths, intersect);
+
+        if (!wasGroup || get(extensionMeta, `${intersect}.__meta`)) {
+            const extensions = get(stateMeta, intersect).__extensions || [];
+
+            // If it is a group the override info will be on __meta and if not it will be directly on the object
+            const override = (get(extensionMeta, intersect, {}).__meta || {}).override ||
+                get(extensionMeta, intersect, {}).override;
+
+            if (
+                notInExtensions(extensions, name) &&
+                override !== true &&
+                notInExtensions(extensions, override)
+            ) {
+                const extensionsList = buildList(extensions);
+                // Fail early, might be more errors after this
+                const overrideMessage = !override ?
+                    `No override value was specified, it should probably be one of:\n${extensionsList}` :
+                    `The override did not match the possible values, it was: ${override}\n`;
+                throw new Error(
+                    'Meta structure was changed without specifying override.\n' +
+                    `Meta for ${bold(intersect)} was changed in ${name} and has been altered before by:\n` +
+                    extensionsList +
+                    overrideMessage +
+                    `Contact the developer of ${underline(name)} for help.`
+                );
+            }
         }
     });
 }
@@ -109,7 +127,9 @@ function validateConfigurationStructure(
         const isGroup = getGroup(extensionConfigPaths, intersect);
         if (wasGroup !== isGroup) {
             const extensions = get(stateMeta, intersect).__extensions || [];
-            const override = get(extensionMeta, intersect, {}).override;
+            // If it is a group the override info will be on __meta and if not it will be directly on the object
+            const override = (get(extensionMeta, intersect, {}).__meta || {}).override ||
+                get(extensionMeta, intersect, {}).override;
 
             if (
                 notInExtensions(extensions, name) &&
@@ -119,7 +139,7 @@ function validateConfigurationStructure(
                 // Fail early, might be more errors after this
                 throw new Error(
                     'Configuration structure was changed without specifying override in meta.\n' +
-                    `Was ${wasGroup ? 'a object' : 'an value'} and is now ${isGroup ? 'a object' : 'and value'}.\n` +
+                    `Was ${wasGroup ? 'a object' : 'an value'} and is now ${isGroup ? 'a object' : 'an value'}.\n` +
                     `The setting is question is: ${bold(intersect)}\n` +
                     `Contact the developer of ${underline(name)} for help.`
                 );
@@ -143,13 +163,10 @@ function updateStateMeta(name, state, extensionConfigPaths, stateConfigPaths) {
 
             return {
                 ...newValue,
-                __extensions: [
-                    ...newExtensions,
-                    name
-                ]
+                __extensions: union(newExtensions, [name])
             };
         });
     });
 
-    return newState;
+    return newState.meta;
 }

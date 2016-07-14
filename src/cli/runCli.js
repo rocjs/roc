@@ -13,7 +13,7 @@ import { setVerbose } from '../helpers/manageVerbose';
 import runHook from '../hooks/runHook';
 import checkGroup from './commands/helpers/checkGroup';
 import generateAliases from './commands/helpers/generateAliases';
-import addOverrides from '../configuration/addOverrides';
+import addRaw from '../configuration/addRaw';
 import log from '../log/default/large';
 import initContext from '../context/initContext';
 
@@ -142,7 +142,7 @@ export default function runCli({
         }
 
         // Does this after the validation so that things set by the CLI always will have the highest priority
-        context.config = merge(addOverrides(context.config), {
+        context.config = merge(addRaw(context.config), {
             settings
         });
 

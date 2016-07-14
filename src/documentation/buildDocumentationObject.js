@@ -3,7 +3,7 @@ import { isPlainObject, isFunction } from 'lodash';
 import toCliOption from './helpers/toCliOption';
 import onProperty from '../helpers/onProperty';
 import automatic from '../converters/automatic';
-import { OVERRIDE } from '../configuration/addOverrides';
+import { RAW } from '../configuration/addRaw';
 
 const defaultValidator = (input, info) => info ? {type: 'Unknown'} : true;
 
@@ -28,7 +28,8 @@ export default function buildDocumentationObject(initalObject, initalMeta = {}, 
             level,
             description: (meta.__meta || {}).description,
             objects: recursiveHelper(object, meta, [], level + 1, parents, true),
-            children: recursiveHelper(object, meta, [], level + 1, parents)
+            children: recursiveHelper(object, meta, [], level + 1, parents),
+            raw: !!object.__raw
         };
     };
 
@@ -64,7 +65,7 @@ export default function buildDocumentationObject(initalObject, initalMeta = {}, 
     function recursiveHelper(object, meta = {}, filter = [], level = 0, initalParents = [], leaves = false) {
         return allObjects(object, (key) => {
             // Make sure that we either have no filter or that there is a match
-            if ((filter.length === 0 || filter.indexOf(key) !== -1) && key !== OVERRIDE) {
+            if ((filter.length === 0 || filter.indexOf(key) !== -1) && key !== RAW) {
                 const parents = [].concat(initalParents, key);
                 const value = object[key];
                 if (isPlainObject(value) && Object.keys(value).length > 0 && !leaves) {
