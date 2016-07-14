@@ -1,5 +1,7 @@
 import { isArrayLike, isPlainObject } from 'lodash';
+
 import createInfoObject from '../helpers/createInfoObject';
+import isValid from '../helpers/isValid';
 
 /**
  * Marks that the value can't be empty, undefined & null is allowed.
@@ -26,7 +28,7 @@ export default function notEmpty(validator) {
             return true;
         }
 
-        return validator(input);
+        return isValid(input, validator);
     };
 }
 

@@ -6,7 +6,7 @@ export default function createInfoObject({
     required = false,
     notEmpty = false,
     converter
-}) {
+} = {}) {
     const info = isFunction(validator) ? validator(null, true) : { type: validator.toString() };
     const type = wrapper ? wrapper(info.type) : info.type;
     const convert = converter ? converter(info.converter) : info.converter;

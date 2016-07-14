@@ -10,3 +10,5 @@ export isPath from './isPath';
 export notEmpty from './notEmpty';
 export oneOf from './oneOf';
 export required from './required';
+
+export createInfoObject from '../helpers/createInfoObject';

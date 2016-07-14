@@ -1,4 +1,5 @@
 import createInfoObject from '../helpers/createInfoObject';
+import isValid from '../helpers/isValid';
 
 export const REQUIRED_ERROR = 'A value was required but none was given!';
 
@@ -22,6 +23,6 @@ export default function required(validator) {
             return true;
         }
 
-        return validator(input);
+        return isValid(input, validator);
     };
 }
