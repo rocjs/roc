@@ -1,11 +1,11 @@
 import { green, red } from 'chalk';
 
-import log from '../../log/default/small';
+import log from '../../log/default/large';
 import verifyInstalledDependencies from '../../require/verifyInstalledDependencies';
 import generateTable from '../../documentation/generateTable';
 
-export default async function verifyRequiredDependencies(directory, required) {
-    const mismatches = await verifyInstalledDependencies(directory, required);
+export default function verifyRequiredDependencies(directory, required) {
+    const mismatches = verifyInstalledDependencies(directory, required);
     if (mismatches.length > 0) {
         const header = {
             name: {

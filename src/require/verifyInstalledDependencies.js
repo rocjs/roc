@@ -1,5 +1,8 @@
-import readInstalled from 'read-installed';
+import { join } from 'path';
+
 import semver from 'semver';
+
+import fileExists from '../helpers/fileExists';
 
 /*
  A mismatch is one of the following:
@@ -7,38 +10,32 @@ import semver from 'semver';
  - Not the correct version installed
 */
 export default function verifyInstalledDependencies(directory, dependencies = {}) {
-    return new Promise((resolve, reject) => {
-        readInstalled(directory, { depth: 0 }, function(err, data) {
-            if (err) {
-                reject(err);
-            }
-
-            const mismatches = [];
-            const allDependencies = {
-                ...data._dependencies,
-                ...data.devDependencies
-            };
-            Object.keys(dependencies).forEach((name) => {
-                const requested = dependencies[name];
-                const current = allDependencies[name];
-                const installedVersion = data.dependencies[name] && data.dependencies[name].version;
-                if (
-                    !current ||
-                    !semver.satisfies(installedVersion, requested.version)
-                ) {
-                    mismatches.push({
-                        name: name,
-                        current: installedVersion,
-                        requested: requested.version,
-                        extension: {
-                            name: requested.extension,
-                            path: requested.context
-                        },
-                        inPackageJson: current
-                    });
-                }
+    const projectJSON = require(join(directory, 'package.json'));
+    const mismatches = [];
+    const allDependencies = {
+        ...projectJSON.dependencies,
+        ...projectJSON.devDependencies
+    };
+    Object.keys(dependencies).forEach((name) => {
+        const requested = dependencies[name];
+        const current = allDependencies[name];
+        const installedVersion = fileExists(join(directory, 'node_modules', name, 'package.json')) &&
+            require(join(directory, 'node_modules', name, 'package.json')).version;
+        if (
+            !current ||
+            !semver.satisfies(installedVersion, requested.version)
+        ) {
+            mismatches.push({
+                name: name,
+                current: installedVersion,
+                requested: requested.version,
+                extension: {
+                    name: requested.extension,
+                    path: requested.context
+                },
+                inPackageJson: current
             });
-            resolve(mismatches);
-        });
+        }
     });
+    return mismatches;
 }
