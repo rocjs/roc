@@ -5,7 +5,6 @@ import isValid from '../validation/helpers/isValid';
 import throwValidationError from '../validation/helpers/throwValidationError';
 import { isVerbose } from '../helpers/manageVerbose';
 import { getConfig } from '../configuration/manageConfig';
-import { getSettings } from '../configuration/manageSettings';
 
 import { getActions } from './manageActions';
 
@@ -56,9 +55,7 @@ export default function runHookDirectly({
     const postActions = [];
 
     getActions().forEach(({ name: actionExtensionName, actions }) => {
-        Object.keys(actions).map((key) => {
-            const action = actions[key];
-
+        actions.map((action) => {
             // Only run if no connection is made to a hook/extension or if they match
             if ((!action.extension || action.extension === extension) &&
                 (!action.hook || action.hook === name)) {
@@ -67,8 +64,6 @@ export default function runHookDirectly({
                         extension,
                         hook: name,
                         previousValue,
-                        description,
-                        settings: getSettings(),
                         config: getConfig(),
                         verbose: isVerbose()
                     });
@@ -83,8 +78,7 @@ export default function runHookDirectly({
                                 console.log(
                                     `${magenta('Hook')} - ` +
                                     `${isPost}Running hook defined in ${underline(extension)} ` +
-                                    `named ${underline(name)} ` +
-                                    `with ${underline(key)} added from ${underline(actionExtensionName)}`
+                                    `named ${underline(name)} from ${underline(actionExtensionName)}` +
                                 );
                             }
 
@@ -94,7 +88,12 @@ export default function runHookDirectly({
                                 const validationResult = isValid(previousValue, returns);
                                 if (validationResult !== true) {
                                     try {
-                                        throwValidationError(key, validationResult, previousValue, 'return value of');
+                                        throwValidationError(
+                                            `action in ${actionExtensionName} for ${name}`,
+                                            validationResult,
+                                            previousValue,
+                                            'return value of'
+                                        );
                                     } catch (err) {
                                         log.error(
                                             'A return value was not valid.\n\n' +

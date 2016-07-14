@@ -7,7 +7,7 @@ global.roc.actions = global.roc.actions || [];
 /**
  * Register actions with Roc.
  *
- * @param {Object<rocAction>} actions - Object with actions.
+ * @param {rocAction[]} actions - Object with actions.
  * @param {string} extensionName - Name of the extension to register the actions on.
  * @param {boolean} [project=false] - If the actions belongs to the project.
  */
@@ -16,24 +16,19 @@ export function registerActions(actions, extensionName, state = global.roc.actio
     const index = state.findIndex(({ name }) => extensionName === name);
 
     if (index === -1) {
-        let extensionActions = {};
-        Object.keys(actions).forEach((key) => {
-            const action = isFunction(actions[key]) ?
-                actions[key] :
-                actions[key].action;
+        let extensionActions = [];
+        actions.forEach((actionObject) => {
+            const action = isFunction(actionObject) ?
+                actionObject :
+                actionObject.action;
 
-            extensionActions = {
-                ...extensionActions,
-                [key]: {
-                    ...createActionHelper(
-                        action,
-                        actions[key].extension,
-                        actions[key].hook,
-                        actions[key].description,
-                        actions[key].post
-                    )
-                }
-            };
+            extensionActions.push(createActionHelper(
+                action,
+                actionObject.extension,
+                actionObject.hook,
+                actionObject.description,
+                actionObject.post
+            ));
         });
 
         state = [].concat(state, {
@@ -50,30 +45,20 @@ export function registerActions(actions, extensionName, state = global.roc.actio
  * Register single action with Roc.
  *
  * @param {function} action - The action function.
- * @param {string} actionName - The name of the action.
  * @param {string} extensionName - Name of the extension to register the actions on.
  * @param {boolean} [project=false] - If the action belongs to the project.
  */
-export function registerAction(action, actionName, extensionName, state = global.roc.actions, project = false) {
+export function registerAction(action, extensionName, state = global.roc.actions, project = false) {
     // Look for the extensionName and update if it exists
     const index = state.findIndex(({ name }) => extensionName === name);
 
     if (index !== -1) {
-        state[index].actions = {
-            ...state[index].actions,
-            [actionName]: {
-                ...createActionHelper(action)
-            }
-        };
+        state[index].actions.push(createActionHelper(action));
     } else {
         state.push({
             project,
             name: extensionName,
-            actions: {
-                [actionName]: {
-                    ...createActionHelper(action)
-                }
-            }
+            actions: [createActionHelper(action)]
         });
     }
 
@@ -90,27 +75,37 @@ function createActionHelper(action, extension, hook, description, post) {
     };
 }
 
-/**
- * Removes actions from Roc.
- *
- * @param {string} extensionToRemove - Name of the extension to remove registered actions for.
- * @param {string} actionToRemove - Name of the action to remove, if left undefined all actions for the extension will
- *  be removed.
- */
-export function removeActions(extensionToRemove, actionToRemove) {
-    if (!extensionToRemove) {
-        throw new Error('You need to at least specify the extension to remove actions for.');
-    }
+export function removeActions(state = global.roc.actions) {
+    return (extensionToRemove, actionsForHookToRemove) => {
+        if (!extensionToRemove) {
+            throw new Error('You need to at least specify the extension to remove actions for.');
+        }
 
-    global.roc.actions
-        .map((extension) => {
-            if (!actionToRemove && extension.name !== extensionToRemove) {
+        if (state.length === 0) {
+            throw new Error('No actions has been added and can therefore not remove any.');
+        }
+
+        state = state
+            .map((extension) => {
+                if (extension.name !== extensionToRemove) {
+                    return extension;
+                }
+
+                if (!actionsForHookToRemove) {
+                    return undefined;
+                }
+
+                extension.actions = extension.actions.map((action) => {
+                    if (action.hook !== actionForHookToRemove) {
+                        return action
+                    }
+                }).filter((element) => !!element);
+
                 return extension;
-            } else if (extension.name === extensionToRemove) {
-                delete extension.actions[actionToRemove];
-                return extension;
-            }
-        }).filter((element) => !!element);
+            }).filter((element) => !!element);
+
+        return state;
+    };
 }
 
 /**
