@@ -13,8 +13,6 @@ export merge from './helpers/merge';
 export runCli from './cli/runCli';
 export initCli from './cli/initCli';
 
-export validateSettings from './validation/validateSettingsWrapper';
-
 export execute from './execute';
 export executeSync from './execute/executeSync';
 export executeSyncExit from './execute/executeSyncExit';
@@ -37,7 +35,7 @@ export { getResolveRequest } from './require/manageResolveRequest';
 
 export generateDependencies from './require/utils/generateDependencies';
 
-export generateDocs from './documentation/markdown/generateDocumentation';
+export generateDocumentation from './documentation/markdown/generateDocumentation';
 
 export initLog from './log';
 
