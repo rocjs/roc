@@ -1,4 +1,4 @@
-import deepExtend from 'deep-extend';
+import mergeOptions from 'merge-options';
 
 /**
  * Merges two configuration objects.
@@ -9,5 +9,5 @@ import deepExtend from 'deep-extend';
  * @returns {Object} - The merged configuration object
  */
 export default function merge(a, b) {
-    return deepExtend({}, a, b);
+    return mergeOptions(a, b);
 }
