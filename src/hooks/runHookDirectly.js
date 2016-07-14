@@ -34,18 +34,16 @@ export default function runHookDirectly({
     // Validate args
     if (argumentsDefinitions) {
         args.forEach((value, i) => {
-            if (value !== undefined) {
-                const validationResult = isValid(value, argumentsDefinitions[i].validation);
-                if (validationResult !== true) {
-                    try {
-                        throwValidationError(argumentsDefinitions[i].name, validationResult, value, 'argument');
-                    } catch (err) {
-                        log.error(
-                            'A argument was not valid.\n\n' +
-                                err.message,
-                            'Hook problem'
-                        );
-                    }
+            const validationResult = isValid(value, argumentsDefinitions[i].validator);
+            if (validationResult !== true) {
+                try {
+                    throwValidationError(argumentsDefinitions[i].name, validationResult, value, 'argument');
+                } catch (err) {
+                    log.error(
+                        `A argument was not valid in ${underline(name)} from ${underline(extension)}.\n\n` +
+                            err.message,
+                        'Hook problem'
+                    );
                 }
             }
         });
