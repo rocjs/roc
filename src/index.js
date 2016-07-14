@@ -35,7 +35,7 @@ export getContext from './context/getContext';
 
 export { getResolveRequest } from './require/manageResolveRequest';
 
-export generateDependencies from './require/utils/createDependencies';
+export generateDependencies from './require/utils/generateDependencies';
 
 export generateDocs from './documentation/markdown/generateDocumentation';
 
