@@ -1,6 +1,6 @@
 import { magenta, underline } from 'chalk';
 
-import log from '../log/default/large';
+import log from '../log/default';
 import isValid from '../validation/helpers/isValid';
 import throwValidationError from '../validation/helpers/throwValidationError';
 import { isVerbose } from '../helpers/manageVerbose';
@@ -39,7 +39,7 @@ export default function runHookDirectly({
                 try {
                     throwValidationError(argumentsDefinitions[i].name, validationResult, value, 'argument');
                 } catch (err) {
-                    log.error(
+                    log.large.error(
                         `A argument was not valid in ${underline(name)} from ${underline(extension)}.\n\n` +
                             err.message,
                         'Hook problem'
@@ -58,54 +58,72 @@ export default function runHookDirectly({
             if ((!action.extension || action.extension === extension) &&
                 (!action.hook || action.hook === name)) {
                 const initAction = (currentAction) => (post = false) => {
-                    const createAction = currentAction({
-                        extension,
-                        hook: name,
-                        previousValue,
-                        config: getConfig(),
-                        verbose: isVerbose()
-                    });
+                    // Run actions in a semi-managed way
+                    let step = 'first';
+                    try {
+                        const createAction = currentAction({
+                            extension,
+                            hook: name,
+                            previousValue,
+                            config: getConfig(),
+                            verbose: isVerbose()
+                        });
+                        step = 'second';
 
-                    if (createAction) {
-                        const performAction = createAction(...args);
+                        if (createAction) {
+                            const performAction = createAction(...args);
+                            step = 'third';
 
-                        if (performAction) {
-                            if (isVerbose()) {
-                                const isPost = post ? '[Post] ' : '';
-                                // FIXME
-                                console.log(
-                                    `${magenta('Hook')} - ` +
-                                    `${isPost}Running hook defined in ${underline(extension)} ` +
-                                    `named ${underline(name)} from ${underline(actionExtensionName)}` +
-                                );
-                            }
+                            if (performAction) {
+                                if (isVerbose()) {
+                                    const isPost = post ? '[Post] ' : '';
+                                    log.small.info(
+                                        `${magenta('Hook')} - ` +
+                                        `${isPost}Running hook defined in ${underline(extension)} ` +
+                                        `named ${underline(name)} with action from ${underline(actionExtensionName)}`
+                                    );
+                                }
 
-                            previousValue = performAction();
+                                previousValue = performAction();
 
-                            if (returns) {
-                                const validationResult = isValid(previousValue, returns);
-                                if (validationResult !== true) {
-                                    try {
-                                        throwValidationError(
-                                            `action in ${actionExtensionName} for ${name}`,
-                                            validationResult,
-                                            previousValue,
-                                            'return value of'
-                                        );
-                                    } catch (err) {
-                                        log.error(
-                                            'A return value was not valid.\n\n' +
-                                                err.message,
-                                            'Hook problem'
-                                        );
+                                if (returns) {
+                                    const validationResult = isValid(previousValue, returns);
+                                    if (validationResult !== true) {
+                                        try {
+                                            throwValidationError(
+                                                `action in ${actionExtensionName} for ${name}`,
+                                                validationResult,
+                                                previousValue,
+                                                'return value of'
+                                            );
+                                        } catch (err) {
+                                            log.large.error(
+                                                'A return value was not valid.\n\n' +
+                                                    err.message,
+                                                'Hook problem'
+                                            );
+                                        }
                                     }
                                 }
-                            }
 
-                            if (callback) {
-                                callback(previousValue);
+                                if (callback) {
+                                    callback(previousValue);
+                                }
                             }
                         }
+                    } catch (error) {
+                        if (isVerbose()) {
+                            const isPost = post ? '[Post] ' : '';
+                            log.small.warn(
+                                `${magenta('Hook')} - ` +
+                                `${isPost}An error happened when running the hook defined in ${underline(extension)} ` +
+                                `named ${underline(name)} with action from ${underline(actionExtensionName)} in the ` +
+                                `${step} function.`,
+                                error
+                            );
+                        }
+
+                        throw error;
                     }
                 };
 
