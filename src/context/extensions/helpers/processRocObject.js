@@ -33,12 +33,12 @@ export function handleResult(roc, result) {
     };
 }
 
-export default function processRocObject({ roc, update = {} }, state, post = false, validate = true) {
+export default function processRocObject({ roc, update = {} }, state, ignoreDependencies = false, validate = true) {
     if (roc) {
         // Get possible dependencies
         // Only possible to alter the dependencies in not post, this since modifying them in post will be to late for
         // things to be able to react to it.
-        if (!post) {
+        if (!ignoreDependencies) {
             if (update.dependencies) {
                 state.context.dependencies = update.dependencies;
             }
