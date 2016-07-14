@@ -1,10 +1,10 @@
-export default function generateDependencies(packageJson, toExport) {
+export default function generateDependencies(packageJSON, toExport) {
     let dependencies = {};
-    Object.keys(packageJson.dependencies).forEach((dependency) => {
+    Object.keys(packageJSON.dependencies).forEach((dependency) => {
         if (toExport.indexOf(dependency) > -1) {
             dependencies = {
                 ...dependencies,
-                [dependency]: packageJson.dependencies[dependency]
+                [dependency]: packageJSON.dependencies[dependency]
             };
         }
     });

@@ -33,7 +33,7 @@ export default function verifyInstalledDependencies(directory, dependencies = {}
                     name: requested.extension,
                     path: requested.context
                 },
-                inPackageJson: current
+                inPackageJSON: current
             });
         }
     });

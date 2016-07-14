@@ -28,7 +28,7 @@ export default function verifyRequiredDependencies(directory, required) {
                 name: 'Extension',
                 renderer: (input) => input.name
             },
-            inPackageJson: {
+            inPackageJSON: {
                 name: 'In package.json',
                 renderer: (input) => {
                     if (input) {
