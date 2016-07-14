@@ -11,17 +11,20 @@ import getParts from './helpers/getParts';
  * Can manage multiple commands if they are divided by either & or &&. Important that there is spacing on both sides.
  *
  * @param {string} command - A command string that should run.
+ * @param {boolean} [silent=false] - If the command should run in silent mode, no output.
+ *
+ * @returns {string[]} - The output to stdout if silent was used.
  */
-export default function executeSync(command) {
+export default function executeSync(command, silent = false) {
     // Will run them in parallel anyway, nothing we can do about it currently
     const parallelCommands = command.split(/ & /);
-    parallelCommands.forEach((syncCommand) => {
+    return parallelCommands.map((syncCommand) => {
         const syncCommands = syncCommand.split(/ && /);
-        runCommandSync(syncCommands);
+        return runCommandSync(syncCommands, silent);
     });
 }
 
-function runCommandSync(syncCommands, path = process.cwd()) {
+function runCommandSync(syncCommands, silent, path = process.cwd(), results = []) {
     const command = syncCommands.shift();
 
     if (command) {
@@ -34,19 +37,27 @@ function runCommandSync(syncCommands, path = process.cwd()) {
             // If the path is absolute, starts with a /, we will not join in with the previous
             const newPath = args[0].charAt(0) === '/' ?
                 args[0] : join(path, args[0]);
-            return runCommandSync(syncCommands, newPath);
+            return runCommandSync(syncCommands, silent, newPath, results);
         }
 
-        const { status } = sync(cmd, args, { stdio: 'inherit', cwd: path });
+        const { status, stdout, stderr } = sync(cmd, args, { cwd: path, stdio: silent ? undefined : 'inherit' });
+
+        const newResults = [...results, stdout && stdout.toString()];
 
         if (status) {
             const error = new Error(`The following command returned exit status [${status}]: ${cmd} ${args.join(' ')}`);
+
             error.command = cmd;
             error.arguments = args;
             error.exitStatus = status;
+            error.stderr = stderr && stderr.toString();
+            error.stdout = newResults;
+
             throw error;
         }
 
-        runCommandSync(syncCommands, path);
+        return runCommandSync(syncCommands, silent, path, newResults);
     }
+
+    return results;
 }
