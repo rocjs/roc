@@ -4,7 +4,7 @@ import log from '../../log/default/large';
 import { RAW } from '../../configuration/addRaw';
 import getSuggestions from '../../helpers/getSuggestions';
 
-export default function verifyConfigurationStructure(config, applicationConfig) {
+export default function verifyConfigurationStructure(config, projectConfig) {
     const getKeys = (obj, oldPath = '', allKeys = [], first = true) => {
         Object.keys(obj).forEach((key) => {
             const value = obj[key];
@@ -22,11 +22,11 @@ export default function verifyConfigurationStructure(config, applicationConfig) 
         return allKeys;
     };
     const keys = getKeys(config);
-    const diff = difference(getKeys(applicationConfig), keys);
+    const diff = difference(getKeys(projectConfig), keys);
 
     if (diff.length > 0) {
         log.warn(
-            'There was a mismatch in the application configuration structure, make sure this is correct.\n' +
+            'There was a mismatch in the project configuration structure, make sure this is correct.\n' +
                 getSuggestions(diff, keys),
             'Configuration'
         );

@@ -27,10 +27,10 @@ export function getConfig(fail = true, state = global.roc.config) {
     // Try to load the configuration if we haven't at this point.
     if (fail && state === undefined && !process.env.ROC_CONFIG_SETTINGS) {
         log.error(
-            'It seems that you are launching a Roc application without using the Roc CLI.\n' +
-            'Please use the CLI or add the Roc runtime to your application.\n\n' +
+            'It seems that you are launching a Roc project without using the Roc CLI.\n' +
+            'Please use the CLI or add the Roc runtime to your project.\n\n' +
             `${bold('Example:')}\n` +
-            `${yellow('import \'roc/runtime/init\';')} or ${yellow('require(\'roc/runtime/init\');')}\n\n` +
+            `${yellow('import \'roc/runtime/register\';')} or ${yellow('require(\'roc/runtime/register\');')}\n\n` +
             'See the documentation for more information.',
             'Configuration'
         );
