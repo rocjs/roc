@@ -1,8 +1,7 @@
 import { getAbsolutePath } from '../helpers';
-import runHook from '../hooks/runHook';
-import { appendSettings } from '../configuration/manageSettings';
 
 import initContext from './initContext';
+import validateAndUpdateSettings from './helpers/validateAndUpdateSettings';
 
 /**
  * Builds the Roc configuration object without running the cli.
@@ -14,23 +13,14 @@ import initContext from './initContext';
  *
  * @returns {Object} - An object containing appConfig, config, meta, hooks and actions from {@link rocCommandObject}
  */
-export default function getContext(dirPath, projectConfigPath) {
+export default function getContext(dirPath, projectConfigPath, validate = true) {
     // Build the complete config object
-    return initContext({
+    const context = initContext({
         directory: getAbsolutePath(dirPath),
         projectConfigPath,
         verify: false,
         runtime: false
-    })
-    // FIXME Temp
-    .then((context) => {
-        runHook('roc')('update-settings', () => context.config.settings)(
-            (newSettings) => context.config.settings = appendSettings(newSettings, context.config)
-        );
-        return {
-            ...context,
-            configObject: context.config,
-            metaObject: context.meta
-        };
     });
+
+    return validateAndUpdateSettings(context, validate);
 }
