@@ -27,12 +27,11 @@ export function getSettings(key, state) {
  * @returns {rocSettings} - The settings object.
  */
 export function appendSettings(settingsObject, state) {
-    setConfig(
+    return setConfig(
         merge(
             getConfig(true, state),
             { settings: settingsObject }
         ),
         state
-    );
-    return getSettings(undefined, state);
+    ).settings;
 }

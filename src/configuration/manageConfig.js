@@ -71,7 +71,10 @@ export function appendConfig(config) {
     return getConfig();
 }
 
-export function setConfig(newConfig, state = global.roc.config) {
-    state = newConfig;
-    return state;
+export function setConfig(newConfig, state) {
+    if (state === undefined) {
+        global.roc.config = newConfig;
+    }
+
+    return newConfig;
 }
