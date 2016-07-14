@@ -10,16 +10,16 @@ import merge from '../../../helpers/merge';
 import { fileExists } from '../../../helpers';
 import log from '../../../log/default/large';
 import ExtensionError from '../helpers/ExtensionError';
-import processRocObject from '../helpers/processRocObject';
+import processRocObject, { handleResult } from '../helpers/processRocObject';
 
-const rocPkg = require('../../../../package.json');
+const rocPackageJSON = require('../../../../package.json');
 
 export default function getExtensions(type) {
-    return (extensions, directory) => (initialState) => {
+    return (extensions) => (initialState) => {
         return extensions.reduce(
             (state, extensionPath) => {
                 // Get the extension
-                const roc = getExtension(extensionPath, directory, type);
+                const roc = getExtension(extensionPath, state.settings.directory, type);
 
                 if (roc) {
                     try {
@@ -41,7 +41,7 @@ export default function getExtensions(type) {
                         return nextState;
                     } catch (err) {
                         log.warn(
-                            `Failed to load Roc ${type} ${bold(extensionPath)}`,
+                            `Failed to load Roc ${type} ${bold(roc.name)}@${roc.version} from ${roc.path}`,
                             'Roc Extension Failed',
                             err
                         );
@@ -126,7 +126,9 @@ function validRocExtension(path) {
             !roc.config &&
             !roc.meta &&
             !roc.init &&
-            !roc.postInit
+            !roc.postInit &&
+            !roc.dependencies &&
+            !roc.commands
         ) {
             throw new ExtensionError(
                 `Will ignore extension. Expected it to have at least one of the following:\n` +
@@ -139,7 +141,9 @@ function validRocExtension(path) {
                         '- packages',
                         '- plugins',
                         '- init',
-                        '- postInit'
+                        '- postInit',
+                        '- dependencies',
+                        '- commands'
                     ].join('\n'),
                 roc.name,
                 roc.version,
@@ -171,7 +175,7 @@ function checkRequired(roc, state) {
         for (const dependency of Object.keys(roc.required)) {
             // Add roc to the usedExtensions to be able to require on that as well
             const required = [
-                {name: 'roc', version: rocPkg.version },
+                {name: 'roc', version: rocPackageJSON.version },
                 ...state.context.usedExtensions
             ].find((used) => used.name === dependency);
             if (!required) {
@@ -201,13 +205,8 @@ function init(roc, state) {
     if (roc.init) {
         const result = roc.init({
             verbose: state.settings.verbose,
-            config: state.context.config,
-            meta: state.context.meta,
-            extensions: state.context.usedExtensions,
-            actions: state.context.actions,
-            hooks: state.context.hooks,
-            currentDependencies: state.context.dependencies,
-            currentCommands: state.context.commands,
+            directory: state.settings.directory,
+            context: state.context,
             localDependencies: state.dependencyContext.extensionsDependencies[roc.name]
         });
 
@@ -227,10 +226,10 @@ function init(roc, state) {
             }
         }
 
-        return processRocObject(result, state);
+        return processRocObject(handleResult(roc, result), state);
     }
 
-    return processRocObject(roc, state);
+    return processRocObject({ roc }, state);
 }
 
 function addPostInit(roc, state) {
@@ -273,25 +272,26 @@ function registerExtension(type) {
 }
 
 function getCompleteExtension(extensionPath) {
-    const getPackageJsonAndPath = (path) => {
+    const getPathAndPackageJSON = (path) => {
         const dir = dirname(path);
         if (dir === path) {
             throw new Error('Could not find package.json for the extension at ' + extensionPath);
         }
 
-        const pkg = join(dir, 'package.json');
+        const pathToPackageJSON = join(dir, 'package.json');
 
-        if (fileExists(pkg)) {
-            const packageJson = require(pkg);
+        if (fileExists(pathToPackageJSON)) {
+            const packageJSON = require(pathToPackageJSON);
             return {
                 path: dir,
-                pkg: packageJson,
-                version: packageJson.version,
-                name: packageJson.name
+                packageJSON,
+                version: packageJSON.version,
+                name: packageJSON.name,
+                description: packageJSON.description
             };
         }
 
-        return getPackageJsonAndPath(dir);
+        return getPathAndPackageJSON(dir);
     };
 
     const { standalone, ...roc } = require(extensionPath).roc;
@@ -300,20 +300,21 @@ function getCompleteExtension(extensionPath) {
      * roc.standalone can be used to avoid using the package.json
      *
      * This can be valuable if the extension not yet has become a real
-     * npm module or if the automatic calculation of path and pkg is wrong.
+     * npm module or if the automatic calculation of path and packageJSON is wrong.
      */
     if (standalone) {
         return {
-            path: dirname(extensionPath),
-            ...roc
+            ...roc,
+            path: dirname(extensionPath)
         };
     }
 
-    const { name, version, ...rest } = getPackageJsonAndPath(extensionPath);
+    const { name, version, description, ...rest } = getPathAndPackageJSON(extensionPath);
 
     return {
         name,
         version,
+        description,
         ...roc,
         ...rest
     };

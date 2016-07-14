@@ -3,6 +3,8 @@ import { isPlainObject, intersection, get, update, union } from 'lodash';
 
 import { RAW } from '../../../configuration/addRaw';
 
+import buildList from './buildList';
+
 export default function processConfig(name, extension, state) {
     const extensionConfigPaths = getKeys(extension.config, true);
     const extensionMetaPaths = getKeys(extension.meta);
@@ -81,12 +83,6 @@ function notInExtensions(extensions, extension) {
 function validateMetaStructure(
     name, intersections, stateConfigPaths, extensionMeta, stateMeta
 ) {
-    const buildList = (elements) => {
-        return elements.map(
-            (element) => ` - ${element}`
-        ).join('\n') + '\n';
-    };
-
     intersections.forEach((intersect) => {
         const wasGroup = getGroup(stateConfigPaths, intersect);
 
@@ -102,15 +98,14 @@ function validateMetaStructure(
                 override !== true &&
                 notInExtensions(extensions, override)
             ) {
-                const extensionsList = buildList(extensions);
                 // Fail early, might be more errors after this
                 const overrideMessage = !override ?
-                    `No override value was specified, it should probably be one of:\n${extensionsList}` :
+                    `No override value was specified, it should probably be one of the extensions above.` :
                     `The override did not match the possible values, it was: ${override}\n`;
                 throw new Error(
                     'Meta structure was changed without specifying override.\n' +
                     `Meta for ${bold(intersect)} was changed in ${name} and has been altered before by:\n` +
-                    extensionsList +
+                    buildList(extensions) +
                     overrideMessage +
                     `Contact the developer of ${underline(name)} for help.`
                 );

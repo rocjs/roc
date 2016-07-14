@@ -1,4 +1,4 @@
-import { isString } from 'lodash';
+import { isString, pick } from 'lodash';
 
 import { registerHooks } from '../../../hooks/manageHooks';
 import { registerActions } from '../../../hooks/manageActions';
@@ -9,19 +9,44 @@ import { initSetDependencies } from '../../../require/manageDependencies';
 import processCommands from './processCommands';
 import processConfig from './processConfig';
 
-export default function processRocObject(roc, state, post = false) {
+export function handleResult(roc, result) {
+    if (!result) {
+        return {
+            roc: undefined,
+            update: undefined
+        };
+    }
+
+    return {
+        roc: {
+            ...roc,
+            ...pick(result.roc, [
+                'action',
+                'commands',
+                'config',
+                'dependencies',
+                'hooks',
+                'meta'
+            ])
+        },
+        update: result.update
+    };
+}
+
+export default function processRocObject({ roc, update = {} }, state, post = false, validate = true) {
     if (roc) {
         // Get possible dependencies
+        // Only possible to alter the dependencies in not post, this since modifying them in post will be to late for
+        // things to be able to react to it.
         if (!post) {
-            // FIXME This will mean that we can create a "newDependencies" directly on the roc object...
-            if (roc.newDependencies) {
-                state.context.dependencies = roc.newDependencies;
+            if (update.dependencies) {
+                state.context.dependencies = update.dependencies;
             }
 
             state.dependencyContext = initSetDependencies(state.dependencyContext)(
                     roc.name,
                     state.context.dependencies,
-                    roc.pkg,
+                    roc.packageJSON,
                     roc.path
                 );
 
@@ -44,14 +69,17 @@ export default function processRocObject(roc, state, post = false) {
             state.context.hooks = registerHooks(roc.hooks, roc.name, state.context.hooks);
         }
 
+        if (update.actions) {
+            state.context.actions = update.actions;
+        }
+
         // Get potential actions
         if (roc.actions) {
             state.context.actions = registerActions(roc.actions, roc.name, state.context.actions);
         }
 
-        // FIXME This will mean that we can create a "newCommands" directly on the roc object...
-        if (roc.newCommands) {
-            state.context.commands = roc.newCommands;
+        if (update.commands) {
+            state.context.commands = update.commands;
         }
 
         // Get potential commands
@@ -62,7 +90,15 @@ export default function processRocObject(roc, state, post = false) {
             );
         }
 
-        const newState = processConfig(roc.name,
+        if (update.config) {
+            state.context.config = update.config;
+        }
+
+        if (update.meta) {
+            state.context.meta = update.meta;
+        }
+
+        state.context.meta = processConfig(roc.name,
             {
                 config: roc.config,
                 meta: roc.meta
@@ -72,51 +108,36 @@ export default function processRocObject(roc, state, post = false) {
             }
         );
 
-        state.context.config = newState.config;
-        state.context.meta = newState.meta;
-
-        // Build the config object
-        // FIXME Remove this and depend on using the init function instead!
-        if (roc.buildConfig) {
-            const { config, meta } = roc.buildConfig(
+        if (roc.config) {
+            state.context.config = merge(
                 state.context.config,
-                state.context.meta
+                roc.config
             );
-            state.context.config = config;
-            state.context.meta = meta;
-        } else {
-            // If not buildConfig use config
-            if (roc.config) {
-                state.context.config = merge(
-                    state.context.config,
-                    roc.config
-                );
-            }
+        }
 
-            // If not buildConfig use meta
-            if (roc.meta) {
-                state.context.meta = merge(
-                    state.context.meta,
-                    roc.meta
-                );
-            }
+        if (roc.meta) {
+            state.context.meta = merge(
+                state.context.meta,
+                roc.meta
+            );
         }
 
         // Validate the configuration
-        try {
-            const settings = state.context.config || {};
-            const metaSettings = state.context.meta || {};
-            validateSettings(settings.settings, metaSettings.settings, true);
-        } catch (error) {
-            if (!/^Validation failed for field/.test(error.message)) {
-                throw error;
+        if (validate) {
+            try {
+                const config = state.context.config || {};
+                const meta = state.context.meta || {};
+                validateSettings(config.settings, meta.settings, true);
+            } catch (error) {
+                if (!/^Validation failed for property/.test(error.message)) {
+                    throw error;
+                }
+                throw new Error(
+                    'The configuration validation failed for the extension.\n' +
+                    `${error.message}\n` +
+                    `Contact the developer of ${roc.name} for help.`
+                );
             }
-
-            throw new Error(
-                'The configuration validation failed for the extension.\n' +
-                `${error.message}\n` +
-                `Contact the developer of ${roc.name} for help.`
-            );
         }
     }
 

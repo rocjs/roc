@@ -1,8 +1,10 @@
 import { bold, underline } from 'chalk';
-import { isPlainObject, intersection, get } from 'lodash';
+import { isPlainObject, intersection, get, union } from 'lodash';
 
 import isCommandGroup from '../../../cli/commands/helpers/isCommandGroup';
 import isCommand from '../../../cli/commands/helpers/isCommand';
+
+import buildList from './buildList';
 
 export default function processCommands(name, extensionCommands, stateCommands) {
     return manageCommandCollisions(
@@ -26,10 +28,7 @@ export function normalizeCommands(name, extensionCommands, stateCommands = {}) {
                     };
                 }
                 if (notInExtensions(existingExtensions, name)) {
-                    localCommands[command].__extensions = [
-                        ...existingExtensions,
-                        name
-                    ];
+                    localCommands[command].__extensions = union(existingExtensions, [name]);
                 }
 
                 // If it was a command group and now is a command
@@ -109,11 +108,12 @@ function manageCommandCollisions(name, extensionCommands, stateCommands) {
         if (notInExtensions(extensions, name) && override !== true && notInExtensions(extensions, override)) {
             // Fail early, might be more errors after this
             const overrideMessage = !override ?
-                `No override value was specified, it should probably be one of: ${extensions}\n` :
+                `No override value was specified, it should probably be one of the extensions above.` :
                 `The override did not match the possible values, it was: ${override}\n`;
             throw new Error(
                 'Tried to update a command that where registered from before without specifying override.\n' +
-                `${bold(intersect.replace('.', ' '))} has already been defined by ${extensions}.\n` +
+                `${bold(intersect.replace('.', ' '))} has already been defined by:\n` +
+                buildList(extensions) +
                 overrideMessage +
                 `Contact the developer of ${underline(name)} for help.`
             );

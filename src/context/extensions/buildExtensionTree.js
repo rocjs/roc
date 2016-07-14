@@ -2,6 +2,8 @@ import getExtensions from './steps/getExtensions';
 import processDevExports from './steps/processDevExports';
 import runPostInits from './steps/runPostInits';
 
+const log = require('debug')('roc:core:extensionBuilder');
+
 /**
  * Builds the complete configuration objects.
  *
@@ -21,11 +23,19 @@ import runPostInits from './steps/runPostInits';
  * @property {Object[]} usedExtensions - All of the loaded extensions.
  */
 export default function buildExtensionTree(context, packages, plugins, directory, verbose, checkRequired) {
+    const completed = (state) => {
+        let totalTime = process.hrtime(state.temp.startTime);
+        log(`Completed loading extensions ${(totalTime[0] * 1000 + totalTime[1] / 1000000).toFixed(0)}ms`);
+        return state;
+    };
+
+    log('Loading extensions…');
     return [
-        getExtensions('package')(packages, directory),
-        getExtensions('plugin')(plugins, directory),
+        getExtensions('package')(packages),
+        getExtensions('plugin')(plugins),
         processDevExports,
-        runPostInits
+        runPostInits,
+        completed
     ].reduce(
         (state, process) => process(state),
         // Initial state
@@ -34,12 +44,14 @@ export default function buildExtensionTree(context, packages, plugins, directory
 
             settings: {
                 checkRequired,
-                verbose
+                verbose,
+                directory
             },
 
             temp: {
                 postInits: [],
-                extensionsDevelopmentExports: {}
+                extensionsDevelopmentExports: {},
+                startTime: process.hrtime()
             },
 
             dependencyContext: {
