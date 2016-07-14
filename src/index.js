@@ -19,7 +19,7 @@ export execute from './execute';
 export executeSync from './execute/executeSync';
 export executeSyncExit from './execute/executeSyncExit';
 
-export { getAbsolutePath, fileExists, folderExists } from './helpers';
+export { getAbsolutePath, fileExists, folderExists, lazyFunctionRequire } from './helpers';
 
 export { defaultPrompt } from './commands/helpers/defaultPrompt';
 

@@ -1,6 +1,7 @@
 import { isBoolean, isPath, isString, required } from '../validation/validators';
+import lazyFunctionRequire from '../helpers/lazyFunctionRequire';
 
-import init from './init';
+const lazyRequire = lazyFunctionRequire(require);
 
 const initOptions = [{
     name: 'list',
@@ -31,12 +32,12 @@ export default {
             description: 'Commands that can be used to create new projects.'
         },
         init: {
-            command: init,
+            command: lazyRequire('./init'),
             description: 'Init a new project.',
             /* eslint-disable max-len */
             help: `
                 Used to init new projects using special templates. If no template is given a prompt will ask for one.
-                The templates are fetched from Github and it's easy to create new ones.`,
+                The templates are fetched from Github or from a zip file and it's easy to create new ones.`,
             markdown: `
                 The __init__ command can be used to initiate a new Roc project and currently expects that it's run inside an empty directory. As can be seen above it takes two optional arguments, template and version. If no template is given a prompt will be shown with the possible alternatives that exists. Currently these alternatives are coded into Roc and matches \`web-app\` and \`web-app-react\`.
 
@@ -54,7 +55,7 @@ export default {
             arguments: initArguments
         },
         new: {
-            command: init,
+            command: lazyRequire('./init'),
             description: 'Create a new project.',
             help: `
                 Alias for "init" that always will try to create a new directory.`,

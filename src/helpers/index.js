@@ -6,6 +6,7 @@ export getRocPackageDependencies from './getRocPackageDependencies';
 export getRocPluginDependencies from './getRocPluginDependencies';
 export getSuggestions from './getSuggestions';
 export keyboardDistance from './keyboardDistance';
+export lazyFunctionRequire from './lazyFunctionRequire';
 export manageVerbose from './manageVerbose';
 export merge from './merge';
 export onProperty from './onProperty';
