@@ -1,4 +1,4 @@
-import { isPlainObject, isFunction } from 'lodash';
+import { isFunction, omit } from 'lodash';
 
 import log from '../log/default/large';
 import merge from '../helpers/merge';
@@ -6,8 +6,8 @@ import getProjectConfig from '../configuration/getProjectConfig';
 import fileExists from '../helpers/fileExists';
 import getRocPackageDependencies from '../helpers/getRocPackageDependencies';
 import getRocPluginDependencies from '../helpers/getRocPluginDependencies';
-import getPackage from '../helpers/getPackage';
-import { registerAction, registerActions } from '../hooks/manageActions';
+import getPackageJSON from '../helpers/getPackageJSON';
+import { registerActions } from '../hooks/manageActions';
 import { setResolveRequest, getResolveRequest } from '../require/manageResolveRequest';
 import patchRequire from '../require/patchRequire';
 
@@ -16,6 +16,7 @@ import verifyInstalledProjectDependencies from './dependencies/verifyInstalledPr
 import verifyRequiredDependencies from './dependencies/verifyRequiredDependencies';
 import buildExtensionTree from './extensions/buildExtensionTree';
 import getDefaults from './helpers/getDefaults';
+import processRocObject, { handleResult } from './extensions/helpers/processRocObject';
 
 import { setActions } from '../hooks/manageActions';
 import { setHooks } from '../hooks/manageHooks';
@@ -37,7 +38,7 @@ import { setHooks } from '../hooks/manageHooks';
  * @property {rocConfig} config - The final configuration, with application configuration.
  * @property {rocMetaConfig} meta - The merged meta configuration.
  */
-export default async function initContext({
+export default function initContext({
     verbose = false,
     commands: baseCommands = {},
     directory = process.cwd(),
@@ -59,25 +60,29 @@ export default async function initContext({
         hooks: {},
         meta: {},
         projectExtensions: [],
-        pkg: {},
+        packageJSON: {},
         usedExtensions: []
     };
 
     context = getDefaults(context, name, directory);
 
     if (fileExists('package.json', directory)) {
-        context.pkg = getPackage(directory);
+        context.packageJSON = getPackageJSON(directory);
 
-        const packages = context.pkg.roc && context.pkg.roc.packages && context.pkg.roc.packages.length ?
-            context.pkg.roc.packages :
-            getRocPackageDependencies(context.pkg);
+        const packages =
+            context.packageJSON.roc && context.packageJSON.roc.packages && context.packageJSON.roc.packages.length ?
+                context.packageJSON.roc.packages :
+                getRocPackageDependencies(context.packageJSON);
 
-        const plugins = context.pkg.roc && context.pkg.roc.plugins && context.pkg.roc.plugins.length ?
-            context.pkg.roc.plugins :
-            getRocPluginDependencies(context.pkg);
+        const plugins =
+            context.packageJSON.roc && context.packageJSON.roc.plugins && context.packageJSON.roc.plugins.length ?
+                context.packageJSON.roc.plugins :
+                getRocPluginDependencies(context.packageJSON);
 
-        const { context: extensionContext, dependencyContext } =
-            buildExtensionTree(context, packages, plugins, directory, verbose, verify);
+        const {
+            context: extensionContext,
+            dependencyContext
+        } = buildExtensionTree(context, packages, plugins, directory, verbose, verify);
 
         context = merge(
             context,
@@ -85,8 +90,8 @@ export default async function initContext({
         );
 
         if (verify) {
-            await verifyRequiredDependencies(directory, context.dependencies.requires);
-            verifyInstalledProjectDependencies(context.pkg, context.dependencies.exports);
+            verifyRequiredDependencies(directory, context.dependencies.requires);
+            verifyInstalledProjectDependencies(context.packageJSON, context.dependencies.exports);
         }
 
         if (runtime) {
@@ -95,6 +100,7 @@ export default async function initContext({
                 directory,
                 dependencyContext
             );
+
             patchRequire(getResolveRequest('Node'));
         }
 
@@ -109,27 +115,52 @@ export default async function initContext({
 
         const projectConfig = getProjectConfig(projectConfigPath, directory, verbose);
 
-        // Check for a mismatch between application configuration and packages.
+        // Check for a mismatch between application configuration and extensions.
         if (verify) {
             if (Object.keys(projectConfig).length) {
                 verifyConfigurationStructure(context.config, projectConfig);
             }
         }
 
-        // Keep a copy of the configuration before we added the user configuration
+        // Keep a copy of the configuration before we add the user configuration
         context.extensionConfig = context.config;
-        context.config = merge(context.config, projectConfig);
 
-        if (isFunction(projectConfig.actions)) {
-            context.actions = registerAction(projectConfig.actions, 'default', context.pkg.name, context.actions, true);
-        } else if (isPlainObject(projectConfig.actions)) {
-            context.actions = registerActions(projectConfig.actions, context.pkg.name, context.actions, true);
-        }
+        if (projectConfig.init) {
+            context = processRocObject(
+                handleResult({
+                    actions: projectConfig.actions,
+                    config: omit(projectConfig, ['actions', 'init'])
+                }, projectConfig.init({ verbose, directory, context })),
+                { context },
+                true,
+                false
+            );
+        } else {
+            context.config = merge(
+                context.config,
+                omit(projectConfig, ['actions', 'init'])
+            );
 
-        if (runtime) {
-            setActions(context.actions);
-            setHooks(context.hooks);
+            if (projectConfig.actions) {
+                // We allow both a function directly or an array of actions
+                const projectActions = isFunction(projectConfig.actions) ?
+                    [projectConfig.actions] :
+                    projectConfig.actions;
+
+                context.actions =
+                    registerActions(
+                        projectActions,
+                        `Project (${context.packageJSON.name})`,
+                        context.actions,
+                        true
+                    );
+            }
         }
+    }
+
+    if (runtime) {
+        setActions(context.actions);
+        setHooks(context.hooks);
     }
 
     return context;
