@@ -13,7 +13,8 @@ export default function isPath(value, info) {
     if (info) {
         return createInfoObject({
             validator: 'Filepath',
-            converter: () => toString
+            converter: () => toString,
+            canBeEmpty: true
         });
     }
 
