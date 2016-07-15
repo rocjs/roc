@@ -1,7 +1,6 @@
-import { bold } from 'chalk';
-
 import log from '../../log/default/large';
 import isValid from '../../validation/helpers/isValid';
+import getInfoObject from '../../validation/helpers/getInfoObject';
 import throwValidationError from '../../validation/helpers/throwValidationError';
 import automatic from '../../converters/automatic';
 
@@ -29,7 +28,7 @@ export default function parseArguments(command, commands = {}, args) {
 
             const converter =
                 argument.converter ||
-                argument.validator && argument.validator(null, true).converter ||
+                getInfoObject(argument.validator).converter ||
                 argument.default !== undefined && automatic(argument.default);
 
             if (value !== undefined && converter) {

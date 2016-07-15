@@ -1,9 +1,7 @@
 import { isFunction } from 'lodash';
 
 export default function createReadme(name, dir, extension, rocCommandObject) {
-    const {
-        projectExtensions
-    } = rocCommandObject;
+    const projectExtensions = rocCommandObject.context.projectExtensions;
     const rows = [];
 
     rows.push(`# ${name}`, '');

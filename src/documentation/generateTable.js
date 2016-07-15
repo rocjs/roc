@@ -7,7 +7,6 @@ import pad from './helpers/pad';
 
 /* eslint-disable no-unused-vars */
 const defaultSettings = {
-    titleWrapper: (name, level, parents) => name,
     groupTitleWrapper: (name, level, parents) => name,
     cellDivider: '|',
     rowWrapper: (input, level) => `|${input}|`,
@@ -57,17 +56,19 @@ export default function generateTable(initalDocumentationObject, header, setting
         ).join(settings.cellDivider), level);
     };
 
-    const printTableHead = (name, parentNames, description, level = 0, printTableHeader = true) => {
+    const printTableHead = ({ name, description, raw }, parentNames, level = 0, printTableHeader = true) => {
         const rows = [];
         rows.push(settings.groupTitleWrapper(name, level, parentNames));
 
         if (description) {
-            rows.push(description);
+            rows.push(description, '');
+        }
+
+        if (raw) {
+            rows.push('✓ ― Supports __raw', '');
         }
 
         if (settings.header && printTableHeader) {
-            // Add a new empty row
-            rows.push('');
             rows.push(printTableRow(header, level, true));
             rows.push(printTableSplitter(level));
         }
@@ -85,7 +86,7 @@ export default function generateTable(initalDocumentationObject, header, setting
 
             if (level === 0 || !settings.compact) {
                 rows = rows.concat(
-                    printTableHead(group.name, parentNames, group.description, level, objects.length > 0)
+                    printTableHead(group, parentNames, level, objects.length > 0)
                 );
             }
 

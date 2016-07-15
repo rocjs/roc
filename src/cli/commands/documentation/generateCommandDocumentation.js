@@ -6,6 +6,7 @@ import getCommandArgumentsAsString from '../getCommandArgumentsAsString';
 import onProperty from '../../../helpers/onProperty';
 import buildDocumentationObject, { sortOnProperty } from '../../../documentation/buildDocumentationObject';
 import getDefaultValue from '../../../documentation/helpers/getDefaultValue';
+import getInfoObject from '../../../validation/helpers/getInfoObject';
 
 import createTable from './createTable';
 
@@ -116,7 +117,7 @@ export default function generateCommandDocumentation(settings, metaSettings, met
                 return '';
             }
         },
-        notEmpty: {
+        canBeEmpty: {
             padding: false,
             renderer: (input) => {
                 if (input) {
@@ -134,7 +135,7 @@ export default function generateCommandDocumentation(settings, metaSettings, met
 }
 
 function createDescription(param) {
-    const required = param.validator ? param.validator(null, true).required : false;
+    const required = getInfoObject(param.validator).required;
     return `${param.description && param.description + '  ' || ''}` +
         `${required && green('Required') + '  ' || ''}` +
         `${param.default !== undefined && cyan(JSON.stringify(param.default)) + '  ' || ''}` +

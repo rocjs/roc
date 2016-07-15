@@ -2,6 +2,7 @@ import { bold, underline } from 'chalk';
 import { set } from 'lodash';
 
 import isValid from '../../validation/helpers/isValid';
+import getInfoObject from '../../validation/helpers/getInfoObject';
 import throwValidationError from '../../validation/helpers/throwValidationError';
 import log from '../../log/default/large';
 import getSuggestions from '../../helpers/getSuggestions';
@@ -126,7 +127,7 @@ function parseCommandOptions(command, notManaged) {
 
             const converter =
                 option.converter ||
-                option.validator && option.validator(null, true).converter ||
+                getInfoObject(option.validator).converter ||
                 option.default !== undefined && automatic(option.default);
 
             if (value !== undefined && converter) {

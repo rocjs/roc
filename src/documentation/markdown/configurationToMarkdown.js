@@ -1,18 +1,20 @@
 import { isFunction, omit } from 'lodash';
 
-export default function configurationToMarkdown(configuration, metaConfiguration, rocCommandObject) {
-    const config = omit(configuration, ['settings', 'actions']);
+export default function configurationToMarkdown(name, configuration, metaConfiguration, rocCommandObject) {
+    const config = omit(configuration, ['settings', 'actions', 'init']);
     const configMeta = omit(metaConfiguration, 'settings');
     const groups = Object.keys(config);
 
-    if (groups.length === 0) {
-        return 'No config available.';
-    }
-
     const rows = [];
 
-    rows.push('# Configuration');
-    rows.push('Configuration that can be defined, other than settings and actions.');
+    rows.push('# Config for `' + name + '`', '');
+
+    rows.push('Configuration that can be defined in `roc.config.js`, other than settings, init and actions.', '');
+
+    if (groups.length === 0) {
+        rows.push('__No config available.__');
+        return rows.join('\n');
+    }
 
     groups.forEach((group) => {
         rows.push(`## \`${group}\``);
@@ -22,7 +24,7 @@ export default function configurationToMarkdown(configuration, metaConfiguration
                 isFunction(configMeta[group].description) ?
                     configMeta[group].description(rocCommandObject, config[group]) :
                     configMeta[group].description
-            );
+            , '');
         }
 
         rows.push(`__Extensions__: ${configMeta[group].__extensions.join(', ')}`);

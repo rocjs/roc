@@ -6,6 +6,8 @@ import generateTable from '../generateTable';
 import pad from '../helpers/pad';
 import createStatefulAnchor from './helpers/createStatefulAnchor';
 
+import createInfoObject from '../../validation/helpers/createInfoObject';
+
 /**
  * Command used to generate markdown documentation for all the registered hooks.
  * Can be piped to a file and uploaded somewhere easily.
@@ -80,13 +82,13 @@ export default function hooksToMarkdown(name, hooks, mode) {
             // Generate the arguments
             if (currentHook.arguments) {
                 const objects = currentHook.arguments.map((argument) => {
-                    const infoObject = argument.validator ? argument.validator(null, true) : {};
+                    const infoObject = argument.validator ? argument.validator(null, true) : createInfoObject();
                     return {
                         name: argument.name,
                         description: argument.description || '',
                         type: infoObject.type,
                         required: infoObject.required,
-                        notEmpty: infoObject.notEmpty
+                        canBeEmpty: infoObject.canBeEmpty
                     };
                 });
 
@@ -120,13 +122,16 @@ export default function hooksToMarkdown(name, hooks, mode) {
                         return 'No';
                     }
                 },
-                notEmpty: {
+                canBeEmpty: {
                     name: 'Can be empty',
                     renderer: (input) => {
-                        if (input === false) {
+                        if (input === true) {
                             return 'Yes';
+                        } else if (input === false) {
+                            return 'No';
                         }
-                        return 'No';
+
+                        return '';
                     }
                 }
             };

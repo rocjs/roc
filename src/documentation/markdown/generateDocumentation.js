@@ -33,38 +33,43 @@ export default function generateDocumentation({
     html = false,
     markdown = true,
     mode,
+    project = false,
     extension = false
 }) {
     const dir = rocCommandObject.directory;
     const documentationDir = join(dir, directory);
-    const name = rocCommandObject.pkg.name;
+    const name = rocCommandObject.context.packageJSON.name;
 
     // Create the folder if it does not exist.
     if (!folderExists(documentationDir)) {
         mkdirSync(documentationDir);
     }
 
+    const config = project ?
+        rocCommandObject.context.config :
+        rocCommandObject.context.extensionConfig;
+
     const documentation = [
         {
             content: createReadme(name, directory, extension, rocCommandObject),
             path: extension ? `${dir}/README.md` : `${dir}/ROC.md`
         }, {
-            content: actionsToMarkdown(name, rocCommandObject.actions, mode),
+            content: actionsToMarkdown(name, rocCommandObject.context.actions, mode, project),
             path: `${documentationDir}/Actions.md`
         }, {
-            content: dependenciesToMarkdown(name, extension, rocCommandObject.dependencies),
+            content: dependenciesToMarkdown(name, extension, rocCommandObject.context.dependencies),
             path: `${documentationDir}/Dependencies.md`
         }, {
-            content: hooksToMarkdown(name, rocCommandObject.hooks, mode),
+            content: hooksToMarkdown(name, rocCommandObject.context.hooks, mode),
             path: `${documentationDir}/Hooks.md`
         }, {
-            content: settingsToMarkdown(name, rocCommandObject.extensionConfig, rocCommandObject.metaObject),
+            content: settingsToMarkdown(name, config, rocCommandObject.context.meta),
             path: `${documentationDir}/Settings.md`
         }, {
             content: commandsToMarkdown(
                 name,
-                rocCommandObject.extensionConfig,
-                rocCommandObject.commands,
+                rocCommandObject.context.extensionConfig,
+                rocCommandObject.context.commands,
                 `${documentationDir}/Settings.md`,
                 mode
             ),
@@ -72,15 +77,15 @@ export default function generateDocumentation({
         }, {
             content: configurationToMarkdown(
                 name,
-                rocCommandObject.extensionConfig,
-                rocCommandObject.metaObject,
+                rocCommandObject.context.extensionConfig,
+                rocCommandObject.context.meta,
                 rocCommandObject
             ),
             path: `${documentationDir}/Configuration.md`
         }, {
             content: extensionsToMarkdown(
                 name,
-                rocCommandObject.usedExtensions,
+                rocCommandObject.context.usedExtensions,
                 rocCommandObject,
                 extension
             ),

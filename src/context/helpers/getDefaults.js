@@ -6,6 +6,7 @@ import { normalizeCommands } from '../extensions/helpers/processCommands';
 import { registerHooks } from '../../hooks/manageHooks';
 import isObject from '../../validation/validators/isObject';
 import isFunction from '../../validation/validators/isFunction';
+import isBoolean from '../../validation/validators/isBoolean';
 
 export default function getDefaults(context, name = 'roc', directory) {
     const newContext = merge(context, {
@@ -58,23 +59,35 @@ function getDefaultCommands(directory) {
                             directory: rocCommandObject.parsedOptions.options.output,
                             html: rocCommandObject.parsedOptions.options.html,
                             markdown: rocCommandObject.parsedOptions.options.markdown,
-                            mode: rocCommandObject.parsedOptions.options.mode
+                            mode: rocCommandObject.parsedOptions.options.mode,
+                            project: rocCommandObject.parsedOptions.options.project
                         }),
                     description: 'Generates documentation for the current project.',
                     options: [{
                         name: 'html',
-                        default: false
+                        default: false,
+                        description: 'If HTML should be generated. (Not supported yet)',
+                        validator: isBoolean
                     }, {
                         name: 'mode',
-                        default: 'github.com'
+                        default: 'github.com',
+                        description: 'The platform that is to be used, for link generation.',
+                        validator: /github\.com|nodejs\.org|bitbucket\.org|ghost\.org|gitlab\.com/
                     }, {
                         name: 'markdown',
-                        default: true
+                        default: true,
+                        description: 'If markdown should be generated.',
+                        validator: isBoolean
                     }, {
                         name: 'output',
-                        default: 'docs'
+                        default: 'docs',
+                        description: 'A directory to place the generated documentation inside of.',
+                        validator: isBoolean
                     }, {
-                        name: 'hide-commands'
+                        name: 'project',
+                        default: false,
+                        description: 'If the projects configuration and actions should be included.',
+                        validator: isBoolean
                     }]
                 }
             }

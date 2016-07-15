@@ -1,4 +1,4 @@
-import { isBoolean, isPath, isString, required } from '../validation/validators';
+import { isBoolean, isPath, isString, notEmpty, required } from '../validation/validators';
 import lazyFunctionRequire from '../helpers/lazyFunctionRequire';
 
 const lazyRequire = lazyFunctionRequire(require);
@@ -17,11 +17,11 @@ const initOptions = [{
 
 const initArguments = [{
     name: 'template',
-    validator: isPath,
+    validator: notEmpty(isPath),
     description: 'The template to use. Matches Github structure with Username/Repo or a local zip file.'
 }, {
     name: 'version',
-    validator: isString,
+    validator: notEmpty(isString),
     description: 'The version to use.'
 }];
 
@@ -62,7 +62,7 @@ export default {
             options: initOptions,
             arguments: [].concat({
                 name: 'name',
-                validator: required(isString),
+                validator: required(notEmpty(isString)),
                 description: 'Name for a new directory to create the project in.'
             }, initArguments)
         }

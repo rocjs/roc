@@ -11,6 +11,7 @@ import createStatefulAnchor from './helpers/createStatefulAnchor';
 
 import isCommandGroup from '../../cli/commands/helpers/isCommandGroup';
 import isCommand from '../../cli/commands/helpers/isCommand';
+import getInfoObject from '../../validation/helpers/getInfoObject';
 
 // Table with default options
 const header = {
@@ -190,13 +191,13 @@ function buildCommand(cli, command, commandData, allSettingGroups, printGroup, p
     // Generate the arguments
     if (commandData.arguments) {
         const objects = commandData.arguments.map((argument) => {
-            const infoObject = argument.validator ? argument.validator(null, true) : {};
+            const infoObject = getInfoObject(argument.validator);
             return {
                 name: argument.name,
                 description: argument.description || '',
                 type: infoObject.type,
                 required: infoObject.required,
-                notEmpty: infoObject.notEmpty,
+                canBeEmpty: infoObject.canBeEmpty,
                 default: argument.default !== undefined && JSON.stringify(argument.default)
             };
         });
@@ -213,13 +214,13 @@ function buildCommand(cli, command, commandData, allSettingGroups, printGroup, p
     // Generate the options
     if (commandData.options) {
         const objects = commandData.options.sort(onProperty('name')).map((option) => {
-            const infoObject = option.validator ? option.validator(null, true) : {};
+            const infoObject = getInfoObject(option.validator);
             return {
-                name: option.shortname ? `-${option.shortname}, --${option.name}` : `--${option.name}`,
+                name: option.alias ? `-${option.alias}, --${option.name}` : `--${option.name}`,
                 description: option.description || '',
                 type: infoObject.type,
                 required: infoObject.required,
-                notEmpty: infoObject.notEmpty,
+                canBeEmpty: infoObject.canBeEmpty,
                 default: option.default !== undefined && JSON.stringify(option.default)
             };
         });
@@ -258,13 +259,16 @@ function buildCommand(cli, command, commandData, allSettingGroups, printGroup, p
                 return 'No';
             }
         },
-        notEmpty: {
+        canBeEmpty: {
             name: 'Can be empty',
             renderer: (input) => {
-                if (input === false) {
+                if (input === true) {
                     return 'Yes';
+                } else if (input === false) {
+                    return 'No';
                 }
-                return 'No';
+
+                return '';
             }
         }
     };

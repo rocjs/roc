@@ -4,15 +4,18 @@ export default function extensionsToMarkdown(name, usedExtensions, rocCommandObj
     const rows = [];
 
     const packages = usedExtensions.filter((extn) => extn.type === 'package' &&
-        extn.name !== rocCommandObject.pkg.name);
-        // FIXME
+        // Do no list the package itself, this is based on the name of the extension and the current name of the
+        // project that this commands runs from.
+        extn.name !== rocCommandObject.context.packageJSON.name);
+
     const plugins = usedExtensions.filter((extn) => extn.type === 'plugin' &&
-        extn.name !== rocCommandObject.pkg.name);
-        // FIXME
+        // Do no list the plugin itself, this is based on the name of the extension and the current name of the
+        // project that this commands runs from.
+        extn.name !== rocCommandObject.context.packageJSON.name);
 
     rows.push('# Extensions for `' + name + '`', '');
 
-    rows.push('The extensions that are used in the project, indirect and direct.');
+    rows.push('The extensions that are used in the project, indirect and direct, in the order that they were added.');
     rows.push('## Packages');
     if (packages.length > 0) {
         packages.forEach((pkg) => {
@@ -22,9 +25,10 @@ export default function extensionsToMarkdown(name, usedExtensions, rocCommandObj
                 pkg.description;
 
             rows.push(description);
+            rows.push('');
         });
     } else {
-        rows.push('No packages.');
+        rows.push('_No packages._', '');
     }
 
     rows.push('## Plugins');
@@ -36,9 +40,10 @@ export default function extensionsToMarkdown(name, usedExtensions, rocCommandObj
                 plugin.description;
 
             rows.push(description);
+            rows.push('');
         });
     } else {
-        rows.push('_No plugins._');
+        rows.push('_No plugins._', '');
     }
 
     return rows.join('\n');

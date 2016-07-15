@@ -1,7 +1,13 @@
 import redent from 'redent';
 import trimNewlines from 'trim-newlines';
 
+import onProperty from '../../helpers/onProperty';
+
 import createStatefulAnchor from './helpers/createStatefulAnchor';
+
+function createHookName(name, action) {
+    return name || `Generic${action.name && ' (' + action.name + ')'}`;
+}
 
 /**
  * Function used to generate markdown documentation for all the registered actions.
@@ -12,9 +18,11 @@ import createStatefulAnchor from './helpers/createStatefulAnchor';
  *
  * @returns {string} - Markdown documentation.
  */
-export default function actionsToMarkdown(name, actions = [], mode) {
-    // Remove project actions if any
-    actions = actions.filter((extensionActions) => !extensionActions.project);
+export default function actionsToMarkdown(name, actions = [], mode, project) {
+    // Remove project actions if we are not in project mode
+    if (!project) {
+        actions = actions.filter((extensionActions) => !extensionActions.project);
+    }
 
     const rows = [];
 
@@ -31,10 +39,10 @@ export default function actionsToMarkdown(name, actions = [], mode) {
     const statefulAnchor = createStatefulAnchor(mode);
 
     actions.forEach((extension) => {
-        const sortedActions = Object.keys(extension.actions).sort();
+        const sortedActions = extension.actions.sort(onProperty('hook'));
         rows.push(`* ${statefulAnchor(extension.name)}`);
-        sortedActions.forEach((action) => {
-            rows.push(`  * ${statefulAnchor(action)}`);
+        sortedActions.forEach(({ hook, action }) => {
+            rows.push(`  * ${statefulAnchor(createHookName(hook, action))}`);
         });
     });
 
@@ -45,12 +53,10 @@ export default function actionsToMarkdown(name, actions = [], mode) {
 
         rows.push('');
 
-        const sortedActions = Object.keys(extension.actions).sort();
+        const sortedActions = extension.actions.sort(onProperty('hook'));
 
-        sortedActions.forEach((action) => {
-            const currentAction = extension.actions[action];
-
-            rows.push(`### ${action}`);
+        sortedActions.forEach((currentAction) => {
+            rows.push(`### ${createHookName(currentAction.hook, currentAction.action)}`);
 
             if (currentAction.description) {
                 rows.push('', redent(trimNewlines(currentAction.description)));
