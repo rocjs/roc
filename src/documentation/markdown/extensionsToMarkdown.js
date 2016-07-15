@@ -15,7 +15,7 @@ export default function extensionsToMarkdown(name, usedExtensions, rocCommandObj
 
     rows.push('# Extensions for `' + name + '`', '');
 
-    rows.push('The extensions that are used in the project, indirect and direct, in the order that they were added.');
+    rows.push('The extensions that are used in the project, indirect and direct, in the order that they were added.\n');
     rows.push('## Packages');
     if (packages.length > 0) {
         packages.forEach((pkg) => {
