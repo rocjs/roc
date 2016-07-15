@@ -11,7 +11,6 @@ export {
 export merge from './helpers/merge';
 
 export runCli from './cli/runCli';
-export initCli from './cli/initCli';
 
 export execute from './execute';
 export executeSync from './execute/executeSync';
