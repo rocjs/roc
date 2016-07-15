@@ -32,7 +32,7 @@ export default function resolveRequest(exports, directory, dependencyContext) {
             }
 
             // Provides a way to opt-out of the Roc require system
-            if (request.charAt(0) === '¡') {
+            if (request.charAt(0) === '_') {
                 return request.substring(1);
             }
 
