@@ -10,35 +10,36 @@
  *
  * @returns {string} - The closest match.
  */
-export default function keyboardDistance(char, possible) {
+export default function keyboardDistance(char, possible = []) {
     if (char.length > 1) {
         throw new Error('First argument must be a single character.');
     }
 
-    possible = possible || [];
     const qwerty = [
         ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'],
         ['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p'],
         ['a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l'],
-        ['z', 'x', 'c', 'v', 'b', 'n', 'm']
+        ['z', 'x', 'c', 'v', 'b', 'n', 'm'],
     ];
 
+    /* eslint-disable guard-for-in, no-restricted-syntax, consistent-return */
     const getPosition = (c) => {
         for (const rowIndex in qwerty) {
             for (const columnIndex in qwerty[rowIndex]) {
                 if (c.toLowerCase() === qwerty[rowIndex][columnIndex]) {
                     return {
                         row: parseInt(rowIndex, 10) + 1,
-                        column: parseInt(columnIndex, 10) + 1
+                        column: parseInt(columnIndex, 10) + 1,
                     };
                 }
+
+                return undefined;
             }
         }
     };
+    /* eslint-enable */
 
-    const map = possible.map((p) => {
-        return Object.assign({}, { name: p }, getPosition(p));
-    });
+    const map = possible.map((p) => Object.assign({}, { name: p }, getPosition(p)));
 
     const getDistance = (a, b) => {
         const minRow = Math.abs(a.row - b.row);
@@ -52,7 +53,7 @@ export default function keyboardDistance(char, possible) {
     let shortest = -1;
     let closest;
 
-    for (let key of map) {
+    for (const key of map) {
         const distance = getDistance(currentKey, key);
 
         if (shortest > -1 && distance >= shortest) {

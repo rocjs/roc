@@ -10,7 +10,7 @@ export default function initLogSmall() {
         error: logger('error', 'red'),
         ok: logger('log', 'green'),
         done: logger('log', 'green'),
-        raw: logger
+        raw: logger,
     };
 }
 
@@ -34,6 +34,6 @@ function logger(level, color) {
 
 function printError(error, log) {
     if (error && error.message) {
-        return log('\n' + (isVerbose() ? error.stack : error.message));
+        log(`\n${(isVerbose() ? error.stack : error.message)}`);
     }
 }

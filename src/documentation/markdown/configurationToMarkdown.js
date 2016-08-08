@@ -7,7 +7,7 @@ export default function configurationToMarkdown(name, configuration, metaConfigu
 
     const rows = [];
 
-    rows.push('# Config for `' + name + '`', '');
+    rows.push(`# Config for \`${name}\``, '');
 
     rows.push('Configuration that can be defined in `roc.config.js`, other than settings, init and actions.', '');
 

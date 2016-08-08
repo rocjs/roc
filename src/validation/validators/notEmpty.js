@@ -12,11 +12,25 @@ import isValid from '../helpers/isValid';
  * @return {function} - A function that takes a value and that returns true or false if valid or not.
  */
 export default function notEmpty(validator) {
+    function isEmpty(value) {
+        if (isArrayLike(value)) {
+            return !value.length;
+        }
+
+        if (isPlainObject(value)) {
+            return !Object.keys(value).length;
+        }
+
+        // If it did not match one of the types above we will consider
+        // it to not be empty
+        return false;
+    }
+
     return (input, info) => {
         if (info) {
             return createInfoObject({
                 validator,
-                canBeEmpty: false
+                canBeEmpty: false,
             });
         }
 
@@ -30,14 +44,4 @@ export default function notEmpty(validator) {
 
         return isValid(input, validator);
     };
-}
-
-function isEmpty(value) {
-    if (isArrayLike(value)) {
-        return !value.length;
-    }
-
-    if (isPlainObject(value)) {
-        return !Object.keys(value).length;
-    }
 }

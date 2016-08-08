@@ -11,12 +11,13 @@ global.roc.actions = global.roc.actions || [];
  * @param {string} extensionName - Name of the extension to register the actions on.
  * @param {boolean} [project=false] - If the actions belongs to the project.
  */
+ /* eslint-disable no-param-reassign */
 export function registerActions(actions, extensionName, state = global.roc.actions, project = false) {
     // Look for the extensionName and only add if not already there
     const index = state.findIndex(({ name }) => extensionName === name);
 
     if (index === -1) {
-        let extensionActions = [];
+        const extensionActions = [];
         actions.forEach((actionObject) => {
             const action = isFunction(actionObject) ?
                 actionObject :
@@ -34,12 +35,13 @@ export function registerActions(actions, extensionName, state = global.roc.actio
         state = [].concat(state, {
             project,
             name: extensionName,
-            actions: extensionActions
+            actions: extensionActions,
         });
     }
 
     return state;
 }
+/* eslint-enable */
 
 /**
  * Register single action with Roc.
@@ -58,7 +60,7 @@ export function registerAction(action, extensionName, state = global.roc.actions
         state.push({
             project,
             name: extensionName,
-            actions: [createActionHelper(action)]
+            actions: [createActionHelper(action)],
         });
     }
 
@@ -71,12 +73,13 @@ function createActionHelper(action, extension, hook, description, post) {
         extension,
         hook,
         description,
-        post
+        post,
     };
 }
 
+/* eslint-disable no-param-reassign */
 export function removeActions(state = global.roc.actions) {
-    return (extensionToRemove, actionsForHookToRemove) => {
+    return (extensionToRemove, hookName) => {
         if (!extensionToRemove) {
             throw new Error('You need to at least specify the extension to remove actions for.');
         }
@@ -91,14 +94,16 @@ export function removeActions(state = global.roc.actions) {
                     return extension;
                 }
 
-                if (!actionsForHookToRemove) {
+                if (!hookName) {
                     return undefined;
                 }
 
                 extension.actions = extension.actions.map((action) => {
-                    if (action.hook !== actionForHookToRemove) {
-                        return action
+                    if (action.hook !== hookName) {
+                        return action;
                     }
+
+                    return undefined;
                 }).filter((element) => !!element);
 
                 return extension;
@@ -107,6 +112,7 @@ export function removeActions(state = global.roc.actions) {
         return state;
     };
 }
+/* eslint-enable */
 
 /**
  * Gets the registered actions.

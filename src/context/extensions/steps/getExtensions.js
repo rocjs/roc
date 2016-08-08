@@ -1,22 +1,22 @@
-import { join, dirname } from 'path';
 import { _findPath } from 'module';
-import resolve from 'resolve';
+import { join, dirname } from 'path';
 
+import resolve from 'resolve';
 import { bold, underline } from 'chalk';
 import { isString } from 'lodash';
 import semver from 'semver';
 
-import merge from '../../../helpers/merge';
 import { fileExists } from '../../../helpers';
-import log from '../../../log/default/large';
 import ExtensionError from '../helpers/ExtensionError';
+import log from '../../../log/default/large';
+import merge from '../../../helpers/merge';
 import processRocObject, { handleResult } from '../helpers/processRocObject';
 
 const rocPackageJSON = require('../../../../package.json');
 
 export default function getExtensions(type) {
-    return (extensions) => (initialState) => {
-        return extensions.reduce(
+    return (extensions) => (initialState) =>
+        extensions.reduce(
             (state, extensionPath) => {
                 // Get the extension
                 const roc = getExtension(extensionPath, state.settings.directory, type);
@@ -35,7 +35,7 @@ export default function getExtensions(type) {
                             name: roc.name,
                             version: roc.version,
                             description: roc.description,
-                            type
+                            type,
                         });
 
                         return nextState;
@@ -51,7 +51,6 @@ export default function getExtensions(type) {
                 return state;
             }
         , initialState);
-    };
 }
 
 function getExtension(extensionName, directory, type) {
@@ -79,13 +78,14 @@ function getExtension(extensionName, directory, type) {
         if (!/^Cannot find module/.test(err.message)) {
             throw err;
         }
-
         log.warn(
             `Failed to load Roc ${type} named ${bold(extensionName)}.\n` +
-                `Make sure you have it installed. Try running: ${underline('npm install --save ' + extensionName)}`,
+                `Make sure you have it installed. Try running: ${underline('npm install --save ' + extensionName)}`, // eslint-disable-line
             'Roc Extension Loading Failed',
             err
         );
+
+        return undefined;
     }
 }
 
@@ -97,7 +97,7 @@ function getCompleteExtensionTree(type, roc, path, initialState) {
         checkRequired,
         init,
         addPostInit,
-        registerExtension(type)
+        registerExtension(type),
     ].reduce(
         (state, process) => process(roc, state),
         initialState
@@ -131,7 +131,7 @@ function validRocExtension(path) {
             !roc.commands
         ) {
             throw new ExtensionError(
-                `Will ignore extension. Expected it to have at least one of the following:\n` +
+                `Will ignore extension. Expected it to have at least one of the following:\n${
                     [
                         '- config',
                         '- meta',
@@ -143,8 +143,8 @@ function validRocExtension(path) {
                         '- init',
                         '- postInit',
                         '- dependencies',
-                        '- commands'
-                    ].join('\n'),
+                        '- commands',
+                    ].join('\n')}`,
                 roc.name,
                 roc.version,
                 path
@@ -161,9 +161,9 @@ function isAbstract(name) {
 
 function getParents(type) {
     return (roc, state) => {
-        let nextState = {...state};
-        for (const parent of roc[type + 's'] || []) {
-            nextState = getCompleteExtensionTree(type, getCompleteExtension(parent), parent, { ...nextState});
+        let nextState = { ...state };
+        for (const parent of roc[`${type}s`] || []) {
+            nextState = getCompleteExtensionTree(type, getCompleteExtension(parent), parent, { ...nextState });
         }
 
         return nextState;
@@ -175,8 +175,8 @@ function checkRequired(roc, state) {
         for (const dependency of Object.keys(roc.required)) {
             // Add roc to the usedExtensions to be able to require on that as well
             const required = [
-                {name: 'roc', version: rocPackageJSON.version },
-                ...state.context.usedExtensions
+                { name: 'roc', version: rocPackageJSON.version },
+                ...state.context.usedExtensions,
             ].find((used) => used.name === dependency);
             if (!required) {
                 throw new ExtensionError(
@@ -207,13 +207,13 @@ function init(roc, state) {
             verbose: state.settings.verbose,
             directory: state.settings.directory,
             context: state.context,
-            localDependencies: state.dependencyContext.extensionsDependencies[roc.name]
+            localDependencies: state.dependencyContext.extensionsDependencies[roc.name],
         });
 
         if (!result || isString(result)) {
             if (isString(result)) {
                 throw new ExtensionError(
-                    'There was a problem when running init. ' + result,
+                    `There was a problem when running init. ${result}`,
                     roc.name,
                     roc.version
                 );
@@ -236,7 +236,7 @@ function addPostInit(roc, state) {
     if (roc.postInit && !alreadyRegistered(roc.name, state)) {
         state.temp.postInits.push({
             postInit: roc.postInit,
-            name: roc.name
+            name: roc.name,
         });
     }
 
@@ -254,7 +254,7 @@ function registerExtension(type) {
             if (fromBefore.version !== roc.version) {
                 log.warn(
                     `Multiple versions for ${roc.name} was detected. (${roc.version} & ${fromBefore.version})\n` +
-                        `This might be an error.`,
+                        'This might be an error.',
                     'Multiple versions'
                 );
             }
@@ -263,7 +263,7 @@ function registerExtension(type) {
                 name: roc.name,
                 version: roc.version,
                 description: roc.description,
-                type
+                type,
             });
         }
 
@@ -275,26 +275,26 @@ function getCompleteExtension(extensionPath) {
     const getPathAndPackageJSON = (path) => {
         const dir = dirname(path);
         if (dir === path) {
-            throw new Error('Could not find package.json for the extension at ' + extensionPath);
+            throw new Error(`Could not find package.json for the extension at ${extensionPath}`);
         }
 
         const pathToPackageJSON = join(dir, 'package.json');
 
         if (fileExists(pathToPackageJSON)) {
-            const packageJSON = require(pathToPackageJSON);
+            const packageJSON = require(pathToPackageJSON); // eslint-disable-line
             return {
                 path: dir,
                 packageJSON,
                 version: packageJSON.version,
                 name: packageJSON.name,
-                description: packageJSON.description
+                description: packageJSON.description,
             };
         }
 
         return getPathAndPackageJSON(dir);
     };
 
-    const { standalone, ...roc } = require(extensionPath).roc;
+    const { standalone, ...roc } = require(extensionPath).roc; // eslint-disable-line
 
     /*
      * roc.standalone can be used to avoid using the package.json
@@ -305,7 +305,7 @@ function getCompleteExtension(extensionPath) {
     if (standalone) {
         return {
             ...roc,
-            path: dirname(extensionPath)
+            path: dirname(extensionPath),
         };
     }
 
@@ -316,6 +316,6 @@ function getCompleteExtension(extensionPath) {
         version,
         description,
         ...roc,
-        ...rest
+        ...rest,
     };
 }

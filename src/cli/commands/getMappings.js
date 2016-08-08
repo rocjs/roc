@@ -17,7 +17,7 @@ export default function getMappings(documentationObject = []) {
                     name: element.cli,
                     path: element.path,
                     converter: element.converter,
-                    validator: element.validator
+                    validator: element.validator,
                 };
             });
 

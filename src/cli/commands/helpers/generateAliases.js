@@ -18,12 +18,12 @@ export default function generateAliases(commands = {}, command, parents) {
     if (mappings[command]) {
         return {
             ...mappings[command],
-            mappings: Object.keys(mappings)
+            mappings: Object.keys(mappings),
         };
     }
 
     return {
-        mappings: Object.keys(mappings)
+        mappings: Object.keys(mappings),
     };
 }
 
@@ -32,6 +32,7 @@ function generateAliasesHelper(commands, parents = [],
     return Object.keys(commands)
         .filter(isCommandGroup(commands))
         .map((group) => {
+            // eslint-disable-next-line
             previous = generateAliasesHelper(
                 commands[group],
                 parents.concat(group),
@@ -40,18 +41,16 @@ function generateAliasesHelper(commands, parents = [],
 
             return previous;
         })
-        .reduce((previousValue, current) => {
-            return {
-                collisions: {
-                    ...previousValue.collisions,
-                    ...current.collisions
-                },
-                mappings: {
-                    ...previousValue.mappings,
-                    ...current.mappings
-                }
-            };
-        }, previous);
+        .reduce((previousValue, current) => ({
+            collisions: {
+                ...previousValue.collisions,
+                ...current.collisions,
+            },
+            mappings: {
+                ...previousValue.mappings,
+                ...current.mappings,
+            },
+        }), previous);
 }
 
 function getCommands(commands, parents, mappings = {}) {
@@ -63,21 +62,21 @@ function getCommands(commands, parents, mappings = {}) {
             if (mappings[command]) {
                 collisions = {
                     ...collisions,
-                    [command]: (collisions[command] || [mappings[command].parents]).concat([parents])
+                    [command]: (collisions[command] || [mappings[command].parents]).concat([parents]),
                 };
             } else {
                 copyMappings = {
                     ...copyMappings,
                     [command]: {
                         commands,
-                        parents
-                    }
+                        parents,
+                    },
                 };
             }
         });
 
     return {
         mappings: copyMappings,
-        collisions
+        collisions,
     };
 }

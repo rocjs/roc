@@ -14,7 +14,7 @@ export default function initLogLarge(name, version) {
         error: logger(name, version)('error', 'Error'),
         ok: logger(name, version)('log', 'Ok'),
         done: logger(name, version)('log', 'Done'),
-        raw: logger(name, version)
+        raw: logger(name, version),
     };
 }
 
@@ -30,7 +30,7 @@ function logger(name, version) {
             const title = isString(args[1]) ? args[1] : args[2];
             const error = isString(args[1]) ? args[2] : args[1];
 
-            const log = console[level];
+            const log = console[level]; // eslint-disable-line
 
             log(
     `${labels[level](label, title)}
@@ -48,19 +48,19 @@ ${redent(message, 2)}${redent(getError(error), 2)}
 function getFromWhere(name, version, error) {
     const path = error && error.getPath && error.getPath();
     const message = (name ? chalk.bold(name) : '') +
-        (version ? chalk.bold('@' + version) : '') +
-        (path ? ' at ' + path : '');
+        (version ? chalk.bold(`@${version}`) : '') +
+        (path ? ` at ${path}` : '');
 
     if (message.length === 0) {
         return '';
     }
 
-    return chalk.gray('\nOccurred in ' + message + '\n');
+    return chalk.gray(`\nOccurred in ${message}\n`);
 }
 
 function getError(error) {
     if (error && error.message) {
-        return '\n\n' + (isVerbose() ? error.stack : error.message);
+        return `\n\n${isVerbose() ? error.stack : error.message}`;
     }
 
     return '';

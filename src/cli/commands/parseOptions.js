@@ -29,7 +29,7 @@ export default function parseOptions(options, mappings, command) {
         possibleCommandOptions,
         possibleCommandOptionsShort,
         parsedOptions,
-        finalNotManaged
+        finalNotManaged,
     } = parseCommandOptions(command, notManaged);
 
     Object.keys(finalNotManaged).forEach((key) => {
@@ -52,7 +52,7 @@ export default function parseOptions(options, mappings, command) {
 
     return {
         settings,
-        parsedOptions
+        parsedOptions,
     };
 }
 
@@ -68,23 +68,24 @@ function parseSettingsOptions(options, mappings) {
             // We did not find a match
             notManaged = {
                 ...notManaged,
-                [key]: options[key]
+                [key]: options[key],
             };
         }
     });
 
     return {
         settings,
-        notManaged
+        notManaged,
     };
 }
 
+/* eslint-disable no-param-reassign */
 function parseCommandOptions(command, notManaged) {
     let possibleCommandOptions = [];
     let possibleCommandOptionsShort = [];
     const parsedOptions = {
         options: {},
-        rest: {}
+        rest: {},
     };
 
     const getName = (name, option) => {
@@ -128,7 +129,7 @@ function parseCommandOptions(command, notManaged) {
             const converter =
                 option.converter ||
                 getInfoObject(option.validator).converter ||
-                option.default !== undefined && automatic(option.default);
+                (option.default !== undefined && automatic(option.default));
 
             if (value !== undefined && converter) {
                 value = converter(value);
@@ -160,9 +161,10 @@ function parseCommandOptions(command, notManaged) {
         possibleCommandOptions,
         possibleCommandOptionsShort,
         parsedOptions,
-        finalNotManaged: notManaged
+        finalNotManaged: notManaged,
     };
 }
+/* eslint-enable */
 
 function convert(value, mapping) {
     const val = mapping.converter(value);
@@ -173,7 +175,7 @@ function convert(value, mapping) {
 
     // Make sure that we got something from the conversion.
     const message = val !== undefined && val !== null && val.toString().length > 0 ?
-        `Received ${underline(JSON.stringify(value)) } and it was converted to ` +
+        `Received ${underline(JSON.stringify(value))} and it was converted to ` +
             `${underline(JSON.stringify(val))}. ` :
         '';
 
@@ -183,4 +185,6 @@ function convert(value, mapping) {
             message + validationResult,
         'Conversion Problem'
     );
+
+    return undefined;
 }

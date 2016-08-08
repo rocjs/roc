@@ -1,6 +1,7 @@
 import { isPlainObject } from 'lodash';
-import isValid from '../helpers/isValid';
+
 import createInfoObject from '../helpers/createInfoObject';
+import isValid from '../helpers/isValid';
 import toObject from '../../converters/toObject';
 
 /**
@@ -16,7 +17,7 @@ export default function isObject(validator) {
                 validator,
                 converter: () => toObject,
                 wrapper: (wrap) => `{${wrap}}`,
-                canBeEmpty: true
+                canBeEmpty: true,
             });
         }
 

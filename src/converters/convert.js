@@ -11,7 +11,7 @@ export default function convert(...converters) {
     }
 
     return (input) => {
-        for (let converter of converters) {
+        for (const converter of converters) {
             const res = converter(input);
 
             // false and null is valid results
@@ -21,5 +21,7 @@ export default function convert(...converters) {
 
             return res;
         }
+
+        return false;
     };
 }

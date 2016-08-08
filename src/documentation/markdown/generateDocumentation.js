@@ -15,8 +15,8 @@ import extensionsToMarkdown from './extensionsToMarkdown';
 import hooksToMarkdown from './hooksToMarkdown';
 import settingsToMarkdown from './settingsToMarkdown';
 
-const writeFilePromise = (file) => {
-    return new Promise((resolve, reject) => {
+const writeFilePromise = (file) =>
+    new Promise((resolve, reject) => {
         writeFile(file.path, file.content, (err) => {
             if (err) {
                 return reject(err);
@@ -25,7 +25,6 @@ const writeFilePromise = (file) => {
             return resolve();
         });
     });
-};
 
 export default function generateDocumentation({
     rocCommandObject,
@@ -34,7 +33,7 @@ export default function generateDocumentation({
     markdown = true,
     mode,
     project = false,
-    extension = false
+    extension = false,
 }) {
     const dir = rocCommandObject.directory;
     const documentationDir = join(dir, directory);
@@ -52,19 +51,19 @@ export default function generateDocumentation({
     const documentation = [
         {
             content: createReadme(name, directory, extension, rocCommandObject),
-            path: extension ? `${dir}/README.md` : `${dir}/ROC.md`
+            path: extension ? `${dir}/README.md` : `${dir}/ROC.md`,
         }, {
             content: actionsToMarkdown(name, rocCommandObject.context.actions, mode, project),
-            path: `${documentationDir}/Actions.md`
+            path: `${documentationDir}/Actions.md`,
         }, {
             content: dependenciesToMarkdown(name, extension, rocCommandObject.context.dependencies),
-            path: `${documentationDir}/Dependencies.md`
+            path: `${documentationDir}/Dependencies.md`,
         }, {
             content: hooksToMarkdown(name, rocCommandObject.context.hooks, mode),
-            path: `${documentationDir}/Hooks.md`
+            path: `${documentationDir}/Hooks.md`,
         }, {
             content: settingsToMarkdown(name, config, rocCommandObject.context.meta),
-            path: `${documentationDir}/Settings.md`
+            path: `${documentationDir}/Settings.md`,
         }, {
             content: commandsToMarkdown(
                 name,
@@ -73,7 +72,7 @@ export default function generateDocumentation({
                 `${documentationDir}/Settings.md`,
                 mode
             ),
-            path: `${documentationDir}/Commands.md`
+            path: `${documentationDir}/Commands.md`,
         }, {
             content: configurationToMarkdown(
                 name,
@@ -81,7 +80,7 @@ export default function generateDocumentation({
                 rocCommandObject.context.meta,
                 rocCommandObject
             ),
-            path: `${documentationDir}/Configuration.md`
+            path: `${documentationDir}/Configuration.md`,
         }, {
             content: extensionsToMarkdown(
                 name,
@@ -89,8 +88,8 @@ export default function generateDocumentation({
                 rocCommandObject,
                 extension
             ),
-            path: `${documentationDir}/Extensions.md`
-        }
+            path: `${documentationDir}/Extensions.md`,
+        },
     ];
 
     const documentations = [];

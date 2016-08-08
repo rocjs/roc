@@ -24,7 +24,7 @@ export function normalizeCommands(name, extensionCommands, stateCommands = {}) {
                 const existingExtensions = (existingCommands[command] || {}).__extensions || [];
                 if (!isPlainObject(localCommands[command])) {
                     localCommands[command] = {
-                        command: localCommands[command]
+                        command: localCommands[command],
                     };
                 }
                 if (notInExtensions(existingExtensions, name)) {
@@ -33,16 +33,16 @@ export function normalizeCommands(name, extensionCommands, stateCommands = {}) {
 
                 // If it was a command group and now is a command
                 if (isCommandGroup(existingCommands)(command) && isCommand(localCommands)(command)) {
-                    localCommands[command].__extensions = [ name ];
+                    localCommands[command].__extensions = [name];
                 }
             } else if (isCommand(localCommands)(command)) {
                 if (!isPlainObject(localCommands[command])) {
                     localCommands[command] = {
-                        command: localCommands[command]
+                        command: localCommands[command],
                     };
                 }
 
-                localCommands[command].__extensions = [ name ];
+                localCommands[command].__extensions = [name];
             }
 
             if (
@@ -50,11 +50,11 @@ export function normalizeCommands(name, extensionCommands, stateCommands = {}) {
                 (!isCommand(existingCommands)(command) || localCommands[command].__meta)
             ) {
                 localCommands[command] = normalizeCommandsHelper(
-                    localCommands[command], existingCommands[command], newPath + '.'
+                    localCommands[command], existingCommands[command], `${newPath}.`
                 );
 
                 if (!localCommands[command].__extensions) {
-                    localCommands[command].__extensions = [ name ];
+                    localCommands[command].__extensions = [name];
                 }
             }
         });
@@ -85,7 +85,7 @@ function manageCommandCollisions(name, extensionCommands, stateCommands) {
                     allKeys.push(newPath);
                 }
 
-                getKeys(value, state[key], isState, newPath + '.', allKeys);
+                getKeys(value, state[key], isState, `${newPath}.`, allKeys);
             } else if (isCommand(state)(key)) {
                 allKeys.push(newPath);
             }
@@ -108,10 +108,10 @@ function manageCommandCollisions(name, extensionCommands, stateCommands) {
         if (notInExtensions(extensions, name) && override !== true && notInExtensions(extensions, override)) {
             // Fail early, might be more errors after this
             const overrideMessage = !override ?
-                `No override value was specified, it should probably be one of the extensions above.` :
+                'No override value was specified, it should probably be one of the extensions above.' :
                 `The override did not match the possible values, it was: ${override}\n`;
             throw new Error(
-                'Tried to update a command that where registered from before without specifying override.\n' +
+                'Tried to update a command that where registered from before without specifying override.\n' + // eslint-disable-line
                 `${bold(intersect.replace('.', ' '))} has already been defined by:\n` +
                 buildList(extensions) +
                 overrideMessage +

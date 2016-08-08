@@ -24,8 +24,8 @@ import createTable from './createTable';
 */
 export default function generateCommandDocumentation(settings, metaSettings, metaCommands, command, name, parents) {
     const rows = [];
-    rows.push('Usage: ' + name + ' ' + parents.concat(command).join(' ') +
-    getCommandArgumentsAsString(metaCommands[command]));
+    rows.push(`Usage: ${name} ${parents.concat(command).join(' ')}` +
+        getCommandArgumentsAsString(metaCommands[command]));
     rows.push('');
 
     if (metaCommands[command] && (metaCommands[command].description || metaCommands[command].help)) {
@@ -45,7 +45,7 @@ export default function generateCommandDocumentation(settings, metaSettings, met
         const objects = metaCommands[command].arguments.map((argument) => (
             {
                 cli: `${argument.name}`,
-                description: createDescription(argument)
+                description: createDescription(argument),
             }
         ));
 
@@ -53,7 +53,7 @@ export default function generateCommandDocumentation(settings, metaSettings, met
             body = body.concat({
                 objects,
                 name: 'Arguments',
-                level: 0
+                level: 0,
             });
         }
     }
@@ -63,7 +63,7 @@ export default function generateCommandDocumentation(settings, metaSettings, met
         const objects = metaCommands[command].options.sort(onProperty('name')).map((option) => (
             {
                 cli: option.alias ? `-${option.alias}, --${option.name}` : `--${option.name}`,
-                description: createDescription(option)
+                description: createDescription(option),
             }
         ));
 
@@ -71,7 +71,7 @@ export default function generateCommandDocumentation(settings, metaSettings, met
             body = body.concat({
                 name: 'Command options',
                 level: 0,
-                objects: objects
+                objects,
             });
         }
     }
@@ -82,14 +82,14 @@ export default function generateCommandDocumentation(settings, metaSettings, met
 
         body = body.concat({
             name: 'Settings options',
-            children: sortOnProperty('name', buildDocumentationObject(settings, metaSettings, filter))
+            children: sortOnProperty('name', buildDocumentationObject(settings, metaSettings, filter)),
         });
     }
 
     const header = {
         cli: true,
         description: {
-            padding: false
+            padding: false,
         },
         defaultValue: {
             padding: false,
@@ -98,14 +98,14 @@ export default function generateCommandDocumentation(settings, metaSettings, met
                     return '';
                 }
 
-                input = getDefaultValue(input);
+                const defaultValue = getDefaultValue(input);
 
-                if (!input) {
+                if (!defaultValue) {
                     return yellow('No default value');
                 }
 
-                return cyan(input);
-            }
+                return cyan(defaultValue);
+            },
         },
         required: {
             padding: false,
@@ -115,7 +115,7 @@ export default function generateCommandDocumentation(settings, metaSettings, met
                 }
 
                 return '';
-            }
+            },
         },
         canBeEmpty: {
             padding: false,
@@ -125,8 +125,8 @@ export default function generateCommandDocumentation(settings, metaSettings, met
                 }
 
                 return '';
-            }
-        }
+            },
+        },
     };
 
     rows.push(createTable(body, header, 'General options', 'cli'));
@@ -136,9 +136,9 @@ export default function generateCommandDocumentation(settings, metaSettings, met
 
 function createDescription(param) {
     const required = getInfoObject(param.validator).required;
-    return `${param.description && param.description + '  ' || ''}` +
-        `${required && green('Required') + '  ' || ''}` +
-        `${param.default !== undefined && cyan(JSON.stringify(param.default)) + '  ' || ''}` +
+    return `${(param.description && param.description + '  ') || ''}` +
+        `${(required && green('Required') + '  ') || ''}` +
+        `${(param.default !== undefined && cyan(JSON.stringify(param.default)) + '  ') || ''}` +
         `${param.default === undefined && param.validator ?
             dim('(' + param.validator(null, true).type + ')') :
             ''

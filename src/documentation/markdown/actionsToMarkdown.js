@@ -6,7 +6,7 @@ import onProperty from '../../helpers/onProperty';
 import createStatefulAnchor from './helpers/createStatefulAnchor';
 
 function createHookName(name, action) {
-    return name || `Generic${action.name && ' (' + action.name + ')'}`;
+    return name || `Generic${action.name && ` (${action.name})`}`;
 }
 
 /**
@@ -20,16 +20,16 @@ function createHookName(name, action) {
  */
 export default function actionsToMarkdown(name, actions = [], mode, project) {
     // Remove project actions if we are not in project mode
-    if (!project) {
-        actions = actions.filter((extensionActions) => !extensionActions.project);
-    }
+    const correctedActions = !project ?
+        actions.filter((extensionActions) => !extensionActions.project) :
+        actions;
 
     const rows = [];
 
     // Header
-    rows.push('# Actions for `' + name + '`', '');
+    rows.push(`# Actions for \`${name}\``, '');
 
-    if (actions.length === 0) {
+    if (correctedActions.length === 0) {
         rows.push('__No actions available.__');
         return rows.join('\n');
     }
@@ -38,7 +38,7 @@ export default function actionsToMarkdown(name, actions = [], mode, project) {
 
     const statefulAnchor = createStatefulAnchor(mode);
 
-    actions.forEach((extension) => {
+    correctedActions.forEach((extension) => {
         const sortedActions = extension.actions.sort(onProperty('hook'));
         rows.push(`* ${statefulAnchor(extension.name)}`);
         sortedActions.forEach(({ hook, action }) => {
@@ -48,7 +48,7 @@ export default function actionsToMarkdown(name, actions = [], mode, project) {
 
     rows.push('');
 
-    actions.forEach((extension) => {
+    correctedActions.forEach((extension) => {
         rows.push(`## ${extension.name}`);
 
         rows.push('');
@@ -64,6 +64,7 @@ export default function actionsToMarkdown(name, actions = [], mode, project) {
 
             rows.push('');
 
+            // eslint-disable-next-line
             rows.push('__Connects to extension:__ ' +
                 (currentAction.extension ?
                     `\`${currentAction.extension}\`` :
@@ -71,6 +72,7 @@ export default function actionsToMarkdown(name, actions = [], mode, project) {
                 + '  '
             );
 
+            // eslint-disable-next-line
             rows.push('__Connects to hook:__ ' +
                 (currentAction.hook ?
                     `\`${currentAction.hook}\`` :

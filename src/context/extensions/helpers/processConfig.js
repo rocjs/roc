@@ -42,6 +42,7 @@ export default function processConfig(name, extension, state) {
     );
 }
 
+/* eslint-disable no-param-reassign */
 function getKeys(obj = {}, flag = false, oldPath = '', allKeys = [], allGroups = []) {
     let isValue = true;
     Object.keys(obj).forEach((key) => {
@@ -54,7 +55,7 @@ function getKeys(obj = {}, flag = false, oldPath = '', allKeys = [], allGroups =
                 allGroups.push(true);
                 allKeys.push(newPath);
             }
-            const x = getKeys(value, flag, newPath + '.', allKeys, allGroups);
+            const x = getKeys(value, flag, `${newPath}.`, allKeys, allGroups);
             // If nothing was changed we where in a value, not a group
             if (x.value) {
                 allGroups[allGroups.length - 1] = false;
@@ -68,9 +69,10 @@ function getKeys(obj = {}, flag = false, oldPath = '', allKeys = [], allGroups =
     return {
         paths: allKeys,
         groups: allGroups,
-        value: isValue
+        value: isValue,
     };
 }
+/* eslint-enable */
 
 function getGroup(obj, path) {
     return !!obj.groups[obj.paths.indexOf(path)];
@@ -100,10 +102,10 @@ function validateMetaStructure(
             ) {
                 // Fail early, might be more errors after this
                 const overrideMessage = !override ?
-                    `No override value was specified, it should probably be one of the extensions above.` :
+                    'No override value was specified, it should probably be one of the extensions above.' :
                     `The override did not match the possible values, it was: ${override}\n`;
                 throw new Error(
-                    'Meta structure was changed without specifying override.\n' +
+                    'Meta structure was changed without specifying override.\n' + // eslint-disable-line
                     `Meta for ${bold(intersect)} was changed in ${name} and has been altered before by:\n` +
                     buildList(extensions) +
                     overrideMessage +
@@ -158,7 +160,7 @@ function updateStateMeta(name, state, extensionConfigPaths, stateConfigPaths) {
 
             return {
                 ...newValue,
-                __extensions: union(newExtensions, [name])
+                __extensions: union(newExtensions, [name]),
             };
         });
     });

@@ -5,16 +5,16 @@ export default function createTable(body, header, options, name, compact = true)
     body.push({
         name: options,
         level: 0,
-        objects: getDefaultOptions(name)
+        objects: getDefaultOptions(name),
     });
 
     return generateTable(body, header, {
         compact,
-        titleWrapper: (input) => input + ':',
+        titleWrapper: (input) => `${input}:`,
         cellDivider: '',
-        rowWrapper: (input) => ' ' + input,
-        cellWrapper: (input) => input + '  ',
+        rowWrapper: (input) => ` ${input}`,
+        cellWrapper: (input) => `${input}  `,
         header: false,
-        groupTitleWrapper: (input) => input + ':'
+        groupTitleWrapper: (input) => `${input}:`,
     });
 }

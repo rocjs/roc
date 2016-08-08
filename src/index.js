@@ -1,11 +1,11 @@
 export {
     getConfig,
-    appendConfig
+    appendConfig,
 } from './configuration/manageConfig';
 
 export {
     getSettings,
-    appendSettings
+    appendSettings,
 } from './configuration/manageSettings';
 
 export merge from './helpers/merge';
@@ -25,7 +25,7 @@ export runHook from './hooks/runHook';
 export runHookDirectly from './hooks/runHookDirectly';
 
 export {
-    removeActions
+    removeActions,
 } from './hooks/manageActions';
 
 export getContext from './context/getContext';

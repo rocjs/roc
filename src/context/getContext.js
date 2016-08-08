@@ -19,7 +19,7 @@ export default function getContext(dirPath, projectConfigPath, validate = true) 
         directory: getAbsolutePath(dirPath),
         projectConfigPath,
         verify: false,
-        runtime: false
+        runtime: false,
     });
 
     return validateAndUpdateSettings(context, validate);

@@ -17,7 +17,7 @@ export default function validateSettings(settings = {}, meta = {}, allowRequired
     for (const validateKey of validateKeys) {
         const configValue = settings[validateKey];
         const validator = meta[validateKey].validator;
-        const newPath = path ? path + '.' + validateKey : validateKey;
+        const newPath = path ? `${path}.${validateKey}` : validateKey;
 
         // process validation nodes recursively
         if (isPlainObject(configValue) && isPlainObject(meta[validateKey])) {

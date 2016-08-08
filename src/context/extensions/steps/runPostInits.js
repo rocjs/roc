@@ -9,7 +9,7 @@ export default function runPostInits(initialState) {
                         verbose: state.settings.verbose,
                         directory: state.settings.directory,
                         context: state.context,
-                        localDependencies: state.dependencyContext.extensionsDependencies[name]
+                        localDependencies: state.dependencyContext.extensionsDependencies[name],
                     })
                 ), state, true
             ),

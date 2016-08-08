@@ -1,4 +1,5 @@
 import { isInteger as isIntegerLodash } from 'lodash';
+
 import createInfoObject from '../helpers/createInfoObject';
 import toInteger from '../../converters/toInteger';
 
@@ -13,7 +14,7 @@ export default function isInteger(value, info) {
     if (info) {
         return createInfoObject({
             validator: 'Integer',
-            converter: () => toInteger
+            converter: () => toInteger,
         });
     }
 

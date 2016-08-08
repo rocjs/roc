@@ -1,7 +1,7 @@
 {
   "name": "roc",
   "version": "1.0.0-rc.10",
-  "description": "Build modern web applications easily",
+  "description": "Modern JavasScript Development Ecosystem",
   "main": "lib/index.js",
   "bin": "bin/index.js",
   "engineStrict": true,
@@ -31,10 +31,7 @@
     "prepublish": "npm test && npm run clean && npm run build && npm run esdocs",
     "postinstall": "node ./scripts/post-install.js"
   },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/rocjs/roc.git"
-  },
+  "repository": "https://github.com/rocjs/roc",
   "keywords": [
     "roc",
     "react",
@@ -44,11 +41,18 @@
     "cli",
     "redux"
   ],
-  "author": "VG",
-  "license": "MIT",
+  "author": "Verdens Gang AS",
+  "contributors": [
+    {
+      "name": "Gustaf Dalemar"
+    },
+    {
+      "name": "Andreas Søvik"
+    }
+  ],
   "devDependencies": {
     "babel-cli": "~6.4.5",
-    "babel-eslint": "5.0.0-beta10",
+    "babel-eslint": "~6.1.2",
     "babel-plugin-transform-async-to-generator": "6.8.0",
     "babel-plugin-transform-es2015-destructuring": "~6.4.0",
     "babel-plugin-transform-es2015-function-name": "~6.4.0",
@@ -66,8 +70,10 @@
     "esdoc": "~0.4.3",
     "esdoc-es7-plugin": "0.0.3",
     "esdoc-importpath-plugin": "0.0.1",
-    "eslint": "~1.10.3",
-    "eslint-config-vgno": "~5.0.0",
+    "eslint": "~3.0.1",
+    "eslint-config-airbnb-base": "~4.0.0",
+    "eslint-plugin-babel": "~3.3.0",
+    "eslint-plugin-import": "~1.10.2",
     "expect": "~1.13.4",
     "isparta": "~4.0.0",
     "mocha": "~2.4.4",
@@ -79,6 +85,7 @@
     "chalk": "~1.1.1",
     "colors": "~1.1.2",
     "cross-spawn": "2.2.3",
+    "debug": "2.2.0",
     "fs-extra": "~0.26.4",
     "got": "~6.1.1",
     "inquirer": "~0.11.1",

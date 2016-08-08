@@ -29,7 +29,7 @@ export default function runHookDirectly({
         description,
         returns,
         arguments: argumentsDefinitions,
-        initialValue
+        initialValue,
     }, args = [], callback) {
     // Validate args
     if (argumentsDefinitions) {
@@ -40,8 +40,8 @@ export default function runHookDirectly({
                     throwValidationError(argumentsDefinitions[i].name, validationResult, value, 'argument');
                 } catch (err) {
                     log.large.error(
-                        `A argument was not valid in ${underline(name)} from ${underline(extension)}.\n\n` +
-                            err.message,
+                        `An argument was not valid in ${underline(name)} from ${underline(extension)}.` +
+                            `\n\n${err.message}`,
                         'Hook problem'
                     );
                 }
@@ -53,7 +53,7 @@ export default function runHookDirectly({
     const postActions = [];
 
     getActions().forEach(({ name: actionExtensionName, actions }) => {
-        actions.map((action) => {
+        actions.forEach((action) => {
             // Only run if no connection is made to a hook/extension or if they match
             if ((!action.extension || action.extension === extension) &&
                 (!action.hook || action.hook === name)) {
@@ -66,7 +66,7 @@ export default function runHookDirectly({
                             hook: name,
                             previousValue,
                             config: getConfig(),
-                            verbose: isVerbose()
+                            verbose: isVerbose(),
                         });
                         step = 'second';
 
@@ -98,8 +98,7 @@ export default function runHookDirectly({
                                             );
                                         } catch (err) {
                                             log.large.error(
-                                                'A return value was not valid.\n\n' +
-                                                    err.message,
+                                                `A return value was not valid.\n\n${err.message}`,
                                                 'Hook problem'
                                             );
                                         }

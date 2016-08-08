@@ -1,5 +1,5 @@
-import createInfoObject from '../helpers/createInfoObject';
 import convert from '../../converters/convert';
+import createInfoObject from '../helpers/createInfoObject';
 import isValid from '../helpers/isValid';
 
 /**
@@ -15,8 +15,8 @@ export default function oneOf(...validators) {
 
     return (input, info) => {
         if (info) {
-            let types = [];
-            let converters = [];
+            const types = [];
+            const converters = [];
             for (const validator of validators) {
                 const result = createInfoObject({ validator });
                 types.push(result.type);
@@ -26,7 +26,7 @@ export default function oneOf(...validators) {
             }
             return createInfoObject({
                 validator: types.join(' / '),
-                converter: converters.length > 0 ? () => convert(...converters) : undefined
+                converter: converters.length > 0 ? () => convert(...converters) : undefined,
             });
         }
 
@@ -39,6 +39,7 @@ export default function oneOf(...validators) {
             invalid.push(validator(null, true).type || 'Unknown type');
         }
 
+        /* eslint-disable prefer-template */
         return 'Was not any of the possible types:\n' +
             invalid.reduce((prev, next) => prev + '\n' + next, '');
     };

@@ -6,5 +6,5 @@
  * @returns {string} - The cli option to set the given configuration option.
  */
 export default function toCliOption(configPaths) {
-    return '--' + configPaths.join('-');
+    return `--${configPaths.join('-')}`;
 }

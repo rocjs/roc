@@ -5,12 +5,12 @@ import { setConfig } from '../configuration/manageConfig';
 export default function initRuntime({
     verbose = false,
     directory = process.cwd(),
-    projectConfigPath
+    projectConfigPath,
 } = {}) {
     const context = initContext({
         verbose,
         directory,
-        projectConfigPath
+        projectConfigPath,
     });
 
     setConfig(

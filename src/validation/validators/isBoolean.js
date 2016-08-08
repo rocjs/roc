@@ -1,4 +1,5 @@
 import { isBoolean as isBooleanLodash } from 'lodash';
+
 import createInfoObject from '../helpers/createInfoObject';
 import toBoolean from '../../converters/toBoolean';
 
@@ -13,7 +14,7 @@ export default function isBoolean(value, info) {
     if (info) {
         return createInfoObject({
             validator: 'Boolean',
-            converter: () => toBoolean
+            converter: () => toBoolean,
         });
     }
 

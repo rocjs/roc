@@ -5,6 +5,8 @@ export function initGetDependencies({ extensionsDependencies }) {
                 (extensionsDependencies[name] || {})[selector] :
                 extensionsDependencies[name];
         }
+
+        return undefined;
     };
 }
 
@@ -22,19 +24,15 @@ export function initSetDependencies({ extensionsDependencies, pathsToExtensions 
             ...extensionsDependencies,
             [name]: {
                 ...extensionDependencies,
-                exports: removeFromExports(extensionDependencies.exports, dependencies)
-            }
+                exports: removeFromExports(extensionDependencies.exports, dependencies),
+            },
         };
 
-        const newPathsToExtensions = path ?
-            {
-                ...pathsToExtensions,
-                [path]: name
-            } : {};
+        const newPathsToExtensions = path ? { ...pathsToExtensions, [path]: name } : {};
 
         return {
             extensionsDependencies: newExtensionsDependencies,
-            pathsToExtensions: newPathsToExtensions
+            pathsToExtensions: newPathsToExtensions,
         };
     };
 }

@@ -11,7 +11,5 @@ export default function createStatefulAnchor(mode = 'github.com') {
         return titleCount[title];
     };
 
-    return (title) => {
-        return anchor(title, mode, getTitleCount(title));
-    };
+    return (title) => anchor(title, mode, getTitleCount(title));
 }

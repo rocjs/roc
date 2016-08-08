@@ -13,7 +13,7 @@ export default function extensionsToMarkdown(name, usedExtensions, rocCommandObj
         // project that this commands runs from.
         extn.name !== rocCommandObject.context.packageJSON.name);
 
-    rows.push('# Extensions for `' + name + '`', '');
+    rows.push(`# Extensions for \`${name}\``, '');
 
     rows.push('The extensions that are used in the project, indirect and direct, in the order that they were added.\n');
     rows.push('## Packages');

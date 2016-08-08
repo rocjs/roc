@@ -1,4 +1,5 @@
 import isProm from 'is-promise';
+
 import createInfoObject from '../helpers/createInfoObject';
 
 /**
@@ -11,7 +12,7 @@ import createInfoObject from '../helpers/createInfoObject';
 export default function isPromise(value, info) {
     if (info) {
         return createInfoObject({
-            validator: 'Promise'
+            validator: 'Promise',
         });
     }
 

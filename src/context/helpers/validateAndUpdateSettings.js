@@ -2,6 +2,7 @@ import runHook from '../../hooks/runHook';
 import { appendSettings } from '../../configuration/manageSettings';
 import validateSettingsWrapper from '../../validation/validateSettingsWrapper';
 
+/* eslint-disable no-param-reassign */
 export default function validateAndUpdateSettings(context, validate = false) {
     if (validate) {
         const config = context.config || {};
@@ -10,8 +11,9 @@ export default function validateAndUpdateSettings(context, validate = false) {
     }
 
     runHook('roc')('update-settings', () => context.config.settings)(
-        (newSettings) => context.config.settings = appendSettings(newSettings, context.config)
+        (newSettings) => { context.config.settings = appendSettings(newSettings, context.config); }
     );
 
     return context;
 }
+/* eslint-enable */

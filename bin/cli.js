@@ -5,7 +5,7 @@ const commands = require('../lib/commands').default;
 runCli({
     info: {
         version: packageJSON.version,
-        name: packageJSON.name
+        name: packageJSON.name,
     },
-    commands: commands
+    commands,
 });

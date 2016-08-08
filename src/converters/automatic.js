@@ -1,4 +1,5 @@
 import { isBoolean, isObject, isRegExp } from 'lodash';
+
 import { toArray, toRegExp, toBoolean, toInteger, toObject } from '../converters';
 
 export default function automatic(value) {

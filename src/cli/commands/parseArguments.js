@@ -18,7 +18,7 @@ import automatic from '../../converters/automatic';
 export default function parseArguments(command, commands = {}, args) {
     // If the command supports options
     if (commands[command] && commands[command].arguments) {
-        let parsedArguments = {};
+        const parsedArguments = {};
         commands[command].arguments.forEach((argument, index) => {
             let value = args[index];
 
@@ -29,7 +29,7 @@ export default function parseArguments(command, commands = {}, args) {
             const converter =
                 argument.converter ||
                 getInfoObject(argument.validator).converter ||
-                argument.default !== undefined && automatic(argument.default);
+                (argument.default !== undefined && automatic(argument.default));
 
             if (value !== undefined && converter) {
                 value = converter(value);
@@ -55,12 +55,12 @@ export default function parseArguments(command, commands = {}, args) {
 
         return {
             arguments: parsedArguments,
-            rest: args.splice(Object.keys(parsedArguments).length)
+            rest: args.splice(Object.keys(parsedArguments).length),
         };
     }
 
     return {
         arguments: {},
-        rest: args
+        rest: args,
     };
 }

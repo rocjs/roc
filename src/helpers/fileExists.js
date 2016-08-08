@@ -11,9 +11,9 @@ import getAbsolutePath from './getAbsolutePath';
 * @returns {boolean} - Whether or not it is a file.
 */
 export default function fileExists(filepath, directory) {
-    filepath = getAbsolutePath(filepath, directory);
+    const absoluteFilepath = getAbsolutePath(filepath, directory);
     try {
-        return fs.statSync(filepath).isFile();
+        return fs.statSync(absoluteFilepath).isFile();
     } catch (error) {
         return false;
     }

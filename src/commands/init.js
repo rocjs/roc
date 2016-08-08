@@ -1,13 +1,14 @@
-import fs from 'fs-extra';
 import path, { join } from 'path';
+
 import { spawn } from 'cross-spawn';
+import chalk from 'chalk';
+import fs from 'fs-extra';
 import inquirer from 'inquirer';
 import replace from 'replace';
-import chalk from 'chalk';
 
+import { getAbsolutePath } from '../helpers';
 import log from '../log/default/small';
 import validRocProject from '../helpers/validRocProject';
-import { getAbsolutePath } from '../helpers';
 
 import { get, getVersions } from './helpers/github';
 import unzip from './helpers/unzip';
@@ -18,12 +19,12 @@ const templates = [{
     name: 'Simple Roc App',
     description: 'A simple start on a generic web application',
     identifier: 'web-app',
-    repo: 'rocjs/roc-template-web-app'
+    repo: 'rocjs/roc-template-web-app',
 }, {
     name: 'Simple Roc React App',
     description: 'A simple start on a React web application',
     identifier: 'web-app-react',
-    repo: 'rocjs/roc-template-web-app-react'
+    repo: 'rocjs/roc-template-web-app-react',
 }];
 
 /**
@@ -66,7 +67,7 @@ function getTemplateVersion(toFetch, list) {
     return getVersions(toFetch)
         .then((versions) => {
             // Add master so we always have a way to install it
-            versions.push({name: 'master'});
+            versions.push({ name: 'master' });
 
             if (list) {
                 log.info('The available versions are:');
@@ -93,20 +94,20 @@ function getTemplate(template) {
     return template;
 }
 
-function fetchTemplate(toFetch, selectVersion, directory, list) {
-    toFetch = getTemplate(toFetch);
+function fetchTemplate(fetch, selectVersion, directory, list) {
+    const toFetch = getTemplate(fetch);
 
     const templateFetcher = isLocalTemplate(toFetch) ?
         unzip(toFetch) :
         getTemplateVersion(toFetch, list).then((versions) => {
             // If the name starts with a number we will automatically add 'v' infront of it to match Github default
             if (selectVersion && !isNaN(Number(selectVersion.charAt(0))) && selectVersion.charAt(0) !== 'v') {
-                selectVersion = `v${selectVersion}`;
+                selectVersion = `v${selectVersion}`; // eslint-disable-line
             }
 
             const selectedVersion = versions.find((v) => v.name === selectVersion);
-            const actualVersion = selectedVersion && selectedVersion.name ||
-                versions[0] && versions[0].name ||
+            const actualVersion = (selectedVersion && selectedVersion.name) ||
+                (versions[0] && versions[0].name) ||
                 'master';
 
             if (!selectedVersion && selectVersion) {
@@ -126,6 +127,8 @@ function fetchTemplate(toFetch, selectVersion, directory, list) {
                 log.info('\nInstalling template setup dependencies…');
                 return npmInstall(dirPath);
             }
+
+            return undefined;
         })
         .then((dirPath) => {
             inquirer.prompt(getPrompt(dirPath), (answers) => {
@@ -147,15 +150,15 @@ function fetchTemplate(toFetch, selectVersion, directory, list) {
 
 function getPrompt(dirPath) {
     try {
-        return require(path.join(dirPath, 'roc.setup.js')).prompt;
+        return require(path.join(dirPath, 'roc.setup.js')).prompt; // eslint-disable-line
     } catch (err) {
-        return require('./helpers/defaultPrompt').defaultPrompt;
+        return require('./helpers/defaultPrompt').defaultPrompt; // eslint-disable-line
     }
 }
 
 function showCompletionMessage(dirPath) {
     try {
-        log.info(require(path.join(dirPath, 'roc.setup.js')).completionMessage);
+        log.info(require(path.join(dirPath, 'roc.setup.js')).completionMessage); // eslint-disable-line
     } catch (err) {
         // Do nothing
     }
@@ -163,13 +166,13 @@ function showCompletionMessage(dirPath) {
 
 function replaceTemplatedValues(answers, dirPath) {
     // 1. Replace content
-    Object.keys(answers).map((key) => {
+    Object.keys(answers).forEach((key) => {
         replace({
             regex: `{{\\s*${key}*\\s*}}`,
             replacement: answers[key],
             paths: [dirPath + '/template'],
             recursive: true,
-            silent: true
+            silent: true,
         });
     });
 
@@ -218,10 +221,10 @@ function npmInstall(dirPath) {
         // Run npm install
         const npm = spawn('npm', ['install', '--loglevel=error'], {
             cwd: dirPath,
-            stdio: 'inherit'
+            stdio: 'inherit',
         });
 
-        npm.on('close', function(code) {
+        npm.on('close', (code) => {
             if (code !== 0) {
                 return reject(new Error('npm install failed with status code: ' + code));
             }
@@ -239,7 +242,7 @@ function interactiveMenu(directory, list) {
             type: 'rawlist',
             name: 'option',
             message: 'Selected a type',
-            choices: choices
+            choices,
         }], answers => {
             resolve(fetchTemplate(answers.option, undefined, directory, list));
         });
@@ -261,14 +264,14 @@ function checkFolder(force = false, directoryName = '', directory = '') {
                     message: `The directory '${directoryPath}' is not empty, what do you want to do?`,
                     choices: [{
                         name: 'Create new folder',
-                        value: 'new'
+                        value: 'new',
                     }, {
                         name: 'Run anyway ' + chalk.yellow('Warning: Some files might be overwritten.'),
-                        value: 'force'
+                        value: 'force',
                     }, {
                         name: 'Abort',
-                        value: 'abort'
-                    }]
+                        value: 'abort',
+                    }],
                 }], ({ selection }) => {
                     if (selection === 'abort') {
                         process.exit(0); // eslint-disable-line
@@ -289,16 +292,16 @@ function askForDirectory(directory, resolve) {
     inquirer.prompt([{
         type: 'input',
         name: 'name',
-        message: `What do you want to name the directory? (It will be created in '${directory || process.cwd()}')`
+        message: `What do you want to name the directory? (It will be created in '${directory || process.cwd()}')`,
     }], ({ name }) => {
         const directoryPath = getAbsolutePath(name, directory);
         fs.mkdir(directoryPath, (err) => {
             if (err) {
                 log.warn('The directory did already exists or was not empty.\n');
-                return askForDirectory(resolve);
+                askForDirectory(resolve);
+            } else {
+                resolve(directoryPath);
             }
-
-            resolve(directoryPath);
         });
     });
 }

@@ -1,6 +1,7 @@
+import zlib from 'zlib';
+
 import got from 'got';
 import tar from 'tar';
-import zlib from 'zlib';
 import temp from 'temp';
 
 // Automatically track and cleanup files at exit
@@ -19,7 +20,7 @@ export function getVersions(packageName) {
     }
 
     return got(`https://api.github.com/repos/${packageName}/tags`, {
-        json: true
+        json: true,
     }).then(response => response.body);
 }
 
@@ -37,13 +38,14 @@ export function get(packageName, version = 'master') {
     }
 
     return new Promise((resolve, reject) => {
+        // eslint-disable-next-line
         temp.mkdir('roc', (err, dirPath) => {
             if (err) {
                 return reject(err);
             }
 
             /* eslint-disable new-cap */
-            const writeTar = tar.Extract({strip: 1, path: dirPath});
+            const writeTar = tar.Extract({ strip: 1, path: dirPath });
             /* eslint-enable */
 
             writeTar.on('finish', () => resolve(dirPath));

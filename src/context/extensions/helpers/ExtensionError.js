@@ -7,8 +7,7 @@ export default class ExtensionError extends Error {
     }
 
     toString() {
-        return this.message +
-            '\nOccurred in: ' + `${this.extension}${this.version ? '@' + this.version : ''}`;
+        return `${this.message}\nOccurred in: ${this.extension}${this.version ? `@${this.version}` : ''}`;
     }
 
     getPath() {

@@ -23,8 +23,7 @@ export default function runHook(extensionName) {
 
     if (!extensionHooks) {
         log.error(
-            'The given extension is not registered.\n\n' +
-                getSuggestions([extensionName], Object.keys(allHooks)),
+            `The given extension is not registered.\n\n${getSuggestions([extensionName], Object.keys(allHooks))}`,
             'Hook problem'
         );
     }
@@ -32,8 +31,7 @@ export default function runHook(extensionName) {
     return (name, ...args) => {
         if (!extensionHooks[name]) {
             log.error(
-                'The given hook is not registered.\n\n' +
-                    getSuggestions([name], Object.keys(extensionHooks)),
+                `The given hook is not registered.\n\n${getSuggestions([name], Object.keys(extensionHooks))}`,
                 'Hook problem'
             );
         }
@@ -43,14 +41,14 @@ export default function runHook(extensionName) {
                 runHookDirectly({
                     ...extensionHooks[name],
                     extension: extensionName,
-                    name
+                    name,
                 }, args, callback);
         }
 
         return runHookDirectly({
             ...extensionHooks[name],
             extension: extensionName,
-            name
+            name,
         }, args);
     };
 }

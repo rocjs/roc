@@ -11,7 +11,7 @@ import fileExists from './fileExists';
  */
 export default function getPackageJSON(directory = process.cwd()) {
     if (fileExists('package.json', directory)) {
-        return require(path.join(directory, 'package.json'));
+        return require(path.join(directory, 'package.json')); // eslint-disable-line
     }
 
     return undefined;

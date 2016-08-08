@@ -12,7 +12,7 @@ export default function getParts(commandString) {
     const parts = [];
     let match;
 
-    while ((match = regex.exec(commandString))) {
+    while ((match = regex.exec(commandString))) { // eslint-disable-line
         const [generalMatch, doubleQuotationMatch, singleQuotationMatch] = match;
         parts.push(doubleQuotationMatch || singleQuotationMatch || generalMatch);
     }

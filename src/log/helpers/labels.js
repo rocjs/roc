@@ -1,6 +1,6 @@
 import {
     white, black, red, yellow, green, cyan,
-    bgRed, bgYellow, bgGreen, bgCyan
+    bgRed, bgYellow, bgGreen, bgCyan,
 } from 'chalk';
 
 /**

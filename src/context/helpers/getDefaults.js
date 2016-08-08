@@ -13,7 +13,7 @@ export default function getDefaults(context, name = 'roc', directory) {
         config: getDefaultConfig(),
         meta: getDefaultMeta(),
         // If it is undefined the existing commands will be overwritten.
-        commands: getDefaultCommands(directory) || {}
+        commands: getDefaultCommands(directory) || {},
     });
 
     newContext.commands = normalizeCommands(name, newContext.commands);
@@ -30,11 +30,11 @@ function getDefaultHooks() {
             arguments: [{
                 name: 'getSettings',
                 validator: isFunction,
-                description: 'A function that returns the settings after the context has been initialized.'
+                description: 'A function that returns the settings after the context has been initialized.',
             }],
             returns: isObject(),
-            hasCallback: true
-        }
+            hasCallback: true,
+        },
     };
 }
 
@@ -42,17 +42,18 @@ function getDefaultCommands(directory) {
     if (directory === undefined || validRocProject(directory)) {
         return {
             meta: {
-                '__meta': {
+                __meta: {
                     name: 'Meta commands',
-                    description: 'Meta commands that can be used to generate meta data about the current project.'
+                    description: 'Meta commands that can be used to generate meta data about the current project.',
                 },
                 'list-settings': {
-                    command: ({ context: { extensionConfig, meta }}) => {
+                    command: ({ context: { extensionConfig, meta } }) => {
+                        // eslint-disable-next-line
                         console.log(settingsToText(extensionConfig, meta));
                     },
-                    description: 'Prints all the available settings that can be changed.'
+                    description: 'Prints all the available settings that can be changed.',
                 },
-                'docs': {
+                docs: {
                     command: (rocCommandObject) =>
                         generateDocumentation({
                             rocCommandObject,
@@ -60,39 +61,41 @@ function getDefaultCommands(directory) {
                             html: rocCommandObject.parsedOptions.options.html,
                             markdown: rocCommandObject.parsedOptions.options.markdown,
                             mode: rocCommandObject.parsedOptions.options.mode,
-                            project: rocCommandObject.parsedOptions.options.project
+                            project: rocCommandObject.parsedOptions.options.project,
                         }),
                     description: 'Generates documentation for the current project.',
                     options: [{
                         name: 'html',
                         default: false,
                         description: 'If HTML should be generated. (Not supported yet)',
-                        validator: isBoolean
+                        validator: isBoolean,
                     }, {
                         name: 'mode',
                         default: 'github.com',
                         description: 'The platform that is to be used, for link generation.',
-                        validator: /github\.com|nodejs\.org|bitbucket\.org|ghost\.org|gitlab\.com/
+                        validator: /github\.com|nodejs\.org|bitbucket\.org|ghost\.org|gitlab\.com/,
                     }, {
                         name: 'markdown',
                         default: true,
                         description: 'If markdown should be generated.',
-                        validator: isBoolean
+                        validator: isBoolean,
                     }, {
                         name: 'output',
                         default: 'docs',
                         description: 'A directory to place the generated documentation inside of.',
-                        validator: isBoolean
+                        validator: isBoolean,
                     }, {
                         name: 'project',
                         default: false,
                         description: 'If the projects configuration and actions should be included.',
-                        validator: isBoolean
-                    }]
-                }
-            }
+                        validator: isBoolean,
+                    }],
+                },
+            },
         };
     }
+
+    return undefined;
 }
 
 function getDefaultConfig() {
@@ -101,7 +104,7 @@ function getDefaultConfig() {
 
         actions: undefined,
 
-        init: undefined
+        init: undefined,
     };
 }
 

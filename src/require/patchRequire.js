@@ -1,12 +1,13 @@
+const Module = require('module');
+
 const log = require('debug')('roc:core:require');
 
-const Module = require('module');
 const originalRequire = Module.prototype.require;
 
 export default function patchRequire(resolveRequest) {
     log('Initializing');
 
-    Module.prototype.require = function(request) {
+    Module.prototype.require = function rocRequire(request) {
         try {
             return originalRequire.apply(this, [resolveRequest(request, this.id)]);
         } catch (_error) {

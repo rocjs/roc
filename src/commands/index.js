@@ -7,29 +7,29 @@ const initOptions = [{
     name: 'list',
     alias: 'l',
     validator: isBoolean,
-    description: 'List the available versions of a template.'
+    description: 'List the available versions of a template.',
 }, {
     name: 'force',
     alias: 'f',
     validator: isBoolean,
-    description: 'Ignore non empty directory warning.'
+    description: 'Ignore non empty directory warning.',
 }];
 
 const initArguments = [{
     name: 'template',
     validator: notEmpty(isPath),
-    description: 'The template to use. Matches Github structure with Username/Repo or a local zip file.'
+    description: 'The template to use. Matches Github structure with Username/Repo or a local zip file.',
 }, {
     name: 'version',
     validator: notEmpty(isString),
-    description: 'The version to use.'
+    description: 'The version to use.',
 }];
 
 export default {
     create: {
         __meta: {
             name: 'Project creation',
-            description: 'Commands that can be used to create new projects.'
+            description: 'Commands that can be used to create new projects.',
         },
         init: {
             command: lazyRequire('./init'),
@@ -52,7 +52,7 @@ export default {
                 Versions should match a tag on the Github repo and will default to master if none exists. When giving an input on the command line Roc will automatically add \`v\` in front of versions that starts with a number to match Github default that have versions tags that start with \`v\` like \`v1.0.0\`. \`master\` is also always available as an option.`,
             /* eslint-enable */
             options: initOptions,
-            arguments: initArguments
+            arguments: initArguments,
         },
         new: {
             command: lazyRequire('./init'),
@@ -63,8 +63,8 @@ export default {
             arguments: [].concat({
                 name: 'name',
                 validator: required(notEmpty(isString)),
-                description: 'Name for a new directory to create the project in.'
-            }, initArguments)
-        }
-    }
+                description: 'Name for a new directory to create the project in.',
+            }, initArguments),
+        },
+    },
 };

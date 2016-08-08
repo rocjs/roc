@@ -9,8 +9,7 @@ import { underline } from 'chalk';
  * @param {string} [type='field'] - What the failed validation value was.
  * @throws {Error} - Throws error if the configuration is invalid.
  */
-export default function throwValidationError(name, message, value, type = 'field') {
-    value = value || '[Nothing]';
+export default function throwValidationError(name, message, value = '[Nothing]', type = 'field') {
     throw new Error(
         `Validation failed for ${type} ${underline(name)}\n` +
         `Received: ${value}.` +

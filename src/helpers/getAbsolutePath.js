@@ -15,4 +15,6 @@ export default function getAbsolutePath(filepath, directory = process.cwd()) {
             filepath :
             path.join(directory, filepath);
     }
+
+    return undefined;
 }

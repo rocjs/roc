@@ -4,9 +4,9 @@ import trimNewlines from 'trim-newlines';
 
 import generateTable from '../generateTable';
 import pad from '../helpers/pad';
-import createStatefulAnchor from './helpers/createStatefulAnchor';
-
 import createInfoObject from '../../validation/helpers/createInfoObject';
+
+import createStatefulAnchor from './helpers/createStatefulAnchor';
 
 /**
  * Command used to generate markdown documentation for all the registered hooks.
@@ -20,7 +20,7 @@ import createInfoObject from '../../validation/helpers/createInfoObject';
 export default function hooksToMarkdown(name, hooks, mode) {
     const rows = [];
 
-    rows.push('# Hooks for `' + name + '`', '');
+    rows.push(`# Hooks for \`${name}\``, '');
 
     if (Object.keys(hooks).length === 0) {
         rows.push('__No hooks available.__');
@@ -61,6 +61,7 @@ export default function hooksToMarkdown(name, hooks, mode) {
 
             rows.push('');
 
+            // eslint-disable-next-line
             rows.push('__Initial value:__ ' +
                 (currentHook.initialValue ?
                     `\`${JSON.stringify(currentHook.initialValue)}\`` :
@@ -68,6 +69,7 @@ export default function hooksToMarkdown(name, hooks, mode) {
                 + '  '
             );
 
+            // eslint-disable-next-line
             rows.push('__Expected return value:__ ' +
                 (currentHook.returns ?
                     `\`${currentHook.returns(null, true).type}\`` :
@@ -88,7 +90,7 @@ export default function hooksToMarkdown(name, hooks, mode) {
                         description: argument.description || '',
                         type: infoObject.type,
                         required: infoObject.required,
-                        canBeEmpty: infoObject.canBeEmpty
+                        canBeEmpty: infoObject.canBeEmpty,
                     };
                 });
 
@@ -96,22 +98,22 @@ export default function hooksToMarkdown(name, hooks, mode) {
                     body = body.concat({
                         name: 'Arguments',
                         level: 1,
-                        objects: objects
+                        objects,
                     });
                 }
             }
 
             const header = {
                 name: {
-                    name: 'Name'
+                    name: 'Name',
                 },
                 description: {
                     name: 'Description',
-                    renderer: (input) => stripAnsi(input)
+                    renderer: (input) => stripAnsi(input),
                 },
                 type: {
                     name: 'Type',
-                    renderer: (input) => input && `\`${input}\``
+                    renderer: (input) => input && `\`${input}\``,
                 },
                 required: {
                     name: 'Required',
@@ -120,7 +122,7 @@ export default function hooksToMarkdown(name, hooks, mode) {
                             return 'Yes';
                         }
                         return 'No';
-                    }
+                    },
                 },
                 canBeEmpty: {
                     name: 'Can be empty',
@@ -132,13 +134,14 @@ export default function hooksToMarkdown(name, hooks, mode) {
                         }
 
                         return '';
-                    }
-                }
+                    },
+                },
             };
 
             const settings = {
-                groupTitleWrapper: (groupName, level) => pad(level + 3, '#') + ' ' +
+                groupTitleWrapper: (groupName, level) => `${pad(level + 3, '#')} ${
                     groupName.charAt(0).toUpperCase() + groupName.slice(1)
+                }`,
             };
             const table = generateTable(body, header, settings);
             if (table) {

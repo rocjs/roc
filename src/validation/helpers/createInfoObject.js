@@ -1,11 +1,11 @@
 import { isFunction } from 'lodash';
 
 export default function createInfoObject({
-    validator = () => ({type: ''}),
+    validator = () => ({ type: '' }),
     wrapper,
     required = false,
     canBeEmpty,
-    converter
+    converter,
 } = {}) {
     const info = isFunction(validator) ? validator(null, true) : { type: validator.toString(), canBeEmpty: null };
     const type = wrapper ? wrapper(info.type) : info.type;
@@ -14,6 +14,6 @@ export default function createInfoObject({
         type,
         canBeEmpty: canBeEmpty === undefined ? info.canBeEmpty : canBeEmpty,
         required: info.required || required,
-        converter: convert
+        converter: convert,
     };
 }

@@ -7,7 +7,7 @@ const getDefaults = require('../lib/context/helpers/getDefaults').default;
 const commands = require('../lib/commands').default;
 
 const context = getDefaults({
-    commands
+    commands,
 });
 
 // Write documentation for commands

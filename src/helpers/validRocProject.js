@@ -16,6 +16,6 @@ export default function validRocProject(directory) {
     const packageJSON = getPackageJSON(directory);
 
     return isObject(packageJSON) && (
-        packageJSON.roc && packageJSON.roc.packages && packageJSON.roc.packages.length > 0 ||
+        (packageJSON.roc && packageJSON.roc.packages && packageJSON.roc.packages.length > 0) ||
         getRocPackageDependencies(packageJSON).length > 0);
 }

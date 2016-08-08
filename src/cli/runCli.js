@@ -1,27 +1,27 @@
-import minimist from 'minimist';
 import { isString } from 'lodash';
+import minimist from 'minimist';
 
+import { appendSettings } from '../configuration/manageSettings';
+import { setConfig } from '../configuration/manageConfig';
+import { setVerbose } from '../helpers/manageVerbose';
+import addRaw from '../configuration/addRaw';
+import buildDocumentationObject from '../documentation/buildDocumentationObject';
 import execute from '../execute';
 import getAbsolutePath from '../helpers/getAbsolutePath';
-import validateSettingsWrapper from '../validation/validateSettingsWrapper';
-import { setConfig } from '../configuration/manageConfig';
-import { appendSettings } from '../configuration/manageSettings';
-import merge from '../helpers/merge';
-import buildDocumentationObject from '../documentation/buildDocumentationObject';
 import getSuggestions from '../helpers/getSuggestions';
-import { setVerbose } from '../helpers/manageVerbose';
+import initContext from '../context/initContext';
+import log from '../log/default/large';
+import merge from '../helpers/merge';
 import runHook from '../hooks/runHook';
+import validateSettingsWrapper from '../validation/validateSettingsWrapper';
+
 import checkGroup from './commands/helpers/checkGroup';
 import generateAliases from './commands/helpers/generateAliases';
-import addRaw from '../configuration/addRaw';
-import log from '../log/default/large';
-import initContext from '../context/initContext';
-
-import generateCommandsDocumentation from './commands/documentation/generateCommandsDocumentation';
 import generateCommandDocumentation from './commands/documentation/generateCommandDocumentation';
-import parseOptions from './commands/parseOptions';
-import parseArguments from './commands/parseArguments';
+import generateCommandsDocumentation from './commands/documentation/generateCommandsDocumentation';
 import getMappings from './commands/getMappings';
+import parseArguments from './commands/parseArguments';
+import parseOptions from './commands/parseOptions';
 
 /**
  * Invokes the Roc cli.
@@ -40,15 +40,15 @@ export default function runCli({
     info = { version: 'Unknown', name: 'Unknown' },
     commands: initalCommands,
     argv = process.argv,
-    invoke = true
+    invoke = true,
 }) {
     const {
-        _, h, help, V, verbose, v, version, c, config, d, directory, b, ['better-feedback']: betterFeedback,
-        ...restOptions
+        _, h, help, V, verbose, v, version, c, config, d, directory, b, 'better-feedback': betterFeedback,
+        ...restOptions,
     } = minimist(argv.slice(2));
 
     // The first should be our command if there is one
-    let [groupOrCommand, ...args] = _;
+    const [groupOrCommand, ...args] = _;
 
     // If version is selected output that and stop
     if (version || v) {
@@ -56,8 +56,8 @@ export default function runCli({
     }
 
     if (betterFeedback || b) {
-        require('source-map-support').install();
-        require('loud-rejection')();
+        require('source-map-support').install(); // eslint-disable-line
+        require('loud-rejection')(); // eslint-disable-line
     }
 
     // Possible to set a command in verbose mode
@@ -76,7 +76,7 @@ export default function runCli({
         commands: initalCommands,
         directory: dirPath,
         projectConfigPath,
-        name: info.name
+        name: info.name,
     });
 
     // If we have no command we will display some help information about all possible commands
@@ -94,8 +94,8 @@ export default function runCli({
 
     let {
         commands,
-        command,
-        parents
+        command, // eslint-disable-line
+        parents,
     } = result;
 
     let suggestions = Object.keys(commands);
@@ -140,7 +140,7 @@ export default function runCli({
         parseOptions(restOptions, getMappings(documentationObject), commands[command]);
 
     const configToValidate = merge(context.config, {
-        settings
+        settings,
     });
 
     // Validate configuration
@@ -150,7 +150,7 @@ export default function runCli({
 
     // Does this after the validation so that things set by the CLI always will have the highest priority
     context.config = merge(addRaw(context.config), {
-        settings
+        settings,
     });
 
     // Set the configuration object
@@ -160,7 +160,7 @@ export default function runCli({
     // This means that they can inspect what has been defined by other extensions, the user through config
     // and through command line options
     runHook('roc')('update-settings', () => context.config.settings)(
-        (newSettings) => context.config.settings = appendSettings(newSettings, context.config)
+        (newSettings) => { context.config.settings = appendSettings(newSettings, context.config); }
     );
 
     // Update the configuration object
@@ -182,7 +182,9 @@ export default function runCli({
             parsedOptions,
 
             // Roc Context
-            context
+            context,
         });
     }
+
+    return undefined;
 }

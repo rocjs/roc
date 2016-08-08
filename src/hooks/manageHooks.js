@@ -9,9 +9,10 @@ global.roc.hooks = global.roc.hooks || {};
  * @param {string} name - Name of the extension that the hooks belongs to.
  */
 export function registerHooks(hooks, name, state = global.roc.hooks) {
+    // eslint-disable-next-line
     state = {
         ...state,
-        [name]: hooks
+        [name]: hooks,
     };
 
     return state;

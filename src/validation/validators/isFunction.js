@@ -1,4 +1,5 @@
 import { isFunction as isFunctionLodash } from 'lodash';
+
 import createInfoObject from '../helpers/createInfoObject';
 
 /**

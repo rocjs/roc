@@ -1,10 +1,10 @@
 import { isPlainObject } from 'lodash';
 
-import createTable from './createTable';
-
-import isCommandGroup from '../helpers/isCommandGroup';
-import isCommand from '../helpers/isCommand';
 import getCommandArgumentsAsString from '../getCommandArgumentsAsString';
+import isCommand from '../helpers/isCommand';
+import isCommandGroup from '../helpers/isCommandGroup';
+
+import createTable from './createTable';
 
 /**
  * Generates a string with information about all the possible commands.
@@ -15,22 +15,22 @@ import getCommandArgumentsAsString from '../getCommandArgumentsAsString';
  *
  * @returns {string} - A string with documentation based on the available commands.
  */
-export default function generateCommandsDocumentation(commands = {'No commands available.': ''}, name, parents = []) {
+export default function generateCommandsDocumentation(commands = { 'No commands available.': '' }, name, parents = []) {
     const header = {
         name: true,
-        description: true
+        description: true,
     };
 
     let body = [{
         name: 'Commands',
         level: 0,
-        objects: getObjects(commands)
+        objects: getObjects(commands),
     }];
 
     body = body.concat(getGroups(commands));
 
     const rows = [];
-    rows.push('Usage: ' + name + ' ' + parents.concat('<command>').join(' '), null);
+    rows.push(`Usage: ${name} ${parents.concat('<command>').join(' ')}`, null);
 
     if (commands.__meta && commands.__meta.description) {
         rows.push(commands.__meta.description, null);
@@ -48,7 +48,7 @@ function getGroups(commands, parentNames = [], level = 1) {
             name: commands[group].__meta && commands[group].__meta.name ? commands[group].__meta.name : group,
             level,
             objects: getObjects(commands[group], parentNames.concat(group), level + 1),
-            children: getGroups(commands[group], parentNames.concat(group), level + 1)
+            children: getGroups(commands[group], parentNames.concat(group), level + 1),
         }));
 }
 
@@ -67,7 +67,7 @@ function getObjects(commands, parentNames = [], level = 1) {
             return {
                 name: (parentNames.concat(command).join(' ') + options),
                 level,
-                description
+                description,
             };
         });
 }

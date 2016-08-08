@@ -25,6 +25,6 @@ export default function checkGroup(commands = {}, potentialGroup, args, name, pa
     return {
         commands,
         command: potentialGroup,
-        parents
+        parents,
     };
 }

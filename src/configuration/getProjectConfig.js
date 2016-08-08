@@ -1,4 +1,5 @@
 import fs from 'fs';
+
 import chalk from 'chalk';
 
 import getAbsolutePath from '../helpers/getAbsolutePath';
@@ -38,8 +39,8 @@ export default function getProjectConfig(projectConfigPath, directory = process.
         onceApp = false;
         log.warn(
             'You have configured a location for the application configuration file but the ' +
-            'environment variable ' + chalk.bold('ROC_CONFIG_PATH') + ' is set and that will be used instead. The ' +
-            'path that will be used is ' + configPath,
+            `environment variable ${chalk.bold('ROC_CONFIG_PATH')} is set and that will be used instead. The ` +
+            `path that will be used is ${configPath}`,
             'Configuration'
         );
     }
@@ -61,11 +62,11 @@ export default function getProjectConfig(projectConfigPath, directory = process.
     // Return correct project configuration with fallback to empty object
     configPath = configPath || getAbsolutePath('roc.config.js', directory);
     try {
-        const config = require(configPath);
+        const config = require(configPath); // eslint-disable-line
 
         if (Object.keys(config).length === 0) {
             log.warn(
-                'The configuration file at ' + chalk.bold(configPath) + ' was empty.',
+                `The configuration file at ${chalk.bold(configPath)} was empty.`,
                 'Configuration'
             );
         }
@@ -74,8 +75,8 @@ export default function getProjectConfig(projectConfigPath, directory = process.
     } catch (err) {
         if (err.constructor === SyntaxError) {
             log.warn(
-                'Something is wrong with the configuration file at ' + chalk.bold(configPath) +
-                ' and it will be ignored. Received: ' + chalk.underline(err.message),
+                `Something is wrong with the configuration file at ${chalk.bold(configPath)}` +
+                ` and it will be ignored. Received: ${chalk.underline(err.message)}`,
                 'Configuration'
             );
         } else if (verbose) {

@@ -1,11 +1,12 @@
 import { isPlainObject, isFunction } from 'lodash';
 
-import toCliOption from './helpers/toCliOption';
 import onProperty from '../helpers/onProperty';
 import automatic from '../converters/automatic';
 import { RAW } from '../configuration/addRaw';
 
-const defaultValidator = (input, info) => info ? {type: 'Unknown'} : true;
+import toCliOption from './helpers/toCliOption';
+
+const defaultValidator = (input, info) => (info ? { type: 'Unknown' } : true);
 
 /**
  * Creates a {@link rocDocumentationObject}.
@@ -18,20 +19,18 @@ const defaultValidator = (input, info) => info ? {type: 'Unknown'} : true;
  * @returns {rocDocumentationObject} - The completed documentation object.
  */
 export default function buildDocumentationObject(initalObject, initalMeta = {}, initalFilter = [], initalLevel = 0) {
-    const allObjects = (object = {}, callback) => {
-        return Object.keys(object).map(callback).filter((value) => value !== undefined);
-    };
+    const allObjects = (object = {}, callback) =>
+        Object.keys(object).map(callback).filter((value) => value !== undefined);
 
-    const manageGroup = (object, name, meta = {}, parents, level) => {
-        return {
+    const manageGroup = (object, name, meta = {}, parents, level) =>
+        ({
             name,
             level,
             description: (meta.__meta || {}).description,
             objects: recursiveHelper(object, meta, [], level + 1, parents, true),
             children: recursiveHelper(object, meta, [], level + 1, parents),
-            raw: !!object.__raw
-        };
-    };
+            raw: !!object.__raw,
+        });
 
     const manageLeaf = (object, name, meta = {}, parents) => {
         const description = meta.description;
@@ -41,7 +40,7 @@ export default function buildDocumentationObject(initalObject, initalMeta = {}, 
             type = 'Unknown',
             required = false,
             canBeEmpty = true,
-            converter
+            converter,
         } = isFunction(validator) ?
             validator(null, true) :
             { type: validator.toString() };
@@ -56,9 +55,9 @@ export default function buildDocumentationObject(initalObject, initalMeta = {}, 
             cli,
             path: parents.join('.'),
             defaultValue: object,
-            validator: validator,
+            validator,
             converter: converterFunction || converter || automatic(object),
-            extensions: meta.__extensions
+            extensions: meta.__extensions,
         };
     };
 
@@ -74,6 +73,8 @@ export default function buildDocumentationObject(initalObject, initalMeta = {}, 
                     return manageLeaf(value, key, meta[key], parents);
                 }
             }
+
+            return undefined;
         });
     }
 
@@ -95,11 +96,11 @@ export default function buildDocumentationObject(initalObject, initalMeta = {}, 
  */
 export function sortOnProperty(property, documentationObject = []) {
     documentationObject.sort(onProperty(property));
-    return documentationObject.map((group) => {
-        return {
+    return documentationObject.map((group) =>
+        ({
             ...group,
             objects: sortOnProperty(property, group.objects),
-            children: sortOnProperty(property, group.children)
-        };
-    });
+            children: sortOnProperty(property, group.children),
+        })
+    );
 }

@@ -17,8 +17,8 @@ export default function getSuggestions(current, possible, prefix = '') {
         let shortest = 0;
         let closest;
 
-        for (let key of possible) {
-            let distance = leven(currentKey, key);
+        for (const key of possible) {
+            const distance = leven(currentKey, key);
 
             if (distance <= 0 || distance > 4) {
                 continue;
@@ -33,10 +33,10 @@ export default function getSuggestions(current, possible, prefix = '') {
         }
 
         if (closest) {
-            info.push('Did not understand ' + chalk.underline(prefix + currentKey) +
-                ' - Did you mean ' + chalk.underline(prefix + closest));
+            info.push(`Did not understand ${chalk.underline(prefix + currentKey)}` +
+                ` - Did you mean ${chalk.underline(prefix + closest)}`);
         } else {
-            info.push('Did not understand ' + chalk.underline(prefix + currentKey));
+            info.push(`Did not understand ${chalk.underline(prefix + currentKey)}`);
         }
     });
 

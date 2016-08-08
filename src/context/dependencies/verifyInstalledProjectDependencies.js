@@ -6,15 +6,15 @@ export default function verifyInstalledProjectDependencies({ dependencies, devDe
     const matches = [];
     const allDependencies = {
         ...dependencies,
-        ...devDependencies
+        ...devDependencies,
     };
 
     Object.keys(exports).forEach((name) => {
         // If the same dependency is in the project we want to warn the user
         if (allDependencies[name]) {
             matches.push({
-                name: name,
-                ...exports[name]
+                name,
+                ...exports[name],
             });
         }
     });

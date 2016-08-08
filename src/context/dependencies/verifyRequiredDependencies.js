@@ -9,7 +9,7 @@ export default function verifyRequiredDependencies(directory, required) {
     if (mismatches.length > 0) {
         const header = {
             name: {
-                name: 'Dependency'
+                name: 'Dependency',
             },
             current: {
                 name: 'Installed version',
@@ -19,14 +19,14 @@ export default function verifyRequiredDependencies(directory, required) {
                     }
 
                     return red('Not installed');
-                }
+                },
             },
             requested: {
-                name: 'Requested version'
+                name: 'Requested version',
             },
             extension: {
                 name: 'Extension',
-                renderer: (input) => input.name
+                renderer: (input) => input.name,
             },
             inPackageJSON: {
                 name: 'In package.json',
@@ -36,14 +36,14 @@ export default function verifyRequiredDependencies(directory, required) {
                     }
 
                     return red('No');
-                }
-            }
+                },
+            },
         };
 
         const body = [{
             objects: mismatches,
             name: 'Some required dependencies was not found!',
-            level: 0
+            level: 0,
         }];
 
         log.error(

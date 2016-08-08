@@ -10,30 +10,32 @@ import fileExists from '../helpers/fileExists';
  - Not the correct version installed
 */
 export default function verifyInstalledDependencies(directory, dependencies = {}) {
-    const projectJSON = require(join(directory, 'package.json'));
+    const projectJSON = require(join(directory, 'package.json')); // eslint-disable-line
     const mismatches = [];
     const allDependencies = {
         ...projectJSON.dependencies,
-        ...projectJSON.devDependencies
+        ...projectJSON.devDependencies,
     };
     Object.keys(dependencies).forEach((name) => {
         const requested = dependencies[name];
         const current = allDependencies[name];
-        const installedVersion = fileExists(join(directory, 'node_modules', name, 'package.json')) &&
-            require(join(directory, 'node_modules', name, 'package.json')).version;
+
+        const packageJSON = join(directory, 'node_modules', name, 'package.json');
+        const installedVersion = fileExists(packageJSON) && require(packageJSON).version; // eslint-disable-line
+
         if (
             !current ||
             !semver.satisfies(installedVersion, requested.version)
         ) {
             mismatches.push({
-                name: name,
+                name,
                 current: installedVersion,
                 requested: requested.version,
                 extension: {
                     name: requested.extension,
-                    path: requested.context
+                    path: requested.context,
                 },
-                inPackageJSON: current
+                inPackageJSON: current,
             });
         }
     });

@@ -4,7 +4,7 @@ export default function generateDependencies(packageJSON, toExport) {
         if (toExport.indexOf(dependency) > -1) {
             dependencies = {
                 ...dependencies,
-                [dependency]: packageJSON.dependencies[dependency]
+                [dependency]: packageJSON.dependencies[dependency],
             };
         }
     });

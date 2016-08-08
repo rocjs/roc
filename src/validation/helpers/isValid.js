@@ -17,7 +17,7 @@ export default function isValid(value, validator) {
         return validator(value);
     } else if (isRegExp(validator)) {
         if (!validator.test(value.toString())) {
-            return 'Did not match the regexp: ' + validator;
+            return `Did not match the regexp: ${validator}`;
         }
 
         return true;

@@ -1,4 +1,5 @@
 import { isString as isStringLodash } from 'lodash';
+
 import createInfoObject from '../helpers/createInfoObject';
 import toString from '../../converters/toString';
 
@@ -14,7 +15,7 @@ export default function isString(value, info) {
         return createInfoObject({
             validator: 'String',
             converter: () => toString,
-            canBeEmpty: true
+            canBeEmpty: true,
         });
     }
 

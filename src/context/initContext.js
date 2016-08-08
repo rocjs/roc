@@ -1,25 +1,23 @@
 import { isFunction, omit } from 'lodash';
 
-import log from '../log/default/large';
-import merge from '../helpers/merge';
-import getProjectConfig from '../configuration/getProjectConfig';
+import { registerActions, setActions } from '../hooks/manageActions';
+import { setHooks } from '../hooks/manageHooks';
+import { setResolveRequest, getResolveRequest } from '../require/manageResolveRequest';
 import fileExists from '../helpers/fileExists';
+import getPackageJSON from '../helpers/getPackageJSON';
+import getProjectConfig from '../configuration/getProjectConfig';
 import getRocPackageDependencies from '../helpers/getRocPackageDependencies';
 import getRocPluginDependencies from '../helpers/getRocPluginDependencies';
-import getPackageJSON from '../helpers/getPackageJSON';
-import { registerActions } from '../hooks/manageActions';
-import { setResolveRequest, getResolveRequest } from '../require/manageResolveRequest';
+import log from '../log/default/large';
+import merge from '../helpers/merge';
 import patchRequire from '../require/patchRequire';
 
-import verifyConfigurationStructure from './helpers/verifyConfigurationStructure';
-import verifyInstalledProjectDependencies from './dependencies/verifyInstalledProjectDependencies';
-import verifyRequiredDependencies from './dependencies/verifyRequiredDependencies';
 import buildExtensionTree from './extensions/buildExtensionTree';
 import getDefaults from './helpers/getDefaults';
 import processRocObject, { handleResult } from './extensions/helpers/processRocObject';
-
-import { setActions } from '../hooks/manageActions';
-import { setHooks } from '../hooks/manageHooks';
+import verifyConfigurationStructure from './helpers/verifyConfigurationStructure';
+import verifyInstalledProjectDependencies from './dependencies/verifyInstalledProjectDependencies';
+import verifyRequiredDependencies from './dependencies/verifyRequiredDependencies';
 
 /**
  * Builds the context
@@ -45,7 +43,7 @@ export default function initContext({
     projectConfigPath,
     verify = true,
     runtime = true,
-    name = 'roc'
+    name = 'roc',
 }) {
     let context = {
         actions: [],
@@ -54,14 +52,14 @@ export default function initContext({
         dependencies: {
             exports: {},
             uses: {},
-            requires: {}
+            requires: {},
         },
         extensionConfig: {},
         hooks: {},
         meta: {},
         projectExtensions: [],
         packageJSON: {},
-        usedExtensions: []
+        usedExtensions: [],
     };
 
     context = getDefaults(context, name, directory);
@@ -81,7 +79,7 @@ export default function initContext({
 
         const {
             context: extensionContext,
-            dependencyContext
+            dependencyContext,
         } = buildExtensionTree(context, packages, plugins, directory, verbose, verify);
 
         context = merge(
@@ -107,7 +105,7 @@ export default function initContext({
         if (context.projectExtensions.length && verbose) {
             log.info(
                 context.projectExtensions.map(
-                    (extension) => `${extension.name}${extension.version ? ' - ' + extension.version : ''}`
+                    (extension) => `${extension.name}${extension.version ? ` - ${extension.version}` : ''}`
                 ).join('\n'),
                 'Extensions Used'
             );
@@ -129,7 +127,7 @@ export default function initContext({
             context = processRocObject(
                 handleResult({
                     actions: projectConfig.actions,
-                    config: omit(projectConfig, ['actions', 'init'])
+                    config: omit(projectConfig, ['actions', 'init']),
                 }, projectConfig.init({ verbose, directory, context })),
                 { context },
                 true,

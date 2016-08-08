@@ -3,7 +3,8 @@ import resolve from 'resolve';
 import { initGetDependencies, initGetDependenciesFromPath } from './manageDependencies';
 
 export default function resolveRequest(exports, directory, dependencyContext) {
-    const log = require('debug')(`roc:core:require`);
+    const log = require('debug')('roc:core:require'); // eslint-disable-line
+
     const contextCache = {};
     const resolveCache = {};
     const pattern = /^([^\/]*)\/?([^\/]*)/;
@@ -55,9 +56,7 @@ export default function resolveRequest(exports, directory, dependencyContext) {
 
                 log(`(${identifier}) : Found an alias for [${module}] => [${newRequest}]`);
 
-                return newRequest ?
-                    newRequest :
-                    request;
+                return newRequest || request;
             }
 
             return request;
@@ -82,6 +81,8 @@ function initInProject(directory) {
         if (matches) {
             return matches[0].indexOf('/node_modules/') === -1;
         }
+
+        return false;
     };
 }
 
@@ -105,7 +106,7 @@ function initGetCurrentModule(getDependencies, getDependenciesFromPath) {
             if (matches) {
                 return getDependencies(
                     matches[1].charAt(0) === '@' ?
-                        matches[1] + '/' + matches[2] :
+                        `${matches[1]}/${matches[2]}` :
                         matches[1]
                 , 'exports');
             }

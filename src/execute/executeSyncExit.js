@@ -20,6 +20,6 @@ export default function executeSyncExit(command, silent = false) {
             throw err;
         }
 
-        process.exit(err.exitStatus); // eslint-disable-line
+        return process.exit(err.exitStatus); // eslint-disable-line
     }
 }

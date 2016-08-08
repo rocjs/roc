@@ -1,6 +1,7 @@
 import { isArray as isArrayLodash } from 'lodash';
-import isValid from '../helpers/isValid';
+
 import createInfoObject from '../helpers/createInfoObject';
+import isValid from '../helpers/isValid';
 import toArray from '../../converters/toArray';
 
 /**
@@ -16,7 +17,7 @@ export default function isArray(validator) {
                 validator,
                 converter: (converter) => toArray(converter),
                 wrapper: (wrap) => (`[${wrap}]`),
-                canBeEmpty: true
+                canBeEmpty: true,
             });
         }
 

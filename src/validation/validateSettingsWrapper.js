@@ -21,8 +21,7 @@ export default function validateSettingsWrapper(settings, metaSettings = {}, toV
         }
     } catch (err) {
         log.error(
-            'Configuration was not valid.\n\n' +
-                err.message,
+            `Configuration was not valid.\n\n${err.message}`,
             'Validation Problem'
         );
     }

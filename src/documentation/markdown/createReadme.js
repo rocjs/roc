@@ -57,7 +57,7 @@ export default function createReadme(name, dir, extension, rocCommandObject) {
 
     rows.push('## Documentation');
     [
-        'Actions', 'Commands', 'Configuration', 'Dependencies', 'Hooks', 'Settings', 'Extensions'
+        'Actions', 'Commands', 'Configuration', 'Dependencies', 'Hooks', 'Settings', 'Extensions',
     ].forEach((group) => {
         rows.push(`- [${group}](/${dir}/${group})`);
     });

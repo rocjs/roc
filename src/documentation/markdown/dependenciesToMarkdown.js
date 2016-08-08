@@ -5,7 +5,7 @@ export default function dependenciesToMarkdown(name, extension, dependencies) {
 
     const rows = [];
 
-    rows.push('# Dependencies for `' + name + '`', '');
+    rows.push(`# Dependencies for \`${name}\``, '');
 
     rows.push('The dependencies that are available in the project.');
 

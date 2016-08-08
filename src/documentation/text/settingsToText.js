@@ -21,16 +21,18 @@ export default function settingsToText({ settings }, { settings: meta }, filter 
             name: 'Description',
             renderer: (input) => {
                 if (input && input.length > 100) {
-                    return input.substr(0, 100) + '…';
+                    return `${input.substr(0, 100)}…`;
                 }
 
                 if (input) {
                     return input;
                 }
-            }
+
+                return undefined;
+            },
         },
         path: {
-            name: 'Path'
+            name: 'Path',
         },
         defaultValue: {
             name: 'Default',
@@ -40,10 +42,10 @@ export default function settingsToText({ settings }, { settings: meta }, filter 
                     return yellow('No default value');
                 }
                 return defaultValue;
-            }
+            },
         },
         cli: {
-            name: 'CLI option'
+            name: 'CLI option',
         },
         required: {
             name: 'Required',
@@ -52,7 +54,7 @@ export default function settingsToText({ settings }, { settings: meta }, filter 
                     return green('Yes');
                 }
                 return red('No');
-            }
+            },
         },
         canBeEmpty: {
             name: 'Can be empty',
@@ -64,12 +66,12 @@ export default function settingsToText({ settings }, { settings: meta }, filter 
                 }
 
                 return '';
-            }
-        }
+            },
+        },
     };
 
     const text = generateTable(documentationObject, header, {
-        groupTitleWrapper: (name, level, parentNames) => parentNames.concat(name).join(' > ')
+        groupTitleWrapper: (name, level, parentNames) => parentNames.concat(name).join(' > '),
     });
 
     if (text.length === 0) {

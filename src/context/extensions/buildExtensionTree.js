@@ -24,8 +24,8 @@ const log = require('debug')('roc:core:extensionBuilder');
  */
 export default function buildExtensionTree(context, packages, plugins, directory, verbose, checkRequired) {
     const completed = (state) => {
-        let totalTime = process.hrtime(state.temp.startTime);
-        log(`Completed loading extensions ${(totalTime[0] * 1000 + totalTime[1] / 1000000).toFixed(0)}ms`);
+        const totalTime = process.hrtime(state.temp.startTime);
+        log(`Completed loading extensions ${((totalTime[0] * 1000) + (totalTime[1] / 1000000)).toFixed(0)}ms`);
         return state;
     };
 
@@ -35,7 +35,7 @@ export default function buildExtensionTree(context, packages, plugins, directory
         getExtensions('plugin')(plugins),
         processDevExports,
         runPostInits,
-        completed
+        completed,
     ].reduce(
         (state, process) => process(state),
         // Initial state
@@ -45,18 +45,18 @@ export default function buildExtensionTree(context, packages, plugins, directory
             settings: {
                 checkRequired,
                 verbose,
-                directory
+                directory,
             },
 
             temp: {
                 postInits: [],
                 extensionsDevelopmentExports: {},
-                startTime: process.hrtime()
+                startTime: process.hrtime(),
             },
 
             dependencyContext: {
                 extensionsDependencies: {},
-                pathsToExtensions: {}
-            }
+                pathsToExtensions: {},
+            },
         });
 }

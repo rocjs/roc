@@ -13,7 +13,7 @@ export function handleResult(roc, result) {
     if (!result) {
         return {
             roc: undefined,
-            update: undefined
+            update: undefined,
         };
     }
 
@@ -26,13 +26,14 @@ export function handleResult(roc, result) {
                 'config',
                 'dependencies',
                 'hooks',
-                'meta'
-            ])
+                'meta',
+            ]),
         },
-        update: result.update
+        update: result.update,
     };
 }
 
+/* eslint-disable no-param-reassign */
 export default function processRocObject({ roc, update = {} }, state, ignoreDependencies = false, validate = true) {
     if (roc) {
         // Get possible dependencies
@@ -101,10 +102,10 @@ export default function processRocObject({ roc, update = {} }, state, ignoreDepe
         state.context.meta = processConfig(roc.name,
             {
                 config: roc.config,
-                meta: roc.meta
+                meta: roc.meta,
             }, {
                 config: state.context.config,
-                meta: state.context.meta
+                meta: state.context.meta,
             }
         );
 
@@ -143,19 +144,20 @@ export default function processRocObject({ roc, update = {} }, state, ignoreDepe
 
     return state;
 }
+/* eslint-enable */
 
 function updateDependencies(dependencies, name, path) {
     const local = { ...dependencies };
     Object.keys(local).forEach((dependency) => {
         if (isString(local[dependency])) {
             local[dependency] = {
-                version: local[dependency]
+                version: local[dependency],
             };
         }
         local[dependency] = {
             ...local[dependency],
             context: path,
-            extension: name
+            extension: name,
         };
     });
 
@@ -167,6 +169,6 @@ function setContext(dependencies, name, path) {
         ...dependencies,
         exports: updateDependencies(dependencies.exports, name, path),
         uses: updateDependencies(dependencies.uses, name, path),
-        requires: updateDependencies(dependencies.requires, name, path)
+        requires: updateDependencies(dependencies.requires, name, path),
     };
 }

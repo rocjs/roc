@@ -1,6 +1,7 @@
-import deepExtend from 'deep-extend';
 import { isUndefined } from 'lodash';
 import stripAnsi from 'strip-ansi';
+
+import merge from '../helpers/merge';
 
 import addPadding from './helpers/addPadding';
 import pad from './helpers/pad';
@@ -12,7 +13,7 @@ const defaultSettings = {
     rowWrapper: (input, level) => `|${input}|`,
     cellWrapper: (input) => ` ${input} `,
     header: true,
-    compact: false
+    compact: false,
 };
 /* eslint-enable */
 
@@ -26,39 +27,37 @@ const defaultSettings = {
  * @returns {string} - A table.
  */
 export default function generateTable(initalDocumentationObject, header, settings) {
-    settings = deepExtend({}, defaultSettings, settings);
+    const finalSettings = merge(defaultSettings, settings);
     const headerLengths = createLengthObject(header, header, {}, true);
     const lengths = createLengthObject(initalDocumentationObject, header, headerLengths);
 
     const printTableCell = (key, element, renderer = (input) => input || '', fill = false, object) => {
         if (fill) {
-            return settings.cellWrapper(pad(lengths[key], '-'));
+            return finalSettings.cellWrapper(pad(lengths[key], '-'));
         }
         const padding = isUndefined(header[key].padding) ? true : header[key].padding;
         const text = padding ?
             addPadding(renderer(element, object), lengths[key]) :
             renderer(element, object);
 
-        return settings.cellWrapper(text);
+        return finalSettings.cellWrapper(text);
     };
 
-    const printTableRow = (object, level, isHeader = false) => {
-        return settings.rowWrapper(Object.keys(header).map((key) => {
+    const printTableRow = (object, level, isHeader = false) =>
+        finalSettings.rowWrapper(Object.keys(header).map((key) => {
             const { value, renderer } = getValueAndRenderer(isHeader, header[key], object[key]);
 
             return printTableCell(key, value, renderer, undefined, object);
-        }).join(settings.cellDivider), level);
-    };
+        }).join(finalSettings.cellDivider), level);
 
-    const printTableSplitter = (level) => {
-        return settings.rowWrapper(Object.keys(header).map((key) =>
+    const printTableSplitter = (level) =>
+        finalSettings.rowWrapper(Object.keys(header).map((key) =>
             printTableCell(key, undefined, undefined, true)
-        ).join(settings.cellDivider), level);
-    };
+        ).join(finalSettings.cellDivider), level);
 
     const printTableHead = ({ name, description, raw }, parentNames, level = 0, printTableHeader = true) => {
         const rows = [];
-        rows.push(settings.groupTitleWrapper(name, level, parentNames));
+        rows.push(finalSettings.groupTitleWrapper(name, level, parentNames));
 
         if (description) {
             rows.push(description, '');
@@ -68,7 +67,7 @@ export default function generateTable(initalDocumentationObject, header, setting
             rows.push('✓ ― Supports __raw', '');
         }
 
-        if (settings.header && printTableHeader) {
+        if (finalSettings.header && printTableHeader) {
             rows.push(printTableRow(header, level, true));
             rows.push(printTableSplitter(level));
         }
@@ -77,14 +76,14 @@ export default function generateTable(initalDocumentationObject, header, setting
     };
 
     const recursiveHelper = (documentationObject = [], parentNames, first = false) => {
-        const spacing = settings.compact || first ? [] : [''];
+        const spacing = finalSettings.compact || first ? [] : [''];
 
         return documentationObject.map((group) => {
             let rows = [];
             const level = group.level || 0;
             const objects = group.objects || [];
 
-            if (level === 0 || !settings.compact) {
+            if (level === 0 || !finalSettings.compact) {
                 rows = rows.concat(
                     printTableHead(group, parentNames, level, objects.length > 0)
                 );
@@ -95,7 +94,7 @@ export default function generateTable(initalDocumentationObject, header, setting
 
             rows = rows.concat(recursiveHelper(group.children, parentNames.concat(group.name)));
 
-            if (group.level !== undefined && level === 0 && settings.compact) {
+            if (group.level !== undefined && level === 0 && finalSettings.compact) {
                 rows.push('');
             }
 
@@ -107,13 +106,11 @@ export default function generateTable(initalDocumentationObject, header, setting
 }
 
 function createLengthObject(initalElements, header, initalLengths, isHeader = false) {
-    const getObjectLength = (element, renderer = (input) => input, object) => {
-        return stripAnsi(renderer(element, object)).length;
-    };
+    const getObjectLength = (element, renderer = (input) => input, object) =>
+        stripAnsi(renderer(element, object)).length;
 
-    const getLength = (newLength, currentLength = 0) => {
-        return newLength > currentLength ? newLength : currentLength;
-    };
+    const getLength = (newLength, currentLength = 0) =>
+        (newLength > currentLength ? newLength : currentLength);
 
     const recursiveHelper = (elements = [], lengths = {}) => {
         let newLengths = { ...lengths };
@@ -135,11 +132,11 @@ function createLengthObject(initalElements, header, initalLengths, isHeader = fa
     };
 
     // Make sure the data matches the expected format
-    if (!Array.isArray(initalElements)) {
-        initalElements = [{objects: [initalElements], children: []}];
-    }
+    const elements = !Array.isArray(initalElements) ?
+        [{ objects: [initalElements], children: [] }] :
+        initalElements;
 
-    return recursiveHelper(initalElements, initalLengths);
+    return recursiveHelper(elements, initalLengths);
 }
 
 function getValueAndRenderer(isHeader, headerObject, object) {
@@ -148,6 +145,6 @@ function getValueAndRenderer(isHeader, headerObject, object) {
 
     return {
         value,
-        renderer
+        renderer,
     };
 }

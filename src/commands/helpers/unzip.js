@@ -1,7 +1,8 @@
-import temp from 'temp';
 import fs from 'fs';
-import nodeUnzip from 'unzip';
 import path from 'path';
+
+import nodeUnzip from 'unzip';
+import temp from 'temp';
 
 // Automatically track and cleanup files at exit
 temp.track();
@@ -19,6 +20,7 @@ export default function unzip(zipFile) {
     }
 
     return new Promise((resolve, reject) => {
+        // eslint-disable-next-line
         temp.mkdir('roc', (err, dirPath) => {
             if (err) {
                 return reject(err);
@@ -31,11 +33,13 @@ export default function unzip(zipFile) {
                     // The template zip is assumed to have a root dir
                     try {
                         fs.readdirSync(dirPath)
-                            .forEach((file) => {
+                            .some((file) => {
                                 const rootDir = path.join(dirPath, file);
                                 if (fs.statSync(rootDir).isDirectory()) {
                                     return resolve(rootDir);
                                 }
+
+                                return false;
                             });
                     } catch (error) {
                         return reject(error);

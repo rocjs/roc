@@ -15,4 +15,6 @@ export default function toBoolean(input) {
     if (isString(input) && (input.toLowerCase() === 'true' || input.toString().toLowerCase() === 'false')) {
         return input === 'true';
     }
+
+    return false;
 }

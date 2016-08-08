@@ -7,20 +7,20 @@ import pad from '../helpers/pad';
 import getCommandArgumentsAsString from '../../cli/commands/getCommandArgumentsAsString';
 import getDefaultOptions from '../../cli/commands/getDefaultOptions';
 import onProperty from '../../helpers/onProperty';
-import createStatefulAnchor from './helpers/createStatefulAnchor';
-
 import isCommandGroup from '../../cli/commands/helpers/isCommandGroup';
 import isCommand from '../../cli/commands/helpers/isCommand';
 import getInfoObject from '../../validation/helpers/getInfoObject';
 
+import createStatefulAnchor from './helpers/createStatefulAnchor';
+
 // Table with default options
 const header = {
     name: {
-        name: 'Name'
+        name: 'Name',
     },
     description: {
         name: 'Description',
-        renderer: (input) => stripAnsi(input)
+        renderer: (input) => stripAnsi(input),
     },
     required: {
         name: 'Required',
@@ -29,13 +29,13 @@ const header = {
                 return 'Yes';
             }
             return 'No';
-        }
-    }
+        },
+    },
 };
 
 const settings = {
-    groupTitleWrapper: (groupName, level) => pad(level + 3, '#') + ' ' +
-        groupName.charAt(0).toUpperCase() + groupName.slice(1)
+    groupTitleWrapper: (groupName, level) => `${pad(level + 3, '#')} ${
+        groupName.charAt(0).toUpperCase() + groupName.slice(1)}`,
 };
 
 /**
@@ -64,7 +64,7 @@ export default function commandsToMarkdown(name, config, commands, settingsLink,
         return `* ${groupName}`;
     };
 
-    rows.push('# Commands for `' + name + '`', '');
+    rows.push(`# Commands for \`${name}\``, '');
 
     if (commands) {
         rows.push('## General Information');
@@ -73,7 +73,7 @@ export default function commandsToMarkdown(name, config, commands, settingsLink,
         rows.push(generateTable([{
             name: 'General options',
             level: 0,
-            objects: getDefaultOptions('name')
+            objects: getDefaultOptions('name'),
         }], header, settings));
 
         rows.push('## Commands');
@@ -143,7 +143,7 @@ function build(cli, commands, allSettingGroups, printGroup, hideCommands, statef
 
     return {
         tableOfContent,
-        content
+        content,
     };
 }
 
@@ -155,7 +155,7 @@ function buildGroup(cli, command, commandData, allSettingGroups, printGroup, par
         rows.push('');
     }
 
-    rows.push('```\n' + `${cli} ${parents.concat(command).join(' ')} <command>` + '\n```');
+    rows.push(`\`\`\`\n${cli} ${parents.concat(command).join(' ')} <command>\n\`\`\``);
     if (commandData.__meta && commandData.__meta.description) {
         rows.push(commandData.__meta.description);
         rows.push('');
@@ -175,8 +175,7 @@ function buildCommand(cli, command, commandData, allSettingGroups, printGroup, p
 
     rows.push('');
 
-    rows.push('```\n' +
-        `${cli} ${parents.concat(command).join(' ')}${getCommandArgumentsAsString(commandData)}` + '\n```');
+    rows.push(`\`\`\`\n${cli} ${parents.concat(command).join(' ')}${getCommandArgumentsAsString(commandData)}\n\`\`\``);
 
     // If we have a markdown property we will use that over help
     if (commandData.markdown) {
@@ -198,7 +197,7 @@ function buildCommand(cli, command, commandData, allSettingGroups, printGroup, p
                 type: infoObject.type,
                 required: infoObject.required,
                 canBeEmpty: infoObject.canBeEmpty,
-                default: argument.default !== undefined && JSON.stringify(argument.default)
+                default: argument.default !== undefined && JSON.stringify(argument.default),
             };
         });
 
@@ -206,7 +205,7 @@ function buildCommand(cli, command, commandData, allSettingGroups, printGroup, p
             body = body.concat({
                 name: 'Arguments',
                 level,
-                objects: objects
+                objects,
             });
         }
     }
@@ -221,7 +220,7 @@ function buildCommand(cli, command, commandData, allSettingGroups, printGroup, p
                 type: infoObject.type,
                 required: infoObject.required,
                 canBeEmpty: infoObject.canBeEmpty,
-                default: option.default !== undefined && JSON.stringify(option.default)
+                default: option.default !== undefined && JSON.stringify(option.default),
             };
         });
 
@@ -229,26 +228,26 @@ function buildCommand(cli, command, commandData, allSettingGroups, printGroup, p
             body = body.concat({
                 name: 'Command options',
                 level,
-                objects: objects
+                objects,
             });
         }
     }
 
     const newHeader = {
         name: {
-            name: 'Name'
+            name: 'Name',
         },
         description: {
             name: 'Description',
-            renderer: (input) => stripAnsi(input)
+            renderer: (input) => stripAnsi(input),
         },
         default: {
             name: 'Default',
-            renderer: (input) => input && `\`${input}\``
+            renderer: (input) => input && `\`${input}\``,
         },
         type: {
             name: 'Type',
-            renderer: (input) => input && `\`${input}\``
+            renderer: (input) => input && `\`${input}\``,
         },
         required: {
             name: 'Required',
@@ -257,7 +256,7 @@ function buildCommand(cli, command, commandData, allSettingGroups, printGroup, p
                     return 'Yes';
                 }
                 return 'No';
-            }
+            },
         },
         canBeEmpty: {
             name: 'Can be empty',
@@ -269,15 +268,15 @@ function buildCommand(cli, command, commandData, allSettingGroups, printGroup, p
                 }
 
                 return '';
-            }
-        }
+            },
+        },
     };
 
     rows.push('');
 
     const table = generateTable(body, newHeader, {
-        groupTitleWrapper: (groupName, level2) => pad(level2 + 3, '#') + ' ' +
-            groupName.charAt(0).toUpperCase() + groupName.slice(1)
+        groupTitleWrapper: (groupName, level2) => `${pad(level2 + 3, '#')} ${
+            groupName.charAt(0).toUpperCase() + groupName.slice(1)}`,
     });
     if (table) {
         rows.push(table);

@@ -1,17 +1,22 @@
 {
-    "extends": "vgno",
+    "extends": "airbnb-base",
 
     "parser": "babel-eslint",
 
-    "env": {
-        "es6": true
-    },
-
-    "ecmaFeatures": {
-        "modules": true
-    },
+    plugins: ["eslint-plugin-babel"],
 
     "rules": {
-        "no-underscore-dangle": 0
+        "indent": [2, 4],
+        "max-len": [2, 120, 4],
+        "no-warning-comments": 1,
+        "no-underscore-dangle": 0,
+        "no-use-before-define": ["error", { "functions": false }],
+        "prefer-template": [1],
+
+        "generator-star-spacing": 0,
+        "babel/generator-star-spacing": [2, { before: false, after: true }],
+
+        "import/order": [2, { "groups": ["builtin", "external", "internal", "parent", "sibling", "index"], "newlines-between": "always"}],
+        "import/newline-after-import": [2]
     }
 }

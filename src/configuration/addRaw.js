@@ -10,18 +10,18 @@ export default function addRaw(config) {
                 if (key === RAW) {
                     newSettings = {
                         ...newSettings,
-                        ...settingsSlice[key]
+                        ...settingsSlice[key],
                     };
                 } else {
                     newSettings = {
                         ...newSettings,
-                        [key]: manageSettings(settingsSlice[key])
+                        [key]: manageSettings(settingsSlice[key]),
                     };
                 }
             } else {
                 newSettings = {
                     ...newSettings,
-                    [key]: settingsSlice[key]
+                    [key]: settingsSlice[key],
                 };
             }
         });
@@ -30,6 +30,6 @@ export default function addRaw(config) {
 
     return {
         ...config,
-        settings: manageSettings(config.settings)
+        settings: manageSettings(config.settings),
     };
 }

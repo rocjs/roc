@@ -1,4 +1,5 @@
 import { isRegExp as isRegExpLodash } from 'lodash';
+
 import createInfoObject from '../helpers/createInfoObject';
 import toRegExp from '../../converters/toRegExp';
 
@@ -13,7 +14,7 @@ export default function isRegExp(value, info) {
     if (info) {
         return createInfoObject({
             validator: 'RegExp',
-            converter: () => toRegExp
+            converter: () => toRegExp,
         });
     }
 
