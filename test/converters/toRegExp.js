@@ -1,6 +1,6 @@
 import expect from 'expect';
 
-import toRegExp from '../../src/converters/toRegexp';
+import toRegExp from '../../src/converters/toRegExp';
 
 describe('roc', () => {
     describe('converters', () => {
