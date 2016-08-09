@@ -32,10 +32,10 @@ export default function keyboardDistance(char, possible = []) {
                         column: parseInt(columnIndex, 10) + 1,
                     };
                 }
-
-                return undefined;
             }
         }
+
+        return undefined;
     };
     /* eslint-enable */
 

@@ -16,5 +16,5 @@ export default function toBoolean(input) {
         return input === 'true';
     }
 
-    return false;
+    return undefined;
 }

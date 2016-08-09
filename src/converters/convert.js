@@ -22,6 +22,6 @@ export default function convert(...converters) {
             return res;
         }
 
-        return false;
+        return undefined;
     };
 }

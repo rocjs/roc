@@ -39,18 +39,21 @@ export function getConfig(fail = true, state = global.roc.config) {
     if (onceSettings && process.env.ROC_CONFIG_SETTINGS) {
         onceSettings = false;
 
+        const environmentSettings = JSON.parse(process.env.ROC_CONFIG_SETTINGS);
+
         if (state && state.settings && Object.keys(state.settings).length > 0 &&
             process.env.ROC_CONFIG_SETTINGS
         ) {
             log.info(
-                'You have settings defined on the environment variable ROC_CONFIG_SETTINGS ' +
+                `You have settings defined on the environment variable ${bold('ROC_CONFIG_SETTINGS')} ` +
                 'and they will be appended to the settings. Will append the following:\n' +
-                JSON.stringify(process.env.ROC_CONFIG_SETTINGS, null, 2),
+                JSON.stringify(environmentSettings, null, 2),
                 'Configuration'
             );
         }
 
-        appendSettings(JSON.parse(process.env.ROC_CONFIG_SETTINGS));
+        // eslint-disable-next-line
+        state.settings = appendSettings(environmentSettings, state);
     }
 
     return state;
