@@ -22,7 +22,7 @@
     "clean": "rimraf lib esdocs coverage",
     "lint": "eslint .",
     "test": "npm run lint && npm run test:coverage",
-    "test:coverage": "cross-env NODE_ENV=test babel-node node_modules/isparta/bin/isparta cover node_modules/mocha/bin/_mocha -- --recursive test/",
+    "test:coverage": "cross-env NODE_ENV=test nyc npm run test:unit",
     "test:unit": "cross-env NODE_ENV=test mocha --compilers js:babel-register test --recursive",
     "test:unit:watch": "npm run test:unit -- --watch",
     "check": "ncu",
@@ -53,6 +53,7 @@
   "devDependencies": {
     "babel-cli": "~6.4.5",
     "babel-eslint": "~6.1.2",
+    "babel-plugin-istanbul": "1.0.3",
     "babel-plugin-transform-async-to-generator": "6.8.0",
     "babel-plugin-transform-es2015-destructuring": "~6.4.0",
     "babel-plugin-transform-es2015-function-name": "~6.4.0",
@@ -74,10 +75,10 @@
     "eslint-config-airbnb-base": "~4.0.0",
     "eslint-plugin-babel": "~3.3.0",
     "eslint-plugin-import": "~1.10.2",
-    "expect": "~1.13.4",
-    "isparta": "~4.0.0",
-    "mocha": "~2.4.4",
+    "expect": "~1.20.2",
+    "mocha": "~3.0.2",
     "npm-check-updates": "~2.5.6",
+    "nyc": "7.1.0",
     "rimraf": "~2.5.0"
   },
   "dependencies": {
@@ -106,5 +107,19 @@
     "trim-newlines": "~1.0.0",
     "unzip": "^0.1.11",
     "update-notifier": "0.6.3"
+  },
+  "nyc": {
+    "include": [
+      "src/**/*.js"
+    ],
+    "require": [
+      "babel-register"
+    ],
+    "reporter": [
+      "lcov",
+      "text-summary"
+    ],
+    "sourceMap": false,
+    "instrument": false
   }
 }
