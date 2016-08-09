@@ -1,0 +1,8 @@
+{
+    "dependencies": {
+        "roc-package-web": "1.0.0"
+    },
+    "roc": {
+        "packages": []
+    }
+}
