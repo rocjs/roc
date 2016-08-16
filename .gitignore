@@ -5,3 +5,4 @@ lib
 esdocs
 coverage
 .idea
+.nyc_output
