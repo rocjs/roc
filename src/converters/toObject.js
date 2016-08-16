@@ -11,6 +11,9 @@ export default function toObject(input) {
     if (isPlainObject(input)) {
         return input;
     }
-
-    return JSON.parse(input);
+    try {
+        return JSON.parse(input);
+    } catch (error) {
+        return undefined;
+    }
 }

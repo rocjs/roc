@@ -22,8 +22,7 @@ describe('roc', () => {
             });
 
             it('should throw if validator is defined but not a function or RegExp', () => {
-                expect(isValid)
-                    .withArgs('value', 2)
+                expect(() => isValid('value', 2))
                     .toThrow();
             });
 
@@ -32,5 +31,5 @@ describe('roc', () => {
                     .toBe(true);
             });
         });
-    })
-})
+    });
+});

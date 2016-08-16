@@ -17,18 +17,18 @@ describe('roc', () => {
             const exports = {
                 a: {
                     resolve: undefined,
-                    context: join(__dirname, 'fixtures', 'resolveRequest')
+                    context: join(__dirname, 'fixtures', 'resolveRequest'),
                 },
                 b: {
                     resolve: resolveSpy,
-                    context: 'my_context'
-                }
+                    context: 'my_context',
+                },
             };
 
             // This is an object that holds all the dependencies for the roc extensions
             const dependencyContext = {
                 extensionsDependencies: {},
-                pathsToExtensions: {}
+                pathsToExtensions: {},
             };
 
             const resolver = resolveRequest(exports, __dirname, dependencyContext)('Test');
@@ -39,25 +39,26 @@ describe('roc', () => {
             });
 
             it('should resolve to exported version of dependency', () => {
-                expect(require(resolver('a', __dirname)))
+                expect(require(resolver('a', __dirname))) // eslint-disable-line
                     .toEqual('a');
             });
 
             it('should resolve to exported version of dependency using custom resolve function', () => {
-                expect(require(resolver('b', __dirname)))
+                expect(require(resolver('b/test', __dirname))) // eslint-disable-line
                     .toEqual('d');
 
-                expect(resolveSpy.calls[0].arguments).toEqual([
-                    'b',
-                    __dirname,
-                    'my_context'
-                ]);
+                expect(resolveSpy.calls[0].arguments).toEqual([{
+                    extensionContext: 'my_context',
+                    module: 'b',
+                    request: 'b/test',
+                    requestContext: __dirname,
+                }]);
             });
 
             it('should not rewrite request if not inside project', () => {
                 expect(resolver('a', join(__dirname, 'node_modules', 'lodash')))
                     .toEqual('a');
-            })
+            });
         });
     });
 });

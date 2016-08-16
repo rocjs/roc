@@ -1,6 +1,0 @@
-{
-    "name": "valid-template",
-    "dependencies": {
-        "roc-web": "1.0.0"
-    }
-}
