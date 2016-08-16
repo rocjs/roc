@@ -4,14 +4,14 @@
 All commands can be called with some additional options as can be seen below.
 
 ### General options
-
-| Name            | Description                                                                                                   | Required |
-| --------------- | ------------------------------------------------------------------------------------------------------------- | -------- |
-| -c, --config    | Path to configuration file, will default to roc.config.js in current working directory.                       | No       |
-| -d, --directory | Path to working directory, will default to the current working directory. Can be either absolute or relative. | No       |
-| -h, --help      | Output usage information.                                                                                     | No       |
-| -V, --verbose   | Enable verbose mode.                                                                                          | No       |
-| -v, --version   | Output version number.                                                                                        | No       |
+| Name                  | Description                                                                                                   | Required |
+| --------------------- | ------------------------------------------------------------------------------------------------------------- | -------- |
+| -b, --better-feedback | Will enable source-map-support and loud-rejection for a better experience with better feedback.               | No       |
+| -c, --config          | Path to configuration file, will default to roc.config.js in current working directory.                       | No       |
+| -d, --directory       | Path to working directory, will default to the current working directory. Can be either absolute or relative. | No       |
+| -h, --help            | Output usage information.                                                                                     | No       |
+| -V, --verbose         | Enable verbose mode.                                                                                          | No       |
+| -v, --version         | Output version number.                                                                                        | No       |
 
 ## Commands
 * [create](#create)
@@ -49,18 +49,16 @@ __version__
 Versions should match a tag on the Github repo and will default to master if none exists. When giving an input on the command line Roc will automatically add `v` in front of versions that starts with a number to match Github default that have versions tags that start with `v` like `v1.0.0`. `master` is also always available as an option.
 
 #### Arguments
-
-| Name        | Description                                                                           | Required | Type       | Default |
-| ----------- | ------------------------------------------------------------------------------------- | -------- | ---------- | ------- |
-| template    | The template to use. Matches Github structure with Username/Repo or a local zip file. | No       | `Filepath` |         |
-| version     | The version to use.                                                                   | No       | `String`   |         |
+| Name        | Description                                                                           | Default | Type       | Required | Can be empty |
+| ----------- | ------------------------------------------------------------------------------------- | ------- | ---------- | -------- | ------------ |
+| template    | The template to use. Matches Github structure with Username/Repo or a local zip file. |         | `Filepath` | No       | No           |
+| version     | The version to use.                                                                   |         | `String`   | No       | No           |
 
 #### Command options
-
-| Name        | Description                                                                           | Required | Type       | Default |
-| ----------- | ------------------------------------------------------------------------------------- | -------- | ---------- | ------- |
-| -f, --force | Ignore non empty directory warning.                                                   | No       | `Boolean`  |         |
-| -l, --list  | List the available versions of a template.                                            | No       | `Boolean`  |         |
+| Name        | Description                                                                           | Default | Type       | Required | Can be empty |
+| ----------- | ------------------------------------------------------------------------------------- | ------- | ---------- | -------- | ------------ |
+| -f, --force | Ignore non empty directory warning.                                                   |         | `Boolean`  | No       |              |
+| -l, --list  | List the available versions of a template.                                            |         | `Boolean`  | No       |              |
 
 ####  Defined by extensions
 roc
@@ -74,19 +72,17 @@ roc create new <name> [template] [version]
 Alias for "init" that always will try to create a new directory.
 
 #### Arguments
-
-| Name        | Description                                                                           | Required | Type       | Default |
-| ----------- | ------------------------------------------------------------------------------------- | -------- | ---------- | ------- |
-| name        | Name for a new directory to create the project in.                                    | Yes      | `String`   |         |
-| template    | The template to use. Matches Github structure with Username/Repo or a local zip file. | No       | `Filepath` |         |
-| version     | The version to use.                                                                   | No       | `String`   |         |
+| Name        | Description                                                                           | Default | Type       | Required | Can be empty |
+| ----------- | ------------------------------------------------------------------------------------- | ------- | ---------- | -------- | ------------ |
+| name        | Name for a new directory to create the project in.                                    |         | `String`   | Yes      | No           |
+| template    | The template to use. Matches Github structure with Username/Repo or a local zip file. |         | `Filepath` | No       | No           |
+| version     | The version to use.                                                                   |         | `String`   | No       | No           |
 
 #### Command options
-
-| Name        | Description                                                                           | Required | Type       | Default |
-| ----------- | ------------------------------------------------------------------------------------- | -------- | ---------- | ------- |
-| -f, --force | Ignore non empty directory warning.                                                   | No       | `Boolean`  |         |
-| -l, --list  | List the available versions of a template.                                            | No       | `Boolean`  |         |
+| Name        | Description                                                                           | Default | Type       | Required | Can be empty |
+| ----------- | ------------------------------------------------------------------------------------- | ------- | ---------- | -------- | ------------ |
+| -f, --force | Ignore non empty directory warning.                                                   |         | `Boolean`  | No       |              |
+| -l, --list  | List the available versions of a template.                                            |         | `Boolean`  | No       |              |
 
 ####  Defined by extensions
 roc
@@ -108,14 +104,13 @@ roc meta docs
 ```
 
 #### Command options
-
-| Name            | Description | Required | Type | Default        |
-| --------------- | ----------- | -------- | ---- | -------------- |
-| --hide-commands |             | No       |      |                |
-| --html          |             | No       |      | `false`        |
-| --markdown      |             | No       |      | `true`         |
-| --mode          |             | No       |      | `"github.com"` |
-| --output        |             | No       |      | `"docs"`       |
+| Name       | Description                                                   | Default        | Type                                                              | Required | Can be empty |
+| ---------- | ------------------------------------------------------------- | -------------- | ----------------------------------------------------------------- | -------- | ------------ |
+| --html     | If HTML should be generated. (Not supported yet)              | `false`        | `Boolean`                                                         | No       |              |
+| --markdown | If markdown should be generated.                              | `true`         | `Boolean`                                                         | No       |              |
+| --mode     | The platform that is to be used, for link generation.         | `"github.com"` | `/github\.com|nodejs\.org|bitbucket\.org|ghost\.org|gitlab\.com/` | No       |              |
+| --output   | A directory to place the generated documentation inside of.   | `"docs"`       | `Boolean`                                                         | No       |              |
+| --project  | If the projects configuration and actions should be included. | `false`        | `Boolean`                                                         | No       |              |
 
 ####  Defined by extensions
 roc
