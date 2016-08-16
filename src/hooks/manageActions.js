@@ -2,7 +2,8 @@ import isFunction from 'lodash/isFunction';
 
 // This needs to be global, same case as with configuration
 global.roc = global.roc || {};
-global.roc.actions = global.roc.actions || [];
+global.roc.context = global.roc.context || {};
+global.roc.context.actions = global.roc.context.actions || [];
 
 /**
  * Register actions with Roc.
@@ -12,7 +13,7 @@ global.roc.actions = global.roc.actions || [];
  * @param {boolean} [project=false] - If the actions belongs to the project.
  */
  /* eslint-disable no-param-reassign */
-export function registerActions(actions, extensionName, state = global.roc.actions, project = false) {
+export function registerActions(actions, extensionName, state = global.roc.context.actions, project = false) {
     // Look for the extensionName and only add if not already there
     const index = state.findIndex(({ name }) => extensionName === name);
 
@@ -50,7 +51,7 @@ export function registerActions(actions, extensionName, state = global.roc.actio
  * @param {string} extensionName - Name of the extension to register the actions on.
  * @param {boolean} [project=false] - If the action belongs to the project.
  */
-export function registerAction(action, extensionName, state = global.roc.actions, project = false) {
+export function registerAction(action, extensionName, state = global.roc.context.actions, project = false) {
     // Look for the extensionName and update if it exists
     const index = state.findIndex(({ name }) => extensionName === name);
 
@@ -70,15 +71,15 @@ export function registerAction(action, extensionName, state = global.roc.actions
 function createActionHelper(action, extension, hook, description, post) {
     return {
         action,
+        description,
         extension,
         hook,
-        description,
         post,
     };
 }
 
 /* eslint-disable no-param-reassign */
-export function removeActions(state = global.roc.actions) {
+export function removeActions(state = global.roc.context.actions) {
     return (extensionToRemove, hookName) => {
         if (!extensionToRemove) {
             throw new Error('You need to at least specify the extension to remove actions for.');
@@ -121,7 +122,7 @@ export function removeActions(state = global.roc.actions) {
  *  themselves with Roc.
  */
 export function getActions() {
-    return global.roc.actions;
+    return global.roc.context.actions;
 }
 
 /**
@@ -131,5 +132,5 @@ export function getActions() {
  *  themselves with Roc.
  */
 export function setActions(actions) {
-    global.roc.actions = actions;
+    global.roc.context.actions = actions;
 }

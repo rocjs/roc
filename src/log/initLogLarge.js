@@ -2,7 +2,7 @@ import { isString } from 'lodash';
 import chalk from 'chalk';
 import redent from 'redent';
 
-import { isVerbose } from '../helpers/manageVerbose';
+import { getContext } from '../context/helpers/manageContext';
 
 import * as labels from './helpers/labels';
 
@@ -60,7 +60,7 @@ function getFromWhere(name, version, error) {
 
 function getError(error) {
     if (error && error.message) {
-        return `\n\n${isVerbose() ? error.stack : error.message}`;
+        return `\n\n${getContext().verbose ? error.stack : error.message}`;
     }
 
     return '';

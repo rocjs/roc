@@ -51,8 +51,12 @@ export default function resolveRequest(exports, directory, dependencyContext) {
                 }
 
                 const newRequest = rocContext[module].resolve ?
-                    rocContext[module].resolve(request, context, rocContext[module].context) :
-                    resolve.sync(request, { basedir: rocContext[module].context });
+                    rocContext[module].resolve({
+                        module,
+                        request,
+                        requestContext: context,
+                        extensionContext: rocContext[module].context,
+                    }) : resolve.sync(request, { basedir: rocContext[module].context });
 
                 log(`(${identifier}) : Found an alias for [${module}] => [${newRequest}]`);
 

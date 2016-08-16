@@ -37,7 +37,7 @@ export default function createReadme(name, dir, extension, rocCommandObject) {
                 rows.push(description);
             });
         } else {
-            rows.push('No packages.');
+            rows.push('_No packages._');
         }
 
         rows.push('### Plugins');

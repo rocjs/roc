@@ -19,7 +19,7 @@ export default function getExtensions(type) {
         extensions.reduce(
             (state, extensionPath) => {
                 // Get the extension
-                const roc = getExtension(extensionPath, state.settings.directory, type);
+                const roc = getExtension(extensionPath, state.context.directory, type);
 
                 if (roc) {
                     try {
@@ -204,8 +204,6 @@ function checkRequired(roc, state) {
 function init(roc, state) {
     if (roc.init) {
         const result = roc.init({
-            verbose: state.settings.verbose,
-            directory: state.settings.directory,
             context: state.context,
             localDependencies: state.dependencyContext.extensionsDependencies[roc.name],
         });

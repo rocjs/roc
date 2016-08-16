@@ -1,6 +1,6 @@
 import chalk from 'chalk';
 
-import { isVerbose } from '../helpers/manageVerbose';
+import { getContext } from '../context/helpers/manageContext';
 
 export default function initLogSmall() {
     return {
@@ -34,6 +34,6 @@ function logger(level, color) {
 
 function printError(error, log) {
     if (error && error.message) {
-        log(`\n${(isVerbose() ? error.stack : error.message)}`);
+        log(`\n${(getContext().verbose ? error.stack : error.message)}`);
     }
 }

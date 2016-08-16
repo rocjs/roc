@@ -10,6 +10,7 @@ import pad from './pad';
  *
  * @returns {string} - A string matching the input.
  */
-export default function addPadding(string = '', length) {
+export default function addPadding(str, length) {
+    const string = str || '';
     return string + pad(length - stripAnsi(string).length);
 }

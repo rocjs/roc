@@ -50,7 +50,15 @@ const settings = {
  *
  * @returns {string} - Markdown documentation.
  */
-export default function commandsToMarkdown(name, config, commands, settingsLink, mode, hideCommands = [], cli = 'roc') {
+export default function commandsToMarkdown(
+    name,
+    config = {},
+    commands,
+    settingsLink,
+    mode,
+    hideCommands = [],
+    cli = 'roc'
+) {
     let rows = [];
     const allSettingGroups = config.settings ?
         Object.keys(config.settings).sort() :
@@ -156,9 +164,13 @@ function buildGroup(cli, command, commandData, allSettingGroups, printGroup, par
     }
 
     rows.push(`\`\`\`\n${cli} ${parents.concat(command).join(' ')} <command>\n\`\`\``);
-    if (commandData.__meta && commandData.__meta.description) {
-        rows.push(commandData.__meta.description);
-        rows.push('');
+    if (commandData.__meta) {
+        // If we have a markdown property we will use that over description
+        if (commandData.__meta.markdown) {
+            rows.push(redent(trimNewlines(commandData.__meta.markdown)), '');
+        } else if (commandData.__meta.description) {
+            rows.push(commandData.__meta.description, '');
+        }
     }
     rows.push('');
     return rows;

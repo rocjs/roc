@@ -8,7 +8,7 @@ import getAbsolutePath from './getAbsolutePath';
 * @param {string} filepath - The filepath to check. Will make it absolute if not already using {@link getAbsolutePath}.
 * @param {string} [directory] - The directory to base the filepath on.
 *
-* @returns {boolean} - Whether or not it is a file.
+* @returns {boolean} - Whether or not it is a folder.
 */
 export default function folderExists(filepath, directory) {
     const absoluteFilepath = getAbsolutePath(filepath, directory);

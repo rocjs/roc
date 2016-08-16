@@ -6,12 +6,10 @@ export default function runPostInits(initialState) {
             manageRocObject(
                 handleResult({ name },
                     postInit({
-                        verbose: state.settings.verbose,
-                        directory: state.settings.directory,
                         context: state.context,
                         localDependencies: state.dependencyContext.extensionsDependencies[name],
                     })
-                ), state, true
+                ), state, false, false
             ),
         initialState
     );

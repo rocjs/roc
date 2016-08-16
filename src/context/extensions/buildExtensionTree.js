@@ -22,7 +22,7 @@ const log = require('debug')('roc:core:extensionBuilder');
  * @property {Object[]} projectExtensions - The extensions that was loaded successfully from the project.
  * @property {Object[]} usedExtensions - All of the loaded extensions.
  */
-export default function buildExtensionTree(context, packages, plugins, directory, verbose, checkRequired) {
+export default function buildExtensionTree(context, packages, plugins, checkRequired) {
     const completed = (state) => {
         const totalTime = process.hrtime(state.temp.startTime);
         log(`Completed loading extensions ${((totalTime[0] * 1000) + (totalTime[1] / 1000000)).toFixed(0)}ms`);
@@ -44,8 +44,6 @@ export default function buildExtensionTree(context, packages, plugins, directory
 
             settings: {
                 checkRequired,
-                verbose,
-                directory,
             },
 
             temp: {

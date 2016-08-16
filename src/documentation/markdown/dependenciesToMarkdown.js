@@ -1,11 +1,12 @@
-export default function dependenciesToMarkdown(name, extension, dependencies) {
-    if (Object.keys(dependencies).length === 0) {
-        return 'No dependencies available.';
-    }
-
+export default function dependenciesToMarkdown(name, extension, dependencies = {}) {
     const rows = [];
 
     rows.push(`# Dependencies for \`${name}\``, '');
+
+    if (Object.keys(dependencies).length === 0) {
+        rows.push('__No dependencies available.__');
+        return rows.join('\n');
+    }
 
     rows.push('The dependencies that are available in the project.');
 

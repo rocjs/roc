@@ -26,7 +26,10 @@ export default function getDefaults(context, name = 'roc', directory) {
 function getDefaultHooks() {
     return {
         'update-settings': {
-            description: 'Expected to return new settings that should be merged with the existing ones.',
+            description: `
+            Expected to return new settings that should be merged with the existing ones.
+
+            Makes it possible to modify the settings object before a command is started and after potential arguments from the command line and configuration file have been parsed. This is a good point to default to some value if no was given or modify something in the settings.`, // eslint-disable-line
             arguments: [{
                 name: 'getSettings',
                 validator: isFunction,
@@ -57,11 +60,11 @@ function getDefaultCommands(directory) {
                     command: (rocCommandObject) =>
                         generateDocumentation({
                             rocCommandObject,
-                            directory: rocCommandObject.parsedOptions.options.output,
-                            html: rocCommandObject.parsedOptions.options.html,
-                            markdown: rocCommandObject.parsedOptions.options.markdown,
-                            mode: rocCommandObject.parsedOptions.options.mode,
-                            project: rocCommandObject.parsedOptions.options.project,
+                            directory: rocCommandObject.options.managed.output,
+                            html: rocCommandObject.options.managed.html,
+                            markdown: rocCommandObject.options.managed.markdown,
+                            mode: rocCommandObject.options.managed.mode,
+                            project: rocCommandObject.options.managed.project,
                         }),
                     description: 'Generates documentation for the current project.',
                     options: [{
@@ -102,9 +105,11 @@ function getDefaultConfig() {
     return {
         settings: {},
 
-        actions: undefined,
+        project: {
+            actions: undefined,
 
-        init: undefined,
+            init: undefined,
+        },
     };
 }
 

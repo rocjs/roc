@@ -9,13 +9,17 @@ import createTable from './createTable';
 /**
  * Generates a string with information about all the possible commands.
  *
- * @param {object} commands - Commands from @{link rocConfig}.
+ * @param {object} cmds - Commands from @{link rocConfig}.
  * @param {string} name - The name of the cli.
  * @param {string[]} parents - The parents that the current scope has.
  *
  * @returns {string} - A string with documentation based on the available commands.
  */
-export default function generateCommandsDocumentation(commands = { 'No commands available.': '' }, name, parents = []) {
+export default function generateCommandsDocumentation(cmds, name, parents = []) {
+    const commands = Object.keys(cmds).length === 0 ?
+        { 'No commands available.': '' } :
+        cmds;
+
     const header = {
         name: true,
         description: true,

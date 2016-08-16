@@ -16,7 +16,7 @@ import getDefaultValue from '../helpers/getDefaultValue';
  * @returns {string} - A markdown table as a string.
  */
 export default function settingsToMarkdown(name, { settings }, { settings: meta }, filter = []) {
-    const documentationObject = sortOnProperty('name', buildDocumentationObject(settings, meta, filter));
+    const documentationObject = sortOnProperty('name', buildDocumentationObject(settings, meta, filter, true));
 
     const header = {
         name: {

@@ -35,7 +35,7 @@ export default function generateDocumentation({
     project = false,
     extension = false,
 }) {
-    const dir = rocCommandObject.directory;
+    const dir = rocCommandObject.context.directory;
     const documentationDir = join(dir, directory);
     const name = rocCommandObject.context.packageJSON.name;
 

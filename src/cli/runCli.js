@@ -3,7 +3,6 @@ import minimist from 'minimist';
 
 import { appendSettings } from '../configuration/manageSettings';
 import { setConfig } from '../configuration/manageConfig';
-import { setVerbose } from '../helpers/manageVerbose';
 import addRaw from '../configuration/addRaw';
 import buildDocumentationObject from '../documentation/buildDocumentationObject';
 import execute from '../execute';
@@ -62,7 +61,6 @@ export default function runCli({
 
     // Possible to set a command in verbose mode
     const verboseMode = !!(verbose || V);
-    setVerbose(verboseMode);
 
     // Get the project configuration path
     const projectConfigPath = c || config;
@@ -149,6 +147,7 @@ export default function runCli({
     }
 
     // Does this after the validation so that things set by the CLI always will have the highest priority
+    // We do not want to do validation on RAW configuration
     context.config = merge(addRaw(context.config), {
         settings,
     });
@@ -175,11 +174,9 @@ export default function runCli({
 
         // Run the command
         return commands[command].command({
-            verbose: verboseMode,
-            directory: dirPath || process.cwd(),
             info,
-            parsedArguments,
-            parsedOptions,
+            arguments: parsedArguments,
+            options: parsedOptions,
 
             // Roc Context
             context,

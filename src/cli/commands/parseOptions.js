@@ -84,8 +84,8 @@ function parseCommandOptions(command, notManaged) {
     let possibleCommandOptions = [];
     let possibleCommandOptionsShort = [];
     const parsedOptions = {
-        options: {},
-        rest: {},
+        managed: {},
+        unmanaged: {},
     };
 
     const getName = (name, option) => {
@@ -151,11 +151,11 @@ function parseCommandOptions(command, notManaged) {
                 }
             }
 
-            parsedOptions.options[option.name] = value;
+            parsedOptions.managed[option.name] = value;
         });
     }
 
-    parsedOptions.rest = notManaged;
+    parsedOptions.unmanaged = notManaged;
 
     return {
         possibleCommandOptions,

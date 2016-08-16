@@ -12,7 +12,8 @@ let onceSettings = true;
  * This guarantees that the variables will live outside the require cache, something that we need for stability.
  */
 global.roc = global.roc || {};
-global.roc.config = global.roc.config || undefined;
+global.roc.context = global.roc.context || {};
+global.roc.context.config = global.roc.context.config || undefined;
 
 /**
  * Gets the current configuration object.
@@ -23,7 +24,7 @@ global.roc.config = global.roc.config || undefined;
  *
  * @returns {rocConfig} - The application configuration object.
  */
-export function getConfig(fail = true, state = global.roc.config) {
+export function getConfig(fail = true, state = global.roc.context.config) {
     // Try to load the configuration if we haven't at this point.
     if (fail && state === undefined && !process.env.ROC_CONFIG_SETTINGS) {
         log.error(
@@ -70,13 +71,13 @@ export function getConfig(fail = true, state = global.roc.config) {
  * @returns {rocConfig} - The configuration object.
  */
 export function appendConfig(config) {
-    global.roc.config = merge(getConfig(false), config);
+    global.roc.context.config = merge(getConfig(false), config);
     return getConfig();
 }
 
 export function setConfig(newConfig, state) {
     if (state === undefined) {
-        global.roc.config = newConfig;
+        global.roc.context.config = newConfig;
     }
 
     return newConfig;

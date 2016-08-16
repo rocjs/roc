@@ -1,7 +1,7 @@
 import { isFunction, omit } from 'lodash';
 
 export default function configurationToMarkdown(name, configuration, metaConfiguration, rocCommandObject) {
-    const config = omit(configuration, ['settings', 'actions', 'init']);
+    const config = omit(configuration, ['settings', 'project']);
     const configMeta = omit(metaConfiguration, 'settings');
     const groups = Object.keys(config);
 
@@ -9,7 +9,7 @@ export default function configurationToMarkdown(name, configuration, metaConfigu
 
     rows.push(`# Config for \`${name}\``, '');
 
-    rows.push('Configuration that can be defined in `roc.config.js`, other than settings, init and actions.', '');
+    rows.push('Configuration that can be defined in `roc.config.js`, other than settings and project.', '');
 
     if (groups.length === 0) {
         rows.push('__No config available.__');

@@ -1,7 +1,6 @@
 import { isFunction, omit } from 'lodash';
 
-import { registerActions, setActions } from '../hooks/manageActions';
-import { setHooks } from '../hooks/manageHooks';
+import { registerActions } from '../hooks/manageActions';
 import { setResolveRequest, getResolveRequest } from '../require/manageResolveRequest';
 import fileExists from '../helpers/fileExists';
 import getPackageJSON from '../helpers/getPackageJSON';
@@ -12,6 +11,7 @@ import log from '../log/default/large';
 import merge from '../helpers/merge';
 import patchRequire from '../require/patchRequire';
 
+import { setContext } from './helpers/manageContext';
 import buildExtensionTree from './extensions/buildExtensionTree';
 import getDefaults from './helpers/getDefaults';
 import processRocObject, { handleResult } from './extensions/helpers/processRocObject';
@@ -54,12 +54,14 @@ export default function initContext({
             uses: {},
             requires: {},
         },
+        directory,
         extensionConfig: {},
         hooks: {},
         meta: {},
         projectExtensions: [],
         packageJSON: {},
         usedExtensions: [],
+        verbose,
     };
 
     context = getDefaults(context, name, directory);
@@ -110,8 +112,10 @@ export default function initContext({
                 'Extensions Used'
             );
         }
+        const configPath = projectConfigPath ||
+            (context.packageJSON.roc && context.packageJSON.roc.config);
 
-        const projectConfig = getProjectConfig(projectConfigPath, directory, verbose);
+        const projectConfig = getProjectConfig(configPath, directory, verbose);
 
         // Check for a mismatch between application configuration and extensions.
         if (verify) {
@@ -123,27 +127,30 @@ export default function initContext({
         // Keep a copy of the configuration before we add the user configuration
         context.extensionConfig = context.config;
 
-        if (projectConfig.init) {
+        const projectSpecific = projectConfig.project || {};
+
+        if (projectSpecific.init) {
             context = processRocObject(
                 handleResult({
-                    actions: projectConfig.actions,
-                    config: omit(projectConfig, ['actions', 'init']),
+                    actions: projectSpecific.actions,
+                    config: omit(projectConfig, ['project']),
                 }, projectConfig.init({ verbose, directory, context })),
                 { context },
+                false,
                 true,
                 false
             );
         } else {
             context.config = merge(
                 context.config,
-                omit(projectConfig, ['actions', 'init'])
+                omit(projectConfig, ['project'])
             );
 
             if (projectConfig.actions) {
                 // We allow both a function directly or an array of actions
-                const projectActions = isFunction(projectConfig.actions) ?
-                    [projectConfig.actions] :
-                    projectConfig.actions;
+                const projectActions = isFunction(projectSpecific.actions) ?
+                    [projectSpecific.actions] :
+                    projectSpecific.actions;
 
                 context.actions =
                     registerActions(
@@ -157,8 +164,7 @@ export default function initContext({
     }
 
     if (runtime) {
-        setActions(context.actions);
-        setHooks(context.hooks);
+        setContext(context);
     }
 
     return context;

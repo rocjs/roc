@@ -18,22 +18,35 @@ const defaultValidator = (input, info) => (info ? { type: 'Unknown' } : true);
  *
  * @returns {rocDocumentationObject} - The completed documentation object.
  */
-export default function buildDocumentationObject(initalObject, initalMeta = {}, initalFilter = [], initalLevel = 0) {
+export default function buildDocumentationObject(
+    initalObject,
+    initalMeta = {},
+    initalFilter = [],
+    markdown = false,
+    initalLevel = 0
+) {
     const allObjects = (object = {}, callback) =>
         Object.keys(object).map(callback).filter((value) => value !== undefined);
 
-    const manageGroup = (object, name, meta = {}, parents, level) =>
-        ({
+    const manageGroup = (object, name, meta = {}, parents, level) => {
+        const description = markdown ?
+            (meta.__meta || {}).markdown || (meta.__meta || {}).description :
+            (meta.__meta || {}).description;
+
+        return {
             name,
             level,
-            description: (meta.__meta || {}).description,
+            description,
             objects: recursiveHelper(object, meta, [], level + 1, parents, true),
             children: recursiveHelper(object, meta, [], level + 1, parents),
             raw: !!object.__raw,
-        });
+        };
+    };
 
     const manageLeaf = (object, name, meta = {}, parents) => {
-        const description = meta.description;
+        const description = markdown ?
+            meta.markdown || meta.description :
+            meta.description;
         const validator = meta.validator || defaultValidator;
         const converterFunction = meta.converter;
         const {

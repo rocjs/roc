@@ -54,13 +54,13 @@ export default function parseArguments(command, commands = {}, args) {
         });
 
         return {
-            arguments: parsedArguments,
-            rest: args.splice(Object.keys(parsedArguments).length),
+            managed: parsedArguments,
+            unmanaged: args.splice(Object.keys(parsedArguments).length),
         };
     }
 
     return {
-        arguments: {},
-        rest: args,
+        managed: {},
+        unmanaged: args,
     };
 }

@@ -1,6 +1,7 @@
 // This needs to be global, same case as with configuration
 global.roc = global.roc || {};
-global.roc.hooks = global.roc.hooks || {};
+global.roc.context = global.roc.context || {};
+global.roc.context.hooks = global.roc.context.hooks || {};
 
 /**
  * Register hooks with Roc.
@@ -8,7 +9,7 @@ global.roc.hooks = global.roc.hooks || {};
  * @param {Object} hooks - Object with hooks.
  * @param {string} name - Name of the extension that the hooks belongs to.
  */
-export function registerHooks(hooks, name, state = global.roc.hooks) {
+export function registerHooks(hooks, name, state = global.roc.context.hooks) {
     // eslint-disable-next-line
     state = {
         ...state,
@@ -24,7 +25,7 @@ export function registerHooks(hooks, name, state = global.roc.hooks) {
  * @returns {Object} - The registered hooks as an object where the key will be the extension they belong to.
  */
 export function getHooks() {
-    return global.roc.hooks;
+    return global.roc.context.hooks;
 }
 
 /**
@@ -33,5 +34,5 @@ export function getHooks() {
  * @param {Object} hooks - The hooks as an object where the key will be the extension they belong to.
  */
 export function setHooks(hooks) {
-    global.roc.hooks = hooks;
+    global.roc.context.hooks = hooks;
 }

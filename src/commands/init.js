@@ -34,9 +34,13 @@ const templates = [{
  *
  * @returns {Promise} - Promise for the command.
  */
-export default function init({ parsedArguments, parsedOptions, directory }) {
-    const { list, force } = parsedOptions.options;
-    const { name, template, version } = parsedArguments.arguments;
+export default function init({
+    arguments: { managed: managedArguments },
+    options: { managed: managedOptions },
+    context: { directory },
+}) {
+    const { list, force } = managedOptions;
+    const { name, template, version } = managedArguments;
 
     // Get versions first
     if (template && list) {

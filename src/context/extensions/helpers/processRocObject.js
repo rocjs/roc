@@ -12,7 +12,7 @@ import processConfig from './processConfig';
 export function handleResult(roc, result) {
     if (!result) {
         return {
-            roc: undefined,
+            roc,
             update: undefined,
         };
     }
@@ -21,7 +21,7 @@ export function handleResult(roc, result) {
         roc: {
             ...roc,
             ...pick(result.roc, [
-                'action',
+                'actions',
                 'commands',
                 'config',
                 'dependencies',
@@ -34,16 +34,25 @@ export function handleResult(roc, result) {
 }
 
 /* eslint-disable no-param-reassign */
-export default function processRocObject({ roc, update = {} }, state, ignoreDependencies = false, validate = true) {
+export default function processRocObject(
+    { roc, update = {} },
+    state,
+    allowNewDependencies = true,
+    allowUpdateDependencies = true,
+    validate = true
+) {
     if (roc) {
         // Get possible dependencies
         // Only possible to alter the dependencies in not post, this since modifying them in post will be to late for
         // things to be able to react to it.
-        if (!ignoreDependencies) {
+
+        if (allowUpdateDependencies) {
             if (update.dependencies) {
                 state.context.dependencies = update.dependencies;
             }
+        }
 
+        if (allowNewDependencies) {
             state.dependencyContext = initSetDependencies(state.dependencyContext)(
                     roc.name,
                     state.context.dependencies,

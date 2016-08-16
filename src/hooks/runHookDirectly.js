@@ -3,8 +3,7 @@ import { magenta, underline } from 'chalk';
 import log from '../log/default';
 import isValid from '../validation/helpers/isValid';
 import throwValidationError from '../validation/helpers/throwValidationError';
-import { isVerbose } from '../helpers/manageVerbose';
-import { getConfig } from '../configuration/manageConfig';
+import { getContext } from '../context/helpers/manageContext';
 
 import { getActions } from './manageActions';
 
@@ -24,12 +23,12 @@ import { getActions } from './manageActions';
  * @returns {function} - Will return a function that takes in the name of the hook and potential arguments.
  */
 export default function runHookDirectly({
-        extension,
-        name,
-        description,
-        returns,
         arguments: argumentsDefinitions,
+        description,
+        extension,
         initialValue,
+        name,
+        returns,
     }, args = [], callback) {
     // Validate args
     if (argumentsDefinitions) {
@@ -62,11 +61,11 @@ export default function runHookDirectly({
                     let step = 'first';
                     try {
                         const createAction = currentAction({
+                            context: getContext(),
+                            description,
                             extension,
                             hook: name,
                             previousValue,
-                            config: getConfig(),
-                            verbose: isVerbose(),
                         });
                         step = 'second';
 
@@ -75,7 +74,7 @@ export default function runHookDirectly({
                             step = 'third';
 
                             if (performAction) {
-                                if (isVerbose()) {
+                                if (getContext().verbose) {
                                     const isPost = post ? '[Post] ' : '';
                                     log.small.info(
                                         `${magenta('Hook')} - ` +
@@ -111,7 +110,7 @@ export default function runHookDirectly({
                             }
                         }
                     } catch (error) {
-                        if (isVerbose()) {
+                        if (getContext().verbose) {
                             const isPost = post ? '[Post] ' : '';
                             log.small.warn(
                                 `${magenta('Hook')} - ` +
