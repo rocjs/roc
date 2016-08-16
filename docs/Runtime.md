@@ -88,12 +88,26 @@ When the runtime has been configured it is possible to get the resolver that Roc
 ```javascript
 import { getResolveRequest } from 'roc';
 
-// resolver: (module, context) => path
+// resolver: (module, context, fallback) => path
 const resolver = getResolveRequest('Identifier');
 ```
 When the runtime has been configured it is possible to get the resolver that Roc uses internally. Using this resolver will resolve in the same way Roc does. Node’s require will by default be patched and this function can be used to add support for other things like Webpack.
 
-### Dependency strategies
+### `resolver`
+The resolver that is returned from `getResolveRequest` has the following arguments.
+
+__`module`__  
+The module that is requested, what typically would be X in `require(X)`.
+
+__`context`__  
+The context from where the request was done, the file that did the request.
+
+__`fallback`__  
+An optional boolean that enables fallback mode, should only be used if the first request failed.
+
+This emulates kinda how `NODE_PATH` works in that we try again with another scope. What this does is that it uses the context of dependencies for the extension that a dependency is installed in to manage possible failures. This is needed if a dependency of an extension requires some peerDependency that some other extension is providing.
+
+## Dependency strategies
 An important part of Roc extensions is how they manage dependencies. This since they often take responsibility for dependencies that otherwise would have been managed by the project itself. This holds true for all of the three types of managed dependencies in Roc: `uses`, `requires` and `exports`.
 
 A recommendation is to use `^` in most cases to allow projects to get the latest features as soon as possible without needing to wait for a new version of an extension. However as always with SemVer it’s important that this is done with care and it might not be a perfect match in all cases.
