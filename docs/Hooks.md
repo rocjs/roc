@@ -76,13 +76,13 @@ __Example__
 #### `arguments`
 An array of object that documents the arguments that the hook uses, what actions will be called with. The order is important and need match the order that is used when running the hook. Will bring better validation and documentation, optional.
 
-__`description`__
+__`description`__  
 A string that describes what the argument is to be used for. Can contain markdown and will be used when generating documentation.
 
-__`name`__
+__`name`__  
 A string that is the name for the argument. Will be used when generating documentation.
 
-__`validation`__
+__`validation`__  
 A validator function that will validate the argument that. Will also be used for the documentation generation.
 
 #### `description`
@@ -106,19 +106,19 @@ Actions are using call chain with three functions that each serve a specific pur
 ```javascript
 ({ context, description, extension, hook, previousValue }) => (...args) => () => { /* do something */ }
 ```
-__`context`__
+__`context`__  
 [The Roc context object.](/docs/Context.md)
 
-__`description`__
+__`description`__  
 A string that is the hook description, can be used for logging what the calling hook is supposed to do.
 
-__`extension`__
+__`extension`__  
 A string that is the calling extension name.
 
-__`hook`__
+__`hook`__  
 A string that is the calling hook name.
 
-__`previousValue`__
+__`previousValue`__  
 The previous value, will either be the initalValue defined for the hook or the return value from the action that run before the current one
 
 #### The call chain
@@ -166,19 +166,19 @@ __Example__
 }
 ```
 
-__`action`__
+__`action`__  
 A function following the same interface as the plain function, required. See above for more details about the signature.
 
-__`description`__
+__`description`__  
 An optional string with a description on what the action does, used for documentation generation and can use Markdown.
 
-__`extension`__
+__`extension`__  
 An optional string for which extension the action should run.
 
-__`hook`__
+__`hook`__  
 An optional string for which hook the action should run.
 
-__`post`__
+__`post`__  
 An optional function following the same interface as the plain function. Will run after all the normal actions has been invoked. Can be used to do something after normal actions has been completed.
 
 An example would be a action that is used to build a Webpack configuration object. A post action could then be responsible for reading something from the `roc.config.js` inside the project after everything else, making sure that it will be added on top of eveything else.

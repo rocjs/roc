@@ -34,7 +34,7 @@ __Example__
 The meta configuration should mirror the normal configuration file.
 
 #### `settings`
-[Read more about settings here.](#)
+[Read more here.](/docs/Settings.md)
 
 #### Custom properties
 Custom properties that are defined by extensions can define meta information, `description` and `override`.
@@ -91,7 +91,9 @@ module.exports = {
 #### `settings`
 See the documentation for the extensions that are used in the project or the generated documentation from `roc meta docs` for the available settings.
 
-#### `projects`
+[Read more here.](/docs/Settings.md)
+
+#### `project`
 
 ##### `actions`
 A function or an array of functions and/or objects. The functions work in the same way as for extensions and the same with the objects.
@@ -108,7 +110,7 @@ __Example__
 ({ context }) => {}
 ```
 
-__`context`__
+__`context`__  
 The [context object](/docs/Context.md).
 
 #### Return value
@@ -134,7 +136,7 @@ __Example__
 }
 ```
 
-__`roc`__
+__`roc`__  
 Will be merged with the values already present directly on the Roc object with the values from the init function overwriting.
 
 Supports specifying:
@@ -144,7 +146,7 @@ Supports specifying:
 - hooks
 - meta
 
-__`update`__
+__`update`__  
 Will replace the already present values on the context.
 
 Supports specifying:

@@ -329,14 +329,14 @@ runCli({ info, commands, args, invoke });
 ```
 Be able to invoke the CLI manually. Can be used to create wrappers around the default `roc` CLI and build the same context as was created by Roc with the parsed arguments using invoke as `false`.
 
-__`info`__
+__`info`__  
 An object that has two properties, `name` and `version`. Should hold the name and the version for the current CLI. Will default to `Unknown` for both.
 
-__`commands`__
+__`commands`__  
 An object with commands that should be used as a base, before additional commands are added from extensions or the default commands that are added if it’s a valid Roc project.
 
-__`args`__
+__`args`__  
 An array with arguments, will default to `process.argv`.
 
-__`invoke`__
+__`invoke`__  
 A boolean that is used to determine ff a command should be invoked after the context has been built or not. Default to `true`.

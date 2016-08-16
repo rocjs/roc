@@ -221,23 +221,23 @@ __Example__
 ({ context, localDependecies }) => {}
 ```
 
-__`context`__
+__`context`__  
 The [context object](/docs/Context.md) so far.
 
-__`localDependecies`__
+__`localDependecies`__  
 An object with the dependencies for the extension itself.
 
 #### Return value
 The function can either return a valid result or an error.
 
-__Error__
+__Error__  
 If the function returns `false` or a string it will be considered an error. This can be useful if some expected value was not present for example. The extension will in that case not be processed further and will not be added to the context.
 
-__Valid__
+__Valid__  
 An object will be considered valid and can both override properties from the extensions Roc object and update the present context.
 
 __Example__
-```
+```javascript
 {
   roc: {
     actions,
@@ -257,7 +257,7 @@ __Example__
 }
 ```
 
-__`roc`__
+__`roc`__  
 Will be merged with the values already present directly on the Roc object with the values from the init function overwriting.
 
 Supports specifying:
@@ -268,7 +268,7 @@ Supports specifying:
 - hooks
 - meta
 
-__`update`__
+__`update`__  
 Will replace the already present values on the context.
 
 Supports specifying:
@@ -306,7 +306,7 @@ A string that notes the name of the extension. Required, but Roc will use the `n
 An array of file paths that point to packages that the extension uses. Will be used by Roc when building the complete context.
 
 __Example__
-```
+```javascript
 [
   require.resolve('roc-package-core-dev'),
   require.resolve('roc-package-module')
@@ -317,7 +317,7 @@ __Example__
 An array of file paths that point to plugins that the extension uses. Will be used by Roc when building the complete context.
 
 __Example__
-```
+```javascript
 [
   require.resolve('roc-plugin-start'),
   require.resolve('roc-plugin-browsersync')
@@ -342,7 +342,7 @@ An object with the dependencies for the extension itself.
 Should return an object with the structure below, can both override properties from the extensions Roc object and update the present context. Can also return `false` if nothing should be processed.
 
 __Example__  
-```
+```javascript
 {
   roc: {
     actions,

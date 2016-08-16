@@ -3,7 +3,7 @@
 ## Overview
 Defined in the [configuration](/docs/Configuration.md), often referred to as `roc.config.js` in projects, and contains settings defined by the different extensions.
 
-Expects that the first level of properties are groups that are used for [reading settings](#read-settings) and when defining [commands](/docs/Commands.md#meta). 
+Expects that the first level of properties are groups that are used for [reading settings](#read-settings) and when defining [commands](/docs/Commands.md#meta).
 
 __Example__
 ```javascript
@@ -21,10 +21,52 @@ __Example__
 
 The name of the groups and the values in them is entirely up to the extensions to define and any type of value is allowed.
 
+## Escape hatch
+It is possible for extensions to enable an escape hatch for settings that can be used by projects to both avoid validation and define things that has not been mapped to the settings. This is to be used with objects to enable additional properties. All of this functionality is behind the `__raw` property key.
+
+### How to use
+```javascript
+{
+  settings: {
+    build: {
+      module: {
+          timeout: 1000,
+          __raw: {}
+      }
+    }
+  }
+}
+```
+By specifying `__raw: {}` above the escape hatch will be enabled. The project can then use it and the extension will get it direct on the normal property.
+
+```javascript
+// In the projects roc.config.js
+{
+  settings: {
+    build: {
+      module: {
+        timeout: 500,
+        __raw: {
+          polling: true
+        }
+      }
+    }
+  }
+}
+```
+```javascript
+// Used by the extension
+
+// settings.build.module = { timeout: 1000, polling: true }
+module(settings.build.module);
+```
+
+Projects can see if something supports `__raw` in the generated documentation.
+
 ## Interacting with `settings`
 
 ### Read settings
-To make it easy to read the settings `roc` exports a function named [`getSettings`](/docs/API.md#getsettings). 
+To make it easy to read the settings `roc` exports a function named [`getSettings`](/docs/API.md#getsettings).
 
 This function will return the settings for that group and if no group is given it will return the entire settings object.
 

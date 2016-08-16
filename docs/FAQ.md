@@ -1,12 +1,12 @@
 # Frequently Asked Questions
 
 ### What is the difference between a package and a plugin?
-Both of them are very similar and the difference is more in how they are supposed to be used and not any big technical differences. That means that plugins and packages generally speaking have the same power in what they can do. 
+Both of them are very similar and the difference is more in how they are supposed to be used and not any big technical differences. That means that plugins and packages generally speaking have the same power in what they can do.
 
 A Roc project needs to depend on at least one package to be considered valid. One way to see it is that packages are single dependencies that can be used to do something in a Roc project. Plugins are enchantments that are added to the top of packages to give the project additional features.
 
 Let’s look at this with some real examples. `roc-package-web-app` is a package since it’s critical to be able to do anything in a project. `roc-plugin-style-sass` on the other hand fits great as a plugin since it enhances the package with support to use Sass. `roc-package-style-sass` would not make sense since that would not by itself be enough to do anything in a project.
- 
+
 ### I have a feature that I would like to add to a package, should I make a PR that adds it or should it be a plugin?
 There is of course no clear answer to this question and every situation is different. However as a general rule it can be good to think about what the feature one wants to add does. Is it something that everyone that uses the package most likely would want? Then it should probably be added to the package directly. Is this feature something that only will beneficial to this package or potentially several different packages? If the later it should probably be a plugin so it can be reused across several packages.
 
@@ -16,7 +16,7 @@ A good start when experimenting with something a bit more complex is to always s
 You don’t need to create a new extension for every new feature that you need in a project. A good start is to start by adding use the available hooks through custom actions. This can be done by adding actions to the [`actions`](#) property in the `roc.config.js` file. Even more advanced things can also be done using the [`init`](#) property in the same file.
 
 This is a great place to start when experimenting with a new feature.
- 
+
 ### I have some logic in my `roc.config.js` that I would like to make into an extension, how can I do that?
 In this case you might have settings, actions or specialised logic in `init` function that you would like to make reusable by promoting it to be an extension.
 
@@ -58,7 +58,7 @@ __Example__
 ```javascript
 import lodash from '_lodash';
 
-var lodash = require('_lodash'); 
+var lodash = require('_lodash');
 ```
 
 2. If a more permanent solution is desired it is possible to remove a dependecy all together through [the `init` function in `roc.config.js`](#).
@@ -76,4 +76,4 @@ A common use case might be to create a custom set of extensions and templates th
 Important to note is that does not make it less suited for smaller teams and projects, rather the opposite since almost everything benefits all projects independent on their size. Additionally their will always be focus on supported extensions that will cater for most projects and situations.
 
 ### What makes Roc different from other similar solutions like nwb and create-react-app?
-The biggest difference is most often two things, composability and unopinionated. This means that Roc allows for flexibility where needed, allowing users to override defaults and choose what they need. 
+The biggest difference is most often two things, composability and agnostic to technologies. This means that Roc allows for flexibility where needed, allowing users to override defaults and choose what they need.
