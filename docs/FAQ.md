@@ -13,25 +13,25 @@ There is of course no clear answer to this question and every situation is diffe
 A good start when experimenting with something a bit more complex is to always start with it being a plugin. This allows for easy experimentation without having to change any packages and if the feature works as intended it can later be moved into a package directly.
 
 ### I want a feature that is currently not available in any extension, how can I solve this for my project in the most convenient way?
-You don’t need to create a new extension for every new feature that you need in a project. A good start is to start by adding use the available hooks through custom actions. This can be done by adding actions to the [`actions`](#) property in the `roc.config.js` file. Even more advanced things can also be done using the [`init`](#) property in the same file.
+You don’t need to create a new extension for every new feature that you need in a project. A good start is to start by adding use the available hooks through custom actions. This can be done by adding actions to the [`actions`](/docs/Configuration.md#actions) property in the `roc.config.js` file. Even more advanced things can also be done using the [`init`](/docs/Configuration.md#init) property in the same file.
 
 This is a great place to start when experimenting with a new feature.
 
 ### I have some logic in my `roc.config.js` that I would like to make into an extension, how can I do that?
 In this case you might have settings, actions or specialised logic in `init` function that you would like to make reusable by promoting it to be an extension.
 
-One way is to create a [new extension](#) and then use [`npm link`](#), making it possible to use it in the project. Another is to [create a standalone extension](#). This can be great for prototyping without having to create an entirely new project.
+One way is to create a [new extension](/docs/guides/CreateExtension.md) and then use [`npm link`](https://docs.npmjs.com/cli/link), making it possible to use it in the project. Another is to [create a standalone extension](/docs/RocObject.md#standalone). This can be great for prototyping without having to create an entirely new project.
 
 ### I want to add some functionally to my project that can’t be done through the project API and is something strictly unique to this specific project, what is the best way to go about this?
 You can use a “standalone” extension if there is something that you want to keep local to a specific project. It has the full power and the same API as a normal extension but does not require you to create a npm module, meaning that you easily can keep it inside you project.
 
-[See more here on how to create a standalone extension](#)  
+[See more here on how to create a standalone extension.](/docs/guides/CreateExtension.md#create-a-standalone-extension)  
 
 ### How do I create an extension?
-[See this guide for how to do this.](#)
+[See this guide for how to do this.](/docs/guides/CreateExtension.md)
 
 ### How do I create a template?
-[See this guide for how to do this.](#)
+[See this guide for how to do this.](/docs/guides/CreateTemplate.md)
 
 ### What is the advantage to use this over a boilerplate?
 Boilerplates can be used to quickly get started but after the initial setup you as a developer are fully responsible for all the configuration. You have no easy way to update the code that was provided from the boilerplate if the maintainer for it fixes something.
@@ -61,7 +61,7 @@ import lodash from '_lodash';
 var lodash = require('_lodash');
 ```
 
-2. If a more permanent solution is desired it is possible to remove a dependecy all together through [the `init` function in `roc.config.js`](#).
+2. If a more permanent solution is desired it is possible to remove a dependecy all together through [the `init` function in `roc.config.js`](/docs/Configuration.md#init).
 
 __Note__
 One thing to note here is that this might create unwanted side effects in your project with multiple versions of the same dependencies being used at the same time.

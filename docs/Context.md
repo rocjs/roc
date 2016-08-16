@@ -1,6 +1,6 @@
 # Context
 
-When a [command is invoked in Roc](#) or when manually [adding the runtime to a project](#) a context object will be built that is used in several places in Roc. This object contains important information about the current state of the project created by the runtime.
+When a [command is invoked in Roc](/docs/CLI.md) or when manually [adding the runtime to a project](/docs/Runtime.md#manually-adding-the-runtime) a context object will be built that is used in several places in Roc. This object contains important information about the current state of the project created by the runtime.
 
 __Object structure__
 ```javascript
@@ -112,7 +112,7 @@ A string with the path for the directory that the runtime is running inside. Wil
 ### `extensionConfig`
 An object with the merged configuration object from all of the extensions. This means that this does not contain the project configuration or settings set on the CLI.
 
-[See here for the configuration structure.](#)
+[See here for the configuration structure.](/docs/Configuration.md)
 
 ### `hooks`
 An object with objects with actions for each extension.
@@ -124,20 +124,6 @@ An object with objects with actions for each extension.
 ```
 
 Will be an object where the key is the extension that the hook belongs to and the value is an object with the hooks definitions, [see what it can contain here](/docs/Extensions.md#hooks).
-
-```js
-/**
- * A complete hook object in Roc.
- *
- * @typedef {Object} rocHook
- * @property {boolean} [hasCallback] - If the hook uses a callback to do something with what the action returns.
- * @property {Object} [initialValue] - An initial value used for the hook.
- * @property {function} [returns] - A Roc validation function that should verify the value that the action returns.
- * @property {Object[]} arguments - The arguments that the hook will call the actions with.
- * @property {string} [description] -A description on what it does, used for documentation generation and can use Markdowns.
- */
-```
-
 
 ### `meta`
 An object with the merged meta configuration.

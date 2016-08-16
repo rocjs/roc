@@ -17,7 +17,7 @@ __Example__
 ```
 
 #### `settings`
-[Read more about settings here.](#)
+[Read more about settings here.](/docs/Settings.md)
 
 #### Custom properties
 Extensions are allowed to define additional properties to suit their needs. An example of this could be something that does not make sense to provide on the normal settings in some way for one reason or another. In general it is recommended to use `settings` to get the best possible documentation generation and allow user to define things on the command line.
@@ -100,7 +100,7 @@ A function or an array of functions and/or objects. The functions work in the sa
 
 See the documentation for the extensions that are used in the project or the generated documentation from `roc meta docs` for the available hooks that the project can register itself on.
 
-[See more here about the general structure.](#)
+[See more here about the general structure.](/docs/Hooks.md#actions)
 
 ##### `init`
 A function that work much in the [same way as for extensions](/docs/RocObject.md#init). Can be used to modify the context in an advanced way. Most user will not need to use this.

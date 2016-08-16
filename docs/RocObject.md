@@ -185,7 +185,7 @@ __function__
 ```
 
 `commandObject`
-[The command object that is used inside Roc.](#)
+[The command object that is used inside Roc.](/docs/Commands.md#command-object)
 
 `extension`
 A boolean that is true when the description is to be used for an extension.
@@ -332,10 +332,10 @@ __Example__
 ({ context, localDependecies }) => {}
 ```
 
-__`context`__
+__`context`__  
 The [context object](/docs/Context.md) so far.
 
-__`localDependecies`__
+__`localDependecies`__  
 An object with the dependencies for the extension itself.
 
 #### Return value
@@ -360,7 +360,7 @@ __Example__
 }
 ```
 
-__`roc`__
+__`roc`__  
 Will be merged with the values already present directly on the Roc object with the values from the init function overwriting.
 
 Supports specifying:
@@ -370,7 +370,7 @@ Supports specifying:
 - hooks
 - meta
 
-__`update`__
+__`update`__  
 Will replace the already present values on the context.
 
 Supports specifying:

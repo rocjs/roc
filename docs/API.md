@@ -11,32 +11,32 @@ import { merge } from 'roc';
 ```
 
 * Utilities
-    * [defaultPrompt](#)
-    * [fileExists](#)
-    * [folderExists](#)
-    * [generateDependencies](#)
-    * [getAbsolutePath](#)
-    * [lazyFunctionRequire](#)
-    * [merge](#)
+    * [defaultPrompt](#defaultprompt)
+    * [fileExists](#fileexists)
+    * [folderExists](#folderexists)
+    * [generateDependencies](#generatedependencies)
+    * [getAbsolutePath](#getabsolutepath)
+    * [lazyFunctionRequire](#lazyfunctionrequire)
+    * [merge](#merge)
 * Execute
-    * [execute](#)
-    * [executeSync](#)
-    * [executeSyncExit](#)
+    * [execute](#execute)
+    * [executeSync](#executesync)
+    * [executeSyncExit](#executesyncexit)
 * Configuration
-    * [appendConfig](#)
-    * [appendSettings](#)
-    * [getConfig](#)
-    * [getSettings](#)
+    * [appendConfig](#appendconfig)
+    * [appendSettings](#appendsettings)
+    * [getConfig](#getconfig)
+    * [getSettings](#getsettings)
 * Runtime
-    * [getResolveRequest](#)
-    * [initRuntime](#)
+    * [getResolveRequest](#getresolverequest)
+    * [initRuntime](#initruntime)
 * Hooks
-    * [removeActions](#)
-    * [runHook](#)
-    * [runHookDirectly](#)
+    * [removeActions](#removeactions)
+    * [runHook](#runhook)
+    * [runHookDirectly](#runhookdirectly)
 * Others
-    * [initLog](#)
-    * [runCli](#)
+    * [initLog](#initlog)
+    * [runCli](#runcli)
 
 ## Utilities
 These are utility functions that might be useful in mainly extensions.
@@ -275,8 +275,8 @@ runHookDirectly(meta, args, callback);
 ```
 Runs a hook directly, without having to register it first with Roc.
 
-__meta__
-An object with meta data for the hook, [see hooks documentation for more info.](#)
+__meta__  
+An object with meta data for the hook, [see hooks documentation for more info.](/docs/Hooks.md#hooks)
 ```
 arguments - Arguments definitions
 description - A description for what the hook does
@@ -286,10 +286,10 @@ name - The name of the hook
 returns - The validation for the return value from the actions
 ```
 
-__args__
+__args__  
 The arguments that should be sent to the actions.
 
-__callback__
+__callback__  
 The callback that should be invoked after the action returns.
 
 ## Others
@@ -319,7 +319,7 @@ import largeDefault from 'roc/log/default/large';
 import initLogDefault from 'roc/log/default';
 ```
 
-[See logging documentation for all the possible types of messages.](#)
+[See logging documentation for all the possible types of messages.](/docs/Logging.md)
 
 ### `runCli`
 ```javascript

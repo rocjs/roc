@@ -2,7 +2,7 @@
 Roc provides a utility for extensions that can be used to log things to the console, keeping output consistent across all the different packages and plugins.
 
 ## How to use
-There is two ways to use the logging function from Roc. Either by using the function that is provided on the main export, [as seen here](#) or by importing it directly as below.
+There is two ways to use the logging function from Roc. Either by using the function that is provided on the main export, [as seen here](/docs/API.md#initlog) or by importing it directly as below.
 
 ```javascript
 import initSmall from 'roc/log/small';
@@ -113,7 +113,7 @@ Color: `green`
 Alias for `log.ok`.
 
 #### `raw`
-Used to specify a logger function on `console`. First argument should be a string that can be either `info`, `warn`, `error` or `log`. The second argument is an optional color from [`chalk`](#).
+Used to specify a logger function on `console`. First argument should be a string that can be either `info`, `warn`, `error` or `log`. The second argument is an optional color from [`chalk`](https://www.npmjs.com/package/chalk).
 
 ```javascript
 log.raw('info', 'blue')('a message', potentialError);

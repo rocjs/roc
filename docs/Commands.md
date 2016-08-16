@@ -22,7 +22,7 @@ The property name `command` is reserved and should not be used as the name for a
 ### String command
 A string command is a string that will managed as if it was typed into the terminal directly. Great for creating aliases to other commands. Does not work exactly as one would run things in a terminal but `&` and `&&` can be used to chain commands together. This feature is experimental in it’s current state and will be improved going forward.
 
-[More information about string commands can be seen here.](#)
+String commands uses [execute](/docs/API.md#execute) internally.
 
 ### Function command
 The function will be invoked with an object called `commandObject`.
@@ -59,7 +59,7 @@ __Object structure__
 ### `context`
 The context object in Roc.
 
-[Read more about the context object here.](#)
+[Read more about the context object here.](/docs/Context.md)
 
 ### `info`
 An object containing information about the `name` and the `version` as strings for the CLI that was invoked.
@@ -166,7 +166,7 @@ arguments: [{
 __`converter`__  
 A converter to be used to convert the input to some other format. Should match the following format `(input) => output`.
 
-For convenience several types of converters exists in `roc` that can be imported from `roc/converters`. [See here for a complete list of them along with more information on how they work.](#).
+For convenience several types of converters exists in `roc` that can be imported from `roc/converters`. [See here for a complete list of them along with more information on how they work.](/docs/Converters.md).
 
 __`default`__  
 The value that the argument will hold if nothing is provided to the CLI.
@@ -175,13 +175,12 @@ __`description`__
  A text that describes how the argument can be used.
 
 __`name`__  
-The name of the argument. Will be used for in the CLI for information and as the name of the value in [`commandObject.arguments.managed`](#).
+The name of the argument. Will be used for in the CLI for information and as the name of the value in [`commandObject.arguments.managed`](/docs/Commands.md#command-object).
 
 __`validator`__  
 Roc assumes that the validators used is either a RegExp or a function that will return true if it's valid or false/error string if it's not.
 
-For convenience several types of validators exists in `roc` that can be imported from `roc/validators`. [See here for a complete list of them along with more information on how they work.](#).
-
+For convenience several types of validators exists in `roc` that can be imported from `roc/validators`. [See here for a complete list of them along with more information on how they work.](/docs/Validators.md).
 
 #### `command`
 
@@ -215,7 +214,7 @@ The alias for the option. Should be a single character long.
 __`converter`__  
 A converter to be used to convert the input to some other format. Should match the following format `(input) => output`.
 
-For convenience several types of converters exists in `roc` that can be imported from `roc/converters`. [See here for a complete list of them along with more information on how they work.](#).
+For convenience several types of converters exists in `roc` that can be imported from `roc/converters`. [See here for a complete list of them along with more information on how they work.](/docs/Converters.md).
 
 __`default`__  
 The value that the option will hold if nothing is provided to the CLI.
@@ -224,12 +223,12 @@ __`description`__
  A text that describes how the option can be used.
 
 __`name`__  
-The name of the option. Will be used for in the CLI for information and as the name of the value in [`commandObject.options.managed`](#).
+The name of the option. Will be used for in the CLI for information and as the name of the value in [`commandObject.options.managed`](/docs/Commands.md#command-object).
 
 __`validator`__  
 Roc assumes that the validators used is either a RegExp or a function that will return true if it's valid or false/error string if it's not.
 
-For convenience several types of validators exists in `roc` that can be imported from `roc/validators`. [See here for a complete list of them along with more information on how they work.](#).
+For convenience several types of validators exists in `roc` that can be imported from `roc/validators`. [See here for a complete list of them along with more information on how they work.](/docs/Validators.md).
 
 #### `override`
 A string or a boolean that is to be used if the group already is created from before. The override will need to be specified to either the extension that defined it previously or true for always overriding.

@@ -23,3 +23,8 @@ $ roc create init rocjs/roc-template-plugin
 ## 2.
 
 _More will come here in the future…_
+
+
+## Create a Standalone Extension
+
+_More will come here in the future…_
