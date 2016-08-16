@@ -28,13 +28,9 @@ export {
     removeActions,
 } from './hooks/manageActions';
 
-export getContext from './context/getContext';
-
 export { getResolveRequest } from './require/manageResolveRequest';
 
 export generateDependencies from './require/utils/generateDependencies';
-
-export generateDocumentation from './documentation/markdown/generateDocumentation';
 
 export initLog from './log';
 

@@ -13,7 +13,7 @@ import validateAndUpdateSettings from './helpers/validateAndUpdateSettings';
  *
  * @returns {Object} - An object containing appConfig, config, meta, hooks and actions from {@link rocCommandObject}
  */
-export default function getContext(dirPath, projectConfigPath, validate = true) {
+export default function buildContext(dirPath, projectConfigPath, validate = true) {
     // Build the complete config object
     const context = initContext({
         directory: getAbsolutePath(dirPath),
