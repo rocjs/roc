@@ -55,17 +55,19 @@ export function registerAction(action, extensionName, state = global.roc.context
     // Look for the extensionName and update if it exists
     const index = state.findIndex(({ name }) => extensionName === name);
 
+    const newState = [...state];
+
     if (index !== -1) {
-        state[index].actions.push(createActionHelper(action));
+        newState[index].actions.push(createActionHelper(action));
     } else {
-        state.push({
+        newState.push({
             project,
             name: extensionName,
             actions: [createActionHelper(action)],
         });
     }
 
-    return state;
+    return newState;
 }
 
 function createActionHelper(action, extension, hook, description, post) {
