@@ -82,7 +82,7 @@ export default function initContext({
         const {
             context: extensionContext,
             dependencyContext,
-        } = buildExtensionTree(context, packages, plugins, directory, verbose, verify);
+        } = buildExtensionTree(context, packages, plugins, verify);
 
         context = merge(
             context,
