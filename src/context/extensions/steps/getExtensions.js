@@ -1,5 +1,5 @@
 import { _findPath } from 'module';
-import { join, dirname } from 'path';
+import { join, dirname, isAbsolute } from 'path';
 
 import resolve from 'resolve';
 import { bold, underline } from 'chalk';
@@ -42,7 +42,7 @@ export default function getExtensions(type) {
                     } catch (err) {
                         log.warn(
                             `Failed to load Roc ${type} ${bold(roc.name)}@${roc.version} from ${roc.path}`,
-                            'Roc Extension Failed',
+                            'Roc Extension Loading Failed',
                             err
                         );
                     }
@@ -56,8 +56,8 @@ export default function getExtensions(type) {
 function getExtension(extensionName, directory, type) {
     try {
         let path;
-        // TODO Windows?
-        if (extensionName.charAt(0) === '.' || extensionName.charAt(0) === '/') {
+
+        if (extensionName.charAt(0) === '.' || isAbsolute(extensionName)) {
             // We will use node-resolve if the path is relative or absolute
             path = resolve.sync(extensionName, { basedir: directory });
         } else {
@@ -108,7 +108,7 @@ function validRocExtension(path) {
     return (roc, state) => {
         if (!roc.name || !roc.version) {
             throw new ExtensionError(
-                `Will ignore extension. Expected it to have a ${underline('name')} and ` +
+                `Will ignore the extension. Expected it to have a ${underline('name')} and ` +
                     `${underline('version')}.`,
                 roc.name,
                 roc.version,
@@ -131,7 +131,7 @@ function validRocExtension(path) {
             !roc.commands
         ) {
             throw new ExtensionError(
-                `Will ignore extension. Expected it to have at least one of the following:\n${
+                `Will ignore the extension. Expected it to have at least one of the following:\n${
                     [
                         '- config',
                         '- meta',
