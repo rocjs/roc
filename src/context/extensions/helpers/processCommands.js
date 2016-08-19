@@ -6,6 +6,7 @@ import isCommand from '../../../cli/commands/helpers/isCommand';
 
 import buildList from './buildList';
 
+// Updates the command object and validates it
 export default function processCommands(name, extensionCommands, stateCommands) {
     return manageCommandCollisions(
         name,
@@ -14,6 +15,7 @@ export default function processCommands(name, extensionCommands, stateCommands) 
     );
 }
 
+// Updated the command object
 export function normalizeCommands(name, extensionCommands, stateCommands = {}) {
     const normalizeCommandsHelper = (newCommands, existingCommands = {}, oldPath = '') => {
         const localCommands = { ...newCommands };
@@ -25,6 +27,7 @@ export function normalizeCommands(name, extensionCommands, stateCommands = {}) {
                 if (!isPlainObject(localCommands[command])) {
                     localCommands[command] = {
                         command: localCommands[command],
+                        __extensions: [name],
                     };
                 }
                 if (notInExtensions(existingExtensions, name)) {
@@ -107,8 +110,11 @@ function manageCommandCollisions(name, extensionCommands, stateCommands) {
 
         if (notInExtensions(extensions, name) && override !== true && notInExtensions(extensions, override)) {
             // Fail early, might be more errors after this
+            // + This gives a better/more concise error for the project developer
+            // + We do not waste computation when we already know there is an error
+            // - The extension developer will not know the entire picture, just one of potentially several errors
             const overrideMessage = !override ?
-                'No override value was specified, it should probably be one of the extensions above.' :
+                'No override value was specified, it should probably be one of the extensions above.\n' :
                 `The override did not match the possible values, it was: ${override}\n`;
             throw new Error(
                 'Tried to update a command that where registered from before without specifying override.\n' + // eslint-disable-line

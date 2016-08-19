@@ -1,5 +1,5 @@
 export default function buildList(elements) {
     return elements.map(
         (element) => ` - ${element}`
-    ).join('\n') + '\n';
+    ).join('\n') + '\n\n';
 }

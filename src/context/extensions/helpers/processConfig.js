@@ -5,6 +5,7 @@ import { RAW } from '../../../configuration/addRaw';
 
 import buildList from './buildList';
 
+// Returns an updated meta object
 export default function processConfig(name, extension, state) {
     const extensionConfigPaths = getKeys(extension.config, true);
     const extensionMetaPaths = getKeys(extension.meta);
@@ -38,6 +39,7 @@ export default function processConfig(name, extension, state) {
         name,
         state,
         extensionConfigPaths,
+        extensionMetaPaths,
         stateConfigPaths
     );
 }
@@ -101,8 +103,11 @@ function validateMetaStructure(
                 notInExtensions(extensions, override)
             ) {
                 // Fail early, might be more errors after this
+                // + This gives a better/more concise error for the project developer
+                // + We do not waste computation when we already know there is an error
+                // - The extension developer will not know the entire picture, just one of potentially several errors
                 const overrideMessage = !override ?
-                    'No override value was specified, it should probably be one of the extensions above.' :
+                    'No override value was specified, it should probably be one of the extensions above.\n' :
                     `The override did not match the possible values, it was: ${override}\n`;
                 throw new Error(
                     'Meta structure was changed without specifying override.\n' + // eslint-disable-line
@@ -136,7 +141,7 @@ function validateConfigurationStructure(
                 // Fail early, might be more errors after this
                 throw new Error(
                     'Configuration structure was changed without specifying override in meta.\n' +
-                    `Was ${wasGroup ? 'a object' : 'an value'} and is now ${isGroup ? 'a object' : 'an value'}.\n` +
+                    `Was ${wasGroup ? 'an object' : 'a value'} and is now ${isGroup ? 'an object' : 'a value'}.\n` +
                     `The setting is question is: ${bold(intersect)}\n` +
                     `Contact the developer of ${underline(name)} for help.`
                 );
@@ -145,8 +150,20 @@ function validateConfigurationStructure(
     });
 }
 
-function updateStateMeta(name, state, extensionConfigPaths, stateConfigPaths) {
+function updateStateMeta(name, state, extensionConfigPaths, extensionMetaPaths, stateConfigPaths) {
     const newState = { ...state };
+
+    // Defining meta for something means that the __extensions should be updated
+    // Might be the case that the value has changed and in that case the old value will be replaced in the next loop
+    extensionMetaPaths.paths.forEach((path) =>
+        update(newState.meta, path, (previous = {}) =>
+            ({
+                ...previous,
+                __extensions: union(previous.__extensions || [], [name]),
+            })
+        )
+    );
+
     extensionConfigPaths.paths.forEach((path, index) => {
         const changed = getGroup(stateConfigPaths, path) !== extensionConfigPaths.groups[index];
         update(newState.meta, path, (previous = {}) => {
