@@ -75,5 +75,7 @@ A common use case might be to create a custom set of extensions and templates th
 
 Important to note is that does not make it less suited for smaller teams and projects, rather the opposite since almost everything benefits all projects independent on their size. Additionally their will always be focus on supported extensions that will cater for most projects and situations.
 
-### What makes Roc different from other similar solutions like nwb and create-react-app?
-The biggest difference is most often two things, composability and agnostic to technologies. This means that Roc allows for flexibility where needed, allowing users to override defaults and choose what they need.
+### What makes Roc different from other similar solutions like neo, nwb and create-react-app?
+The biggest difference compared to similar solutions is most often two things; composability and unopinionated.
+
+What this means is that Roc allows you to put together the right stack for you while still maintaining the zero configuration philosophy that all tools share. Another benefit of this is that it allows you to easily craft missing pieces for your specific use case while still maintaining the same level of reusability and power as official packages have.
