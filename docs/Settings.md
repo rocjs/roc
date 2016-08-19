@@ -22,7 +22,7 @@ __Example__
 The name of the groups and the values in them is entirely up to the extensions to define and any type of value is allowed.
 
 ## Escape hatch
-It is possible for extensions to enable an escape hatch for settings that can be used by projects to both avoid validation and define things that has not been mapped to the settings. This is to be used with objects to enable additional properties. All of this functionality is behind the `__raw` property key.
+It is possible for extensions to enable an escape hatch for settings that can be used by projects to both avoid validation and define things that has not been mapped to the settings. This is to be used with objects to enable additional properties or write over existing ones. All of this functionality is behind the `__raw` property key.
 
 ### How to use
 ```javascript
