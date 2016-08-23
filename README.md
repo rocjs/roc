@@ -5,6 +5,8 @@ Build JavaScript projects easily using modern libraries.
 
 Quickly create products powered by libraries like [Koa](http://koajs.com/), [React](http://facebook.github.io/react/) and [Redux](https://github.com/reactjs/redux) ready for deployment in production with minimal additional setup. Tools like [Webpack](https://github.com/webpack) and [Babel](https://babeljs.io/) power the build process.
 
+Maintained and used in production by teams within [Schibsted](http://schibsted.com). 
+
 ![stability rc](https://img.shields.io/badge/stability-RC-green.svg)
 [![roc](https://img.shields.io/npm/v/roc.svg)](https://www.npmjs.com/package/roc)
 [![build status](https://travis-ci.org/rocjs/roc.svg)](https://travis-ci.org/rocjs/roc)
@@ -91,7 +93,9 @@ Development of Roc was started before these posts where created but they still d
 * [Javascript Fatigue](https://medium.com/@ericclemmons/javascript-fatigue-48d4011b6fc4) by [**@ericclemmons**](https://github.com/ericclemmons)
 
 ## Versioning and stability
-Roc follows semantic versioning and is currently pre-release software. We hope to release 1.0.0 before summer 2016.
+Roc follows semantic versioning and is currently pre-release software that will soon be released as stable.
+
+It is already used in production by teams within [Schibsted](http://schibsted.com) as well as other companies and individuals.
 
 ## Contribute
 We are open to, and grateful for, any contributions made by the community.
