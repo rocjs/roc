@@ -1,6 +1,6 @@
 # API Reference
 
-This document outlines all the named exports form the main file in Roc. This means that these functions can be considered part of the public API and can be consumed in the following way.
+This document outlines all the named exports from the main file in Roc. This means that these functions can be considered part of the public API and can be consumed in the following way.
 
 ```javscript
 // ES5
