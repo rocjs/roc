@@ -17,7 +17,7 @@ The Roc object is the API that extensions use when they are registered with Roc 
 	* [`name`](#name)
 	* [`packages`](#packages)
 	* [`plugins`](#plugins)
-	* [`postInit`](#postInit)
+	* [`postInit`](#postinit)
 	* [`required`](#required)
 	* [`standalone`](#standalone)
 	* [`version`](#version)
@@ -443,3 +443,5 @@ roc = {
   }]
 }
 ```
+
+Another advantage of doing this is that the code that will be loaded using `lazyFunctionRequire` will be loaded after the runtime has started. This results in that `import`s / `require`s can be done on things that other extensions have exported.

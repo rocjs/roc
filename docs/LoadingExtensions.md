@@ -59,24 +59,31 @@ __Example__
 ## Understanding how Roc builds the context
 We mentioned above how user can specify extensions in both projects and other extensions. Something that was not mentioned however was how Roc traverses the extensions to build the final [context](/docs/Context.md) that is used by the runtime.
 
+There is a slight difference between how packages and plugins are processed in terms of how the context is built. Packages that are on the same "level", that means have the same parent, will be processed with the same state and then when everything is computed they will be merged. Plugins on the other hand are managed in sequence. This means that the new context that they compute will be used for the next plugin and so on giving them access to what the previous defined.
+
 1. Load all top level packages, [see below](#loading-a-single-extension). If something in the chain fails when loading a top level package that package will be ignored along with any parents it might have had.
 2. Load all top level plugins, [see below](#loading-a-single-extension). If something in the chain fails when loading a top level plugin that plugin will be ignored along with any parents it might have had.
 3. Manage dependencies from [`-dev` extensions](/docs/Extensions.md#development-extensions).
 4. Invoke registered `postInit` functions in the reverse order as they where added. The last one that was registered will run first and so on.
-6. Verify [required dependencies](/docs/RocObject.md#requires).
-7. Verify that the project does not have local dependencies that also are exported from extensions.
-8. Patch `require` with exported dependencies.
-9. Read project configuration, `roc.config.js`, and update context with configuration along with `actions` and run a potential `init`.
-10. _If launching from the CLI:_ Update the configuration with the values from the CLI options.
-11. Run [`update-settings`](/docs/default/Hooks.md#update-settings) allowing extensions to update the settings after the CLI and the user project might have changed it.
+5. Verify [required dependencies](/docs/RocObject.md#requires).
+6. Verify that the project does not have local dependencies that also are exported from extensions.
+7. Patch `require` with exported dependencies.
+8. Read project configuration, `roc.config.js`, and update context with configuration along with `actions` and run a potential `init`.
+9. _If launching from the CLI:_ Update the configuration with the values from the CLI options.
+10. Run [`update-settings`](/docs/default/Hooks.md#update-settings) allowing extensions to update the settings after the CLI and the user project might have changed it.
 
 ### Loading a single extension
 Each extension will go through the this recursive algorithm.
 
-1. [Validate that it's a valid extension](/docs/RocObject.md#what-is-considered-a-valid-object)
-2. Process parent packages defined in `packages` _(Go to step 1 for each of them in order)_
-3. Process parent plugins defined in `plugins` _(Go to step 1 for each of them in order)_
-4. Check [required](/docs/RocObject.md#required) extensions
-5. Run [`init`](/docs/RocObject.md#init) or just take values straight from the [Roc object](/docs/RocObject.md)
-6. Register [`postInit`](/docs/RocObject.md#init) to run later
+1. [Validate that it's a valid extension.](/docs/RocObject.md#what-is-considered-a-valid-object)
+2. Process parent packages defined in `packages`. _(Go to step 1 for each of them in order)_
+3. Process parent plugins defined in `plugins`. _(Go to step 1 for each of them in order)_
+4. Check [required](/docs/RocObject.md#required) extensions.
+5. Run [`init`](/docs/RocObject.md#init) or just take values straight from the [Roc object](/docs/RocObject.md).
+6. Register [`postInit`](/docs/RocObject.md#init) to run later.
 7. Register that the extension has been added and check if we have multiple different version of it already and warn the user.
+
+### Dependency management
+An important thing to note is how Roc manages dependencies for a specific extension. When other extension have exported dependencies for an extension to use those that already are defined in the extensions `package.json` will be ignored. This means that the dependency that extensions that have defined in the `package.json` will always be the one that is used.
+
+It's also important to note that non development extensions will have access to the same dependencies that the development version have along with what it has exported. The development version is defined by the suffix `-dev` at the end of the extension name.

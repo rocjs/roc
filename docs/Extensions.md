@@ -18,11 +18,11 @@ Abstract extensions are not meant to be used directly inside a project but rathe
 The naming convention serves two purposes. Firstly it makes it clear for everyone that it's something to only use inside other extensions. Secondly it makes Roc ignore them if present inside a user projects `package.json`. If the user however wants to use one inside the project he can still add it to the [`packages` or `plugins` properties inside the projects `package.json`](/docs/LoadingExtensions.md).
 
 ### Development Extensions
-As mentioned above packages often come in both a development package and a non-development package, this can also be the case for some plugins. These development packages should be named the same as the non-development version with the addition of a `-dev` prefix.
+As mentioned above packages often come in both a development package and a non-development package, this can also be the case for some plugins. These development packages should be named the same as the non-development version with the addition of a `-dev` suffix.
 
 For example would a development version of `roc-package-web-app` be `roc-package-web-app-dev`. This mainly makes it possible to have the non-development extension in the normal `dependencies` and the development extension in `devDependencies` allowing projects to only install what they need for a given situation.
 
-The naming difference also has a technical implication. When Roc is loading extensions it will manage development ones in a specific way in regards too the dependencies that they might export from their Roc object. This to make sure that the non-development extension always will have access to what its development partner exports.
+The naming difference also has a technical implication. When Roc is loading extensions it will manage development ones in a specific way in regards too the dependencies that they might export from their Roc object. This to make sure that the non-development extension always will have access to what its development partner exports and have access to itself.
 
 ## API
 For something to be considered a valid Roc extension it will need to export an object named `roc` from its main file. Other than this the extensions are free to export additional things along side it.
