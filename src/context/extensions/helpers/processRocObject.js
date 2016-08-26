@@ -54,23 +54,23 @@ export default function processRocObject(
 
         if (allowNewDependencies) {
             state.dependencyContext = initSetDependencies(state.dependencyContext)(
-                    roc.name,
-                    state.context.dependencies,
-                    roc.packageJSON,
-                    roc.path
-                );
+                roc.name,
+                state.context.dependencies,
+                roc.packageJSON,
+                roc.path
+            );
 
             if (roc.dependencies) {
                 state.context.dependencies = merge(
                     state.context.dependencies,
                     setContext(roc.dependencies, roc.name, roc.path)
                 );
+            }
 
-                // If dev module save the exports for the extension for later reuse
-                if (roc.dependencies.exports && /^.*-dev$/.test(roc.name)) {
-                    state.temp.extensionsDevelopmentExports[roc.name] =
-                        updateDependencies(roc.dependencies.exports, roc.name, roc.path);
-                }
+            // Store dev dependencies for later use
+            if (/^.*-dev$/.test(roc.name)) {
+                state.temp.extensionsDevelopmentExports[roc.name] =
+                    state.context.dependencies.exports;
             }
         }
 

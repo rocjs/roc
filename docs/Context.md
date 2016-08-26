@@ -134,10 +134,13 @@ The structure of the object is the same as the one used in the [Roc object](#con
 
 ```javascript
 [{
-  name: roc.name
-  version: roc.version
-  description: roc.description
-  type: 'package' / 'plugin'
+  description: roc.description,
+  name: roc.name,
+  packageJSON: {} // The extensions packageJSON if one exists, or if provided on roc.packageJSON if standalone
+  path: '/some/path', // The location of the extension on the disc
+  standalone: roc.standalone,
+  type: 'package' / 'plugin',
+  version: roc.version,
 }]
 ```
 
@@ -145,10 +148,13 @@ The structure of the object is the same as the one used in the [Roc object](#con
 
 ```javascript
 [{
-  name: roc.name
-  version: roc.version
-  description: roc.description
-  type: 'package' / 'plugin'
+  description: roc.description,
+  name: roc.name,
+  packageJSON: {} // The extensions packageJSON if one exists, or if provided on roc.packageJSON if standalone
+  path: '/some/path', // The location of the extension on the disc
+  standalone: roc.standalone,
+  type: 'package' / 'plugin',
+  version: roc.version,
 }]
 ```
 

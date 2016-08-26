@@ -7,38 +7,27 @@ import { isString } from 'lodash';
 import semver from 'semver';
 
 import { fileExists } from '../../../helpers';
+import { registerActions } from '../../../hooks/manageActions';
+import { validateCommands } from '../helpers/processCommands';
+import { validateConfig } from '../helpers/processConfig';
 import ExtensionError from '../helpers/ExtensionError';
 import log from '../../../log/default/large';
 import merge from '../../../helpers/merge';
 import processRocObject, { handleResult } from '../helpers/processRocObject';
+import updateExtensions from '../helpers/updateExtensions';
 
 const rocPackageJSON = require('../../../../package.json');
 
 export default function getExtensions(type) {
-    return (extensions) => (initialState) =>
-        extensions.reduce(
-            (state, extensionPath) => {
-                // Get the extension
-                const roc = getExtension(extensionPath, state.context.directory, type);
-
-                if (roc) {
+    return (extensions) => (initialState) => {
+        if (type === 'package') {
+            // We manage packages separately and merge after all states have been computed.
+            return extensions
+                .map((extensionPath) => getProjectExtension(type, extensionPath, initialState))
+                .reduce((previousState, state) => {
+                    const roc = state.context.projectExtensions[0] || {};
                     try {
-                        const nextState = getCompleteExtensionTree(
-                            type,
-                            roc,
-                            extensionPath,
-                            // Make sure no mutations are carried over
-                            merge({}, state)
-                        );
-
-                        nextState.context.projectExtensions.push({
-                            name: roc.name,
-                            version: roc.version,
-                            description: roc.description,
-                            type,
-                        });
-
-                        return nextState;
+                        return mergeState(roc.name)(previousState, state);
                     } catch (err) {
                         log.warn(
                             `Failed to load Roc ${type} ${bold(roc.name)}@${roc.version} from ${roc.path}`,
@@ -46,11 +35,95 @@ export default function getExtensions(type) {
                             err
                         );
                     }
-                }
-                // Use the previous state
-                return state;
-            }
-        , initialState);
+
+                    return previousState;
+                }, initialState);
+        }
+
+        // We manage plugins in chain, letting them build on each other.
+        return extensions
+            .reduce((state, extensionPath) => getProjectExtension(type, extensionPath, state), initialState);
+    };
+}
+
+function getProjectExtension(type, extensionPath, state) {
+    const roc = getExtension(extensionPath, state.context.directory, type);
+
+    if (roc) {
+        try {
+            const nextState = getCompleteExtensionTree(
+                type,
+                roc,
+                extensionPath,
+                // Make sure no mutations are carried over
+                merge({}, state)
+            );
+
+            nextState.context.projectExtensions.push({
+                description: roc.description,
+                name: roc.name,
+                packageJSON: roc.packageJSON,
+                path: roc.path,
+                standalone: roc.standalone,
+                type,
+                version: roc.version,
+            });
+
+            return nextState;
+        } catch (err) {
+            log.warn(
+                `Failed to load Roc ${type} ${bold(roc.name)}@${roc.version} from ${roc.path}`,
+                'Roc Extension Loading Failed',
+                err
+            );
+        }
+    }
+
+    return state;
+}
+
+function mergeState(name) {
+    return (previousState, state) => {
+        let temp = {
+            context: {
+                actions: [].concat(previousState.context.actions),
+                usedExtensions: [].concat(previousState.context.usedExtensions),
+                projectExtensions: [],
+                commands: {},
+                config: {},
+                meta: {},
+            },
+        };
+
+        state.context.actions.forEach((extension) => {
+            // We do not currently handle if the actions has changed between two extensions
+            // This is in general and not only in this case
+            temp.context.actions = registerActions(extension.actions, extension.name, temp.context.actions);
+        });
+
+        state.context.usedExtensions.forEach(({ type, ...roc }) => {
+            temp = registerExtension(type)(roc, temp);
+        });
+
+        temp.context.projectExtensions =
+            [].concat(previousState.context.projectExtensions, state.context.projectExtensions);
+
+        // Validate configuration and check for possible collisions
+        validateConfig(name, state.context, previousState.context);
+        temp.context.meta = updateExtensions(
+            merge(previousState.context.meta, state.context.meta),
+            previousState.context.meta
+        );
+
+        // Validate commands and check for possible collisions
+        validateCommands(name, state.context.commands, previousState.context.commands);
+        temp.context.commands = updateExtensions(
+            merge(previousState.context.commands, state.context.commands),
+            previousState.context.commands
+        );
+
+        return merge(merge(previousState, state), temp);
+    };
 }
 
 function getExtension(extensionName, directory, type) {
@@ -91,7 +164,7 @@ function getExtension(extensionName, directory, type) {
 
 function getCompleteExtensionTree(type, roc, path, initialState) {
     return [
-        validRocExtension(path),
+        validateRocExtension(path),
         getParents('package'),
         getParents('plugin'),
         checkRequired,
@@ -104,7 +177,7 @@ function getCompleteExtensionTree(type, roc, path, initialState) {
     );
 }
 
-function validRocExtension(path) {
+function validateRocExtension(path) {
     return (roc, state) => {
         if (!roc.name || !roc.version) {
             throw new ExtensionError(
@@ -161,6 +234,15 @@ function isAbstract(name) {
 
 function getParents(type) {
     return (roc, state) => {
+        if (type === 'package') {
+            // We manage packages separately and merge after all states have been computed.
+            return (roc[`${type}s`] || [])
+                .map((parent) =>
+                    getCompleteExtensionTree(type, getCompleteExtension(parent), parent, { ...state }))
+                .reduce(mergeState(roc.name), state);
+        }
+
+        // We manage plugins in chain, letting them build on each other.
         let nextState = { ...state };
         for (const parent of roc[`${type}s`] || []) {
             nextState = getCompleteExtensionTree(type, getCompleteExtension(parent), parent, { ...nextState });
@@ -258,10 +340,13 @@ function registerExtension(type) {
             }
         } else {
             state.context.usedExtensions.push({
-                name: roc.name,
-                version: roc.version,
                 description: roc.description,
+                name: roc.name,
+                packageJSON: roc.packageJSON,
+                path: roc.path,
+                standalone: roc.standalone,
                 type,
+                version: roc.version,
             });
         }
 
@@ -286,13 +371,14 @@ function getCompleteExtension(extensionPath) {
                 version: packageJSON.version,
                 name: packageJSON.name,
                 description: packageJSON.description,
+                standalone: false,
             };
         }
 
         return getPathAndPackageJSON(dir);
     };
 
-    const { standalone, ...roc } = require(extensionPath).roc; // eslint-disable-line
+    const roc = require(extensionPath).roc; // eslint-disable-line
 
     /*
      * roc.standalone can be used to avoid using the package.json
@@ -300,8 +386,10 @@ function getCompleteExtension(extensionPath) {
      * This can be valuable if the extension not yet has become a real
      * npm module or if the automatic calculation of path and packageJSON is wrong.
      */
-    if (standalone) {
+    if (roc.standalone) {
         return {
+            // Having this first making it possible to define a package.json object that overrides it if needed
+            packageJSON: {},
             ...roc,
             path: dirname(extensionPath),
         };

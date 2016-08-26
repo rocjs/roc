@@ -3,6 +3,7 @@ import minimist from 'minimist';
 
 import { appendSettings } from '../configuration/manageSettings';
 import { setConfig } from '../configuration/manageConfig';
+import { setContext } from '../context/helpers/manageContext';
 import addRaw from '../configuration/addRaw';
 import buildDocumentationObject from '../documentation/buildDocumentationObject';
 import execute from '../execute';
@@ -67,6 +68,12 @@ export default function runCli({
 
     // Get the directory path
     const dirPath = getAbsolutePath(directory || d);
+
+    // Set temporary context
+    setContext({
+        verbose: verboseMode,
+        directory: dirPath,
+    });
 
     // Initialize the complete context
     const context = initContext({

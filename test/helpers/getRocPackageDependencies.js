@@ -20,7 +20,7 @@ describe('helpers', () => {
                 },
             };
             expect(getRocPackageDependencies(packageJson))
-                .toEqual(['roc-package-test', 'roc-package-web', '@name/roc-package-web-react']);
+                .toEqual(['roc-package-web', '@name/roc-package-web-react', 'roc-package-test']);
         });
     });
 });

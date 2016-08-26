@@ -8,10 +8,11 @@ import buildList from './buildList';
 
 // Updates the command object and validates it
 export default function processCommands(name, extensionCommands, stateCommands) {
-    return manageCommandCollisions(
+    return validateCommands(
         name,
         normalizeCommands(name, extensionCommands, stateCommands),
-        stateCommands
+        stateCommands,
+        true
     );
 }
 
@@ -69,10 +70,14 @@ export function normalizeCommands(name, extensionCommands, stateCommands = {}) {
 }
 
 function notInExtensions(extensions, extension) {
+    if (Array.isArray(extension)) {
+        return !extension.some((e) => extensions.indexOf(e) !== -1);
+    }
+
     return extensions.indexOf(extension) === -1;
 }
 
-function manageCommandCollisions(name, extensionCommands, stateCommands) {
+export function validateCommands(name, extensionCommands, stateCommands, ignoreExtension = false) {
     const getKeys = (obj, state = {}, isState = false, oldPath = '', allKeys = []) => {
         Object.keys(obj).forEach((key) => {
             const value = obj[key];
@@ -103,12 +108,19 @@ function manageCommandCollisions(name, extensionCommands, stateCommands) {
     );
 
     intersections.forEach((intersect) => {
-        const extensions = get(stateCommands, intersect).__extensions;
+        const stateExtensions = get(stateCommands, intersect).__extensions;
+        const extensionExtensions = get(extensionCommands, intersect).__extensions;
+
         // If it is a group the override info will be on __meta and if not it will be directly on the object
         const override = (get(extensionCommands, intersect, {}).__meta || {}).override ||
             get(extensionCommands, intersect, {}).override;
 
-        if (notInExtensions(extensions, name) && override !== true && notInExtensions(extensions, override)) {
+        if (
+            notInExtensions(stateExtensions, name) &&
+            override !== true &&
+            notInExtensions(stateExtensions, override) &&
+            (ignoreExtension || notInExtensions(stateExtensions, extensionExtensions))
+        ) {
             // Fail early, might be more errors after this
             // + This gives a better/more concise error for the project developer
             // + We do not waste computation when we already know there is an error
@@ -119,7 +131,7 @@ function manageCommandCollisions(name, extensionCommands, stateCommands) {
             throw new Error(
                 'Tried to update a command that where registered from before without specifying override.\n' + // eslint-disable-line
                 `${bold(intersect.replace('.', ' '))} has already been defined by:\n` +
-                buildList(extensions) +
+                buildList(stateExtensions) +
                 overrideMessage +
                 `Contact the developer of ${underline(name)} for help.`
             );

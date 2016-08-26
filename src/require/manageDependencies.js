@@ -28,7 +28,9 @@ export function initSetDependencies({ extensionsDependencies, pathsToExtensions 
             },
         };
 
-        const newPathsToExtensions = path ? { ...pathsToExtensions, [path]: name } : {};
+        const newPathsToExtensions = path ?
+            { ...pathsToExtensions, [path]: name } :
+            pathsToExtensions;
 
         return {
             extensionsDependencies: newExtensionsDependencies,

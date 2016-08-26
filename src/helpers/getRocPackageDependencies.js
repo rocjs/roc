@@ -7,8 +7,8 @@
  */
 export default function getRocPackageDependencies(packageJSON) {
     return [
-        ...Object.keys(packageJSON.devDependencies || {}),
         ...Object.keys(packageJSON.dependencies || {}),
+        ...Object.keys(packageJSON.devDependencies || {}),
     ]
     .filter((dependency) => /^(?:@.*\/)?roc-package(-.+)/.test(dependency));
 }

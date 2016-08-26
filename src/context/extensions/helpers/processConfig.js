@@ -7,6 +7,22 @@ import buildList from './buildList';
 
 // Returns an updated meta object
 export default function processConfig(name, extension, state) {
+    const {
+        extensionConfigPaths,
+        extensionMetaPaths,
+        stateConfigPaths,
+    } = validateConfig(name, extension, state);
+
+    return updateStateMeta(
+        name,
+        state,
+        extensionConfigPaths,
+        extensionMetaPaths,
+        stateConfigPaths
+    );
+}
+
+export function validateConfig(name, extension, state) {
     const extensionConfigPaths = getKeys(extension.config, true);
     const extensionMetaPaths = getKeys(extension.meta);
     const stateConfigPaths = getKeys(state.config, true);
@@ -35,13 +51,12 @@ export default function processConfig(name, extension, state) {
         state.meta
     );
 
-    return updateStateMeta(
-        name,
-        state,
+    return {
         extensionConfigPaths,
         extensionMetaPaths,
-        stateConfigPaths
-    );
+        stateConfigPaths,
+        stateMetaPaths,
+    };
 }
 
 /* eslint-disable no-param-reassign */
@@ -57,9 +72,9 @@ function getKeys(obj = {}, flag = false, oldPath = '', allKeys = [], allGroups =
                 allGroups.push(true);
                 allKeys.push(newPath);
             }
-            const x = getKeys(value, flag, `${newPath}.`, allKeys, allGroups);
+            const keys = getKeys(value, flag, `${newPath}.`, allKeys, allGroups);
             // If nothing was changed we where in a value, not a group
-            if (x.value) {
+            if (keys.value) {
                 allGroups[allGroups.length - 1] = false;
             }
         } else if (flag && key !== '__meta') {
@@ -81,26 +96,30 @@ function getGroup(obj, path) {
 }
 
 function notInExtensions(extensions, extension) {
+    if (Array.isArray(extension)) {
+        return !extension.some((e) => extensions.indexOf(e) !== -1);
+    }
+
     return extensions.indexOf(extension) === -1;
 }
 
-function validateMetaStructure(
-    name, intersections, stateConfigPaths, extensionMeta, stateMeta
-) {
+function validateMetaStructure(name, intersections, stateConfigPaths, extensionMeta, stateMeta) {
     intersections.forEach((intersect) => {
         const wasGroup = getGroup(stateConfigPaths, intersect);
 
         if (!wasGroup || get(extensionMeta, `${intersect}.__meta`)) {
-            const extensions = get(stateMeta, intersect).__extensions || [];
+            const stateExtensions = get(stateMeta, intersect).__extensions || [];
+            const extensionExtensions = get(extensionMeta, intersect).__extensions || [];
 
             // If it is a group the override info will be on __meta and if not it will be directly on the object
             const override = (get(extensionMeta, intersect, {}).__meta || {}).override ||
                 get(extensionMeta, intersect, {}).override;
 
             if (
-                notInExtensions(extensions, name) &&
+                notInExtensions(stateExtensions, name) &&
                 override !== true &&
-                notInExtensions(extensions, override)
+                notInExtensions(stateExtensions, override) &&
+                notInExtensions(stateExtensions, extensionExtensions)
             ) {
                 // Fail early, might be more errors after this
                 // + This gives a better/more concise error for the project developer
@@ -112,7 +131,7 @@ function validateMetaStructure(
                 throw new Error(
                     'Meta structure was changed without specifying override.\n' + // eslint-disable-line
                     `Meta for ${bold(intersect)} was changed in ${name} and has been altered before by:\n` +
-                    buildList(extensions) +
+                    buildList(stateExtensions) +
                     overrideMessage +
                     `Contact the developer of ${underline(name)} for help.`
                 );
@@ -128,17 +147,23 @@ function validateConfigurationStructure(
         const wasGroup = getGroup(stateConfigPaths, intersect);
         const isGroup = getGroup(extensionConfigPaths, intersect);
         if (wasGroup !== isGroup) {
-            const extensions = get(stateMeta, intersect).__extensions || [];
+            const stateExtensions = get(stateMeta, intersect).__extensions || [];
+            const extensionExtensions = get(extensionMeta, intersect, {}).__extensions || [];
+
             // If it is a group the override info will be on __meta and if not it will be directly on the object
             const override = (get(extensionMeta, intersect, {}).__meta || {}).override ||
                 get(extensionMeta, intersect, {}).override;
 
             if (
-                notInExtensions(extensions, name) &&
+                notInExtensions(stateExtensions, name) &&
                 override !== true &&
-                notInExtensions(extensions, override)
+                notInExtensions(stateExtensions, override) &&
+                notInExtensions(stateExtensions, extensionExtensions)
             ) {
                 // Fail early, might be more errors after this
+                // + This gives a better/more concise error for the project developer
+                // + We do not waste computation when we already know there is an error
+                // - The extension developer will not know the entire picture, just one of potentially several errors
                 throw new Error(
                     'Configuration structure was changed without specifying override in meta.\n' +
                     `Was ${wasGroup ? 'an object' : 'a value'} and is now ${isGroup ? 'an object' : 'a value'}.\n` +
