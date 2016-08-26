@@ -1,6 +1,7 @@
 import { isString } from 'lodash';
 import chalk from 'chalk';
 import redent from 'redent';
+import trimNewlines from 'trim-newlines';
 
 import { getContext } from '../context/helpers/manageContext';
 
@@ -35,7 +36,7 @@ function logger(name, version) {
             log(
     `${labels[level](label, title)}
 
-${redent(message, 2)}${redent(getError(error), 2)}
+${trimNewlines(redent(message, 2))}${redent(getError(error), 2)}
   ${getFromWhere(name, version, error)}`
     );
             if (level === 'error') {
