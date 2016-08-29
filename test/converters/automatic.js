@@ -23,7 +23,7 @@ describe('converters', () => {
                 expect(converter('1,2,3')).toEqual([1, 2, 3]);
             });
 
-            it('integers', () => {
+            it('strings', () => {
                 const converter = automatic(['a', 'b', 'c']);
                 expect(converter('["d", "e", "f"]')).toEqual(['d', 'e', 'f']);
                 expect(converter('d,e,f')).toEqual(['d', 'e', 'f']);

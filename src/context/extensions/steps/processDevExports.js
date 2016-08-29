@@ -9,20 +9,20 @@ import { initSetDependencies } from '../../../require/manageDependencies';
  dependencies out of it since we want to only install what are actually used.
 */
 export default function processDevExports(initialState) {
+    let dependencyContext = { ...initialState.dependencyContext };
     initialState.context.usedExtensions.forEach(({ name, packageJSON }) => {
         if (initialState.temp.extensionsDevelopmentExports[`${name}-dev`]) {
-            // eslint-disable-next-line no-param-reassign
-            initialState.dependencyContext =
-                initSetDependencies(initialState.dependencyContext)(
+            dependencyContext =
+                initSetDependencies(dependencyContext)(
                     name,
                     {
-                        ...initialState.dependencyContext.extensionsDependencies[name],
+                        ...dependencyContext.extensionsDependencies[name],
                         exports: {
                             // We add the development exports first since we do not want to overwrite something
                             // that comes from the non development ones because that could result in different
                             // dependencies in development and production
                             ...initialState.temp.extensionsDevelopmentExports[`${name}-dev`],
-                            ...initialState.dependencyContext.extensionsDependencies[name].exports,
+                            ...dependencyContext.extensionsDependencies[name].exports,
                         },
                     },
                     // Remove things that are defined in the package.json directly
@@ -32,5 +32,8 @@ export default function processDevExports(initialState) {
         }
     });
 
-    return initialState;
+    return {
+        ...initialState,
+        dependencyContext,
+    };
 }

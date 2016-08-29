@@ -93,7 +93,14 @@ function mergeState(name) {
                 config: {},
                 meta: {},
             },
+            temp: {
+                postInits: [].concat(previousState.temp.postInits),
+            },
         };
+
+        state.temp.postInits.forEach((roc) => {
+            temp = addPostInit(roc, temp);
+        });
 
         state.context.actions.forEach((extension) => {
             // We do not currently handle if the actions has changed between two extensions
@@ -254,25 +261,25 @@ function getParents(type) {
 
 function checkRequired(roc, state) {
     if (roc.required && state.settings.checkRequired) {
-        for (const dependency of Object.keys(roc.required)) {
+        for (const extension of Object.keys(roc.required)) {
             // Add roc to the usedExtensions to be able to require on that as well
             const required = [
-                { name: 'roc', version: rocPackageJSON.version },
+                { name: rocPackageJSON.name, version: rocPackageJSON.version },
                 ...state.context.usedExtensions,
-            ].find((used) => used.name === dependency);
+            ].find((used) => used.name === extension);
             if (!required) {
                 throw new ExtensionError(
-                    'Could not find required dependency. ' +
-                    `Needs ${dependency}@${roc.required[dependency]}`,
+                    'Could not find required extension. ' +
+                    `Needs ${extension}@${roc.required[extension]}`,
                     roc.name,
                     roc.version
                 );
             }
 
-            if (required.version && !semver.satisfies(required.version, roc.required[dependency])) {
+            if (required.version && !semver.satisfies(required.version, roc.required[extension])) {
                 throw new ExtensionError(
-                    'Current dependency version does not satisfy required version.\n' +
-                    `Needs ${dependency}@${roc.required[dependency]} and current version is ${required.version}`,
+                    'Current extension version does not satisfy required version.\n' +
+                    `Needs ${extension}@${roc.required[extension]} and current version is ${required.version}`,
                     roc.name,
                     roc.version
                 );
