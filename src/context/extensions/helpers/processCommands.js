@@ -1,8 +1,9 @@
 import { bold, underline } from 'chalk';
 import { isPlainObject, intersection, get, union } from 'lodash';
 
-import isCommandGroup from '../../../cli/commands/helpers/isCommandGroup';
 import isCommand from '../../../cli/commands/helpers/isCommand';
+import isCommandGroup from '../../../cli/commands/helpers/isCommandGroup';
+import merge from '../../../helpers/merge';
 
 import buildList from './buildList';
 
@@ -31,9 +32,8 @@ export function normalizeCommands(name, extensionCommands, stateCommands = {}) {
                         __extensions: [name],
                     };
                 }
-                if (notInExtensions(existingExtensions, name)) {
-                    localCommands[command].__extensions = union(existingExtensions, [name]);
-                }
+
+                localCommands[command].__extensions = union(existingExtensions, [name]);
 
                 // If it was a command group and now is a command
                 if (isCommandGroup(existingCommands)(command) && isCommand(localCommands)(command)) {
@@ -66,7 +66,7 @@ export function normalizeCommands(name, extensionCommands, stateCommands = {}) {
         return localCommands;
     };
 
-    return normalizeCommandsHelper(extensionCommands, stateCommands);
+    return normalizeCommandsHelper(merge({}, extensionCommands), stateCommands);
 }
 
 function notInExtensions(extensions, extension) {

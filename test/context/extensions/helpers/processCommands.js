@@ -23,20 +23,20 @@ describe('context', () => {
                     expect(normalizeCommands('test', commandsObject)).toEqual({
                         meta: {
                             docs: {
-                                command: () => {},
+                                command: commandsObject.meta.docs.command,
                                 __extensions: [
                                     'test',
                                 ],
                             },
                             list: {
-                                command: () => {},
+                                command: commandsObject.meta.list,
                                 __extensions: [
                                     'test',
                                 ],
                             },
                             extra: {
                                 test: {
-                                    command: () => {},
+                                    command: commandsObject.meta.extra.test,
                                     __extensions: [
                                         'test',
                                     ],
@@ -63,20 +63,20 @@ describe('context', () => {
                     expect(normalizeCommands('test', commandsObject, initalStateCommands)).toEqual({
                         meta: {
                             docs: {
-                                command: () => {},
+                                command: commandsObject.meta.docs.command,
                                 __extensions: [
                                     'test',
                                 ],
                             },
                             list: {
-                                command: () => {},
+                                command: commandsObject.meta.list,
                                 __extensions: [
                                     'test',
                                 ],
                             },
                             extra: {
                                 test: {
-                                    command: () => {},
+                                    command: commandsObject.meta.extra.test,
                                     __extensions: [
                                         'test',
                                     ],
@@ -103,14 +103,14 @@ describe('context', () => {
                     expect(normalizeCommands('test2', commandsObject, initalStateCommands)).toEqual({
                         meta: {
                             docs: {
-                                command: () => {},
+                                command: commandsObject.meta.docs.command,
                                 __extensions: [
                                     'test',
                                     'test2',
                                 ],
                             },
                             list: {
-                                command: () => {},
+                                command: commandsObject.meta.list,
                                 __extensions: [
                                     'test',
                                     'test2',
@@ -118,7 +118,7 @@ describe('context', () => {
                             },
                             extra: {
                                 test: {
-                                    command: () => {},
+                                    command: commandsObject.meta.extra.test,
                                     __extensions: [
                                         'test',
                                         'test2',
