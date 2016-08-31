@@ -15,7 +15,7 @@ import getDefaultValue from '../helpers/getDefaultValue';
  *
  * @returns {string} - A markdown table as a string.
  */
-export default function settingsToMarkdown(name, { settings }, { settings: meta }, filter = []) {
+export default function settingsToMarkdown(name, { settings } = {}, { settings: meta } = {}, filter = []) {
     const documentationObject = sortOnProperty('name', buildDocumentationObject(settings, meta, filter, true));
 
     const header = {
@@ -76,7 +76,7 @@ export default function settingsToMarkdown(name, { settings }, { settings: meta 
     rows.push(`# Settings for \`${name}\``, '');
 
     if (settingsTable.length === 0) {
-        rows.push('__No settings available.__');
+        rows.push('__No settings available.__', '');
     } else {
         rows.push(settingsTable);
     }

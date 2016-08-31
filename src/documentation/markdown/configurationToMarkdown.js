@@ -12,7 +12,7 @@ export default function configurationToMarkdown(name, configuration, metaConfigu
     rows.push('Configuration that can be defined in `roc.config.js`, other than settings and project.', '');
 
     if (groups.length === 0) {
-        rows.push('__No config available.__');
+        rows.push('__No config available.__', '');
         return rows.join('\n');
     }
 

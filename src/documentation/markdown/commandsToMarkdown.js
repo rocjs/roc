@@ -91,7 +91,7 @@ export default function commandsToMarkdown(
 
         rows = rows.concat(tableOfContent, '', content, '');
     } else {
-        rows.push('__No commands available.__');
+        rows.push('__No commands available.__', '');
     }
 
     return rows.join('\n');

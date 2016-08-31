@@ -17,13 +17,13 @@ import createStatefulAnchor from './helpers/createStatefulAnchor';
  *
  * @returns {string} - Markdown documentation.
  */
-export default function hooksToMarkdown(name, hooks, mode) {
+export default function hooksToMarkdown(name, hooks = {}, mode) {
     const rows = [];
 
     rows.push(`# Hooks for \`${name}\``, '');
 
     if (Object.keys(hooks).length === 0) {
-        rows.push('__No hooks available.__');
+        rows.push('__No hooks available.__', '');
         return rows.join('\n');
     }
 

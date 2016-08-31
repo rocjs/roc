@@ -1,0 +1,35 @@
+import { join } from 'path';
+import { readFileSync } from 'fs';
+
+import expect from 'expect';
+
+import dependenciesToMarkdown from '../../../src/documentation/markdown/dependenciesToMarkdown';
+
+import getContext from './fixtures/getContext';
+
+describe('documentation', () => {
+    describe('markdown', () => {
+        describe('dependenciesToMarkdown', () => {
+            it('should correctly format dependencies when no dependencies', () => {
+                expect(dependenciesToMarkdown('name'))
+                    .toBe('# Dependencies for `name`\n\n__No dependencies available.__\n');
+            });
+
+            it('should correctly format dependencies for project empty', () => {
+                const project = join(__dirname, 'fixtures', 'projects', 'empty');
+                const context = getContext(project);
+
+                expect(dependenciesToMarkdown('empty', false, context.dependencies))
+                    .toEqual(readFileSync(join(project, 'docs', 'Dependencies.md'), 'utf8'));
+            });
+
+            it('should correctly format dependencies for project complex', () => {
+                const project = join(__dirname, 'fixtures', 'projects', 'complex');
+                const context = getContext(project);
+
+                expect(dependenciesToMarkdown('complex', false, context.dependencies))
+                    .toEqual(readFileSync(join(project, 'docs', 'Dependencies.md'), 'utf8'));
+            });
+        });
+    });
+});

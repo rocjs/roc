@@ -4,7 +4,7 @@ export default function dependenciesToMarkdown(name, extension, dependencies = {
     rows.push(`# Dependencies for \`${name}\``, '');
 
     if (Object.keys(dependencies).length === 0) {
-        rows.push('__No dependencies available.__');
+        rows.push('__No dependencies available.__', '');
         return rows.join('\n');
     }
 
@@ -32,7 +32,7 @@ export default function dependenciesToMarkdown(name, extension, dependencies = {
     rows.push('## Requires');
 
     if (Object.keys(dependencies.requires).length === 0) {
-        rows.push('Nothing is required.');
+        rows.push('Nothing is required.', '');
     } else {
         Object.keys(dependencies.requires).sort().forEach((module) => {
             rows.push(`### [${module}](https://www.npmjs.com/package/${module})`);

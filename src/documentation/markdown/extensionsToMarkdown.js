@@ -1,6 +1,6 @@
 import { isFunction } from 'lodash';
 
-export default function extensionsToMarkdown(name, usedExtensions, rocCommandObject, extension) {
+export default function extensionsToMarkdown(name, usedExtensions = [], rocCommandObject, extension) {
     const rows = [];
 
     const packages = usedExtensions.filter((extn) => extn.type === 'package' &&
@@ -24,7 +24,10 @@ export default function extensionsToMarkdown(name, usedExtensions, rocCommandObj
                 pkg.description(rocCommandObject, extension) :
                 pkg.description;
 
-            rows.push(description);
+            if (description) {
+                rows.push(description);
+            }
+
             rows.push('');
         });
     } else {
@@ -39,7 +42,10 @@ export default function extensionsToMarkdown(name, usedExtensions, rocCommandObj
                 plugin.description(rocCommandObject, extension) :
                 plugin.description;
 
-            rows.push(description);
+            if (description) {
+                rows.push(description);
+            }
+
             rows.push('');
         });
     } else {

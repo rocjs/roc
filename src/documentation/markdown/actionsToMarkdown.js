@@ -30,7 +30,7 @@ export default function actionsToMarkdown(name, actions = [], mode, project) {
     rows.push(`# Actions for \`${name}\``, '');
 
     if (correctedActions.length === 0) {
-        rows.push('__No actions available.__');
+        rows.push('__No actions available.__', '');
         return rows.join('\n');
     }
 
@@ -79,6 +79,9 @@ export default function actionsToMarkdown(name, actions = [], mode, project) {
                     'Not specified')
                 + '  '
             );
+
+            // eslint-disable-next-line
+            rows.push('__Have post:__ ' + (currentAction.post ? 'Yes' : 'No') + '  ');
 
             rows.push('');
         });

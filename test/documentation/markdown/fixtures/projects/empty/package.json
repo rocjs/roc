@@ -1,0 +1,12 @@
+{
+    "name": "empty",
+    "version": "1.0.0",
+    "roc": {
+        "packages": [
+            "./packages/a/index.js"
+        ],
+        "plugins": [
+            "./plugins/a/index.js"
+        ]
+    }
+}

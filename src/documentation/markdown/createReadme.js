@@ -6,7 +6,7 @@ export default function createReadme(name, dir, extension, rocCommandObject) {
 
     rows.push(`# ${name}`, '');
 
-    // If we are documenting a extensions we will want to use the description inside projectExtensions
+    // If we are documenting an extensions we will want to use the description inside projectExtensions
     if (extension) {
         const description = isFunction(projectExtensions[0].description) ?
             projectExtensions[0].description(rocCommandObject, extension) :
@@ -25,7 +25,8 @@ export default function createReadme(name, dir, extension, rocCommandObject) {
         const plugins = projectExtensions.filter((extn) => extn.type === 'plugin');
 
         rows.push('## Extensions');
-        rows.push('The extensions that are used in the project.');
+        rows.push('The extensions that are used in the project.', '');
+
         rows.push('### Packages');
         if (packages.length > 0) {
             packages.forEach((pkg) => {
