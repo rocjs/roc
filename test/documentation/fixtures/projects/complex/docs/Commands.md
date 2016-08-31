@@ -4,6 +4,7 @@
 All commands can be called with some additional options as can be seen below.
 
 ### General options
+
 | Name                  | Description                                                                                                   | Required |
 | --------------------- | ------------------------------------------------------------------------------------------------------------- | -------- |
 | -b, --better-feedback | Will enable source-map-support and loud-rejection for a better experience with better feedback.               | No       |
@@ -49,12 +50,14 @@ __version__
 Versions should match a tag on the Github repo and will default to master if none exists. When giving an input on the command line Roc will automatically add `v` in front of versions that starts with a number to match Github default that have versions tags that start with `v` like `v1.0.0`. `master` is also always available as an option.
 
 #### Arguments
+
 | Name        | Description                                                                           | Default | Type       | Required | Can be empty |
 | ----------- | ------------------------------------------------------------------------------------- | ------- | ---------- | -------- | ------------ |
 | template    | The template to use. Matches Github structure with Username/Repo or a local zip file. |         | `Filepath` | No       | No           |
 | version     | The version to use.                                                                   |         | `String`   | No       | No           |
 
 #### Command options
+
 | Name        | Description                                                                           | Default | Type       | Required | Can be empty |
 | ----------- | ------------------------------------------------------------------------------------- | ------- | ---------- | -------- | ------------ |
 | -f, --force | Ignore non empty directory warning.                                                   |         | `Boolean`  | No       |              |
@@ -72,6 +75,7 @@ roc create new <name> [template] [version]
 Alias for "init" that always will try to create a new directory.
 
 #### Arguments
+
 | Name        | Description                                                                           | Default | Type       | Required | Can be empty |
 | ----------- | ------------------------------------------------------------------------------------- | ------- | ---------- | -------- | ------------ |
 | name        | Name for a new directory to create the project in.                                    |         | `String`   | Yes      | No           |
@@ -79,6 +83,7 @@ Alias for "init" that always will try to create a new directory.
 | version     | The version to use.                                                                   |         | `String`   | No       | No           |
 
 #### Command options
+
 | Name        | Description                                                                           | Default | Type       | Required | Can be empty |
 | ----------- | ------------------------------------------------------------------------------------- | ------- | ---------- | -------- | ------------ |
 | -f, --force | Ignore non empty directory warning.                                                   |         | `Boolean`  | No       |              |
@@ -104,6 +109,7 @@ roc meta docs
 ```
 
 #### Command options
+
 | Name       | Description                                                   | Default        | Type                                                              | Required | Can be empty |
 | ---------- | ------------------------------------------------------------- | -------------- | ----------------------------------------------------------------- | -------- | ------------ |
 | --html     | If HTML should be generated. (Not supported yet)              | `false`        | `Boolean`                                                         | No       |              |

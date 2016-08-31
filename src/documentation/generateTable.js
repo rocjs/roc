@@ -61,6 +61,8 @@ export default function generateTable(initalDocumentationObject, header, setting
 
         if (description) {
             rows.push(description, '');
+        } else {
+            rows.push('');
         }
 
         if (raw) {

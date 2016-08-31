@@ -4,8 +4,7 @@ import { readFileSync } from 'fs';
 import expect from 'expect';
 
 import extensionsToMarkdown from '../../../src/documentation/markdown/extensionsToMarkdown';
-
-import getContext from './fixtures/getContext';
+import getContext from '../fixtures/getContext';
 
 describe('documentation', () => {
     describe('markdown', () => {
@@ -17,7 +16,7 @@ describe('documentation', () => {
             });
 
             it('should correctly format extensions for project empty', () => {
-                const project = join(__dirname, 'fixtures', 'projects', 'empty');
+                const project = join(__dirname, '..', 'fixtures', 'projects', 'empty');
                 const context = getContext(project);
 
                 expect(extensionsToMarkdown('empty', context.usedExtensions, { context }))
@@ -25,7 +24,7 @@ describe('documentation', () => {
             });
 
             it('should correctly format extensions for project complex', () => {
-                const project = join(__dirname, 'fixtures', 'projects', 'complex');
+                const project = join(__dirname, '..', 'fixtures', 'projects', 'complex');
                 const context = getContext(project);
 
                 expect(extensionsToMarkdown('complex', context.usedExtensions, { context }))

@@ -4,8 +4,7 @@ import { readFileSync } from 'fs';
 import expect from 'expect';
 
 import hooksToMarkdown from '../../../src/documentation/markdown/hooksToMarkdown';
-
-import getContext from './fixtures/getContext';
+import getContext from '../fixtures/getContext';
 
 describe('documentation', () => {
     describe('markdown', () => {
@@ -16,7 +15,7 @@ describe('documentation', () => {
             });
 
             it('should correctly format hooks for project empty', () => {
-                const project = join(__dirname, 'fixtures', 'projects', 'empty');
+                const project = join(__dirname, '..', 'fixtures', 'projects', 'empty');
                 const context = getContext(project);
 
                 expect(hooksToMarkdown('empty', context.hooks))
@@ -24,7 +23,7 @@ describe('documentation', () => {
             });
 
             it('should correctly format hooks for project complex', () => {
-                const project = join(__dirname, 'fixtures', 'projects', 'complex');
+                const project = join(__dirname, '..', 'fixtures', 'projects', 'complex');
                 const context = getContext(project);
 
                 expect(hooksToMarkdown('complex', context.hooks))

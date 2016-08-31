@@ -1,4 +1,4 @@
-import initContext from '../../../../src/context/initContext';
+import initContext from '../../../src/context/initContext';
 
 export default (projectPath, commands) => initContext({
     commands,

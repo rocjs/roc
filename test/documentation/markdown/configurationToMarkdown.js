@@ -4,8 +4,7 @@ import { readFileSync } from 'fs';
 import expect from 'expect';
 
 import configurationToMarkdown from '../../../src/documentation/markdown/configurationToMarkdown';
-
-import getContext from './fixtures/getContext';
+import getContext from '../fixtures/getContext';
 
 describe('documentation', () => {
     describe('markdown', () => {
@@ -17,7 +16,7 @@ describe('documentation', () => {
             });
 
             it('should correctly format config for project empty', () => {
-                const project = join(__dirname, 'fixtures', 'projects', 'empty');
+                const project = join(__dirname, '..', 'fixtures', 'projects', 'empty');
                 const context = getContext(project);
 
                 expect(configurationToMarkdown('empty', context.extensionConfig, context.meta))
@@ -25,7 +24,7 @@ describe('documentation', () => {
             });
 
             it('should correctly format config for project complex', () => {
-                const project = join(__dirname, 'fixtures', 'projects', 'complex');
+                const project = join(__dirname, '..', 'fixtures', 'projects', 'complex');
                 const context = getContext(project);
 
                 expect(configurationToMarkdown('complex', context.extensionConfig, context.meta))
