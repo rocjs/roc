@@ -38,18 +38,6 @@ const settings = {
         groupName.charAt(0).toUpperCase() + groupName.slice(1)}`,
 };
 
-/**
- * Command used to generate markdown documentation for all the possible commands.
- * Can be piped to a file and uploaded somewhere easily.
- *
- * @param {string} name - Name of the cli.
- * @param {rocConfig} config - Roc configuration object.
- * @param {rocMetaConfig} metaConfig - Roc meta configuration object.
- * @param {string} settingsLink - A possible link to the settings documentation.
- * @param {string[]} hideCommands - An array with commands that should not be listed in the documentation.
- *
- * @returns {string} - Markdown documentation.
- */
 export default function commandsToMarkdown(
     name,
     config = {},

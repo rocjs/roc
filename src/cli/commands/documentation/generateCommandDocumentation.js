@@ -12,15 +12,6 @@ import createTable from './createTable';
 
 /**
 * Generates a string with information about a specific command.
-*
-* @param {object} settings - Settings from @{link rocConfig}.
-* @param {object} metaSettings - Meta settings from @{link rocMetaConfig}.
-* @param {object} metaCommands - Meta commands from @{link rocMetaConfig}.
-* @param {string} command - The selected command.
-* @param {string} name - The name of the cli.
-* @param {string[]} parents - The parents that the command has.
-*
-* @returns {string} - A string with documentation based on the selected commands.
 */
 export default function generateCommandDocumentation(settings, metaSettings, metaCommands, command, name, parents) {
     const rows = [];

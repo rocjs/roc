@@ -5,13 +5,6 @@ global.roc = global.roc || {};
 global.roc.context = global.roc.context || {};
 global.roc.context.actions = global.roc.context.actions || [];
 
-/**
- * Register actions with Roc.
- *
- * @param {rocAction[]} actions - Object with actions.
- * @param {string} extensionName - Name of the extension to register the actions on.
- * @param {boolean} [project=false] - If the actions belongs to the project.
- */
  /* eslint-disable no-param-reassign */
 export function registerActions(actions, extensionName, state = global.roc.context.actions, project = false) {
     // Look for the extensionName and only add if not already there
@@ -46,10 +39,6 @@ export function registerActions(actions, extensionName, state = global.roc.conte
 
 /**
  * Register single action with Roc.
- *
- * @param {function} action - The action function.
- * @param {string} extensionName - Name of the extension to register the actions on.
- * @param {boolean} [project=false] - If the action belongs to the project.
  */
 export function registerAction(action, extensionName, state = global.roc.context.actions, project = false) {
     // Look for the extensionName and update if it exists

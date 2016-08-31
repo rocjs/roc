@@ -2,9 +2,9 @@
  * Creates mappings between cli commands to their "path" in the configuration structure, their validator and type
  * converter.
  *
- * @param {rocDocumentationObject} documentationObject - Documentation object to create mappings for.
+ * @param {Object} documentationObject - Documentation object to create mappings for.
  *
- * @returns {Object} - Properties are the cli command without leading dashes that maps to a {@link rocMapObject}.
+ * @returns {Object} - Properties are the cli command without leading dashes that maps to the mapped configuration.
  */
 export default function getMappings(documentationObject = []) {
     const recursiveHelper = (groups) => {

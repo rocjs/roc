@@ -25,16 +25,8 @@ import parseOptions from './commands/parseOptions';
 
 /**
  * Invokes the Roc cli.
- *
- * @param {{version: string, name: string}} info - Information about the cli.
- * @param {rocConfig} initalConfig - The inital configuration, will be merged with the selected packages and
- *  application.
- * @param {rocMetaConfig} initalMeta - The inital meta configuration, will be merged with the selected packages.
- * @param {string[]} [argv=process.argv] - From where it should parse the arguments.
- * @param {boolean} [invoke=true] - If the a command should be invoked after initing the configuration.
- *
- * @returns {object} - Returns what the command is returning. If the command is a string command a promise will be
- *  returned that is resolved when the command has been completed.
+ * Returns what the command is returning. If the command is a string command a promise will be
+ * returned that is resolved when the command has been completed.
  */
 export default function runCli({
     info = { version: 'Unknown', name: 'Unknown' },

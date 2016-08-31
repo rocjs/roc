@@ -7,13 +7,13 @@ import automatic from '../../converters/automatic';
 /**
  * Parses arguments and validates them.
  *
- * @param {string} command - The command to parse arguments for.
- * @param {Object} commands - commands from {@link rocMetaConfig}.
+ * @param {string} command
+ * @param {Object} commands
  * @param {Object[]} args - Arguments parsed by minimist.
  *
  * @returns {Object} - Parsed arguments.
- * @property {object[]} options - The parsed arguments that was matched against the meta configuration for the command.
- * @property {object[]} rest - The rest of the arguments that could not be matched against the configuration.
+ * @property {Object} managed - The parsed arguments that was matched against the configuration for the command.
+ * @property {Object[]} unmanaged - The rest of the arguments that could not be matched against the configuration.
  */
 export default function parseArguments(command, commands = {}, args) {
     // If the command supports options

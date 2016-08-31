@@ -20,21 +20,9 @@ import verifyInstalledProjectDependencies from './dependencies/verifyInstalledPr
 import verifyRequiredDependencies from './dependencies/verifyRequiredDependencies';
 
 /**
- * Builds the context
+ * Builds the context.
  *
- * @param {boolean} [verbose=true] - If verbose mode should be enabled, logs some extra information.
- * @param {rocConfig} baseConfig - The base configuration.
- * @param {rocMetaConfig} baseMeta - The base meta configuration.
- * @param {object} baseCommands - The base commands.
- * @param {string} [directory=process.cwd()] - The directory to resolve relative paths from.
- * @param {string} applicationConfigPath - The path to the application configuration.
- * @param {boolean} [verify=true] - If the newConfig and the newMeta structure should be validated.
- * @param {boolean} [checkDependencies=true] - If dependencies should be verified in extensions.
- *
- * @returns {Object} - The result of with the built configurations.
- * @property {rocConfig} packageConfig - The packages merged configurations.
- * @property {rocConfig} config - The final configuration, with application configuration.
- * @property {rocMetaConfig} meta - The merged meta configuration.
+ * Will return the context after completion and set in if "runtime" is defined to true.
  */
 export default function initContext({
     verbose = false,

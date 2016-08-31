@@ -9,15 +9,6 @@ function createHookName(name, action) {
     return name || `Generic${action.name && ` (${action.name})`}`;
 }
 
-/**
- * Function used to generate markdown documentation for all the registered actions.
- * Can be piped to a file and uploaded somewhere easily.
- *
- * @param {string} name - Name from info object in {@link rocCommandObject}.
- * @param {Object[]} actions - The actions from {@link rocCommandObject}.
- *
- * @returns {string} - Markdown documentation.
- */
 export default function actionsToMarkdown(name, actions = [], mode, project) {
     // Remove project actions if we are not in project mode
     const correctedActions = !project ?

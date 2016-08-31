@@ -8,16 +8,6 @@ import toCliOption from './helpers/toCliOption';
 
 const defaultValidator = (input, info) => (info ? { type: 'Unknown' } : true);
 
-/**
- * Creates a {@link rocDocumentationObject}.
- *
- * @param {Object} initalObject - The object to create a {@link rocDocumentationObject} of.
- * @param {rocMetaSettings} meta - The meta object to use.
- * @param {string[]} [initalFilter=[]] - The groups that should be used, will default to all groups.
- * @param {number}  [initalLevel=0] - The level that the groups should be based on.
- *
- * @returns {rocDocumentationObject} - The completed documentation object.
- */
 export default function buildDocumentationObject(
     initalObject,
     initalMeta = {},

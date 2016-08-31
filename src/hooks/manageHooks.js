@@ -5,9 +5,6 @@ global.roc.context.hooks = global.roc.context.hooks || {};
 
 /**
  * Register hooks with Roc.
- *
- * @param {Object} hooks - Object with hooks.
- * @param {string} name - Name of the extension that the hooks belongs to.
  */
 export function registerHooks(hooks, name, state = global.roc.context.hooks) {
     // eslint-disable-next-line

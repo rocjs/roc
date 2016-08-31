@@ -5,16 +5,6 @@ import generateTable from '../generateTable';
 import pad from '../helpers/pad';
 import getDefaultValue from '../helpers/getDefaultValue';
 
-/**
- * Generates markdown documentation for the provided configuration object.
- *
- * @param {string} name - The name of the one generation the documentation.
- * @param {rocConfig} config - The configuration object to generate documentation for.
- * @param {rocMetaConfig} metaConfig - The meta configuration object that has information about the config object.
- * @param {string[]} [filter=[]] - The groups that should be includes, by default all will be used.
- *
- * @returns {string} - A markdown table as a string.
- */
 export default function settingsToMarkdown(name, { settings } = {}, { settings: meta } = {}, filter = []) {
     const documentationObject = sortOnProperty('name', buildDocumentationObject(settings, meta, filter, true));
 

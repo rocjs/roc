@@ -10,13 +10,13 @@ import keyboardDistance from '../../helpers/keyboardDistance';
 import automatic from '../../converters/automatic';
 
 import { defaultOptions, defaultOptionsAlias } from './getDefaultOptions';
+
 /**
  * Converts a set of options to {@link rocConfigSettings} object and command specific options.
  *
  * @param {Object} options - Options parsed from minimist.
  * @param {Object} mappings - Result from {@link getMappings}.
  * @param {string} command - The command to parse arguments for.
- * @param {Object} commands - commands from {@link rocMetaConfig}.
  *
  * @returns {{settings: rocConfigSettings, parseOptions: Object}} - The mapped Roc configuration settings object.
  */

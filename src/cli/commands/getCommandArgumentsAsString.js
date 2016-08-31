@@ -1,8 +1,5 @@
 /**
- * Generates arguments as a information string.
- *
- * @param {rocCommandMeta} command - The command meta object.
- * @returns {string} - The arguments as a string.
+ * Generates arguments as an information string.
  */
 export default function getCommandArgumentsAsString(command = {}) {
     let args = '';

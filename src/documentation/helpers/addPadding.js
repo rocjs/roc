@@ -5,7 +5,7 @@ import pad from './pad';
 /**
  * Pads a string to a given length with spaces.
  *
- * @param {string} string - The string to be padded.
+ * @param {string} str - The string to be padded.
  * @param {number} length - The desired length of the new string.
  *
  * @returns {string} - A string matching the input.

@@ -8,7 +8,8 @@ import { appendSettings } from './manageSettings';
 /* Make sure that we only print some feedback once */
 let onceSettings = true;
 
-/* Using global variables here to make sure that we can access the values set from different projects.
+/**
+ * Using global variables here to make sure that we can access the values set from different projects.
  * This guarantees that the variables will live outside the require cache, something that we need for stability.
  */
 global.roc = global.roc || {};
@@ -17,12 +18,6 @@ global.roc.context.config = global.roc.context.config || undefined;
 
 /**
  * Gets the current configuration object.
- *
- * Will try to init the configuration if not done previously.
- *
- * @param {boolean} [fail=true] - If the function should fail if no configuration exists
- *
- * @returns {rocConfig} - The application configuration object.
  */
 export function getConfig(fail = true, state = global.roc.context.config) {
     // Try to load the configuration if we haven't at this point.
@@ -65,10 +60,6 @@ export function getConfig(fail = true, state = global.roc.context.config) {
  *
  * Will merge with the already existing configuration object meaning that this function can be called multiple times and
  * the configuration will be a merge of all those calls.
- *
- * @param {!rocConfig} config - A configuration object.
- *
- * @returns {rocConfig} - The configuration object.
  */
 export function appendConfig(config) {
     global.roc.context.config = merge(getConfig(false), config);

@@ -8,15 +8,6 @@ import createInfoObject from '../../validation/helpers/createInfoObject';
 
 import createStatefulAnchor from './helpers/createStatefulAnchor';
 
-/**
- * Command used to generate markdown documentation for all the registered hooks.
- * Can be piped to a file and uploaded somewhere easily.
- *
- * @param {string} name - Name from info object in {@link rocCommandObject}.
- * @param {Object} hooks - The hooks from {@link rocCommandObject}.
- *
- * @returns {string} - Markdown documentation.
- */
 export default function hooksToMarkdown(name, hooks = {}, mode) {
     const rows = [];
 

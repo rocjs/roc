@@ -5,11 +5,7 @@ import throwValidationError from './helpers/throwValidationError';
 import { REQUIRED_ERROR } from './validators/required';
 
 /**
- * Validates the provided settings object.
- *
- * @param {rocSettings} settings - The settings object to validate.
- * @param {Object} validations - The meta configuration object that has information about how to validate.
- * @throws {Error} throws error if the configuration is invalid
+ * Validates the provided settings objects and might throw.
  */
 export default function validateSettings(settings = {}, meta = {}, allowRequiredFailure = false, path = 'settings') {
     const validateKeys = Object.keys(meta);
