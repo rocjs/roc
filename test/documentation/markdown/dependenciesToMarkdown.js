@@ -19,7 +19,7 @@ describe('documentation', () => {
                 const project = join(__dirname, 'fixtures', 'projects', 'empty');
                 const context = getContext(project);
 
-                expect(dependenciesToMarkdown('empty', false, context.dependencies))
+                expect(dependenciesToMarkdown('empty', true, context.dependencies))
                     .toEqual(readFileSync(join(project, 'docs', 'Dependencies.md'), 'utf8'));
             });
 
@@ -27,7 +27,7 @@ describe('documentation', () => {
                 const project = join(__dirname, 'fixtures', 'projects', 'complex');
                 const context = getContext(project);
 
-                expect(dependenciesToMarkdown('complex', false, context.dependencies))
+                expect(dependenciesToMarkdown('complex', true, context.dependencies))
                     .toEqual(readFileSync(join(project, 'docs', 'Dependencies.md'), 'utf8'));
             });
         });
