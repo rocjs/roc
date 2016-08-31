@@ -177,7 +177,9 @@ function setContext(dependencies, name, path) {
     return {
         ...dependencies,
         exports: updateDependencies(dependencies.exports, name, path),
-        uses: updateDependencies(dependencies.uses, name, path),
+        uses: {
+            [name]: updateDependencies(dependencies.uses, name, path),
+        },
         requires: updateDependencies(dependencies.requires, name, path),
     };
 }

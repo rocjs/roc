@@ -73,37 +73,45 @@ An object containing the final configuration. This means that the project config
 ### `dependencies`
 
 #### `exports`
-An array with objects for the exported dependencies from the extensions.
+An object where the key is the dependency with objects for the exported dependencies from the extensions.
 
 ```javascript
-[{
-  context,
-  version,
-  extension,
-  resolve,
-}]
+{
+  dependencyName: {
+    context, // the location of the extension
+    version, // semver for required version
+    extension, // the name of the extension
+    resolve, // custom resolve function
+  }
+}
 ```
 
 #### `requires`
-An array with objects for the required dependencies by the extensions.
+An object where the key is the dependency with objects for the required dependencies by the extensions.
 
 ```javascript
-[{
-  context, // the location of the extension
-  version, // semver for required version
-  extension, // the name of the extension
-}]
+{
+  dependencyName: {
+    context, // the location of the extension
+    version, // semver for required version
+    extension, // the name of the extension
+  }
+}
 ```
 
 #### `uses`
-An array with objects for the used dependencies by the extensions.
+An object where the key is the extension with objects where the key is the dependency. Lists all of the used dependencies by the extensions.
 
 ```javascript
-[{
-  context,
-  version,
-  extension,
-}]
+{
+  extensionName: {
+    dependencyName: {
+      context, // the location of the extension
+      version, // semver for required version
+      extension, // the name of the extension
+    }
+  }
+}
 ```
 
 ### `directory`

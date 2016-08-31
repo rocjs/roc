@@ -103,10 +103,12 @@ describe('context', () => {
                                 },
                             },
                             uses: {
-                                redux: {
-                                    context: __dirname,
-                                    extension: 'test-dev',
-                                    version: '3.x',
+                                'test-dev': {
+                                    redux: {
+                                        context: __dirname,
+                                        extension: 'test-dev',
+                                        version: '3.x',
+                                    },
                                 },
                             },
                         });
