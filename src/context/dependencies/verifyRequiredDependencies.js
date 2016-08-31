@@ -42,7 +42,7 @@ export default function verifyRequiredDependencies(directory, required) {
 
         const body = [{
             objects: mismatches,
-            name: 'Some required dependencies was not found!',
+            name: 'Some required dependencies was not found!\n',
             level: 0,
         }];
 
