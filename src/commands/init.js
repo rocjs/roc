@@ -30,9 +30,7 @@ const templates = [{
 /**
  * Command used to init a new Roc project.
  *
- * @param {rocCommandObject} parsedArguments - The Roc command object, uses parsedArguments from it.
- *
- * @returns {Promise} - Promise for the command.
+ * @returns {Promise} - Promise that resolves when the command has completed.
  */
 export default function init({
     arguments: { managed: managedArguments },
@@ -127,12 +125,10 @@ function fetchTemplate(fetch, selectVersion, directory, list) {
         .then((dirPath) => {
             if (!validRocProject(path.join(dirPath, 'template'))) {
                 log.error('Seems like this is not a Roc template.');
-            } else {
-                log.info('\nInstalling template setup dependencies…');
-                return npmInstall(dirPath);
             }
 
-            return undefined;
+            log.info('\nInstalling template setup dependencies…');
+            return npmInstall(dirPath);
         })
         .then((dirPath) => {
             inquirer.prompt(getPrompt(dirPath), (answers) => {
