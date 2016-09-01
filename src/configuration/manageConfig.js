@@ -19,9 +19,13 @@ global.roc.context.config = global.roc.context.config || undefined;
 /**
  * Gets the current configuration object.
  */
-export function getConfig(fail = true, state = global.roc.context.config) {
+export function getConfig(customState) {
+    if (customState) {
+        return customState;
+    }
+
     // Try to load the configuration if we haven't at this point.
-    if (fail && state === undefined && !process.env.ROC_CONFIG_SETTINGS) {
+    if (global.roc.context.config === undefined) {
         log.error(
             'It seems that you are launching a Roc project without using the Roc CLI.\n' +
             'Please use the CLI or add the Roc runtime to your project.\n\n' +
@@ -37,7 +41,9 @@ export function getConfig(fail = true, state = global.roc.context.config) {
 
         const environmentSettings = JSON.parse(process.env.ROC_CONFIG_SETTINGS);
 
-        if (state && state.settings && Object.keys(state.settings).length > 0 &&
+        if (global.roc.context.config &&
+            global.roc.context.config.settings &&
+            Object.keys(global.roc.context.config.settings).length > 0 &&
             process.env.ROC_CONFIG_SETTINGS
         ) {
             log.info(
@@ -48,11 +54,10 @@ export function getConfig(fail = true, state = global.roc.context.config) {
             );
         }
 
-        // eslint-disable-next-line
-        state.settings = appendSettings(environmentSettings, state);
+        appendSettings(environmentSettings);
     }
 
-    return state;
+    return global.roc.context.config;
 }
 
 /**
@@ -62,12 +67,12 @@ export function getConfig(fail = true, state = global.roc.context.config) {
  * the configuration will be a merge of all those calls.
  */
 export function appendConfig(config) {
-    global.roc.context.config = merge(getConfig(false), config);
+    global.roc.context.config = merge(getConfig(), config);
     return getConfig();
 }
 
-export function setConfig(newConfig, state) {
-    if (state === undefined) {
+export function setConfig(newConfig, setGlobal = true) {
+    if (setGlobal) {
         global.roc.context.config = newConfig;
     }
 

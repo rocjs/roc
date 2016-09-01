@@ -1,7 +1,7 @@
 import { isString } from 'lodash';
 import minimist from 'minimist';
 
-import { appendSettings } from '../configuration/manageSettings';
+import { appendSettings, getSettings } from '../configuration/manageSettings';
 import { setConfig } from '../configuration/manageConfig';
 import { setContext } from '../context/helpers/manageContext';
 import addRaw from '../configuration/addRaw';
@@ -157,12 +157,9 @@ export default function runCli({
     // Run hook to make it possible for extensions to update the settings before anything other uses them
     // This means that they can inspect what has been defined by other extensions, the user through config
     // and through command line options
-    runHook('roc')('update-settings', () => context.config.settings)(
-        (newSettings) => { context.config.settings = appendSettings(newSettings, context.config); }
+    runHook('roc')('update-settings', () => getSettings())(
+        (newSettings) => appendSettings(newSettings)
     );
-
-    // Update the configuration object
-    setConfig(context.config);
 
     if (invoke) {
         // If string run as shell command
