@@ -18,13 +18,9 @@ const defaultSettings = {
 /* eslint-enable */
 
 /**
- * Creates a table based on a {@link rocDocumentationObject}.
+ * Creates a table based on a documentation object.
  *
- * @param {rocDocumentationObject} initalDocumentationObject - The documentation object to create a table of.
- * @param {rocTableHeader} header - Header object to use.
- * @param {rocTableSettings} settings - The settings to use.
- *
- * @returns {string} - A table.
+ * @returns {string} - A formatted table.
  */
 export default function generateTable(initalDocumentationObject, header, settings) {
     const finalSettings = merge(defaultSettings, settings);
@@ -61,7 +57,7 @@ export default function generateTable(initalDocumentationObject, header, setting
 
         if (description) {
             rows.push(description, '');
-        } else {
+        } else if (finalSettings.header) {
             rows.push('');
         }
 
