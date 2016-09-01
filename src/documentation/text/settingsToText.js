@@ -20,7 +20,7 @@ export default function settingsToText({ settings }, { settings: meta }, filter 
         description: {
             name: 'Description',
             renderer: (input) => {
-                if (input && input.length > 100) {
+                if (input && input.length > 101) {
                     return `${input.substr(0, 100)}…`;
                 }
 
