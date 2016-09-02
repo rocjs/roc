@@ -198,7 +198,7 @@ An array of objects that define what options the command uses. The order of the 
 
 __Example__
 ```
-arguments: [{
+options: [{
   alias: 'f', // Will be used as '-f'
   converter: toBoolean,
   default: false
