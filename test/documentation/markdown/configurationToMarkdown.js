@@ -2,6 +2,7 @@ import { join } from 'path';
 import { readFileSync } from 'fs';
 
 import expect from 'expect';
+import { lf } from 'eol';
 
 import configurationToMarkdown from '../../../src/documentation/markdown/configurationToMarkdown';
 import getContext from '../fixtures/getContext';
@@ -20,7 +21,7 @@ describe('documentation', () => {
                 const context = getContext(project);
 
                 expect(configurationToMarkdown('empty', context.extensionConfig, context.meta))
-                    .toBe(readFileSync(join(project, 'docs', 'Configuration.md'), 'utf8'));
+                    .toBe(lf(readFileSync(join(project, 'docs', 'Configuration.md'), 'utf8')));
             });
 
             it('should correctly format config for project complex', () => {
@@ -28,7 +29,7 @@ describe('documentation', () => {
                 const context = getContext(project);
 
                 expect(configurationToMarkdown('complex', context.extensionConfig, context.meta))
-                    .toBe(readFileSync(join(project, 'docs', 'Configuration.md'), 'utf8'));
+                    .toBe(lf(readFileSync(join(project, 'docs', 'Configuration.md'), 'utf8')));
             });
         });
     });

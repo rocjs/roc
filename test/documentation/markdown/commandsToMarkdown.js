@@ -2,6 +2,7 @@ import { join } from 'path';
 import { readFileSync } from 'fs';
 
 import expect from 'expect';
+import { lf } from 'eol';
 
 import commandsToMarkdown from '../../../src/documentation/markdown/commandsToMarkdown';
 import defaultCommands from '../../../src/commands';
@@ -20,7 +21,7 @@ describe('documentation', () => {
                 const context = getContext(project, defaultCommands);
 
                 expect(commandsToMarkdown('empty', context.extensionConfig, context.commands, '/docs/Settings.md'))
-                    .toEqual(readFileSync(join(project, 'docs', 'Commands.md'), 'utf8'));
+                    .toEqual(lf(readFileSync(join(project, 'docs', 'Commands.md'), 'utf8')));
             });
 
             it('should correctly format commands for project complex', () => {
@@ -28,7 +29,7 @@ describe('documentation', () => {
                 const context = getContext(project, defaultCommands);
 
                 expect(commandsToMarkdown('complex', context.extensionConfig, context.commands, '/docs/Settings.md'))
-                    .toEqual(readFileSync(join(project, 'docs', 'Commands.md'), 'utf8'));
+                    .toEqual(lf(readFileSync(join(project, 'docs', 'Commands.md'), 'utf8')));
             });
         });
     });

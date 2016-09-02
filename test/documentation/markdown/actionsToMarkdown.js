@@ -2,6 +2,7 @@ import { join } from 'path';
 import { readFileSync } from 'fs';
 
 import expect from 'expect';
+import { lf } from 'eol';
 
 import actionsToMarkdown from '../../../src/documentation/markdown/actionsToMarkdown';
 import getContext from '../fixtures/getContext';
@@ -19,7 +20,7 @@ describe('documentation', () => {
                 const context = getContext(project);
 
                 expect(actionsToMarkdown('empty', context.actions))
-                    .toBe(readFileSync(join(project, 'docs', 'Actions.md'), 'utf8'));
+                    .toBe(lf(readFileSync(join(project, 'docs', 'Actions.md'), 'utf8')));
             });
 
             it('should correctly format actions for project complex', () => {
@@ -27,7 +28,7 @@ describe('documentation', () => {
                 const context = getContext(project);
 
                 expect(actionsToMarkdown('complex', context.actions))
-                    .toBe(readFileSync(join(project, 'docs', 'Actions.md'), 'utf8'));
+                    .toBe(lf(readFileSync(join(project, 'docs', 'Actions.md'), 'utf8')));
             });
         });
     });

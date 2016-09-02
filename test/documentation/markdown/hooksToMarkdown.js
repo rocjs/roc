@@ -2,6 +2,7 @@ import { join } from 'path';
 import { readFileSync } from 'fs';
 
 import expect from 'expect';
+import { lf } from 'eol';
 
 import hooksToMarkdown from '../../../src/documentation/markdown/hooksToMarkdown';
 import getContext from '../fixtures/getContext';
@@ -19,7 +20,7 @@ describe('documentation', () => {
                 const context = getContext(project);
 
                 expect(hooksToMarkdown('empty', context.hooks))
-                    .toBe(readFileSync(join(project, 'docs', 'Hooks.md'), 'utf8'));
+                    .toBe(lf(readFileSync(join(project, 'docs', 'Hooks.md'), 'utf8')));
             });
 
             it('should correctly format hooks for project complex', () => {
@@ -27,7 +28,7 @@ describe('documentation', () => {
                 const context = getContext(project);
 
                 expect(hooksToMarkdown('complex', context.hooks))
-                    .toBe(readFileSync(join(project, 'docs', 'Hooks.md'), 'utf8'));
+                    .toBe(lf(readFileSync(join(project, 'docs', 'Hooks.md'), 'utf8')));
             });
         });
     });

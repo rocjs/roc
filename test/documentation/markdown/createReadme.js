@@ -2,6 +2,7 @@ import { join } from 'path';
 import { readFileSync } from 'fs';
 
 import expect from 'expect';
+import { lf } from 'eol';
 
 import createReadme from '../../../src/documentation/markdown/createReadme';
 import defaultCommands from '../../../src/commands';
@@ -15,7 +16,7 @@ describe('documentation', () => {
                 const context = getContext(project, defaultCommands);
 
                 expect(createReadme('empty', 'docs', false, { context }))
-                    .toEqual(readFileSync(join(project, 'ROC.md'), 'utf8'));
+                    .toEqual(lf(readFileSync(join(project, 'ROC.md'), 'utf8')));
             });
 
             it('should correctly format ROC.md for project complex', () => {
@@ -23,7 +24,7 @@ describe('documentation', () => {
                 const context = getContext(project, defaultCommands);
 
                 expect(createReadme('complex', 'docs', false, { context }))
-                    .toEqual(readFileSync(join(project, 'ROC.md'), 'utf8'));
+                    .toEqual(lf(readFileSync(join(project, 'ROC.md'), 'utf8')));
             });
         });
     });

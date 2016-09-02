@@ -2,6 +2,7 @@ import { join } from 'path';
 import { readFileSync } from 'fs';
 
 import expect from 'expect';
+import { lf } from 'eol';
 
 import settingsToMarkdown from '../../../src/documentation/markdown/settingsToMarkdown';
 import defaultCommands from '../../../src/commands';
@@ -20,7 +21,7 @@ describe('documentation', () => {
                 const context = getContext(project, defaultCommands);
 
                 expect(settingsToMarkdown('empty', context.extensionConfig, context.meta))
-                    .toEqual(readFileSync(join(project, 'docs', 'Settings.md'), 'utf8'));
+                    .toEqual(lf(readFileSync(join(project, 'docs', 'Settings.md'), 'utf8')));
             });
 
             it('should correctly format settings for project complex', () => {
@@ -28,7 +29,7 @@ describe('documentation', () => {
                 const context = getContext(project, defaultCommands);
 
                 expect(settingsToMarkdown('complex', context.extensionConfig, context.meta))
-                    .toEqual(readFileSync(join(project, 'docs', 'Settings.md'), 'utf8'));
+                    .toEqual(lf(readFileSync(join(project, 'docs', 'Settings.md'), 'utf8')));
             });
         });
     });

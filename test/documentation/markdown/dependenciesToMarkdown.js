@@ -2,6 +2,7 @@ import { join } from 'path';
 import { readFileSync } from 'fs';
 
 import expect from 'expect';
+import { lf } from 'eol';
 
 import dependenciesToMarkdown from '../../../src/documentation/markdown/dependenciesToMarkdown';
 import getContext from '../fixtures/getContext';
@@ -19,7 +20,7 @@ describe('documentation', () => {
                 const context = getContext(project);
 
                 expect(dependenciesToMarkdown('empty', true, context.dependencies))
-                    .toEqual(readFileSync(join(project, 'docs', 'Dependencies.md'), 'utf8'));
+                    .toEqual(lf(readFileSync(join(project, 'docs', 'Dependencies.md'), 'utf8')));
             });
 
             it('should correctly format dependencies for project complex', () => {
@@ -27,7 +28,7 @@ describe('documentation', () => {
                 const context = getContext(project);
 
                 expect(dependenciesToMarkdown('complex', true, context.dependencies))
-                    .toEqual(readFileSync(join(project, 'docs', 'Dependencies.md'), 'utf8'));
+                    .toEqual(lf(readFileSync(join(project, 'docs', 'Dependencies.md'), 'utf8')));
             });
         });
     });
