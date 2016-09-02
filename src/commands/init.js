@@ -298,7 +298,7 @@ function askForDirectory(directory, resolve) {
         fs.mkdir(directoryPath, (err) => {
             if (err) {
                 log.warn('The directory did already exists or was not empty.\n');
-                askForDirectory(resolve);
+                askForDirectory(directory, resolve);
             } else {
                 resolve(directoryPath);
             }
