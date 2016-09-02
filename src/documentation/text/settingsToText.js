@@ -7,8 +7,8 @@ import getDefaultValue from '../helpers/getDefaultValue';
 /**
  * Generates plain text documentation for the provided configuration object.
  *
- * @param {rocConfig} config - The configuration object to generate documentation for.
- * @param {rocMetaConfig} metaConfig - The meta configuration object that has information about the config object.
+ * @param {Object} config - The configuration object to generate documentation for.
+ * @param {Object} metaConfig - The meta configuration object that has information about the config object.
  * @param {string[]} [filter=[]] - The groups that should be includes, by default all will be used.
  *
  * @returns {string} - A table as a string.
