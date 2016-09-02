@@ -1,3 +1,5 @@
+import { sep } from 'path';
+
 import resolve from 'resolve';
 
 import { initGetDependencies, initGetDependenciesFromPath } from './manageDependencies';
@@ -79,11 +81,11 @@ export default function resolveRequest(exports, directory, dependencyContext) {
 }
 
 function initInProject(directory) {
-    const directoryPattern = new RegExp(`^${directory}(.*)$`);
+    const directoryPattern = new RegExp(makePathReadyForRegExpInWindows(`^${directory}(.*)$`));
     return (path) => {
         const matches = directoryPattern.exec(path);
         if (matches) {
-            return matches[0].indexOf('/node_modules/') === -1;
+            return matches[0].indexOf(`${sep}node_modules${sep}`) === -1;
         }
 
         return false;
@@ -92,12 +94,14 @@ function initInProject(directory) {
 
 function initGetCurrentModule(getDependencies, getDependenciesFromPath) {
     const fallbackPattern = /roc-.*/;
-    const normalPattern = /.*node_modules\/([^\/]*)\/?([^\/]*)/;
+    const normalPattern = new RegExp(
+        makePathReadyForRegExpInWindows(`.*node_modules${sep}([^${sep}]*)${sep}?([^${sep}]*)`)
+    );
     return (path, fallback) => {
         // Will match against the last roc-* in the path
         if (fallback) {
             const match = path
-                .split('/')
+                .split(sep)
                 .reverse()
                 .find((name) => fallbackPattern.test(name));
 
@@ -120,4 +124,12 @@ function initGetCurrentModule(getDependencies, getDependenciesFromPath) {
         // This means that we are only running this when doing local development
         return getDependenciesFromPath(path, 'exports');
     };
+}
+
+function makePathReadyForRegExpInWindows(path) {
+    if (sep === '\\') {
+        return path.replace(/\\/g, '\\\\');
+    }
+
+    return path;
 }
