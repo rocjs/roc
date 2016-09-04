@@ -126,12 +126,12 @@ export default function generateCommandDocumentation(settings, metaSettings, met
 }
 
 function createDescription(param) {
-    const required = getInfoObject(param.validator).required;
+    const infoObject = getInfoObject(param.validator);
     return `${(param.description && param.description + '  ') || ''}` +
-        `${(required && green('Required') + '  ') || ''}` +
+        `${(infoObject.required && green('Required') + '  ') || ''}` +
         `${(param.default !== undefined && cyan(JSON.stringify(param.default)) + '  ') || ''}` +
-        `${param.default === undefined && param.validator ?
-            dim('(' + param.validator(null, true).type + ')') :
+        `${param.default === undefined && infoObject.type ?
+            dim('(' + infoObject.type + ')') :
             ''
         }`;
 }
