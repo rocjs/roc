@@ -4,6 +4,6 @@
 export default function lazyFunctionRequire(fn) {
     return (id) => (...args) => {
         const mod = fn(id);
-        return mod.default ? mod.default(...args) : mod(...args);
+        return mod.__esModule ? mod.default(...args) : mod(...args);
     };
 }
