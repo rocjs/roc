@@ -5,21 +5,16 @@ import executeSync from './executeSync';
  * without throwing an exception.
  *
  * This can be useful for when the command that is running is handling the error output itself.
- *
- * @param {string} command - A command string that should run.
- * @param {boolean} [silent=false] - If the command should run in silent mode, no output.
- *
- * @returns {string[]} - The output to stdout if silent was used.
  */
-export default function executeSyncExit(command, silent = false) {
+export default function executeSyncExit(command, options) {
     try {
-        return executeSync(command, silent);
-    } catch (err) {
-        // Only process if we got the error from below that sets the exitStatus.
-        if (!err.exitStatus) {
-            throw err;
+        return executeSync(command, options);
+    } catch (error) {
+        // Only process if we got an error that have getCode
+        if (!error.getExitCode) {
+            throw error;
         }
 
-        return process.exit(err.exitStatus); // eslint-disable-line
+        return process.exit(error.getExitCode()); // eslint-disable-line
     }
 }

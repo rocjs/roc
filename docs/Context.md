@@ -65,7 +65,13 @@ actions             Action objects.
 ### `commands`
 An object with the merged commands.
 
-The structure of the object is the same as the one used in the [Roc object](#commands) with the exception for `__extensions` that Roc will add when building the context to all the groups and commands. This property is an array with strings that list all of the extensions that have modified it in some way. This is used in the core together with `override` to make sure that extensions knowingly override groups and commands defined by other extensions.
+The structure of the object is the same as the one used in the [Roc object](#commands) with the exception for `__extensions` and `__context` that Roc will add when building the context to the groups and the commands.
+
+__`__extensions`__  
+This property is an array with strings that list all of the extensions that have modified it in some way. This is used in the core together with `override` to make sure that extensions knowingly override groups and commands defined by other extensions.
+
+__`__context`__  
+This is the path to the extension that registered the command. This is used internally for giving access to `node_modules/.bin` when invoking a string command.
 
 ### `config`
 An object containing the final configuration. This means that the project configuration will have been merged with the configuration from the packages as well as the settings that was defined in the cli at runtime and the `__raw` values added to their properties in `settings`.

@@ -5,12 +5,12 @@ import stripAnsi from 'strip-ansi';
 
 import { consoleMockWrapper } from '../utils';
 import runCli from '../../src/cli/runCli';
-import largeLog from '../../src/log/default/large';
+import defaultLog from '../../src/log/default';
 
 describe('cli', () => {
     describe('runCli', () => {
         const spy = createSpy();
-        const logError = spyOn(largeLog, 'error').andThrow();
+        const logError = spyOn(defaultLog.large, 'error').andThrow();
 
         const commands = {
             test: {

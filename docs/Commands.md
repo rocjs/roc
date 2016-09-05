@@ -20,9 +20,13 @@ __Important!__
 The property name `command` is reserved and should not be used as the name for a command group or command.
 
 ### String command
-A string command is a string that will managed as if it was typed into the terminal directly. Great for creating aliases to other commands. Does not work exactly as one would run things in a terminal but `&` and `&&` can be used to chain commands together. This feature is experimental in it’s current state and will be improved going forward.
+A string command is a string that will managed as if it was typed into the terminal directly. Great for creating aliases to other commands. Uses [`spawn-command`](https://github.com/mmalecki/spawn-command) internally meaning that the command will be launched in either `cmd.exe` or `/bin/sh`. By default will the `node_modules/.bin` for a extension be added making it easy to proxy CLI tools to Roc projects.
+
+This feature is experimental in it’s current state and will be improved going forward.
 
 String commands uses [execute](/docs/API.md#execute) internally.
+
+Tip: You can provide additional arguments to a command in Roc that is using a string command by using `--`.
 
 ### Function command
 The function will be invoked with an object called `commandObject`.
@@ -52,7 +56,8 @@ __Object structure__
   options: {
     managed: {}
     unmanaged: {}
-  }
+  },
+  extraArguments: []
 }
 ```
 
@@ -81,6 +86,9 @@ An object with options matching the defined options from the commands meta infor
 
 #### `unmanaged`
 An object with options that was not managed by Roc.
+
+### `extraArguments`
+An array with the arguments that are defined after `--` on the command line.
 
 ## Define new commands & groups
 To define new commands that extension will need to either use the [`command`](/docs/RocObject.md#commands)  property on the [Roc object](/docs/RocObject.md) or return a command property form the [`init`](/docs/RocObject.md#init) function.

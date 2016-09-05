@@ -122,18 +122,40 @@ Will deeply merge two objects together and return a new object.
 ## `Execute`
 __These functions should be seen as experimental and might change without a mayor version change to Roc.__
 
-Roc has a simple implementation of execute that makes it easy to invoke string commands as they would have been invoked through a npm script. Does not currently automatically bind `node_modules` to the _PATH_ meaning that correct paths needs to be used. Not a complete mapping to the shell, supports `&`, `&&` for running commands in sequence and `cd`.
+Roc has a simple implementation of execute that makes it easy to invoke string commands as they would have been invoked through a npm script. Supports binding of  `node_modules` to the _$PATH_ using the options.
+
+__`options`__  
+All of the variants of execute takes in the same option object as the second argument.
+
+```js
+{
+  args: [], // Additional arguments as an array that should be used with the command.
+  context: '/some/path', // A path that where a lookup will be done for node_modules/.bin and if found it will be added to the $PATH
+  cwd: 'some/path/', // The directory the command should be invoked inside
+  silent: true // A boolean that will enable and disable output from the command
+}
+```
+
+__`ExecuteError`__  
+If an error happens in one of the execute functions an `ExecuteError` will be thrown, or in the case of `execute` the promise will be rejected with the error.
+
+It extends the normal `Error` with the following methods.
+
+```
+error.getCommand() - The command that was used that caused the problem
+error.getExitCode() - The exit code from the process
+error.getStderr() - The result from stderr
+error.getStdout() - The result from stdout
+```
 
 ### `execute`
 ```javascript
 import { execute } from 'roc';
 
-execute('git log')
-  .then(() => {
+execute('git log', options).then(() => {
     // Completed
   })
-  .catch((exitStatus) => {
-	  // A problem happened, status from the process available
+  .catch((executeError) => {
   });
 ```
 Runs a string in the shell asynchronous and returns a promise that resolves when the command is completed or when a error happened.
@@ -142,36 +164,20 @@ Runs a string in the shell asynchronous and returns a promise that resolves when
 ```javascript
 import { executeSync } from 'roc';
 
-// Will no print anything to console, result available in return value
-const output = executeSync('git log', true);
-
-// Will print to console
-executeSync('git log');
+const output = executeSync('git log', options);
 ```
-Runs a string in the shell synchronous. If running in silent mode, the second argument set to true, the function will return the output.
+Runs a string in the shell synchronously.
 
-The function will throw if an error happens. The error object will be extended with the following extra properties.
-
-```
-error.command - The command that was used that caused the problem
-error.arguments - The arguments that where used that caused the problem
-error.exitStatus - The status from the process
-error.stderr - The result from stderr
-error.stdout - The result from stdout
-```
+The function will throw if an `ExecuteError` if an error happens.
 
 ### `executeSyncExit`
 ```javascript
 import { executeSyncExit } from 'roc';
 
-// Will no print anything to console, result available in return value
-const output = executeSyncExit('git log', true);
-
-// Will print to console
-executeSyncExit('git log');
+const output = executeSyncExit('git log', options);
 ```
 
-A wrapper around `executeSync` with the difference that it will terminate the process if an error happens with the same status.
+A wrapper around `executeSync` with the difference that it will terminate the process if an error happens using the same exit code.
 
 ## Configuration
 

@@ -96,7 +96,7 @@ export default function processRocObject(
         if (roc.commands) {
             state.context.commands = merge(
                 state.context.commands,
-                processCommands(roc.name, roc.commands, state.context.commands)
+                processCommands(roc.name, roc.path, roc.commands, state.context.commands)
             );
         }
 

@@ -10,7 +10,7 @@ import execute from '../execute';
 import getAbsolutePath from '../helpers/getAbsolutePath';
 import getSuggestions from '../helpers/getSuggestions';
 import initContext from '../context/initContext';
-import log from '../log/default/large';
+import log from '../log/default';
 import merge from '../helpers/merge';
 import runHook from '../hooks/runHook';
 import validateSettingsWrapper from '../validation/validateSettingsWrapper';
@@ -36,8 +36,8 @@ export default function runCli({
 }) {
     const {
         _, h, help, V, verbose, v, version, c, config, d, directory, b, 'better-feedback': betterFeedback,
-        ...restOptions,
-    } = minimist(argv.slice(2));
+        '--': extraArguments, ...restOptions,
+    } = minimist(argv.slice(2), { '--': true });
 
     // The first should be our command if there is one
     const [groupOrCommand, ...args] = _;
@@ -110,7 +110,7 @@ export default function runCli({
     }
 
     if (!commands[command]) {
-        log.error(
+        log.large.error(
             getSuggestions([command], suggestions),
             'Invalid command'
         );
@@ -164,8 +164,14 @@ export default function runCli({
     if (invoke) {
         // If string run as shell command
         if (isString(commands[command].command)) {
-            return execute(commands[command].command)
-                .catch(process.exit);
+            return execute(commands[command].command, {
+                context: commands[command].__context,
+                args: extraArguments,
+                cwd: directory,
+            }).catch((error) => {
+                process.exitCode = error.getCode ? error.getCode() : 1;
+                log.small.error('An error happened when running the Roc command', error);
+            });
         }
 
         // Run the command
@@ -173,6 +179,7 @@ export default function runCli({
             info,
             arguments: parsedArguments,
             options: parsedOptions,
+            extraArguments,
 
             // Roc Context
             context,

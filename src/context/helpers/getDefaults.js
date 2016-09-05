@@ -16,7 +16,7 @@ export default function getDefaults(context, name = 'roc', directory) {
         commands: getDefaultCommands(directory) || {},
     });
 
-    newContext.commands = normalizeCommands(name, newContext.commands);
+    newContext.commands = normalizeCommands(name, null, newContext.commands);
 
     newContext.hooks = registerHooks(getDefaultHooks(), 'roc', newContext.hooks);
 

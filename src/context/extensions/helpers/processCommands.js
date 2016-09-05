@@ -8,17 +8,17 @@ import merge from '../../../helpers/merge';
 import buildList from './buildList';
 
 // Updates the command object and validates it
-export default function processCommands(name, extensionCommands, stateCommands) {
+export default function processCommands(name, path, extensionCommands, stateCommands) {
     return validateCommands(
         name,
-        normalizeCommands(name, extensionCommands, stateCommands),
+        normalizeCommands(name, path, extensionCommands, stateCommands),
         stateCommands,
         true
     );
 }
 
 // Updated the command object
-export function normalizeCommands(name, extensionCommands, stateCommands = {}) {
+export function normalizeCommands(name, path, extensionCommands, stateCommands = {}) {
     const normalizeCommandsHelper = (newCommands, existingCommands = {}, oldPath = '') => {
         const localCommands = { ...newCommands };
         Object.keys(localCommands).forEach((command) => {
@@ -30,7 +30,11 @@ export function normalizeCommands(name, extensionCommands, stateCommands = {}) {
                     localCommands[command] = {
                         command: localCommands[command],
                         __extensions: [name],
+                        __context: path,
                     };
+                } else if (localCommands[command].command) {
+                    // If the command has been changed we would like to update the context for it
+                    localCommands[command].__context = path;
                 }
 
                 localCommands[command].__extensions = union(existingExtensions, [name]);
@@ -38,6 +42,7 @@ export function normalizeCommands(name, extensionCommands, stateCommands = {}) {
                 // If it was a command group and now is a command
                 if (isCommandGroup(existingCommands)(command) && isCommand(localCommands)(command)) {
                     localCommands[command].__extensions = [name];
+                    localCommands[command].__context = path;
                 }
             } else if (isCommand(localCommands)(command)) {
                 if (!isPlainObject(localCommands[command])) {
@@ -47,6 +52,7 @@ export function normalizeCommands(name, extensionCommands, stateCommands = {}) {
                 }
 
                 localCommands[command].__extensions = [name];
+                localCommands[command].__context = path;
             }
 
             if (
