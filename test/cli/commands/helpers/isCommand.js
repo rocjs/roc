@@ -26,6 +26,8 @@ describe('cli', () => {
                     expect(isCommand(commandsObject.meta)('docs')).toBeTruthy();
                     expect(isCommand(commandsObject.meta)('list')).toBeTruthy();
                     expect(isCommand(commandsObject.meta)('extra')).toBeFalsy();
+
+                    expect(isCommand(commandsObject.meta.extra)('test')).toBeTruthy();
                 });
             });
         });
