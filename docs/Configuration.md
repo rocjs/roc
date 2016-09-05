@@ -1,11 +1,11 @@
 # Configuration
-Roc features a configuration system that makes it possible for extensions to define things that other extensions and projects can use and configure.
+Roc features a configuration system that makes it possible for extensions to define useful data that other extensions and projects can use.
 
 ## Configuration in Extensions
-Configuration in extensions are similar to projects with some slight variances. Mainly the existence of a meta configuration that can be used to further define the configuration.
+Configuration in extensions are similar to projects with some slight differences. Mainly the existence of a meta configuration that can be used to further enhance the user experience and documentation generation.
 
 ### Configuration
-The configuration object in extensions have one property that is specially managed by Roc, `settings`, and one that extensions are not allowed to define, `project`. Other than that they are free to define additional properties as they need.
+The configuration object in extensions has one property that is specially managed by Roc, `settings`, and one that extensions are not allowed to define, `project`. Other than that extensions are free to define additional properties as they need.
 
 __Example__
 ```javascript
@@ -20,7 +20,7 @@ __Example__
 [Read more about settings here.](/docs/Settings.md)
 
 #### Custom properties
-Extensions are allowed to define additional properties to suit their needs. An example of this could be something that does not make sense to provide on the normal settings in some way for one reason or another. In general it is recommended to use `settings` to get the best possible documentation generation and allow user to define things on the command line.
+Extensions are allowed to define additional properties to suit their needs. An example of this could be something that does not make sense to provide within the normal settings managed by the core. In general it is recommended to use `settings` to get the best possible documentation generation as well as allowing a user to define things on the command line. With custom properties you lose this.
 
 __Example__
 ```javascript
@@ -31,13 +31,13 @@ __Example__
 ```
 
 ### Meta Configuration
-The meta configuration should mirror the normal configuration file.
+The meta configuration should mirror the normal configuration structure.
 
 #### `settings`
 [Read more here.](/docs/Settings.md)
 
 #### Custom properties
-Custom properties that are defined by extensions can define meta information, `description` and `override`.
+Custom properties that are defined by extensions can define useful meta information, `description` and `override`.
 
 __Example__
 ```javascript
@@ -48,7 +48,7 @@ __Example__
     },
 
     custom2: {
-        description: (commandObject, configurationForProperty) => {},
+        description: (commandObject, configurationForProperty) => '',
         override: 'roc-package-example'
     }
 }
@@ -72,7 +72,7 @@ Roc projects can be configured to a great extent using the `roc.config.js` file.
 Once imported to your project the configuration will persist throughout the process lifetime and it’s recommended that it is treated as it would be immutable.
 
 ### Expected structure
-Roc expects that the `roc.config.js` exports an object and by default some properties are managed as can be seen below. Extensions can add more managed properties.
+Roc expects that the `roc.config.js` exports an object and by default some properties are managed as illustrated in the example below. Extensions can add more managed properties.
 
 __Example__
 ```javascript
@@ -83,7 +83,7 @@ module.exports = {
     init: () => {}
   },
 
-  // Extension defined properties
+  // Extension defined / custom properties
   custom: {}
 };
 ```
@@ -96,14 +96,14 @@ See the documentation for the extensions that are used in the project or the gen
 #### `project`
 
 ##### `actions`
-A function or an array of functions and/or objects. The functions work in the same way as for extensions and the same with the objects.
+A function or an array of functions and/or objects. The functions and objects work in the same way as for extensions.
 
-See the documentation for the extensions that are used in the project or the generated documentation from `roc meta docs` for the available hooks that the project can register itself on.
+See the documentation for the extensions that are used in the project or the generated documentation from `roc meta docs` for the available hooks that the project can register actions on.
 
 [See more here about the general structure.](/docs/Hooks.md#actions)
 
 ##### `init`
-A function that work much in the [same way as for extensions](/docs/RocObject.md#init). Can be used to modify the context in an advanced way. Most user will not need to use this.
+A function that work much in the [same way as for extensions](/docs/RocObject.md#init). Can be used to modify the context in an advanced way. Most users will not need to use this.
 
 __Example__
 ```javascript
@@ -126,7 +126,7 @@ __Example__
     hooks,
     meta
   },
-  update: {
+  context: {
     actions,
     commands,
     config,
@@ -137,7 +137,7 @@ __Example__
 ```
 
 __`roc`__  
-Will be merged with the values already present directly on the Roc object with the values from the init function overwriting.
+Will be shallow merged with the values already present directly on the Roc object.
 
 Supports specifying:
 - actions
@@ -146,7 +146,7 @@ Supports specifying:
 - hooks
 - meta
 
-__`update`__  
+__`context`__  
 Will replace the already present values on the context.
 
 Supports specifying:
@@ -156,7 +156,7 @@ Supports specifying:
 - dependencies
 - meta
 
-_Note:_ `hooks` are not present in the `update` object. This since it would not make sense to remove registered hooks from other extensions.
+_Note:_ `hooks` are not present in the `context` object. This since it would not make sense to remove registered hooks from other extensions.
 
 _Note:_ `dependencies` are not present in `roc`.
 

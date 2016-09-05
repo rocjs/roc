@@ -13,11 +13,11 @@ describe('context', () => {
                     expect(response.roc).toBe(roc);
                     expect(response).toEqual({
                         roc,
-                        update: undefined,
+                        context: undefined,
                     });
                 });
 
-                it('should overwrite props in roc from result.roc and provide update', () => {
+                it('should overwrite props in roc from result.roc and provide context', () => {
                     const roc = {
                         name: 'test',
                         config: {
@@ -35,7 +35,7 @@ describe('context', () => {
                             },
                             notSupported: 123,
                         },
-                        update: {
+                        context: {
                             dependencies: {},
                         },
                     };
@@ -45,7 +45,7 @@ describe('context', () => {
                             name: 'test',
                             config: result.roc.config,
                         },
-                        update: {
+                        context: {
                             dependencies: {},
                         },
                     });
@@ -73,7 +73,7 @@ describe('context', () => {
                                 },
                             },
                         },
-                        update: {
+                        context: {
                             dependencies: {},
                             actions: [],
                             hooks: {},

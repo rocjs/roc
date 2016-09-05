@@ -247,7 +247,7 @@ __Example__
     hooks,
     meta
   },
-  update: {
+  context: {
     actions,
     commands,
     config,
@@ -268,7 +268,7 @@ Supports specifying:
 - hooks
 - meta
 
-__`update`__  
+__`context`__  
 Will replace the already present values on the context.
 
 Supports specifying:
@@ -280,7 +280,7 @@ Supports specifying:
 
 Dependencies will be used for both the project and the extension itself.
 
-_Note:_ `hooks` are not present in the `update` object. This since it would not make sense to remove registered hooks from other extensions.
+_Note:_ `hooks` are not present in the `context` object. This since it would not make sense to remove registered hooks from other extensions.
 
 ### `meta`
 The Roc meta configuration object.
@@ -351,7 +351,7 @@ __Example__
     hooks,
     meta
   },
-  update: {
+  context: {
     actions,
     commands,
     config,
@@ -370,7 +370,7 @@ Supports specifying:
 - hooks
 - meta
 
-__`update`__  
+__`context`__  
 Will replace the already present values on the context.
 
 Supports specifying:
@@ -379,7 +379,7 @@ Supports specifying:
 - config
 - meta
 
-_Note:_ `hooks` are not present in the `update` object. This since it would not make sense to remove registered hooks from other extensions.
+_Note:_ `hooks` are not present in the `context` object. This since it would not make sense to remove registered hooks from other extensions.
 
 _Note:_ `dependencies` are not present. This since it would be to late to change them at this time.
 
