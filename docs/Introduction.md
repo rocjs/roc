@@ -1,10 +1,10 @@
 # Introduction
 
-Roc is a tool that assists in creating and managing JavaScript projects. It has the ambitious goal of making it easier to work with modern web development, that at times can be quite complex and require a lot of tooling and configuration to get started.
+Roc is a tool that assists in creating and managing JavaScript projects built on libraries from npm. It has the ambitious goal of making it easier to work with modern JavaScript development, which at times can be quite complex and require a lot of tooling and configuration.
 
-The core of Roc (this project) aims to be as agnostic as possible and instead uses opinionated [extensions](#extensions) to provide different frameworks and libraries along with [templates](#templates) for easy and predictable initial setup. When putting all of this together you get an ecosystem that enables developers to focus on writing great software and away from tooling and juggling boilerplates that degrade over time.
+The core of Roc (this project) aims to be as agnostic as possible and uses opinionated [extensions](#extensions) to provide different frameworks and libraries along with [templates](#templates) for easy and predictable initial setup. When putting all of this together you get an ecosystem that enables developers to focus on writing great software and away from tooling and juggling boilerplates that degrade over time.  All the software (including Roc itself) is still on npm.
 
-By design it will in most cases be trivial to migrate away from or to Roc _(based on individual extensions)_ because the code you write is the same code you would write without it; just with less boilerplate, setup and dependency management.
+By design it will in most cases be trivial to migrate away from or to Roc _(based on individual extensions)_ because the code you write is the same code you would write without it; just with less boilerplate, setup and dependency management directly coupled with your project space.
 
 __Why Roc?__
 - Get started quickly and easily
@@ -12,6 +12,8 @@ __Why Roc?__
 - Unopinionated, allowing for a wide range of different types of projects
 - Composable, easy to add and remove functionality
 - Modular, easy to create custom packages & plugins for specific needs
+
+Roc removes fragmented configurations, boilerplate and toolchain complexity from your project space without limiting you.
 
 ## Overview
 You can see Roc as mainly four separate things that work together.
