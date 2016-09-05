@@ -27,13 +27,15 @@ function logger(level, color) {
         printError(error, log);
 
         if (level === 'error') {
-            process.exit(1); // eslint-disable-line
+            process.exit(process.exitCode || 1); // eslint-disable-line
         }
     };
 }
 
 function printError(error, log) {
     if (error && error.message) {
-        log(`\n${(getContext().verbose ? error.stack : error.message)}`);
+        // Transform Error: XYZ to XYZ for a nicer error message
+        // We will only change the error if it is a generic error
+        log(`\n${(getContext().verbose ? error.stack : error.toString().replace(/^Error: /, ''))}`);
     }
 }

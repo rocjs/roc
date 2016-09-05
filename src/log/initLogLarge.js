@@ -40,7 +40,7 @@ ${trimNewlines(redent(message, 2))}${redent(getError(error), 2)}
   ${getFromWhere(name, version, error)}`
     );
             if (level === 'error') {
-                process.exit(1); // eslint-disable-line
+                process.exit(process.exitCode || 1); // eslint-disable-line
             }
         };
     };
@@ -61,7 +61,9 @@ function getFromWhere(name, version, error) {
 
 function getError(error) {
     if (error && error.message) {
-        return `\n\n${getContext().verbose ? error.stack : error.message}`;
+        // Transform Error: XYZ to XYZ for a nicer error message
+        // We will only change the error if it is a generic error
+        return `\n\n${getContext().verbose ? error.stack : error.toString().replace(/^Error: /, '')}`;
     }
 
     return '';
