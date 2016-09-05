@@ -47,7 +47,7 @@ All commands have some default options that can be used together with them.
 
 ### Default commands
 
-Some commands are default, that is that they are not owned by any specific extension. This commands come from the core, `roc`, and some of the will always be present while others will only be available in valid Roc projects.
+Some commands are default, this means that they are not owned by any specific extension. These commands come from the core, `roc`, and some of them will always be present while others will only be available in valid Roc projects.
 
 The `meta` group commands will only be available in valid Roc projects while the `create` group is always present no matter the context.
 
@@ -58,10 +58,10 @@ Extensions can define new commands and change existing ones through their interf
 
 [Read more here about how to define extensions in general below.](#add-commands)
 
-## How the CLI operates
+## How the CLI operates on user input
 
 ### Arrays
-In Roc will arguments and options that take arrays as values need to separate the values using comma (together with `toArray`) or multiple flags.
+In Roc arguments and options that take arrays as values need to separate the values using a comma (together with `toArray`) or multiple flags.
 
 __Example__
 ```
@@ -75,7 +75,7 @@ $ roc <command> --options 1 --options 2 --options 3 --options 4
 `options = [1,2,3,4]`
 
 ### Booleans
-Roc will consider options whiteout a value as `true` and also support a `no-` prefix to set an option to `false`.
+Roc will consider options without a value as `true` and also support a `no-` prefix to set an option to `false`.
 
 __Example__
 ```
