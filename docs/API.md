@@ -359,4 +359,4 @@ __`args`__
 An array with arguments, will default to `process.argv`.
 
 __`invoke`__  
-A boolean that is used to determine ff a command should be invoked after the context has been built or not. Default to `true`.
+A boolean that is used to determine ff a command should be invoked after the context has been built or not. Defaults to `true`.
