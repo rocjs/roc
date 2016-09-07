@@ -53,34 +53,33 @@ __Example__
         hasCallback: true, // If it uses a callback - optional
         initialValue: [], // The initial value - optional
         returns: isArrayOrSingle(isString), // What it expects to get after all the actions has been processed, used for validation and for documentation - optional
-        arguments: [{ // The arguments that the hook will call the actions with - optional
-            name: 'target', // The name of the argument
-            validator: isString, // The validator for the argument
-            description: 'Lorem bacon' // A description
-        }]
+        arguments: { // The arguments that the hook will call the actions with - optional
+            target: { // The name of the argument
+                validator: isString, // The validator for the argument
+                description: 'Lorem bacon' // A description
+            }
+        }
     },
 
     'babel-load-plugins': {
         description: 'Expected to return a concatenated array with the final presets to use.', // A description on what it does, used for documentation generation and can use Markdown
         initialValue: [], //
         returns: isArray(isString),
-        arguments: [{
-            description: 'Lorem bacon'
-            name: 'target',
-            validation: isString,
-        }]
+        arguments: {
+            target: {
+                description: 'Lorem bacon'
+                validation: isString,
+            }
+        }
     },
 }
 ```
 
 #### `arguments`
-An array of object that documents the arguments that the hook uses, what actions will be called with. The order is important and need match the order that is used when running the hook. Will bring better validation and documentation, optional.
+An object that documents the arguments that the hook uses, what actions will be called with, and where the keys are the name of the arguments. The order is important and need match the order that is used when running the hook. Will bring better validation and documentation, optional. They key will be used as the name for the argument and used when generating documentation.
 
 __`description`__  
 A string that describes what the argument is to be used for. Can contain markdown and will be used when generating documentation.
-
-__`name`__  
-A string that is the name for the argument. Will be used when generating documentation.
 
 __`validation`__  
 A validator function that will validate the argument that. Will also be used for the documentation generation.

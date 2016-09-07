@@ -158,17 +158,22 @@ command3: {
 ```
 
 #### `arguments`
-An array of objects that define what arguments the command uses. The order of the objects in the array matter, they are parsed in the same order.
+An object where the keys are the names for the arguments. The order of the keys matter, they are parsed in the same order as they are listed. 
+
+The key will be used for in the CLI for information and as the name of the value in [`commandObject.arguments.managed`](/docs/Commands.md#command-object).
+
+Internally `Object.getOwnPropertyNames` is used to guarantee the order as they are created.
 
 __Example__
 ```javascript
-arguments: [{
-  converter: toBoolean,
-  default: false
-  description: 'If something should be enabled or not',
-  name: 'feature',
-  validator: isBoolean
-}]
+arguments: {
+  feature: {
+    converter: toBoolean,
+    default: false
+    description: 'If something should be enabled or not',
+    validator: isBoolean
+  }
+}
 ```
 
 __`converter`__  
@@ -181,9 +186,6 @@ The value that the argument will hold if nothing is provided to the CLI.
 
 __`description`__  
  A text that describes how the argument can be used.
-
-__`name`__  
-The name of the argument. Will be used for in the CLI for information and as the name of the value in [`commandObject.arguments.managed`](/docs/Commands.md#command-object).
 
 __`validator`__  
 Roc assumes that the validators used is either a RegExp or a function that will return true if it's valid or false/error string if it's not.
@@ -202,18 +204,23 @@ Used when printing information about a specific command. The input is reindented
 Used when generating documentation for the commands. The input is reindented and starting/ending newlines are trimmed which means you can use a template literal without having to care about using the correct amount of indent. If no `markdown` is provided the `help` will be used instead.
 
 #### `options`
-An array of objects that define what options the command uses. The order of the objects in the array does not matter.
+An object where the keys are the names for the options.
+
+The key will be used for in the CLI for information and as the name of the value in [`commandObject.options.managed`](/docs/Commands.md#command-object).
+
+All properties on the object is optional.
 
 __Example__
 ```
-options: [{
-  alias: 'f', // Will be used as '-f'
-  converter: toBoolean,
-  default: false
-  description: 'If something should be enabled or not',
-  name: 'feature', // Will be used as '--feature'
-  validator: isBoolean
-}]
+options: { 
+  feature: { // Will be used as '--feature'
+    alias: 'f', // Will be used as '-f'
+    converter: toBoolean,
+    default: false
+    description: 'If something should be enabled or not',
+    validator: isBoolean
+  }
+}
 ```
 
 __`alias`__  
@@ -229,9 +236,6 @@ The value that the option will hold if nothing is provided to the CLI.
 
 __`description`__  
  A text that describes how the option can be used.
-
-__`name`__  
-The name of the option. Will be used for in the CLI for information and as the name of the value in [`commandObject.options.managed`](/docs/Commands.md#command-object).
 
 __`validator`__  
 Roc assumes that the validators used is either a RegExp or a function that will return true if it's valid or false/error string if it's not.

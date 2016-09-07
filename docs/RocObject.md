@@ -68,11 +68,11 @@ __Example__
       build: String / Function,
       dev: {
         command: String / Function,
-        arguments: [Objects] - optional,
+        arguments: Object - optional,
         description: String - optional,
         help: String - optional,
         markdown: String - optional,
-        options: [Objects] - optional,
+        options: Object - optional,
         settings: true / [Strings] - optional
       }
     }
@@ -197,17 +197,18 @@ An array with objects that define hooks.
 __Example__
 ```javascript
 {
-    'babel-load-presets': { // The name of the hook, important as this is used by actions
-        description: 'Expected to return a presets to add to the array of presets to use.', // A description on what it does, used for documentation generation and can use Markdown - optional
-        hasCallback: true, // If it uses a callback - optional
-        initialValue: [], // The initial value - optional
-        returns: isArrayOrSingle(isString), // What it expects to get after all the actions has been processed, used for validation and for documentation - optional
-        arguments: [{ // The arguments that the hook will call the actions with - optional
-            name: 'target', // The name of the argument
-            validator: isString, // The validation for the argument
-            description: 'Lorem bacon' // A description
-        }]
+  'babel-load-presets': { // The name of the hook, important as this is used by actions
+    description: 'Expected to return a presets to add to the array of presets to use.', // A description on what it does, used for documentation generation and can use Markdown - optional
+    hasCallback: true, // If it uses a callback - optional
+    initialValue: [], // The initial value - optional
+    returns: isArrayOrSingle(isString), // What it expects to get after all the actions has been processed, used for validation and for documentation - optional
+    arguments: { // The arguments that the hook will call the actions with - optional
+      target: { // The name of the argument
+        validator: isString, // The validation for the argument
+        description: 'Lorem bacon' // A description
+      }
     }
+  }
 }
 ```
 
