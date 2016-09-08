@@ -55,11 +55,11 @@ Manages a runtime that drives extensions allowing them to do powerful things lik
 ### Extensions
 ![extensions](/docs/assets/extensions.png)
 
-Extensions are typically opinionated modules that add code and configuration needed to build a project as well as some boilerplate code in some instances. They come in two forms, __packages__ and __plugins__.
+Extensions are typically opinionated modules that add code and configuration needed to build a project as well as boilerplate code in some instances. Extensions come in two forms, __packages__ and __plugins__. They are always npm packages unless declared as standalone.
 
-A user project can use multiple extensions that together composes everything needed for the project. That is build management, testing, project code, commands and much more.
+A user project can use multiple extensions that together compose everything needed for the project. That is build management, testing, project code, cli commands and much more.
 
-By design most extensions will try to be out of the developers way as much as possible and should in most cases not introduce anything specific to Roc that needs to be considered when writing code. This makes it easier to learn and also migrate away from or to Roc.
+By design most extensions will try to stay out of the developers way as much as possible and should in most cases not introduce anything specific to Roc that needs to be considered when writing your code. This makes it easier to learn and also migrate away from or to Roc.
 
 [Read more here.](/docs/Extensions.md)
 
