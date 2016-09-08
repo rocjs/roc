@@ -1,9 +1,10 @@
 # Commands for `roc`
 
 ## General Information
-All commands can be called with some additional options illustrated in the table below.
+All commands can be called with some additional options as can be seen below.
 
 ### General options
+
 | Name                  | Description                                                                                                   | Required |
 | --------------------- | ------------------------------------------------------------------------------------------------------------- | -------- |
 | -b, --better-feedback | Will enable source-map-support and loud-rejection for a better experience with better feedback.               | No       |
@@ -49,16 +50,19 @@ __version__
 Versions should match a tag on the Github repo and will default to master if none exists. When giving an input on the command line Roc will automatically add `v` in front of versions that starts with a number to match Github default that have versions tags that start with `v` like `v1.0.0`. `master` is also always available as an option.
 
 #### Arguments
-| Name        | Description                                                                           | Default | Type       | Required | Can be empty |
-| ----------- | ------------------------------------------------------------------------------------- | ------- | ---------- | -------- | ------------ |
-| template    | The template to use. Matches Github structure with Username/Repo or a local zip file. |         | `Filepath` | No       | No           |
-| version     | The version to use.                                                                   |         | `String`   | No       | No           |
+
+| Name                | Description                                                | Default | Type       | Required | Can be empty |
+| ------------------- | ---------------------------------------------------------- | ------- | ---------- | -------- | ------------ |
+| template            | The template to use.                                       |         | `Filepath` | No       | No           |
+| version             | The version of the template to use.                        |         | `String`   | No       | No           |
 
 #### Command options
-| Name        | Description                                                                           | Default | Type       | Required | Can be empty |
-| ----------- | ------------------------------------------------------------------------------------- | ------- | ---------- | -------- | ------------ |
-| -f, --force | Ignore non empty directory warning.                                                   |         | `Boolean`  | No       |              |
-| -l, --list  | List the available versions of a template.                                            |         | `Boolean`  | No       |              |
+
+| Name                | Description                                                | Default | Type       | Required | Can be empty |
+| ------------------- | ---------------------------------------------------------- | ------- | ---------- | -------- | ------------ |
+| --clone             | If git clone should be used when downloading the template. |         | `Boolean`  | No       |              |
+| -f, --force         | Ignore non empty directory warning.                        |         | `Boolean`  | No       |              |
+| -l, --list-versions | List the available versions of a template.                 |         | `Boolean`  | No       |              |
 
 ####  Defined by extensions
 roc
@@ -72,17 +76,20 @@ roc create new <name> [template] [version]
 Alias for "init" that always will try to create a new directory.
 
 #### Arguments
-| Name        | Description                                                                           | Default | Type       | Required | Can be empty |
-| ----------- | ------------------------------------------------------------------------------------- | ------- | ---------- | -------- | ------------ |
-| name        | Name for a new directory to create the project in.                                    |         | `String`   | Yes      | No           |
-| template    | The template to use. Matches Github structure with Username/Repo or a local zip file. |         | `Filepath` | No       | No           |
-| version     | The version to use.                                                                   |         | `String`   | No       | No           |
+
+| Name                | Description                                                | Default | Type       | Required | Can be empty |
+| ------------------- | ---------------------------------------------------------- | ------- | ---------- | -------- | ------------ |
+| name                | Name for a new directory to create the project in.         |         | `String`   | Yes      | No           |
+| template            | The template to use.                                       |         | `Filepath` | No       | No           |
+| version             | The version of the template to use.                        |         | `String`   | No       | No           |
 
 #### Command options
-| Name        | Description                                                                           | Default | Type       | Required | Can be empty |
-| ----------- | ------------------------------------------------------------------------------------- | ------- | ---------- | -------- | ------------ |
-| -f, --force | Ignore non empty directory warning.                                                   |         | `Boolean`  | No       |              |
-| -l, --list  | List the available versions of a template.                                            |         | `Boolean`  | No       |              |
+
+| Name                | Description                                                | Default | Type       | Required | Can be empty |
+| ------------------- | ---------------------------------------------------------- | ------- | ---------- | -------- | ------------ |
+| --clone             | If git clone should be used when downloading the template. |         | `Boolean`  | No       |              |
+| -f, --force         | Ignore non empty directory warning.                        |         | `Boolean`  | No       |              |
+| -l, --list-versions | List the available versions of a template.                 |         | `Boolean`  | No       |              |
 
 ####  Defined by extensions
 roc
@@ -104,12 +111,13 @@ roc meta docs
 ```
 
 #### Command options
+
 | Name       | Description                                                   | Default        | Type                                                              | Required | Can be empty |
 | ---------- | ------------------------------------------------------------- | -------------- | ----------------------------------------------------------------- | -------- | ------------ |
 | --html     | If HTML should be generated. (Not supported yet)              | `false`        | `Boolean`                                                         | No       |              |
 | --markdown | If markdown should be generated.                              | `true`         | `Boolean`                                                         | No       |              |
 | --mode     | The platform that is to be used, for link generation.         | `"github.com"` | `/github\.com|nodejs\.org|bitbucket\.org|ghost\.org|gitlab\.com/` | No       |              |
-| --output   | A directory to place the generated documentation inside of.   | `"docs"`       | `String`                                                         | No       |              |
+| --output   | A directory to place the generated documentation inside of.   | `"docs"`       | `String`                                                          | No       | No           |
 | --project  | If the projects configuration and actions should be included. | `false`        | `Boolean`                                                         | No       |              |
 
 ####  Defined by extensions
@@ -124,3 +132,4 @@ roc meta list-settings
 
 ####  Defined by extensions
 roc
+
