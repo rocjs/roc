@@ -14,7 +14,7 @@ export default function initLogLarge(name, version) {
         warn: logger(name, version)('warn', 'Warning'),
         error: logger(name, version)('error', 'Error'),
         ok: logger(name, version)('log', 'Ok'),
-        done: logger(name, version)('log', 'Done'),
+        success: logger(name, version)('log', 'Success'),
         raw: logger(name, version),
     };
 }

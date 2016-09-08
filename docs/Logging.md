@@ -57,10 +57,10 @@ Output: `console.log`
 Color: `green`  
 Label: Ok
 
-#### `done`
+#### `success`
 Output: `console.log`  
 Color: `green`  
-Label: Done
+Label: Success
 
 #### `raw`
 Used to specify a logger function on `console`. First argument should be a string that can be either `info`, `warn`, `error` or `log`. The second argument is is the default label text.
@@ -78,7 +78,7 @@ Used for small messages.
 ### Types
 Several modes exists that can be used.
 
-When having a logger each of the types can be used as a property. The logging function takes in a message as the first argument and an optional `Error` as the second argument. If `verbose` is enabled the `error.stack` will be displayed, otherwise just `error.message`.
+When having a logger each of the types can be used as a property. The logging function takes in a message as the first argument and an optional `Error` as the second argument and the third is a boolean that determines if a potential symbol should be shown, default to `true`. If `verbose` is enabled the `error.stack` will be displayed, otherwise just `error.message`.
 
 __Example__
 ```javascript
@@ -86,7 +86,7 @@ import initSmall from 'roc/log/small';
 
 const log = initSmall(packageJSON.name, packageJSON.version);
 
-log.error('Some message', potentialError);
+log.error('Some message', potentialError, showSymbol);
 ```
 
 #### `info`
@@ -95,26 +95,31 @@ Color: Default
 
 #### `note`
 Output: `console.info`  
-Color: `cyan`
+Color: `cyan`  
+Symbol: `ℹ`
 
 #### `warn`
 Output: `console.warn`  
-Color: `yellow`
+Color: `yellow`  
+Symbol: `⚠`
 
 #### `error`
 Output: `console.error`  
-Color: `red`
+Color: `red`  
+Symbol: `✖`
 
 #### `ok`
 Output: `console.log`  
 Color: `green`
 
-#### `done`
-Alias for `log.ok`.
+#### `success`
+Output: `console.log`  
+Color: `green`  
+Symbol: `✔`
 
 #### `raw`
-Used to specify a logger function on `console`. First argument should be a string that can be either `info`, `warn`, `error` or `log`. The second argument is an optional color from [`chalk`](https://www.npmjs.com/package/chalk).
+Used to specify a logger function on `console`. First argument should be a string that can be either `info`, `warn`, `error` or `log`. The second argument is an optional color from [`chalk`](https://www.npmjs.com/package/chalk). The third argument is an optional symbol to show in front of the message.
 
 ```javascript
-log.raw('info', 'blue')('a message', potentialError);
+log.raw('info', 'blue', '🦄')('a message', potentialError, showSymbol);
 ```

@@ -101,7 +101,7 @@ export default function generateDocumentation({
     }
 
     return Promise.all(documentations)
-        .then(() => log.done(`Documentation has been generated in ${underline(documentationDir)}`));
+        .then(() => log.success(`Documentation has been generated in ${underline(documentationDir)}`));
 }
 
 function generateMarkdown(documentation) {
