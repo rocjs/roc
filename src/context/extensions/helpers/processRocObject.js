@@ -13,7 +13,7 @@ export function handleResult(roc, result) {
     if (!result) {
         return {
             roc,
-            context: undefined,
+            newContext: undefined,
         };
     }
 
@@ -29,13 +29,13 @@ export function handleResult(roc, result) {
                 'meta',
             ]),
         },
-        context: result.context,
+        newContext: result.context,
     };
 }
 
 /* eslint-disable no-param-reassign */
 export default function processRocObject(
-    { roc, context = {} },
+    { roc, newContext = {} },
     state,
     allowNewDependencies = true,
     allowUpdateDependencies = true,
@@ -47,8 +47,8 @@ export default function processRocObject(
         // things to be able to react to it.
 
         if (allowUpdateDependencies) {
-            if (context.dependencies) {
-                state.context.dependencies = context.dependencies;
+            if (newContext.dependencies) {
+                state.context.dependencies = newContext.dependencies;
             }
         }
 
@@ -79,8 +79,8 @@ export default function processRocObject(
             state.context.hooks = registerHooks(roc.hooks, roc.name, state.context.hooks);
         }
 
-        if (context.actions) {
-            state.context.actions = context.actions;
+        if (newContext.actions) {
+            state.context.actions = newContext.actions;
         }
 
         // Get potential actions
@@ -88,8 +88,8 @@ export default function processRocObject(
             state.context.actions = registerActions(roc.actions, roc.name, state.context.actions);
         }
 
-        if (context.commands) {
-            state.context.commands = context.commands;
+        if (newContext.commands) {
+            state.context.commands = newContext.commands;
         }
 
         // Get potential commands
@@ -100,12 +100,12 @@ export default function processRocObject(
             );
         }
 
-        if (context.config) {
-            state.context.config = context.config;
+        if (newContext.config) {
+            state.context.config = newContext.config;
         }
 
-        if (context.meta) {
-            state.context.meta = context.meta;
+        if (newContext.meta) {
+            state.context.meta = newContext.meta;
         }
 
         state.context.meta = processConfig(roc.name,

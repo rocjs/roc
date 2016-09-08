@@ -13,7 +13,7 @@ describe('context', () => {
                     expect(response.roc).toBe(roc);
                     expect(response).toEqual({
                         roc,
-                        context: undefined,
+                        newContext: undefined,
                     });
                 });
 
@@ -45,7 +45,7 @@ describe('context', () => {
                             name: 'test',
                             config: result.roc.config,
                         },
-                        context: {
+                        newContext: {
                             dependencies: {},
                         },
                     });
