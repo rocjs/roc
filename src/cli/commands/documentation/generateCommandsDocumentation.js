@@ -55,7 +55,7 @@ function getObjects(commands, parentNames = [], level = 1) {
         .filter((command) => isCommand(commands)(command))
         .sort()
         .map((command) => {
-            const options = isPlainObject(commands[command]) && commands[command].arguments ?
+            const args = isPlainObject(commands[command]) && commands[command].arguments ?
                 getCommandArgumentsAsString(commands[command]) :
                 '';
             const description = isPlainObject(commands[command]) && commands[command].description ?
@@ -63,7 +63,7 @@ function getObjects(commands, parentNames = [], level = 1) {
                 '';
 
             return {
-                name: (parentNames.concat(command).join(' ') + options),
+                name: (parentNames.concat(command).join(' ') + args),
                 level,
                 description,
             };

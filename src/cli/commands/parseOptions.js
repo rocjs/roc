@@ -8,6 +8,7 @@ import log from '../../log/default/large';
 import getSuggestions from '../../helpers/getSuggestions';
 import keyboardDistance from '../../helpers/keyboardDistance';
 import automatic from '../../converters/automatic';
+import objectToArray from '../../helpers/objectToArray';
 
 import { defaultOptions, defaultOptionsAlias } from './getDefaultOptions';
 
@@ -98,8 +99,10 @@ function parseCommandOptions(command, notManaged) {
     };
 
     if (command && command.options) {
-        possibleCommandOptions = command.options.map((option) => option.name);
-        possibleCommandOptionsShort = command.options.reduce((previous, option) => {
+        const options = objectToArray(command.options);
+
+        possibleCommandOptions = options.map((option) => option.name);
+        possibleCommandOptionsShort = options.reduce((previous, option) => {
             if (option.alias) {
                 return previous.concat(option.alias);
             }
@@ -107,7 +110,7 @@ function parseCommandOptions(command, notManaged) {
             return previous;
         }, []);
 
-        command.options.forEach((option) => {
+        options.forEach((option) => {
             let value;
             let name;
 

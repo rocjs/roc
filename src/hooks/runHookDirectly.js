@@ -4,6 +4,7 @@ import log from '../log/default';
 import isValid from '../validation/helpers/isValid';
 import throwValidationError from '../validation/helpers/throwValidationError';
 import { getContext } from '../context/helpers/manageContext';
+import objectToArray from '../helpers/objectToArray';
 
 import { getActions } from './manageActions';
 
@@ -32,11 +33,12 @@ export default function runHookDirectly({
     }, args = [], callback) {
     // Validate args
     if (argumentsDefinitions) {
+        const argumentsDefinitionsArray = objectToArray(argumentsDefinitions);
         args.forEach((value, i) => {
-            const validationResult = isValid(value, argumentsDefinitions[i].validator);
+            const validationResult = isValid(value, argumentsDefinitionsArray[i].validator);
             if (validationResult !== true) {
                 try {
-                    throwValidationError(argumentsDefinitions[i].name, validationResult, value, 'argument');
+                    throwValidationError(argumentsDefinitionsArray[i].name, validationResult, value, 'argument');
                 } catch (err) {
                     log.large.error(
                         `An argument was not valid in ${underline(name)} from ${underline(extension)}.` +

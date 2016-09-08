@@ -5,6 +5,7 @@ import trimNewlines from 'trim-newlines';
 import generateTable from '../generateTable';
 import pad from '../helpers/pad';
 import createInfoObject from '../../validation/helpers/createInfoObject';
+import objectToArray from '../../helpers/objectToArray';
 
 import createStatefulAnchor from './helpers/createStatefulAnchor';
 
@@ -74,7 +75,7 @@ export default function hooksToMarkdown(name, hooks = {}, mode) {
 
             // Generate the arguments
             if (currentHook.arguments) {
-                const objects = currentHook.arguments.map((argument) => {
+                const objects = objectToArray(currentHook.arguments).map((argument) => {
                     const infoObject = argument.validator ? argument.validator(null, true) : createInfoObject();
                     return {
                         name: argument.name,

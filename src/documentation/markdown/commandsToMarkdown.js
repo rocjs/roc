@@ -10,6 +10,7 @@ import onProperty from '../../helpers/onProperty';
 import isCommandGroup from '../../cli/commands/helpers/isCommandGroup';
 import isCommand from '../../cli/commands/helpers/isCommand';
 import getInfoObject from '../../validation/helpers/getInfoObject';
+import objectToArray from '../../helpers/objectToArray';
 
 import createStatefulAnchor from './helpers/createStatefulAnchor';
 
@@ -189,7 +190,7 @@ function buildCommand(cli, command, commandData, allSettingGroups, printGroup, p
 
     // Generate the arguments
     if (commandData.arguments) {
-        const objects = commandData.arguments.map((argument) => {
+        const objects = objectToArray(commandData.arguments).map((argument) => {
             const infoObject = getInfoObject(argument.validator);
             return {
                 name: argument.name,
@@ -212,7 +213,7 @@ function buildCommand(cli, command, commandData, allSettingGroups, printGroup, p
 
     // Generate the options
     if (commandData.options) {
-        const objects = commandData.options.sort(onProperty('name')).map((option) => {
+        const objects = objectToArray(commandData.options).sort(onProperty('name')).map((option) => {
             const infoObject = getInfoObject(option.validator);
             return {
                 name: option.alias ? `-${option.alias}, --${option.name}` : `--${option.name}`,

@@ -7,6 +7,8 @@ import { registerHooks } from '../../hooks/manageHooks';
 import isObject from '../../validation/validators/isObject';
 import isFunction from '../../validation/validators/isFunction';
 import isBoolean from '../../validation/validators/isBoolean';
+import isString from '../../validation/validators/isString';
+import notEmpty from '../../validation/validators/notEmpty';
 
 export default function getDefaults(context, name = 'roc', directory) {
     const newContext = merge(context, {
@@ -30,11 +32,12 @@ function getDefaultHooks() {
             Expected to return new settings that should be merged with the existing ones.
 
             Makes it possible to modify the settings object before a command is started and after potential arguments from the command line and configuration file have been parsed. This is a good point to default to some value if no was given or modify something in the settings.`, // eslint-disable-line
-            arguments: [{
-                name: 'getSettings',
-                validator: isFunction,
-                description: 'A function that returns the settings after the context has been initialized.',
-            }],
+            arguments: {
+                getSettings: {
+                    validator: isFunction,
+                    description: 'A function that returns the settings after the context has been initialized.',
+                },
+            },
             returns: isObject(),
             hasCallback: true,
         },
@@ -67,32 +70,33 @@ function getDefaultCommands(directory) {
                             project: rocCommandObject.options.managed.project,
                         }),
                     description: 'Generates documentation for the current project.',
-                    options: [{
-                        name: 'html',
-                        default: false,
-                        description: 'If HTML should be generated. (Not supported yet)',
-                        validator: isBoolean,
-                    }, {
-                        name: 'mode',
-                        default: 'github.com',
-                        description: 'The platform that is to be used, for link generation.',
-                        validator: /github\.com|nodejs\.org|bitbucket\.org|ghost\.org|gitlab\.com/,
-                    }, {
-                        name: 'markdown',
-                        default: true,
-                        description: 'If markdown should be generated.',
-                        validator: isBoolean,
-                    }, {
-                        name: 'output',
-                        default: 'docs',
-                        description: 'A directory to place the generated documentation inside of.',
-                        validator: isBoolean,
-                    }, {
-                        name: 'project',
-                        default: false,
-                        description: 'If the projects configuration and actions should be included.',
-                        validator: isBoolean,
-                    }],
+                    options: {
+                        html: {
+                            default: false,
+                            description: 'If HTML should be generated. (Not supported yet)',
+                            validator: isBoolean,
+                        },
+                        mode: {
+                            default: 'github.com',
+                            description: 'The platform that is to be used, for link generation.',
+                            validator: /github\.com|nodejs\.org|bitbucket\.org|ghost\.org|gitlab\.com/,
+                        },
+                        markdown: {
+                            default: true,
+                            description: 'If markdown should be generated.',
+                            validator: isBoolean,
+                        },
+                        output: {
+                            default: 'docs',
+                            description: 'A directory to place the generated documentation inside of.',
+                            validator: notEmpty(isString),
+                        },
+                        project: {
+                            default: false,
+                            description: 'If the projects configuration and actions should be included.',
+                            validator: isBoolean,
+                        },
+                    },
                 },
             },
         };

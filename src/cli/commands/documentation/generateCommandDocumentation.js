@@ -7,6 +7,7 @@ import onProperty from '../../../helpers/onProperty';
 import buildDocumentationObject, { sortOnProperty } from '../../../documentation/buildDocumentationObject';
 import getDefaultValue from '../../../documentation/helpers/getDefaultValue';
 import getInfoObject from '../../../validation/helpers/getInfoObject';
+import objectToArray from '../../../helpers/objectToArray';
 
 import createTable from './createTable';
 
@@ -33,7 +34,7 @@ export default function generateCommandDocumentation(settings, metaSettings, met
 
     // Generate the arguments table
     if (metaCommands[command] && metaCommands[command].arguments) {
-        const objects = metaCommands[command].arguments.map((argument) => (
+        const objects = objectToArray(metaCommands[command].arguments).map((argument) => (
             {
                 cli: `${argument.name}`,
                 description: createDescription(argument),
@@ -51,7 +52,7 @@ export default function generateCommandDocumentation(settings, metaSettings, met
 
     // Generate the options table
     if (metaCommands[command] && metaCommands[command].options) {
-        const objects = metaCommands[command].options.sort(onProperty('name')).map((option) => (
+        const objects = objectToArray(metaCommands[command].options).sort(onProperty('name')).map((option) => (
             {
                 cli: option.alias ? `-${option.alias}, --${option.name}` : `--${option.name}`,
                 description: createDescription(option),

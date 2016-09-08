@@ -3,6 +3,7 @@ import isValid from '../../validation/helpers/isValid';
 import getInfoObject from '../../validation/helpers/getInfoObject';
 import throwValidationError from '../../validation/helpers/throwValidationError';
 import automatic from '../../converters/automatic';
+import objectToArray from '../../helpers/objectToArray';
 
 /**
  * Parses arguments and validates them.
@@ -19,7 +20,7 @@ export default function parseArguments(command, commands = {}, args) {
     // If the command supports options
     if (commands[command] && commands[command].arguments) {
         const parsedArguments = {};
-        commands[command].arguments.forEach((argument, index) => {
+        objectToArray(commands[command].arguments).forEach((argument, index) => {
             let value = args[index];
 
             if (value === undefined && argument.default) {

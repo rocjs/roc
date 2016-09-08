@@ -3,31 +3,33 @@ import lazyFunctionRequire from '../helpers/lazyFunctionRequire';
 
 const lazyRequire = lazyFunctionRequire(require);
 
-const initOptions = [{
-    name: 'list-versions',
-    alias: 'l',
-    validator: isBoolean,
-    description: 'List the available versions of a template.',
-}, {
-    name: 'force',
-    alias: 'f',
-    validator: isBoolean,
-    description: 'Ignore non empty directory warning.',
-}, {
-    name: 'clone',
-    validator: isBoolean,
-    description: 'If git clone should be used when downloading the template.',
-}];
+const initOptions = {
+    'list-versions': {
+        alias: 'l',
+        validator: isBoolean,
+        description: 'List the available versions of a template.',
+    },
+    force: {
+        alias: 'f',
+        validator: isBoolean,
+        description: 'Ignore non empty directory warning.',
+    },
+    clone: {
+        validator: isBoolean,
+        description: 'If git clone should be used when downloading the template.',
+    },
+};
 
-const initArguments = [{
-    name: 'template',
-    validator: notEmpty(isPath),
-    description: 'The template to use.',
-}, {
-    name: 'version',
-    validator: notEmpty(isString),
-    description: 'The version of the template to use.',
-}];
+const initArguments = {
+    template: {
+        validator: notEmpty(isPath),
+        description: 'The template to use.',
+    },
+    version: {
+        validator: notEmpty(isString),
+        description: 'The version of the template to use.',
+    },
+};
 
 export default {
     create: {
@@ -64,11 +66,13 @@ export default {
             help: `
                 Alias for "init" that always will try to create a new directory.`,
             options: initOptions,
-            arguments: [].concat({
-                name: 'name',
-                validator: required(notEmpty(isString)),
-                description: 'Name for a new directory to create the project in.',
-            }, initArguments),
+            arguments: {
+                name: {
+                    validator: required(notEmpty(isString)),
+                    description: 'Name for a new directory to create the project in.',
+                },
+                ...initArguments,
+            },
         },
     },
 };
