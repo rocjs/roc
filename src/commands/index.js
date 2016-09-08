@@ -4,7 +4,7 @@ import lazyFunctionRequire from '../helpers/lazyFunctionRequire';
 const lazyRequire = lazyFunctionRequire(require);
 
 const initOptions = [{
-    name: 'list',
+    name: 'list-versions',
     alias: 'l',
     validator: isBoolean,
     description: 'List the available versions of a template.',
@@ -13,16 +13,20 @@ const initOptions = [{
     alias: 'f',
     validator: isBoolean,
     description: 'Ignore non empty directory warning.',
+}, {
+    name: 'clone',
+    validator: isBoolean,
+    description: 'If git clone should be used when downloading the template.',
 }];
 
 const initArguments = [{
     name: 'template',
     validator: notEmpty(isPath),
-    description: 'The template to use. Matches Github structure with Username/Repo or a local zip file.',
+    description: 'The template to use.',
 }, {
     name: 'version',
     validator: notEmpty(isString),
-    description: 'The version to use.',
+    description: 'The version of the template to use.',
 }];
 
 export default {

@@ -1,6 +1,0 @@
-{
-    "name": "valid",
-    "dependencies": {
-        "roc-web": "1.0.0"
-    }
-}

@@ -11,7 +11,6 @@ import { merge } from 'roc';
 ```
 
 * Utilities
-    * [defaultPrompt](#defaultprompt)
     * [fileExists](#fileexists)
     * [folderExists](#folderexists)
     * [generateDependencies](#generatedependencies)
@@ -40,11 +39,6 @@ import { merge } from 'roc';
 
 ## Utilities
 These are utility functions that might be useful in mainly extensions.
-
-### `defaultPrompt`
-The default prompt that will be shown when using a template if not one is specified from the template, is an array. Can be used to extend the prompt.
-
-[See template documentation for more information.](/docs/Templates.md)
 
 ### `fileExists`
 ```javascript

@@ -18,8 +18,6 @@ export executeSyncExit from './execute/executeSyncExit';
 
 export { getAbsolutePath, fileExists, folderExists, lazyFunctionRequire } from './helpers';
 
-export defaultPrompt from './commands/helpers/defaultPrompt';
-
 export runHook from './hooks/runHook';
 
 export runHookDirectly from './hooks/runHookDirectly';

@@ -12,6 +12,7 @@
         "no-underscore-dangle": 0,
         "no-use-before-define": ["error", { "functions": false }],
         "prefer-template": [1],
+        "consistent-return": [1],
 
         "generator-star-spacing": 0,
         "babel/generator-star-spacing": [2, { before: false, after: true }],
