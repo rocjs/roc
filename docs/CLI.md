@@ -17,7 +17,7 @@ The property name `command` is reserved and should not be used as the name for a
 
 The command line interface in Roc supports command groups that makes it possible to group similar commands together. The groups can be as nested as one would like and need.
 
-You will not have to write the entire command with all it’s groups for convince in most cases. Roc will look in the current context and try to find a match. This means that if there are two commands that are called the same thing in different groups the user will be asked to be more exact.
+You will not have to write the entire command with all its groups for convenience in most cases. Roc will look in the current context and try to find a match for you. This means that if there are two commands that are called the same thing in different groups the user will be asked to be more specific.
 
 __Example__
 ```bash
@@ -28,7 +28,7 @@ roc group2 group3 third
 ```
 
 Let’s look at an example of this to make it a bit more clear.
-Say we have the commands above available to use in the current context. A user would here be able to write `roc first` and the first command would be invoked, this will be the same thing as writing `roc group1 first`. However if the user would now type `roc second` we would match 2 potential commands and Roc will ask the user to be more precise. Both `roc group1 second` and `roc group2 second` would work fine here.
+Say we have the commands above available to use in the current context. A user would be able to write `roc first` here and the first command would be invoked, this will be the same thing as writing `roc group1 first`. However if the user would now type `roc second` we would match 2 potential commands and Roc will ask the user to be more precise. Both `roc group1 second` and `roc group2 second` would work fine here.
 
 This shorthand syntax also works inside groups. So we could use `roc group2 third` or `roc third` over the fully correct `roc group2 group3 third` if we want.
 

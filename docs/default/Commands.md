@@ -1,7 +1,7 @@
 # Commands for `roc`
 
 ## General Information
-All commands can be called with some additional options as can be seen below.
+All commands can be called with some additional options illustrated in the table below.
 
 ### General options
 | Name                  | Description                                                                                                   | Required |
@@ -109,7 +109,7 @@ roc meta docs
 | --html     | If HTML should be generated. (Not supported yet)              | `false`        | `Boolean`                                                         | No       |              |
 | --markdown | If markdown should be generated.                              | `true`         | `Boolean`                                                         | No       |              |
 | --mode     | The platform that is to be used, for link generation.         | `"github.com"` | `/github\.com|nodejs\.org|bitbucket\.org|ghost\.org|gitlab\.com/` | No       |              |
-| --output   | A directory to place the generated documentation inside of.   | `"docs"`       | `Boolean`                                                         | No       |              |
+| --output   | A directory to place the generated documentation inside of.   | `"docs"`       | `String`                                                         | No       |              |
 | --project  | If the projects configuration and actions should be included. | `false`        | `Boolean`                                                         | No       |              |
 
 ####  Defined by extensions
@@ -124,4 +124,3 @@ roc meta list-settings
 
 ####  Defined by extensions
 roc
-

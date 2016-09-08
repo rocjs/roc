@@ -1,6 +1,6 @@
 # The Roc Object
 
-The Roc object is the API that extensions use when they are registered with Roc and added to the context.
+The Roc object is the API that extensions use when registered with Roc and added to the context.
 
 * API
 	* [`actions`](#actions)
@@ -83,7 +83,7 @@ __Example__
 [Read more here.](/docs/Commands.md)
 
 ### `config`
-An object that contains configuration. Both allows the extension to define new configuration and modify things define by others.
+An object that contains configuration. Allows the extension to define new configuration and modify things defined by others.
 
 The core has knowledge about two properties on the object that are specially handled.
 
@@ -93,7 +93,7 @@ An object that contains project specific configuration that is managed by the co
 `settings`
 An object containing settings for Roc that is used by both extensions and projects.
 
-Other than this two properties extensions are free to define other properties as they need. Note that `config` is to be used together with [`meta`](#meta) described below.
+Other than these two properties extensions are free to define other properties as needed. Note that `config` is to be used together with [`meta`](#meta) described below.
 
 __Example__
 ```javascript
@@ -132,7 +132,7 @@ dependencies: {
 _Tip:_ [Use `generateDependencies`](/docs/API.md#generatedependencies)
 
 ##### Custom resolve
-By default will everything that is exported be resolved in the extensions context, the location of the extension, but it is possible to provide a custom resolve function. Can be used to replace one dependency with another for example, like changing all requests to `underscore` to `lodash`.
+By default extensions that are exported will be resolved in the extensions context, the location of the extension, but it is possible to provide a custom resolve function to override this. Can be used to replace one dependency with another for example, like changing all requests for `underscore` to `lodash`.
 
 The custom resolve function gets an object as a argument and is expected to return a path that should be resolved.
 
@@ -174,7 +174,7 @@ dependencies: {
 _Tip:_ [Use `generateDependencies`](/docs/API.md#generatedependencies)
 
 ### `description`
-Either a string or a function that will be used as the description for the extension. Roc will use the `description` from the `package.json` of the extension if non is provided
+Either a string or a function that will be used as the description for the extension. Roc will use the `description` from the `package.json` of the extension if none is provided
 
 Supports markdown.
 
@@ -214,7 +214,7 @@ __Example__
 [Read more here.](/docs/Hooks.md#hooks)
 
 ### `init`
-A function that can be used to programmatically both define values that should be used over what is defined on the Roc object and override things from the built context.  
+A function that can be used to programmatically define values that should be used instead of what is already defined on the Roc object and override things from the built context.  
 
 __Example__
 ```javascript
@@ -300,7 +300,7 @@ config: {
 [See more here.](/docs/Configuration.md#meta-configuration)
 
 ### `name`
-A string that notes the name of the extension. Required, but Roc will use the `name` from the `package.json` of the extension if non is provided
+A string that notes the name of the extension. Required, but Roc will use the `name` from the `package.json` of the extension if none is provided
 
 ### `packages`
 An array of file paths that point to packages that the extension uses. Will be used by Roc when building the complete context.
@@ -384,7 +384,7 @@ _Note:_ `hooks` are not present in the `context` object. This since it would not
 _Note:_ `dependencies` are not present. This since it would be to late to change them at this time.
 
 ### `required`
-An object listing required extensions and what version that are considered valid. Uses the same [semver parser](https://www.npmjs.com/package/semver) as is used by npm.
+An object listing required extensions and what version that are considered valid. Uses the same [semver parser](https://www.npmjs.com/package/semver) that is used by npm.
 
 Also `roc` can be checked, this will be the instance that started the runtime and not the dependency that the extension itself might have.
 
@@ -398,20 +398,19 @@ __Example__
 ```
 
 ### `standalone`
-A boolean that defaults to `false` that informs Roc if the extension should be managed as a standalone extension.
+A boolean that defaults to `false` that informs Roc if the extension should be managed as a standalone extension or not.
 
-Roc will by default try to find the extensions `package.json` by searching recursively upwards from the main file until it finds one or fails. This will not work in all situations, for example when a custom extension has been created without a `package.json`.
+Roc will by default try to find an extensions `package.json` by searching recursively upwards from the main file until it finds one or fails. This will not work in all situations, for example when a custom extension has been created without a `package.json`.
 
-This means that Roc will not be able to find `name` and `version` from the `package.json` resulting in that they are needed when defining this to `true`. Additionally if a `description` is desired this will also need to be defined because of the same reason, Roc can’t take it from the `package.json`.
+This means that Roc will not be able to find `name` and `version` from the `package.json` resulting in that they have to be defined when setting this to `true`. Additionally if a `description` is desired this will also need to be defined for the same reason, Roc can’t take it from the `package.json` automatically.
 
 ### `version`
-A string that notes the version of the extension. Required, but Roc will use the `version` from the `package.json` of the extension if non is provided.
-
+A string that notes the version of the extension. Required, but Roc will use the `version` from the `package.json` of the extension if none is provided.
 
 ## What is considered a valid object
 For a Roc object in an extension to be considered valid it needs to have at least a `name`, a `version` and one more property.
 
-This is however an exception to this, abstract extensions. They just need `name` and `version` to be valid.
+There is however an exception to this, abstract extensions. They just need `name` and `version` to be valid.
 
 Even though `name` and `version` are mandatory you will not need to define them in most cases since Roc will read them from the extension’s `package.json` if one exists.
 
@@ -444,4 +443,4 @@ roc = {
 }
 ```
 
-Another advantage of doing this is that the code that will be loaded using `lazyFunctionRequire` will be loaded after the runtime has started. This results in that `import`s / `require`s can be done on things that other extensions have exported.
+Another advantage of doing this is that the code that will be loaded using `lazyFunctionRequire` will be loaded after the runtime has started. This results in  `import`s / `require`s can be done on things that other extensions have exported.
