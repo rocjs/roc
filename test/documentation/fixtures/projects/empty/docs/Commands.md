@@ -1,7 +1,7 @@
 # Commands for `empty`
 
 ## General Information
-All commands can be called with some additional options as can be seen below.
+All commands can be called with some additional options illustrated in the table below.
 
 ### General options
 

@@ -1,7 +1,7 @@
 # Commands for `roc`
 
 ## General Information
-All commands can be called with some additional options as can be seen below.
+All commands can be called with some additional options illustrated in the table below.
 
 ### General options
 
@@ -51,18 +51,17 @@ Versions should match a tag on the Github repo and will default to master if non
 
 #### Arguments
 
-| Name                | Description                                                | Default | Type       | Required | Can be empty |
-| ------------------- | ---------------------------------------------------------- | ------- | ---------- | -------- | ------------ |
-| template            | The template to use.                                       |         | `Filepath` | No       | No           |
-| version             | The version of the template to use.                        |         | `String`   | No       | No           |
+| Name        | Description                                                                           | Default | Type       | Required | Can be empty |
+| ----------- | ------------------------------------------------------------------------------------- | ------- | ---------- | -------- | ------------ |
+| template    | The template to use. Matches Github structure with Username/Repo or a local zip file. |         | `Filepath` | No       | No           |
+| version     | The version to use.                                                                   |         | `String`   | No       | No           |
 
 #### Command options
 
-| Name                | Description                                                | Default | Type       | Required | Can be empty |
-| ------------------- | ---------------------------------------------------------- | ------- | ---------- | -------- | ------------ |
-| --clone             | If git clone should be used when downloading the template. |         | `Boolean`  | No       |              |
-| -f, --force         | Ignore non empty directory warning.                        |         | `Boolean`  | No       |              |
-| -l, --list-versions | List the available versions of a template.                 |         | `Boolean`  | No       |              |
+| Name        | Description                                                                           | Default | Type       | Required | Can be empty |
+| ----------- | ------------------------------------------------------------------------------------- | ------- | ---------- | -------- | ------------ |
+| -f, --force | Ignore non empty directory warning.                                                   |         | `Boolean`  | No       |              |
+| -l, --list  | List the available versions of a template.                                            |         | `Boolean`  | No       |              |
 
 ####  Defined by extensions
 roc
@@ -77,19 +76,18 @@ Alias for "init" that always will try to create a new directory.
 
 #### Arguments
 
-| Name                | Description                                                | Default | Type       | Required | Can be empty |
-| ------------------- | ---------------------------------------------------------- | ------- | ---------- | -------- | ------------ |
-| name                | Name for a new directory to create the project in.         |         | `String`   | Yes      | No           |
-| template            | The template to use.                                       |         | `Filepath` | No       | No           |
-| version             | The version of the template to use.                        |         | `String`   | No       | No           |
+| Name        | Description                                                                           | Default | Type       | Required | Can be empty |
+| ----------- | ------------------------------------------------------------------------------------- | ------- | ---------- | -------- | ------------ |
+| name        | Name for a new directory to create the project in.                                    |         | `String`   | Yes      | No           |
+| template    | The template to use. Matches Github structure with Username/Repo or a local zip file. |         | `Filepath` | No       | No           |
+| version     | The version to use.                                                                   |         | `String`   | No       | No           |
 
 #### Command options
 
-| Name                | Description                                                | Default | Type       | Required | Can be empty |
-| ------------------- | ---------------------------------------------------------- | ------- | ---------- | -------- | ------------ |
-| --clone             | If git clone should be used when downloading the template. |         | `Boolean`  | No       |              |
-| -f, --force         | Ignore non empty directory warning.                        |         | `Boolean`  | No       |              |
-| -l, --list-versions | List the available versions of a template.                 |         | `Boolean`  | No       |              |
+| Name        | Description                                                                           | Default | Type       | Required | Can be empty |
+| ----------- | ------------------------------------------------------------------------------------- | ------- | ---------- | -------- | ------------ |
+| -f, --force | Ignore non empty directory warning.                                                   |         | `Boolean`  | No       |              |
+| -l, --list  | List the available versions of a template.                                            |         | `Boolean`  | No       |              |
 
 ####  Defined by extensions
 roc

@@ -65,7 +65,7 @@ export default function commandsToMarkdown(
 
     if (commands) {
         rows.push('## General Information');
-        rows.push('All commands can be called with some additional options as can be seen below.', '');
+        rows.push('All commands can be called with some additional options illustrated in the table below.', '');
 
         rows.push(generateTable([{
             name: 'General options',
