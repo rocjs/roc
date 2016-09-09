@@ -1,6 +1,6 @@
 import { isFunction, omit } from 'lodash';
 
-export default function configurationToMarkdown(name, configuration, metaConfiguration, rocCommandObject) {
+export default function configurationToMarkdown(name, configuration, metaConfiguration, commandObject) {
     const config = omit(configuration, ['settings', 'project']);
     const configMeta = omit(metaConfiguration, 'settings');
     const groups = Object.keys(config);
@@ -22,7 +22,7 @@ export default function configurationToMarkdown(name, configuration, metaConfigu
         if (configMeta[group].description) {
             rows.push(
                 isFunction(configMeta[group].description) ?
-                    configMeta[group].description(rocCommandObject, config[group]) :
+                    configMeta[group].description(commandObject, config[group]) :
                     configMeta[group].description
             , '');
         }

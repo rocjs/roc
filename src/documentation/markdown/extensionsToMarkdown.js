@@ -1,17 +1,19 @@
 import { isFunction } from 'lodash';
+import redent from 'redent';
+import trimNewlines from 'trim-newlines';
 
-export default function extensionsToMarkdown(name, usedExtensions = [], rocCommandObject, extension) {
+export default function extensionsToMarkdown(name, usedExtensions = [], commandObject, extension) {
     const rows = [];
 
     const packages = usedExtensions.filter((extn) => extn.type === 'package' &&
         // Do no list the package itself, this is based on the name of the extension and the current name of the
         // project that this commands runs from.
-        extn.name !== rocCommandObject.context.packageJSON.name);
+        extn.name !== commandObject.context.packageJSON.name);
 
     const plugins = usedExtensions.filter((extn) => extn.type === 'plugin' &&
         // Do no list the plugin itself, this is based on the name of the extension and the current name of the
         // project that this commands runs from.
-        extn.name !== rocCommandObject.context.packageJSON.name);
+        extn.name !== commandObject.context.packageJSON.name);
 
     rows.push(`# Extensions for \`${name}\``, '');
 
@@ -21,8 +23,8 @@ export default function extensionsToMarkdown(name, usedExtensions = [], rocComma
         packages.forEach((pkg) => {
             rows.push(`### ${pkg.name} — [v${pkg.version}](https://www.npmjs.com/package/${pkg.name})`);
             const description = isFunction(pkg.description) ?
-                pkg.description(rocCommandObject, extension) :
-                pkg.description;
+                pkg.description(commandObject, extension) :
+                pkg.description && trimNewlines(redent(pkg.description));
 
             if (description) {
                 rows.push(description);
@@ -39,8 +41,8 @@ export default function extensionsToMarkdown(name, usedExtensions = [], rocComma
         plugins.forEach((plugin) => {
             rows.push(`### ${plugin.name} — [v${plugin.version}](https://www.npmjs.com/package/${plugin.name})`);
             const description = isFunction(plugin.description) ?
-                plugin.description(rocCommandObject, extension) :
-                plugin.description;
+                plugin.description(commandObject, extension) :
+                plugin.description && trimNewlines(redent(plugin.description));
 
             if (description) {
                 rows.push(description);

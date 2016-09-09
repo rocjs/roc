@@ -60,14 +60,14 @@ function getDefaultCommands(directory) {
                     description: 'Prints all the available settings that can be changed.',
                 },
                 docs: {
-                    command: (rocCommandObject) =>
+                    command: (commandObject) =>
                         generateDocumentation({
-                            rocCommandObject,
-                            directory: rocCommandObject.options.managed.output,
-                            html: rocCommandObject.options.managed.html,
-                            markdown: rocCommandObject.options.managed.markdown,
-                            mode: rocCommandObject.options.managed.mode,
-                            project: rocCommandObject.options.managed.project,
+                            commandObject,
+                            directory: commandObject.options.managed.output,
+                            html: commandObject.options.managed.html,
+                            markdown: commandObject.options.managed.markdown,
+                            mode: commandObject.options.managed.mode,
+                            project: commandObject.options.managed.project,
                         }),
                     description: 'Generates documentation for the current project.',
                     options: {
