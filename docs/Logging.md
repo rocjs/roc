@@ -37,11 +37,6 @@ Output: `console.info`
 Color: `cyan`  
 Label: Info
 
-#### `note`
-Output: `console.info`  
-Color: `cyan`  
-Label: Notice
-
 #### `warn`
 Output: `console.warn`  
 Color: `yellow`  
@@ -51,11 +46,6 @@ Label: Warning
 Output: `console.error`  
 Color: `red`  
 Label: Error
-
-#### `ok`
-Output: `console.log`  
-Color: `green`  
-Label: Ok
 
 #### `success`
 Output: `console.log`  
@@ -78,7 +68,7 @@ Used for small messages.
 ### Types
 Several modes exists that can be used.
 
-When having a logger each of the types can be used as a property. The logging function takes in a message as the first argument and an optional `Error` as the second argument and the third is a boolean that determines if a potential symbol should be shown, default to `true`. If `verbose` is enabled the `error.stack` will be displayed, otherwise just `error.message`.
+When having a logger each of the types can be used as a property. The logging function takes in a message as the first argument and the second and third arguments can be in any order. An optional `Error` and a boolean that determines if a potential symbol should be shown, default to `true`. If `verbose` is enabled the `error.stack` will be displayed, otherwise just `error.message`.
 
 __Example__
 ```javascript
@@ -89,7 +79,7 @@ const log = initSmall(packageJSON.name, packageJSON.version);
 log.error('Some message', potentialError, showSymbol);
 ```
 
-#### `info`
+#### `log`
 Output: `console.log`  
 Color: Default
 
@@ -107,10 +97,6 @@ Symbol: `⚠`
 Output: `console.error`  
 Color: `red`  
 Symbol: `✖`
-
-#### `ok`
-Output: `console.log`  
-Color: `green`
 
 #### `success`
 Output: `console.log`  

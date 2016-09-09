@@ -115,11 +115,11 @@ async function github(template, version) {
             if (!selectedVersion && selectVersion) {
                 log.warn(`Selected template version not found, using ${chalk.bold(version)}`);
             } else if (!selectedVersion) {
-                log.note(`Using ${chalk.bold(version)} as template version`);
+                log.info(`Using ${chalk.bold(version)} as template version`);
             }
         } catch (error) {
             version = 'latest'; // eslint-disable-line
-            log.note(`Failed to fetch versions, will fallback to ${chalk.bold(version)}`, error);
+            log.info(`Failed to fetch versions, will fallback to ${chalk.bold(version)}`, error);
         }
     }
 
@@ -129,7 +129,7 @@ async function github(template, version) {
 function download(template, version, clone = false) {
     if (!version) {
         version = 'latest'; // eslint-disable-line
-        log.note(`Will use ${chalk.bold(version)} as default version`);
+        log.info(`Will use ${chalk.bold(version)} as default version`);
     }
 
     const tmp = temp.mkdirSync('roc-template');
@@ -159,7 +159,7 @@ function download(template, version, clone = false) {
 function cloneRepo(template, version) {
     if (!version) {
         version = 'latest'; // eslint-disable-line
-        log.note(`Will use ${chalk.bold(version)} as default version`);
+        log.info(`Will use ${chalk.bold(version)} as default version`);
     }
 
     const tmp = temp.mkdirSync('roc-template');

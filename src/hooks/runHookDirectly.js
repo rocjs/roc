@@ -78,7 +78,7 @@ export default function runHookDirectly({
                             if (performAction) {
                                 if (getContext().verbose) {
                                     const isPost = post ? '[Post] ' : '';
-                                    log.small.info(
+                                    log.small.log(
                                         `${magenta('Hook')} - ` +
                                         `${isPost}Running hook defined in ${underline(extension)} ` +
                                         `named ${underline(name)} with action from ${underline(actionExtensionName)}`

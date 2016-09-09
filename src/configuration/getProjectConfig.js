@@ -75,8 +75,9 @@ export default function getProjectConfig(projectConfigPath, directory = process.
     } catch (err) {
         if (err.constructor === SyntaxError) {
             log.warn(
-                `Something is wrong with the configuration file at ${chalk.bold(configPath)}` +
-                ` and it will be ignored. Received: ${chalk.underline(err.message)}`,
+                `
+                Something is wrong with the configuration file at ${chalk.bold(configPath)} and it will be ignored.
+                Received: ${chalk.underline(err.message)}`,
                 'Configuration'
             );
         } else if (verbose) {

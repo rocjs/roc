@@ -1,3 +1,4 @@
+import { isBoolean } from 'lodash';
 import chalk from 'chalk';
 import symbols from 'log-symbols';
 
@@ -5,11 +6,10 @@ import { getContext } from '../context/helpers/manageContext';
 
 export default function initLogSmall() {
     return {
-        info: logger('log'),
-        note: logger('info', 'cyan', symbols.info),
+        log: logger('log'),
+        info: logger('info', 'cyan', symbols.info),
         warn: logger('warn', 'yellow', symbols.warning),
         error: logger('error', 'red', symbols.error),
-        ok: logger('log', 'green'),
         success: logger('log', 'green', symbols.success),
         raw: logger,
     };
@@ -20,7 +20,11 @@ function logger(level, color, symbol) {
     if (validLevels.indexOf(level) === -1) {
         throw new Error(`The provided level "${level}" is not valid, try one of: ${validLevels.join(', ')}`);
     }
-    return (message, error, showSymbol = true) => {
+    return (...args) => {
+        const message = args[0];
+        const error = isBoolean(args[1]) ? args[2] : args[1];
+        const showSymbol = (isBoolean(args[1]) ? args[1] : args[2]) || true;
+
         const symbolText = symbol && showSymbol ? `${symbol} ` : '';
         const log = console[level]; // eslint-disable-line
 

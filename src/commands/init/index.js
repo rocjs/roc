@@ -33,7 +33,7 @@ export default async function init({
 
     if (listVersions) {
         if (isLocal(template, directory)) {
-            return log.note('You can’t list versions for local templates');
+            return log.info('You can’t list versions for local templates');
         } else if (template.indexOf('/') === -1 || isGithub(template)) {
             try {
                 const templateVersions = await getVersions(template);
@@ -41,8 +41,8 @@ export default async function init({
                 // Add master so we always have a way to install it
                 templateVersions.push({ name: 'master' });
 
-                log.info('The available versions are:');
-                return log.info(
+                log.log('The available versions are:');
+                return log.log(
                     templateVersions
                         .map(({ name: templateVersion }) => ` ${templateVersion}`).join('\n')
                 );
@@ -51,7 +51,7 @@ export default async function init({
             }
         }
 
-        return log.note('Can’t list versions for the provided template');
+        return log.info('Can’t list versions for the provided template');
     }
 
     // 1. Check if directory is empty
