@@ -2,7 +2,7 @@
 Extensions can define their own commands with the help of [the Roc object](/docs/RocObject.md). This is a powerful feature of Roc that makes it easy to add new commands that can be used with the CLI.
 
 ## General
-Roc expects that the commands is either a string or a function. See example below for a valid structure.
+Roc expects that the commands are either a string or a function. See example below for a valid structure.
 
 ```javascript
 module.exports = {
@@ -20,7 +20,7 @@ __Important!__
 The property name `command` is reserved and should not be used as the name for a command group or command.
 
 ### String command
-A string command is a string that will managed as if it was typed into the terminal directly. Great for creating aliases to other commands. Uses [`spawn-command`](https://github.com/mmalecki/spawn-command) internally meaning that the command will be launched in either `cmd.exe` or `/bin/sh`. By default will the `node_modules/.bin` for a extension be added making it easy to proxy CLI tools to Roc projects.
+A string command is a string that will managed as if it was typed into the terminal directly. Great for creating aliases to other commands. Uses [`spawn-command`](https://github.com/mmalecki/spawn-command) internally meaning that the command will be launched in either `cmd.exe` or `/bin/sh`. The `node_modules/.bin` for a extension will be added by default making it easy to proxy CLI tools to Roc projects.
 
 This feature is experimental in it’s current state and will be improved going forward.
 
@@ -35,8 +35,6 @@ __Example__
 ```javascript
 (commandObject) => { /* do stuff */ }
 ```
-
-See below for more details.
 
 ## Command Object
 Object that is built when running the command line interface and what command functions get as their first argument, called `commandObject`.
@@ -70,28 +68,28 @@ The context object in Roc.
 An object containing information about the `name` and the `version` as strings for the CLI that was invoked.
 
 ### `arguments`
-An object with the arguments that was passed to the command.
+An object with the arguments that were passed to the command.
 
 #### `managed`
 An object with values matching the defined arguments from the commands meta information as key-value.
 
 #### `unmanaged`
-An array with the arguments that was not managed by Roc.
+An array with the arguments that were not managed by Roc.
 
 ### `options`
-An object with the options that was passed to the command. Will not include options from the settings.
+An object with the options that were passed to the command. Will not include options from the settings.
 
 #### `managed`
 An object with options matching the defined options from the commands meta information as key-value.
 
 #### `unmanaged`
-An object with options that was not managed by Roc.
+An object with options that were not managed by Roc.
 
 ### `extraArguments`
 An array with the arguments that are defined after `--` on the command line.
 
 ## Define new commands & groups
-To define new commands that extension will need to either use the [`command`](/docs/RocObject.md#commands)  property on the [Roc object](/docs/RocObject.md) or return a command property form the [`init`](/docs/RocObject.md#init) function.
+To define new commands that extension will need to either use the [`command`](/docs/RocObject.md#commands)  property on the [Roc object](/docs/RocObject.md) or return a command property from the [`init`](/docs/RocObject.md#init) function.
 
 __Example__
 ```javascript
@@ -130,13 +128,13 @@ group: {
 Description that will be shown when using `--help` for the group and when generating documentation by default.
 
 ##### `markdown`
-Markdown formatted text that will be used, if available, when using `roc meta docs`, will be used over description if existing.
+Markdown formatted text that will be used, if available, when using `roc meta docs`, will be used over description if defined.
 
 ##### `name`
 A string with the name for the group, can be used to show something over the property name that is the default.
 
 ##### `override`
-A string or a boolean that is to be used if the group already is created from before. The override will need to be specified to either the extension that defined it previously or true for always overriding.
+A string or a boolean that is to be used if the group already exists. The override will need to be set to either the name of the extension that defined it previously or true for always overriding.
 
 ### Command
 A command can be either a string, a function or an object. It’s recommended to use objects since it will allow both string and function commands to be used along with additional meta information.
@@ -158,9 +156,9 @@ command3: {
 ```
 
 #### `arguments`
-An object where the keys are the names for the arguments. The order of the keys matter, they are parsed in the same order as they are listed. 
+An object where the keys are the names for the arguments. The order of the keys matter, they are parsed in the same order as they are listed.
 
-The key will be used for in the CLI for information and as the name of the value in [`commandObject.arguments.managed`](/docs/Commands.md#command-object).
+The key will be used in the CLI for information and as the name of the value in [`commandObject.arguments.managed`](/docs/Commands.md#command-object).
 
 Internally `Object.getOwnPropertyNames` is used to guarantee the order as they are created.
 
@@ -212,7 +210,7 @@ All properties on the object is optional.
 
 __Example__
 ```
-options: { 
+options: {
   feature: { // Will be used as '--feature'
     alias: 'f', // Will be used as '-f'
     converter: toBoolean,
@@ -243,7 +241,7 @@ Roc assumes that the validators used is either a RegExp or a function that will 
 For convenience several types of validators exists in `roc` that can be imported from `roc/validators`. [See here for a complete list of them along with more information on how they work.](/docs/Validators.md).
 
 #### `override`
-A string or a boolean that is to be used if the group already is created from before. The override will need to be specified to either the extension that defined it previously or true for always overriding.
+A string or a boolean that is to be used if the group already exists. The override will need to be specified to either the extension name that defined it previously or true for always overriding.
 
 #### `settings`
 What roc settings the command uses, can either be true or an array with strings of the groups to use. Will determine what information the cli outputs, what it parses and what it validates.
