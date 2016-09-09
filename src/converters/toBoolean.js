@@ -12,7 +12,7 @@ export default function toBoolean(input) {
         return input;
     }
 
-    if (isString(input) && (input.toLowerCase() === 'true' || input.toString().toLowerCase() === 'false')) {
+    if (isString(input) && (input === 'true' || input === 'false')) {
         return input === 'true';
     }
 

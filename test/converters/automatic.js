@@ -13,6 +13,9 @@ describe('converters', () => {
             expect(converter('true')).toBe(true);
             expect(converter('false')).toBe(false);
 
+            expect(converter('True')).toBe(undefined);
+            expect(converter('False')).toBe(undefined);
+
             expect(converter('asd')).toBe(undefined);
         });
 

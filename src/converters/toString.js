@@ -1,7 +1,7 @@
 import { isString } from 'lodash';
 
 /**
- * Given an input the function will return an string.
+ * Given an input the function will return a string.
  *
  * @param {object} input - The input to be converted.
  *
