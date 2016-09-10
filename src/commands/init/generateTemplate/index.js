@@ -67,18 +67,31 @@ function filterFiles(filters) {
 }
 
 function renderTemplateFiles(files, metalsmith, done) {
-    const keys = Object.keys(files);
+    const filenames = Object.keys(files);
     const metalsmithMetadata = metalsmith.metadata();
-    async.each(keys, (file, next) => {  // eslint-disable-line
-        const str = files[file].contents.toString();
-        // do not attempt to render files that do not have mustaches
-        if (!/{{([^{}]+)}}/g.test(str)) {
-            return next();
-        }
-        render(str, metalsmithMetadata, (err, res) => {
-            if (err) return next(err);
-            files[file].contents = new Buffer(res); // eslint-disable-line
-            return next();
+    async.each(filenames, (filename, next) => {  // eslint-disable-line
+        // Rename files that that might use mustaches
+        render(filename, metalsmithMetadata, (renameError, newFilename) => {
+            if (renameError) return next(renameError);
+
+            // If we got a new filename we replace the old file with the new
+            if (newFilename !== filename) {
+                files[newFilename] = files[filename]; // eslint-disable-line
+                delete files[filename]; // eslint-disable-line
+            }
+
+            const str = files[newFilename].contents.toString();
+            // do not attempt to render files that do not have mustaches
+            if (!/{{([^{}]+)}}/g.test(str)) {
+                return next();
+            }
+
+            render(str, metalsmithMetadata, (contentError, res) => {
+                if (contentError) return next(contentError);
+
+                files[newFilename].contents = new Buffer(res); // eslint-disable-line
+                return next();
+            });
         });
     }, done);
 }
