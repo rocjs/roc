@@ -30,36 +30,30 @@ import parseOptions from './commands/parseOptions';
  */
 export default function runCli({
     info = { version: 'Unknown', name: 'Unknown' },
-    commands: initalCommands,
+    commands: initialCommands,
     argv = process.argv,
     invoke = true,
 }) {
-    const {
-        _, h, help, V, verbose, v, version, c, config, d, directory, b, 'better-feedback': betterFeedback,
-        '--': extraArguments, ...restOptions,
-    } = minimist(argv.slice(2), { '--': true });
-
-    // The first should be our command if there is one
-    const [groupOrCommand, ...args] = _;
+    const input = parseCliInput(minimist(argv.slice(2), { '--': true }));
 
     // If version is selected output that and stop
-    if (version || v) {
+    if (input.coreOptions.version || input.coreOptions.v) {
         return console.log(info.version);
     }
 
-    if (betterFeedback || b) {
+    if (input.coreOptions.betterFeedback || input.coreOptions.b) {
         require('source-map-support').install(); // eslint-disable-line
         require('loud-rejection')(); // eslint-disable-line
     }
 
     // Possible to set a command in verbose mode
-    const verboseMode = !!(verbose || V);
+    const verboseMode = !!(input.coreOptions.verbose || input.coreOptions.V);
 
     // Get the project configuration path
-    const projectConfigPath = c || config;
+    const projectConfigPath = input.coreOptions.c || input.coreOptions.config;
 
     // Get the directory path
-    const dirPath = getAbsolutePath(directory || d);
+    const dirPath = getAbsolutePath(input.coreOptions.directory || input.coreOptions.d);
 
     // Set temporary context
     setContext({
@@ -70,21 +64,21 @@ export default function runCli({
     // Initialize the complete context
     const context = initContext({
         verbose: verboseMode,
-        commands: initalCommands,
+        commands: initialCommands,
         directory: dirPath,
         projectConfigPath,
         name: info.name,
     });
 
     // If we have no command we will display some help information about all possible commands
-    if (!groupOrCommand) {
+    if (!input.groupOrCommand) {
         return console.log(
             generateCommandsDocumentation(context.commands, info.name)
         );
     }
 
     // Check if we are in a subgroup
-    const result = checkGroup(context.commands, groupOrCommand, args, info.name);
+    const result = checkGroup(context.commands, input.groupOrCommand, input.argsWithoutOptions, info.name);
     if (!result) {
         return undefined;
     }
@@ -118,12 +112,11 @@ export default function runCli({
 
     // Show command help information if requested
     // Will ignore application configuration
-    if (help || h) {
+    if (input.coreOptions.help || input.coreOptions.h) {
         return console.log(generateCommandDocumentation(context.extensionConfig.settings, context.meta.settings,
             commands, command, info.name, parents));
     }
 
-    const parsedArguments = parseArguments(command, commands, args);
 
     let documentationObject;
     // Only parse arguments if the command accepts it
@@ -134,7 +127,7 @@ export default function runCli({
     }
 
     const { settings, parsedOptions } =
-        parseOptions(restOptions, getMappings(documentationObject), commands[command]);
+        parseOptions(input.extOptions, getMappings(documentationObject), commands[command]);
 
     const configToValidate = merge(context.config, {
         settings,
@@ -166,25 +159,71 @@ export default function runCli({
         if (isString(commands[command].command)) {
             return execute(commands[command].command, {
                 context: commands[command].__context,
-                args: extraArguments,
-                cwd: directory,
+                args: input.extraArguments,
+                cwd: input.coreOptions.directory,
             }).catch((error) => {
                 process.exitCode = error.getCode ? error.getCode() : 1;
                 log.small.error('An error happened when running the Roc command', error);
             });
         }
 
+        const parsedArguments = parseArguments(command, commands, input.argsWithoutOptions);
+
         // Run the command
         return commands[command].command({
             info,
             arguments: parsedArguments,
             options: parsedOptions,
-            extraArguments,
-
+            extraArguments: input.extraArguments,
             // Roc Context
             context,
         });
     }
 
     return undefined;
+}
+
+/* Return an object wrapping all relevant data from minimist with descriptive names */
+function parseCliInput(minimistData) {
+    const {
+        _,
+        h,
+        help,
+        V,
+        verbose,
+        v,
+        version,
+        c,
+        config,
+        d,
+        directory,
+        b,
+        'better-feedback': betterFeedback,
+        '--': extraArguments,
+        ...extOptions,
+    } = minimistData;
+
+    // The first should be our command or commandgroup, if there is one
+    const [groupOrCommand, ...argsWithoutOptions] = _;
+
+    return {
+        groupOrCommand, // commandgroup or command
+        coreOptions: { // options managed and parsed by core
+            h,
+            help,
+            V,
+            verbose,
+            v,
+            version,
+            c,
+            config,
+            d,
+            directory,
+            b,
+            betterFeedback,
+        },
+        extOptions, // options that will be forwarded to commands from context
+        argsWithoutOptions, // remaining arguments with no associated options
+        extraArguments, // arguments after the ended argument list (--)
+    };
 }
