@@ -15,7 +15,7 @@ import merge from '../helpers/merge';
 import runHook from '../hooks/runHook';
 import validateSettingsWrapper from '../validation/validateSettingsWrapper';
 
-import checkGroup from './commands/helpers/checkGroup';
+import extractCommand from './commands/helpers/extractCommand';
 import generateAliases from './commands/helpers/generateAliases';
 import generateCommandDocumentation from './commands/documentation/generateCommandDocumentation';
 import generateCommandsDocumentation from './commands/documentation/generateCommandsDocumentation';
@@ -77,35 +77,45 @@ export default function runCli({
         );
     }
 
-    // Check if we are in a subgroup
-    const result = checkGroup(context.commands, input.groupOrCommand, input.argsWithoutOptions, info.name);
-    if (!result) {
-        return undefined;
+    // Given context commands and user input, extract command data from potentially
+    // nested group/command structure
+    const commandData = extractCommand(
+        context.commands,
+        input.groupOrCommand,
+        input.argsWithoutOptions,
+        info.name
+    );
+
+    // command data as string indicates no match, so print the provided feedback
+    if (isString(commandData)) {
+        return console.log(commandData);
     }
 
-    let {
-        commands,
-        command, // eslint-disable-line
-        parents,
-    } = result;
+    let commandSuggestions = Object.keys(commandData.commands);
 
-    let suggestions = Object.keys(commands);
+    // If there is no direct match we will search through the tree for a match
+    if (!commandData.commands[commandData.commandName]) {
+        const commandAliases = generateAliases(
+            commandData.commands,
+            commandData.commandName,
+            commandData.parents
+        );
 
-    // If there is no direct match we will search through the tree after a match
-    if (!commands[command]) {
-        const aliases = generateAliases(commands, command, parents);
-        if (!aliases) {
+        if (!commandAliases) {
             return undefined;
-        } else if (aliases.commands) {
-            commands = aliases.commands;
-            parents = aliases.parents;
+        } else if (commandAliases.commands) {
+            commandData.commands = commandAliases.commands;
+            commandData.parents = commandAliases.parents;
         }
-        suggestions = suggestions.concat(aliases.mappings);
+
+        commandSuggestions = commandSuggestions.concat(commandAliases.mappings);
     }
 
-    if (!commands[command]) {
+    const command = commandData.commands[commandData.commandName];
+
+    if (!command) {
         log.large.error(
-            getSuggestions([command], suggestions),
+            getSuggestions([commandData.commandName], commandSuggestions),
             'Invalid command'
         );
     }
@@ -113,29 +123,36 @@ export default function runCli({
     // Show command help information if requested
     // Will ignore application configuration
     if (input.coreOptions.help || input.coreOptions.h) {
-        return console.log(generateCommandDocumentation(context.extensionConfig.settings, context.meta.settings,
-            commands, command, info.name, parents));
+        return console.log(
+            generateCommandDocumentation(
+                context.extensionConfig.settings,
+                context.meta.settings,
+                commandData.commands,
+                commandData.commandName,
+                info.name,
+                commandData.parents
+            )
+        );
     }
-
 
     let documentationObject;
     // Only parse arguments if the command accepts it
-    if (commands[command] && commands[command].settings) {
+    if (command && command.settings) {
         // Get config from application and only parse options that this command cares about.
-        const filter = commands[command].settings === true ? [] : commands[command].settings;
+        const filter = command.settings === true ? [] : command.settings;
         documentationObject = buildDocumentationObject(context.config.settings, context.meta.settings, filter);
     }
 
     const { settings, parsedOptions } =
-        parseOptions(input.extOptions, getMappings(documentationObject), commands[command]);
+        parseOptions(input.extOptions, getMappings(documentationObject), command);
 
     const configToValidate = merge(context.config, {
         settings,
     });
 
     // Validate configuration
-    if (commands[command] && commands[command].settings) {
-        validateSettingsWrapper(configToValidate.settings, context.meta.settings, commands[command].settings);
+    if (command && command.settings) {
+        validateSettingsWrapper(configToValidate.settings, context.meta.settings, command.settings);
     }
 
     // Does this after the validation so that things set by the CLI always will have the highest priority
@@ -156,9 +173,9 @@ export default function runCli({
 
     if (invoke) {
         // If string run as shell command
-        if (isString(commands[command].command)) {
-            return execute(commands[command].command, {
-                context: commands[command].__context,
+        if (isString(command.command)) {
+            return execute(command.command, {
+                context: command.__context,
                 args: input.extraArguments,
                 cwd: input.coreOptions.directory,
             }).catch((error) => {
@@ -167,10 +184,10 @@ export default function runCli({
             });
         }
 
-        const parsedArguments = parseArguments(command, commands, input.argsWithoutOptions);
+        const parsedArguments = parseArguments(commandData.commandName, commandData.commands, input.argsWithoutOptions);
 
         // Run the command
-        return commands[command].command({
+        return command.command({
             info,
             arguments: parsedArguments,
             options: parsedOptions,
@@ -183,7 +200,9 @@ export default function runCli({
     return undefined;
 }
 
-/* Return an object wrapping all relevant data from minimist with descriptive names */
+/**
+ * Wrap all relevant data from minimist with descriptive names
+ */
 function parseCliInput(minimistData) {
     const {
         _,

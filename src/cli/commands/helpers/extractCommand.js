@@ -2,19 +2,21 @@ import generateCommandsDocumentation from '../documentation/generateCommandsDocu
 
 import isCommandGroup from './isCommandGroup';
 
-export default function checkGroup(commands = {}, potentialGroup, args, name, parents = []) {
+export default function extractCommand(commands = {}, potentialGroup, args, name, parents = []) {
     if (isCommandGroup(commands)(potentialGroup)) {
         const newGroupOrCommand = args.shift();
 
+        // return documentation string if neither group or command
         if (!newGroupOrCommand) {
-            return console.log(generateCommandsDocumentation(
+            return generateCommandsDocumentation(
                 commands[potentialGroup],
                 name,
                 parents.concat(potentialGroup)
-            ));
+            );
         }
 
-        return checkGroup(
+        // proceed extraction, register parent
+        return extractCommand(
             commands[potentialGroup],
             newGroupOrCommand,
             args,
@@ -22,9 +24,10 @@ export default function checkGroup(commands = {}, potentialGroup, args, name, pa
             parents.concat(potentialGroup)
         );
     }
+
     return {
         commands,
-        command: potentialGroup,
+        commandName: potentialGroup,
         parents,
     };
 }
