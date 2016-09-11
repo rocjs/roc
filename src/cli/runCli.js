@@ -177,7 +177,7 @@ export default function runCli({
             return execute(command.command, {
                 context: command.__context,
                 args: input.extraArguments,
-                cwd: input.coreOptions.directory,
+                cwd: dirPath,
             }).catch((error) => {
                 process.exitCode = error.getCode ? error.getCode() : 1;
                 log.small.error('An error happened when running the Roc command', error);
