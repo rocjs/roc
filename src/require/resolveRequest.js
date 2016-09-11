@@ -3,6 +3,7 @@ import { sep } from 'path';
 import resolve from 'resolve';
 
 import { initGetDependencies, initGetDependenciesFromPath } from './manageDependencies';
+import createPathRegExp from './createPathRegExp';
 
 export default function resolveRequest(exports, directory, dependencyContext) {
     const log = require('debug')('roc:core:require'); // eslint-disable-line
@@ -81,7 +82,7 @@ export default function resolveRequest(exports, directory, dependencyContext) {
 }
 
 function initInProject(directory) {
-    const directoryPattern = new RegExp(makePathReadyForRegExpInWindows(`^${directory}(.*)$`));
+    const directoryPattern = createPathRegExp(`^${directory}(.*)$`);
     return (path) => {
         const matches = directoryPattern.exec(path);
         if (matches) {
@@ -94,9 +95,7 @@ function initInProject(directory) {
 
 function initGetCurrentModule(getDependencies, getDependenciesFromPath) {
     const fallbackPattern = /roc-.*/;
-    const normalPattern = new RegExp(
-        makePathReadyForRegExpInWindows(`.*node_modules${sep}([^${sep}]*)${sep}?([^${sep}]*)`)
-    );
+    const normalPattern = createPathRegExp(`.*node_modules${sep}([^${sep}]*)${sep}?([^${sep}]*)`);
     return (path, fallback) => {
         // Will match against the last roc-* in the path
         if (fallback) {
@@ -124,12 +123,4 @@ function initGetCurrentModule(getDependencies, getDependenciesFromPath) {
         // This means that we are only running this when doing local development
         return getDependenciesFromPath(path, 'exports');
     };
-}
-
-function makePathReadyForRegExpInWindows(path) {
-    if (sep === '\\') {
-        return path.replace(/\\/g, '\\\\');
-    }
-
-    return path;
 }
