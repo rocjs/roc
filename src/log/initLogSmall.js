@@ -21,7 +21,7 @@ function logger(level, color, symbol) {
         throw new Error(`The provided level "${level}" is not valid, try one of: ${validLevels.join(', ')}`);
     }
     return (...args) => {
-        const message = args[0];
+        const message = args[0] || '';
         const error = isBoolean(args[1]) ? args[2] : args[1];
         const showSymbol = (isBoolean(args[1]) ? args[1] : args[2]) || true;
 
