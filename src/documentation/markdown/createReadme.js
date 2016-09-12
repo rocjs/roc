@@ -62,7 +62,7 @@ export default function createReadme(name, dir, extension, commandObject) {
     [
         'Actions', 'Commands', 'Configuration', 'Dependencies', 'Hooks', 'Settings', 'Extensions',
     ].forEach((group) => {
-        rows.push(`- [${group}](/${dir}/${group}.md)`);
+        rows.push(`- [${group}](${dir}/${group}.md)`);
     });
     rows.push('');
     rows.push('---');
