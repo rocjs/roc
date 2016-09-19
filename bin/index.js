@@ -27,5 +27,5 @@ if (currentCli !== localCli) {
         }
     }
 } else {
-    require(currentCli); // eslint-disable-line    
+    require(currentCli); // eslint-disable-line
 }
