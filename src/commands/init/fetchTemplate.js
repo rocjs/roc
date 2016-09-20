@@ -19,6 +19,8 @@ import { getVersions, getOfficialTemplates } from './githubHelpers';
 // Automatically track and cleanup files at exit
 temp.track();
 
+const defaultVersion = 'next'; // replace with "latest" when we release as latest on npm
+
 export function isLocal(template, directory) {
     return folderExists(template, directory) ||
         (path.extname(template) === '.zip' && fileExists(template, directory));
@@ -110,7 +112,7 @@ async function github(template, version) {
             // eslint-disable-next-line
             version = (selectedVersion && selectedVersion.name) || // Try to get the requested version
                 (versions[0] && versions[0].name) || // Otherwise take the latest version
-                'latest'; // Fallback to use latest
+                defaultVersion; // Fallback to use latest
 
             if (!selectedVersion && selectVersion) {
                 log.warn(`Selected template version not found, using ${chalk.bold(version)}`);
@@ -118,7 +120,7 @@ async function github(template, version) {
                 log.info(`Using ${chalk.bold(version)} as template version`);
             }
         } catch (error) {
-            version = 'latest'; // eslint-disable-line
+            version = defaultVersion; // eslint-disable-line
             log.info(`Failed to fetch versions, will fallback to ${chalk.bold(version)}`, error);
         }
     }
@@ -128,7 +130,7 @@ async function github(template, version) {
 
 function download(template, version, clone = false) {
     if (!version) {
-        version = 'latest'; // eslint-disable-line
+        version = defaultVersion; // eslint-disable-line
         log.info(`Will use ${chalk.bold(version)} as default version`);
     }
 
@@ -158,7 +160,7 @@ function download(template, version, clone = false) {
 
 function cloneRepo(template, version) {
     if (!version) {
-        version = 'latest'; // eslint-disable-line
+        version = defaultVersion; // eslint-disable-line
         log.info(`Will use ${chalk.bold(version)} as default version`);
     }
 
