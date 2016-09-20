@@ -4,13 +4,6 @@ branches:
 language: node_js
 node_js:
     - stable
-deploy:
-    provider: npm
-    email: arsovik@gmail.com
-    api_key:
-        secure: WmbsXJj/s8ibfEy562Bf1q5e7GhyFnXut+Uu4bYwxoh0KdhW2QI2mg++4QOyy+66KONYQG71Q/QcCa3yMqGXvmuCoOlX44A1RjvvCW6YGeLoYMySMLdfFGPo4b+wyPIZblb3F7qPBpNPIbDpbwk3So8EBIm+tLxp+auarXYcyZbI3X/tJp0nC8aAGQrVCuvtJrYJ0jVtGB7+yYgCfL19ikNWnAtZzR6agd0/eFxd6qVEvBYRMZRVMF+eygkMye7oUxT9gYj71eZ/9C1mrfgHqcj9jQowA/6STa+GuYUwjIVWBaOT321OlIZ0TvYIfMirYZHe/CKVXDGTZz29uW/tv9Nmr02ZI/9xTlxTyIzS3Kym0XTMExDwvBYvU4yY+BDTV8yjwrVA+LMyCLroHnHyb6sv9u13IJlJaziNgVuvpB0AR4llGtvQr6ldeJums3kZXZPhQ0pueJ4KaLGAW34kCQzHLaaJs6m57dvhjLJ4TJjfsA01ZJvo9so89q+sk6qjCav/XxxHwirYdOzSCKHhZ886ZOuKNiQirYrTC+CvN/HSeGXyqymGa7nnmCt37vXvWmB7F2MAkhKPJcWizRKG8cwwR1PRtHJWZ7nJD5mK8ZSdliLc2aUFMjL0jQ2L95FdkULnBvd0wDTc7ZmCCd9FRSfjg3+gslBsMOf12gz7SuM=
-    on:
-        tags: true
 addons:
     code_climate:
         repo_token:
