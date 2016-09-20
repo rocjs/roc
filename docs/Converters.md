@@ -1,48 +1,165 @@
 # Converters
 
-Converters are used in the CLI context. CLI extensions could use converters
-to convert the input value from your command option to the correct value your extension expects.
+Roc offers some converters that can be used to make sure some input has the correct form when using the command line. This since the command line will most often give string values for everything and sometimes that is not what is desired.
 
-## Usage
+**Table of Contents**
+* [Where are converters used?](#where-are-converters-used)
+  * [Commands](#commands)
+  * [Meta Settings](#meta-settings)
+* [Default Converters](#default-converters)
+  * [automatic](#automatic)
+  * [convert](#convert)
+  * [toArray](#toArray)
+  * [toBoolean](#toBoolean)
+  * [toInteger](#toInteger)
+  * [toObject](#toObject)
+  * [toRegExp](#toRegExp)
+  * [toString](#toString)
+* [Custom Converters](#custom-converters)
 
-### automatic
-If you don't provide one it'll be provided for you.
+## Where are converters used?
 
+Converters are used in two places in Roc:
+1. Commands
+2. Meta Settings
 
-### convert
-Will convert to the first valid converter you pass to the function.  
-It's also possible to provide a custom converter. See example.
-
-Command
-```bash
-$ roc yourCliCommand --yourOption='true'
-$ roc yourCliCommand --yourOption=100
+### Commands
+```javascript
+commands: {
+    build: {
+        // ...
+        arguments: [{
+            // ...
+            default: 'Hello World',
+            validator: isString,
+            converter: toString
+        }],
+        options: [{
+            // ...
+            default: false,
+            validator: isBoolean,
+            converter: toBoolean
+        }]
+    }
+}
 ```
 
-Output
-```js
-true
-1000
-```
+The following strategy is used when trying to find the converter:
+1. Use the `converter` that is defined directly on the object from the property.
+2. Use the `validator` and try to find a converter from it since `infoObject` can return a converter.
+3. Use the `default` value if present together with the automatic converter.
+4. Do not convert.
 
-Code
-```js
-import { convert, toBoolean, toInteger } from 'roc/converters';
+This means that it is not mandatory to define a converter and Roc will do the best it can to select a fitting one if none is provided. 
 
-// ... meta object
-converters: {
-    dev: {
-        yourCliCommand: {
-            yourOption: convert(toBoolean, toInteger)
+### Meta Settings
+```javascript
+settings: {
+    build: {
+        someValue: {
+            // ...
+            validator: isString,
+            converter: toString
         }
     }
 }
-// ... end meta object
 ```
 
-Custom converter
-```js
+The following strategy is used when trying to find the converter:
+1. Use the `converter` that is defined directly on the object.
+2. Use the `validator` and try to find a converter from it since `infoObject` can return a converter.
+3. Use the value that is defined in the non meta settings together with the automatic converter.
+
+This means that it is not mandatory to define a converter and Roc will do the best it can to select a fitting one if none is provided.
+
+## Default Converters
+
+All converters will have the same syntax.
+```javascript
+// a converter
+(input) => convertedValue
+```
+
+### `automatic`
+```javascript
+import { automatic } from 'roc/converters';
+
+automatic(value) => converter
+```
+Takes in a value and returns a converter. Will most likely not be needed to be defined manually.
+
+### `convert`
+```javascript
 import { convert } from 'roc/converters';
+
+convert(...converters) => converter
+```
+Takes in a number of converters and returns a single converter.
+
+Will convert to the first valid converter you pass to the function or undefined.
+
+__Example__
+```javascript
+import { convert, toBoolean, toInteger } from 'roc/converters';
+
+convert(toBoolean, toInteger) => converter
+```
+
+### `toArray`
+```javascript
+import { toArray } from 'roc/converters';
+
+toArray(/* possible converter */) => converter
+```
+Take in a possible converter and returns a converter that will transform the input to an array.
+
+__Example__
+```javascript
+import { toArray, toBoolean } from 'roc/converters';
+
+// Will convert input to an array of booleans
+toArray(isBoolean) => converter
+```
+
+### `toBoolean`
+```javascript
+import { toBoolean } from 'roc/converters';
+```
+Will convert the input to a boolean if possible or return undefined.
+
+### `toInteger`
+```javascript
+import { toInteger } from 'roc/converters';
+```
+Will convert the input value to a number or return NaN if not valid.
+
+### `toObject`
+```javascript
+import { toObject } from 'roc/converters';
+```
+Will convert the input value to an object by trying to do `JSON.parse` on it.
+
+### `toRegExp`
+```javascript
+import { toObject } from 'roc/converters';
+```
+Will convert the input value to a RegExp.
+
+### `toString`
+```javascript
+import { toString } from 'roc/converters';
+```
+Will convert the input value to a string.
+
+## Custom Converters
+
+It is of course also possible to define custom converters if one of the default ones does not cover the specific use case.
+
+A converter is just a function that takes in one value and returns the correct value. Custom converters can be combined with default converters for more complex behavior.
+
+__Example__
+```javascript
+import { convert, toBoolean } from 'roc/converters';
 
 const customConverter => (input) => {
     if (input === 'something') {
@@ -52,170 +169,5 @@ const customConverter => (input) => {
     return false;
 };
 
-// ... meta object
-converters: {
-    dev: {
-        yourCliCommand: {
-            yourOption: convert(customConverter)
-        }
-    }
-}
-// ... end meta object
-```
-
-
-### toArray
-Will convert the input to an array.
-
-Command
-```bash
-$ roc yourCliCommand --yourOption=1,2,3,4
-$ roc yourCliCommand --yourOption='[1, 2, 3, 4]'
-```
-
-Output
-```js
-[1, 2, 3, 4]
-```
-
-Code
-```js
-import { toArray } from 'roc/converters';
-
-// ... meta object
-converters: {
-    dev: {
-        yourCliCommand: {
-            yourOption: toArray
-        }
-    }
-}
-// ... end meta object
-```
-
-### toBoolean
-Will convert the input to a boolean or return the default value
-if convertion fails.
-
-Command
-```bash
-$ roc yourCliCommand --yourOption=true
-$ roc yourCliCommand --yourOption='false'
-$ roc yourCliCommand --yourOption='true'
-$ roc yourCliCommand --yourOption=100
-$ roc yourCliCommand --yourOption
-$ roc yourCliCommand --no-yourOption
-```
-
-Output
-```js
-true
-false
-true
-undefined
-true
-false
-```
-
-Code
-```js
-import { toBoolean } from 'roc/converters';
-
-// ... meta object
-converters: {
-    dev: {
-        yourCliCommand: {
-            yourOption: toBoolean
-        }
-    }
-}
-// ... end meta object
-```
-
-### toInteger
-Will convert the input value to a number or return NaN if is not valid.
-
-Command
-```bash
-$ roc yourCliCommand --yourOption=100
-$ roc yourCliCommand --yourOption='100'
-$ roc yourCliCommand --yourOption='string'
-```
-
-Output
-```js
-100
-100
-NaN
-```
-
-Code
-```js
-import { toInteger } from 'roc/converters';
-
-// ... meta object
-converters: {
-    dev: {
-        yourCliCommand: {
-            yourOption: toInteger
-        }
-    }
-}
-// ... end meta object
-```
-
-### toObject
-Will convert the input value to an object.
-
-Command
-```bash
-$ roc yourCliCommand --yourOption='{}'
-```
-
-Output
-```js
-{}
-```
-
-Code
-```js
-import { toObject } from 'roc/converters';
-
-// ... meta object
-converters: {
-    dev: {
-        yourCliCommand: {
-            yourOption: toObject
-        }
-    }
-}
-// ... end meta object
-```
-
-### toRegExp
-Will convert the input value to a RegExp.
-
-Command
-```bash
-$ roc yourCliCommand --yourOption='myRegExp'
-```
-
-Output
-```js
-/myRegExp/
-```
-
-Code
-```js
-import { toRegExp } from 'roc/converters';
-
-// ... meta object
-converters: {
-    dev: {
-        yourCliCommand: {
-            yourOption: toRegExp
-        }
-    }
-}
-// ... end meta object
+convert(customConverter, toBoolean) => converter
 ```

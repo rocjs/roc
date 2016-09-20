@@ -1,4 +1,9 @@
 {
+    "env": {
+        "test": {
+            "plugins": ["babel-plugin-istanbul"]
+        }
+    },
     "plugins": [
         "babel-plugin-transform-object-rest-spread",
         "babel-plugin-transform-es2015-spread",
@@ -8,6 +13,7 @@
         "babel-plugin-transform-es2015-parameters",
         "babel-plugin-transform-es2015-destructuring",
         "babel-plugin-transform-es2015-modules-commonjs",
-        "babel-plugin-transform-export-extensions"
+        "babel-plugin-transform-export-extensions",
+        "babel-plugin-transform-async-to-generator"
     ]
 }

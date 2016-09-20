@@ -1,0 +1,15 @@
+{
+    "name": "complex",
+    "version": "1.0.0",
+    "dependencies": {
+        "noop3": "1.0.0"
+    },
+    "roc": {
+        "packages": [
+            "./packages/a/index.js"
+        ],
+        "plugins": [
+            "./plugins/a/index.js"
+        ]
+    }
+}

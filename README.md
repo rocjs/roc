@@ -16,10 +16,10 @@ Maintained and used in production by teams within [Schibsted](http://schibsted.c
 _Currently supports Linux and OS X using Node4+ and npm3_
 
 ## Roc provides
+- A way to eliminate boilerplate code within your projects
 - Command Line Interface (CLI) for creating and managing your project
 - Consistent configuration and runtime management
 - Minimized complexity within projects by combining powerful modules together
-- A way to eliminate boilerplate code within your projects
 - Best in class developer tools ready to be used instantly
 
 All of this is provided by a flexible extension system, and several extensions are available today.

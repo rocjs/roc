@@ -1,40 +1,35 @@
-export roc from './roc';
-
 export {
-    merge,
     getConfig,
     appendConfig,
+} from './configuration/manageConfig';
+
+export {
     getSettings,
-    appendSettings
-} from './configuration';
+    appendSettings,
+} from './configuration/manageSettings';
 
-export { generateMarkdownDocumentation, generateTextDocumentation } from './documentation';
+export merge from './helpers/merge';
 
-export { runCli, initCli } from './cli';
+export runCli from './cli/runCli';
 
-export { validate } from './validation';
+export execute from './execute';
+export executeSync from './execute/executeSync';
+export executeSyncExit from './execute/executeSyncExit';
 
-export { execute, executeSync } from './cli/execute';
+export { getAbsolutePath, fileExists, folderExists, lazyFunctionRequire } from './helpers';
 
-export { getAbsolutePath, fileExists } from './helpers';
+export runHook from './hooks/runHook';
 
-export { defaultPrompt } from './commands/helpers/default-prompt';
-
-export {
-    runHook,
-    runHookDirectly,
-    registerHooks
-} from './hooks';
+export runHookDirectly from './hooks/runHookDirectly';
 
 export {
-    registerAction,
-    registerActions,
-    removeActions
-} from './hooks/actions';
+    removeActions,
+} from './hooks/manageActions';
 
-export generateMarkdownHooks from './hooks/documentation/generate-markdown-hooks';
-export generateMarkdownActions from './hooks/documentation/generate-markdown-actions';
+export { getResolveRequest } from './require/manageResolveRequest';
 
-export generateMarkdownCommands from './commands/markdown-commands';
+export generateDependencies from './require/utils/generateDependencies';
 
-export getConfiguration from './cli/get-configuration';
+export initLog from './log';
+
+export initRuntime from './runtime';

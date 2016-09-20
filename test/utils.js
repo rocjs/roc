@@ -33,25 +33,25 @@ export function makeGetterSpy(obj, getter) {
 
     // define spy getter
     Object.defineProperty(obj, getter, {
-        get: function() {
+        get() {
             callCount++;
             return oldGetter.call(obj);
         },
-        configurable: true
+        configurable: true,
     });
 
     return {
-        called: function() {
+        called() {
             return callCount > 0;
         },
-        callCount: function() {
+        callCount() {
             return callCount;
         },
-        restore: function() {
+        restore() {
             Object.defineProperty(obj, getter, {
                 get: oldGetter,
-                configurable: true
+                configurable: true,
             });
-        }
+        },
     };
 }

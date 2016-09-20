@@ -1,8 +1,11 @@
-const pkg = require('../package.json');
-const runCli = require('../lib/cli').runCli;
-const roc = require('../lib').roc;
+const packageJSON = require('../package.json');
+const runCli = require('../lib/cli/runCli').default;
+const commands = require('../lib/commands').default;
 
 runCli({
-    version: pkg.version,
-    name: pkg.name
-}, roc.config, roc.meta);
+    info: {
+        version: packageJSON.version,
+        name: packageJSON.name,
+    },
+    commands,
+});

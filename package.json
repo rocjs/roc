@@ -1,7 +1,8 @@
 {
   "name": "roc",
   "version": "1.0.0-rc.10",
-  "description": "Build modern web applications easily",
+  "description": "Modern JavasScript Development Ecosystem",
+  "license": "MIT",
   "main": "lib/index.js",
   "bin": "bin/index.js",
   "engineStrict": true,
@@ -22,19 +23,16 @@
     "clean": "rimraf lib esdocs coverage",
     "lint": "eslint .",
     "test": "npm run lint && npm run test:coverage",
-    "test:coverage": "cross-env NODE_ENV=test babel-node node_modules/isparta/bin/isparta cover node_modules/mocha/bin/_mocha -- --recursive test/",
+    "test:coverage": "cross-env NODE_ENV=test nyc mocha --compilers js:babel-register test --recursive",
     "test:unit": "cross-env NODE_ENV=test mocha --compilers js:babel-register test --recursive",
     "test:unit:watch": "npm run test:unit -- --watch",
     "check": "ncu",
-    "docs": "node bin/index.js markdown-commands > docs/DefaultCommands.md",
+    "docs": "node scripts/generate-documentation.js",
     "esdocs": "esdoc -c esdoc.json",
-    "prepublish": "npm test && npm run clean && npm run build && npm run esdocs",
+    "prepublish": "npm run clean && npm run build && npm test",
     "postinstall": "node ./scripts/post-install.js"
   },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/rocjs/roc.git"
-  },
+  "repository": "https://github.com/rocjs/roc",
   "keywords": [
     "roc",
     "react",
@@ -44,11 +42,20 @@
     "cli",
     "redux"
   ],
-  "author": "VG",
-  "license": "MIT",
+  "author": "Verdens Gang AS",
+  "contributors": [
+    {
+      "name": "Gustaf Dalemar"
+    },
+    {
+      "name": "Andreas Søvik"
+    }
+  ],
   "devDependencies": {
     "babel-cli": "~6.4.5",
-    "babel-eslint": "5.0.0-beta10",
+    "babel-eslint": "~6.1.2",
+    "babel-plugin-istanbul": "1.0.3",
+    "babel-plugin-transform-async-to-generator": "6.8.0",
     "babel-plugin-transform-es2015-destructuring": "~6.4.0",
     "babel-plugin-transform-es2015-function-name": "~6.4.0",
     "babel-plugin-transform-es2015-modules-commonjs": "~6.4.5",
@@ -62,40 +69,72 @@
     "codeclimate-test-reporter": "~0.3.0",
     "coveralls": "~2.11.6",
     "cross-env": "1.0.7",
+    "eol": "0.2.0",
     "esdoc": "~0.4.3",
     "esdoc-es7-plugin": "0.0.3",
     "esdoc-importpath-plugin": "0.0.1",
-    "eslint": "~1.10.3",
-    "eslint-config-vgno": "~5.0.0",
-    "expect": "~1.13.4",
-    "isparta": "~4.0.0",
-    "mocha": "~2.4.4",
+    "eslint": "~3.0.1",
+    "eslint-config-airbnb-base": "~4.0.0",
+    "eslint-plugin-babel": "~3.3.0",
+    "eslint-plugin-import": "~1.10.2",
+    "expect": "~1.20.2",
+    "mocha": "~3.0.2",
     "npm-check-updates": "~2.5.6",
+    "nyc": "7.1.0",
+    "proxyquire": "1.7.10",
     "rimraf": "~2.5.0"
   },
   "dependencies": {
+    "anchor-markdown-header": "0.5.5",
+    "async": "2.0.1",
     "chalk": "~1.1.1",
     "colors": "~1.1.2",
+    "consolidate": "0.14.1",
     "cross-spawn": "2.2.3",
-    "deep-extend": "~0.4.0",
+    "debug": "2.2.0",
+    "download-git-repo": "0.1.2",
+    "extract-zip": "1.5.0",
     "fs-extra": "~0.26.4",
+    "git-clone": "0.1.0",
     "got": "~6.1.1",
-    "inquirer": "~0.11.1",
+    "handlebars": "4.0.5",
+    "inquirer": "~1.1.3",
     "is-promise": "2.1.0",
     "leven": "~2.0.0",
-    "lodash": "~4.0.1",
+    "lodash": "~4.13.1",
+    "log-symbols": "1.0.2",
     "loud-rejection": "~1.3.0",
+    "manage-path": "2.0.0",
+    "merge-options": "0.0.64",
+    "metalsmith": "2.2.0",
+    "micromatch": "2.3.11",
     "minimist": "~1.2.0",
+    "ora": "0.3.0",
     "redent": "~1.0.0",
-    "replace": "~0.3.0",
     "resolve": "~1.1.6",
-    "semver": "~5.1.0",
+    "semver": "5.1.0",
+    "shell-escape": "0.2.0",
     "source-map-support": "~0.4.0",
+    "spawn-command": "0.0.2-1",
     "strip-ansi": "~3.0.0",
-    "tar": "~2.2.1",
     "temp": "~0.8.3",
     "trim-newlines": "~1.0.0",
     "unzip": "^0.1.11",
-    "update-notifier": "0.6.3"
+    "update-notifier": "0.6.3",
+    "validate-npm-package-name": "2.2.2"
+  },
+  "nyc": {
+    "include": [
+      "src/**/*.js"
+    ],
+    "require": [
+      "babel-register"
+    ],
+    "reporter": [
+      "lcov",
+      "text-summary"
+    ],
+    "sourceMap": false,
+    "instrument": false
   }
 }
