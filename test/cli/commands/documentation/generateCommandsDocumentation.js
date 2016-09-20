@@ -23,9 +23,9 @@ describe('cli', () => {
                              No commands available.
 
                             General options:
-                             -b, --better-feedback   Will enable source-map-support and loud-rejection for a better experience with better feedback.
-                             -c, --config            Path to configuration file, will default to roc.config.js in current working directory.
-                             -d, --directory         Path to working directory, will default to the current working directory. Can be either absolute or relative.
+                             -b, --better-feedback   Enables source-map-support and loud-rejection.
+                             -c, --config            Path to configuration file.
+                             -d, --directory         Path to working directory.
                              -h, --help              Output usage information.
                              -V, --verbose           Enable verbose mode.
                              -v, --version           Output version number.
@@ -76,9 +76,9 @@ describe('cli', () => {
                              group group2 cmd3      A description that describes command nr. 3
 
                             General options:
-                             -b, --better-feedback  Will enable source-map-support and loud-rejection for a better experience with better feedback.
-                             -c, --config           Path to configuration file, will default to roc.config.js in current working directory.
-                             -d, --directory        Path to working directory, will default to the current working directory. Can be either absolute or relative.
+                             -b, --better-feedback  Enables source-map-support and loud-rejection.
+                             -c, --config           Path to configuration file.
+                             -d, --directory        Path to working directory.
                              -h, --help             Output usage information.
                              -V, --verbose          Enable verbose mode.
                              -v, --version          Output version number.
