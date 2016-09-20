@@ -5,14 +5,14 @@ All commands can be called with some additional options illustrated in the table
 
 ### General options
 
-| Name                  | Description                                                                                                   | Required |
-| --------------------- | ------------------------------------------------------------------------------------------------------------- | -------- |
-| -b, --better-feedback | Will enable source-map-support and loud-rejection for a better experience with better feedback.               | No       |
-| -c, --config          | Path to configuration file, will default to roc.config.js in current working directory.                       | No       |
-| -d, --directory       | Path to working directory, will default to the current working directory. Can be either absolute or relative. | No       |
-| -h, --help            | Output usage information.                                                                                     | No       |
-| -V, --verbose         | Enable verbose mode.                                                                                          | No       |
-| -v, --version         | Output version number.                                                                                        | No       |
+| Name                  | Description                                    | Required |
+| --------------------- | ---------------------------------------------- | -------- |
+| -b, --better-feedback | Enables source-map-support and loud-rejection. | No       |
+| -c, --config          | Path to configuration file.                    | No       |
+| -d, --directory       | Path to working directory.                     | No       |
+| -h, --help            | Output usage information.                      | No       |
+| -V, --verbose         | Enable verbose mode.                           | No       |
+| -v, --version         | Output version number.                         | No       |
 
 ## Commands
 * [create](#create)
