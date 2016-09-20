@@ -1,5 +1,6 @@
 import { isString } from 'lodash';
 import minimist from 'minimist';
+import isPromise from 'is-promise';
 
 import { appendSettings, getSettings } from '../configuration/manageSettings';
 import { setConfig } from '../configuration/manageConfig';
@@ -180,14 +181,14 @@ export default function runCli({
                 cwd: dirPath,
             }).catch((error) => {
                 process.exitCode = error.getCode ? error.getCode() : 1;
-                log.small.error('An error happened when running the Roc command', error);
+                log.small.error('A problem happened when running the Roc command');
             });
         }
 
         const parsedArguments = parseArguments(commandData.commandName, commandData.commands, input.argsWithoutOptions);
 
         // Run the command
-        return command.command({
+        const commandResult = command.command({
             info,
             arguments: parsedArguments,
             options: parsedOptions,
@@ -195,6 +196,15 @@ export default function runCli({
             // Roc Context
             context,
         });
+
+        if (isPromise(commandResult)) {
+            return commandResult
+                .catch((error) => {
+                    log.small.warn('A problem happened when running the Roc command', error);
+                });
+        }
+
+        return commandResult;
     }
 
     return undefined;
@@ -204,20 +214,15 @@ export default function runCli({
  * Wrap all relevant data from minimist with descriptive names
  */
 function parseCliInput(minimistData) {
+    /* eslint-disable object-property-newline */
     const {
         _,
-        h,
-        help,
-        V,
-        verbose,
-        v,
-        version,
-        c,
-        config,
-        d,
-        directory,
-        b,
-        'better-feedback': betterFeedback,
+        h, help,
+        V, verbose,
+        v, version,
+        c, config,
+        d, directory,
+        b, 'better-feedback': betterFeedback,
         '--': extraArguments,
         ...extOptions,
     } = minimistData;
@@ -228,21 +233,16 @@ function parseCliInput(minimistData) {
     return {
         groupOrCommand, // commandgroup or command
         coreOptions: { // options managed and parsed by core
-            h,
-            help,
-            V,
-            verbose,
-            v,
-            version,
-            c,
-            config,
-            d,
-            directory,
-            b,
-            betterFeedback,
+            h, help,
+            V, verbose,
+            v, version,
+            c, config,
+            d, directory,
+            b, betterFeedback,
         },
         extOptions, // options that will be forwarded to commands from context
         argsWithoutOptions, // remaining arguments with no associated options
         extraArguments, // arguments after the ended argument list (--)
     };
+    /* eslint-enable object-property-newline */
 }
