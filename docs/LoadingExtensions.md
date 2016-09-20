@@ -1,7 +1,7 @@
 # Loading Extensions
 
 ## In projects
-Roc will by default search through the `dependencies` and `devDependencies` within the project `package.json` and find every dependency that matches `roc-package-*` or `roc-plugin-*`. Scoped packages are managed and the scope will not be included when matching against the pattern mentioned. This means that `@scope/roc-package-*` will also be matched for example. The order of them will be based on the order within `package.json` and is not guaranteed. External factors like `npm` can modify this. Note that the order will not be relevant in most cases and Roc will load `devDependencies` before `dependencies`. The reason for this is to get the development and production as similar as possible.
+Roc will by default search through the `dependencies` and `devDependencies` within the project `package.json` and find every dependency that matches `roc-package-*` or `roc-plugin-*`. Scoped packages are managed and the scope will not be included when matching against the pattern mentioned. This means that `@scope/roc-package-*` will also be matched for example. They will be sorted based on their name to make the order as consistent as possible. Note that the order will not be relevant in most cases and Roc will load `dependencies` before `devDependencies`.
 
 One thing that is important to note is that packages will always be loaded before plugins, one of the differences between the two types of extensions.
 

@@ -20,7 +20,7 @@ describe('helpers', () => {
                 },
             };
             expect(getRocPluginDependencies(packageJson))
-                .toEqual(['roc-plugin-web', '@name/roc-plugin-web-react', 'roc-plugin-test']);
+                .toEqual(['@name/roc-plugin-web-react', 'roc-plugin-web', 'roc-plugin-test']);
         });
     });
 });
