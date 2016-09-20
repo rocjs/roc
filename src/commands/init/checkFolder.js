@@ -12,15 +12,9 @@ export default async function checkDirectory(name = '', directory = '', { force 
 
     if (folderExists(directoryPath) && name) {
         log.warn(`Found a folder named ${chalk.underline(directoryPath)}, will try to use it.`);
-    } else if (name) {
-        try {
-            fs.mkdirSync(directoryPath);
-        } catch (error) {
-            log.error(`Failed to create new folder at ${directoryPath}`, error);
-        }
     }
 
-    if (!force && fs.readdirSync(directoryPath).length > 0) {
+    if (folderExists(directoryPath) && !force && fs.readdirSync(directoryPath).length > 0) {
         const { selection } = await inquirer.prompt([{
             type: 'list',
             name: 'selection',
@@ -42,7 +36,7 @@ export default async function checkDirectory(name = '', directory = '', { force 
         if (selection === 'abort') {
             process.exit(0); // eslint-disable-line
         } else if (selection === 'new') {
-            return await askForDirectory(directoryPath);
+            return await askForDirectory(directory);
         } else if (selection === 'force') {
             return {
                 dir: directoryPath,
@@ -72,11 +66,6 @@ async function askForDirectory(directory) {
     } else if (fileExists(directoryPath)) {
         log.warn('There is already a file with that name');
         return await askForDirectory(directory);
-    }
-    try {
-        fs.mkdirSync(directoryPath);
-    } catch (error) {
-        log.error(`Failed to create new folder at ${directoryPath}`, error);
     }
 
     return {
