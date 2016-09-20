@@ -28,7 +28,7 @@ function logger(level, color, symbol) {
         const symbolText = symbol && showSymbol ? `${symbol} ` : '';
         const log = console[level]; // eslint-disable-line
 
-        log(color ? chalk[color](symbolText + message) : symbolText + message);
+        log(!symbolText && color ? chalk[color](symbolText + message) : symbolText + message);
         printError(error, log);
 
         if (level === 'error') {
