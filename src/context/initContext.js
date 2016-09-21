@@ -1,4 +1,5 @@
 import { isFunction, omit } from 'lodash';
+import { yellow, bold } from 'chalk';
 
 import { registerActions } from '../hooks/manageActions';
 import { setResolveRequest, getResolveRequest } from '../require/manageResolveRequest';
@@ -18,6 +19,7 @@ import processRocObject, { handleResult } from './extensions/helpers/processRocO
 import verifyConfigurationStructure from './helpers/verifyConfigurationStructure';
 import verifyInstalledProjectDependencies from './dependencies/verifyInstalledProjectDependencies';
 import verifyRequiredDependencies from './dependencies/verifyRequiredDependencies';
+import getAlphaExtensionsThatAreNotLocked from './dependencies/getAlphaExtensionsThatAreNotLocked';
 
 /**
  * Builds the context.
@@ -148,6 +150,37 @@ export default function initContext({
                         true
                     );
             }
+        }
+
+        /**
+            Temporary warning to manage projects using rc.10
+            and extensions with alpha version
+        */
+        if (getAlphaExtensionsThatAreNotLocked(context.packageJSON)) {
+            console.log(`
+${yellow('================================================ IMPORTANT ================================================')}
+  Roc is getting closer to the first stable 1.0 release and some things have have changed.
+
+  You might be seeing some some warning now about "configuration mismatches" among other things.
+  Most of these warning are easy to address and for the full changes please take a look at the
+  link below. It also contains information about how to update the project to the latest version.
+
+  https://gist.github.com/dlmr/4a548f85b57c1291d63191aecd30caf6
+
+  To remove this warning please update your Roc dependencies to point to at least "beta.1",
+  and preferably lock the versions since we might do more changes in the future that can be breaking.
+
+  If you do not feel like doing this right now you can run the ${bold('"roc lock"')} command that will lock
+  the project dependencies to work as before. If you use this we do encourage you to update
+  eventually to get all the new improvements.
+
+  We promise to keep breaking changes to a minimum and we are really close to release
+  everything as stable.
+
+  If something does not work as expected anymore do not hesitate to post an issue at
+  https://github.com/rocjs/roc
+${yellow('===========================================================================================================')}
+`);
         }
     }
 
