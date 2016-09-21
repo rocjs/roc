@@ -19,7 +19,7 @@ import { getVersions, getOfficialTemplates } from './githubHelpers';
 // Automatically track and cleanup files at exit
 temp.track();
 
-const defaultVersion = 'next'; // replace with "latest" when we release as latest on npm
+const defaultVersion = 'next'; // replace with "latest" when we release as latest on npm - temporary
 
 export function isLocal(template, directory) {
     return folderExists(template, directory) ||
@@ -93,6 +93,12 @@ async function getOfficialTemplate(template, version) {
 }
 
 async function github(template, version) {
+    // Temporary to get next for the moment
+    if (!version) {
+        version = defaultVersion; // eslint-disable-line
+        log.info(`Will use ${chalk.bold(version)} as default version`);
+    }
+
     // Get the versions for the template if no version is provided or it starts with a number
     if (!version || !isNaN(Number(version.charAt(0)))) {
         try {

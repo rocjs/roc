@@ -26,7 +26,7 @@ export default async function init({
     const { name, version } = managedArguments;
     let { template } = managedArguments;
 
-    // 0. Show a list of official templates if template name was provided
+    // 0. Show a list of official templates if no template name was provided
     if (!template) {
         template = await showListOfTemplates();
     }
@@ -133,7 +133,7 @@ function npmInstall(dirPath, verbose) {
     });
 }
 
-
+// TODO Handle if we get 403 from GitHub
 async function showListOfTemplates() {
     const spinner = ora('Fetching list of official templates').start();
     const templates = await getOfficialTemplates();
