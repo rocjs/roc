@@ -32,6 +32,10 @@ const initArguments = {
 };
 
 export default {
+    lock: {
+        command: lazyRequire('./lock'),
+        description: 'Locks down Roc dependencies to fixed alpha versions.',
+    },
     create: {
         __meta: {
             name: 'Project creation',
