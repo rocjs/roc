@@ -15,12 +15,23 @@ All commands can be called with some additional options illustrated in the table
 | -v, --version         | Output version number.                         | No       |
 
 ## Commands
+* [lock](#lock)
 * [create](#create)
     * [init](#init)
     * [new](#new)
 * [meta](#meta)
     * [docs](#docs)
     * [list-settings](#list-settings)
+
+## lock
+__Locks down Roc dependencies to fixed alpha versions.__
+
+```
+roc lock
+```
+
+###  Defined by extensions
+roc
 
 ## create
 __Project creation__
