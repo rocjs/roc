@@ -20,6 +20,9 @@ export const officialExtensions = {
     'roc-package-web-app-react': '1.0.0-alpha.11',
     'roc-package-web-app-react-dev': '1.0.0-alpha.11',
 
+    'roc-package-web-component': '1.0.0-alpha.4',
+    'roc-package-web-component-dev': '1.0.0-alpha.4',
+
     'roc-plugin-react': '1.0.0-alpha.3',
     'roc-plugin-react-dev': '1.0.0-alpha.3',
 
