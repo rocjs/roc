@@ -24,7 +24,7 @@ export default function verifyInstalledProjectDependencies({ dependencies, devDe
 `You have some dependencies in your package.json that also have been exported by extensions. This is probably a mistake.
 
 ${underline('Roc will prioritize the ones exported by the extensions.')}
-You can override this by adding "¡" to the start of the require/import in the code, see documentation for more info.
+You can override this by adding "_" to the start of the require/import in the code, see documentation for more info.
 
 Dependencies that is both exported and in the projects package.json:
 ${matches.map((match) => `- ${bold(match.name)} ${dim('from')} ` +
