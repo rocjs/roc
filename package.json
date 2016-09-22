@@ -13,6 +13,8 @@
   "files": [
     "converters",
     "validators",
+    "runtime",
+    "log",
     "bin",
     "lib",
     "scripts"
