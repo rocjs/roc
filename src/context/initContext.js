@@ -124,19 +124,19 @@ export default function initContext({
                 handleResult({
                     actions: projectSpecific.actions,
                     config: omit(projectConfig, ['project']),
-                }, projectConfig.init({ verbose, directory, context })),
+                }, projectSpecific.init({ context })),
                 { context },
                 false,
                 true,
                 false
-            );
+            ).context;
         } else {
             context.config = merge(
                 context.config,
                 omit(projectConfig, ['project'])
             );
 
-            if (projectConfig.actions) {
+            if (projectSpecific.actions) {
                 // We allow both a function directly or an array of actions
                 const projectActions = isFunction(projectSpecific.actions) ?
                     [projectSpecific.actions] :
