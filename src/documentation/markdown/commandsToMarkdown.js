@@ -63,7 +63,7 @@ export default function commandsToMarkdown(
 
     rows.push(`# Commands for \`${name}\``, '');
 
-    if (commands) {
+    if (commands && Object.keys(commands).length > 0) {
         rows.push('## General Information');
         rows.push('All commands can be called with some additional options illustrated in the table below.', '');
 
