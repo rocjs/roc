@@ -31,7 +31,7 @@ An array where the values are either functions or objects.
 
 __function__
 ```javascript
-({ context, description, extension, hook, previousValue }) => (...args) => () => { /* do stuff */ }
+({ context, description, extension, hook, previousValue }) => (...args) => (previousValue) => { /* do stuff */ }
 ```
 
 __object__

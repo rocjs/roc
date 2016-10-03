@@ -85,7 +85,7 @@ export default function runHookDirectly({
                                     );
                                 }
 
-                                previousValue = performAction();
+                                previousValue = performAction(previousValue);
 
                                 if (returns) {
                                     const validationResult = isValid(previousValue, returns);
