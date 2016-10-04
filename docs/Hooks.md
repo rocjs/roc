@@ -103,7 +103,7 @@ Actions are functions that react to hooks and can both be generic, they run for 
 Actions are using call chain with three functions that each serve a specific purpose. This signature are used for all actions, both the ones that are registered as a plain function and those that uses an object.
 
 ```javascript
-({ context, description, extension, hook, previousValue }) => (...args) => () => { /* do something */ }
+({ context, description, extension, hook, previousValue }) => (...args) => (previousValue) => { /* do something */ }
 ```
 __`context`__  
 [The Roc context object.](/docs/Context.md)
@@ -118,7 +118,9 @@ __`hook`__
 A string that is the calling hook name.
 
 __`previousValue`__  
-The previous value, will either be the initalValue defined for the hook or the return value from the action that run before the current one
+The previous value, will either be the `initalValue` defined for the hook or the return value from the action that run before the current one.
+
+This value can also be accessed from the third function in the chain and is the recommended way to access it. It should only be accessed here if the value of it is needed to "short-circuit" and not run the action.
 
 #### The call chain
 
@@ -126,7 +128,7 @@ The previous value, will either be the initalValue defined for the hook or the r
 
 2. The second function will be called with possible arguments and it might return another function if it should run.
 
-3. The third function will be invoked and in some instances it might be expected that it returns a value, in others not.
+3. The third function will be invoked and in some instances it might be expected that it returns a value, in others not. The previous value can be accessed here if one exists and it will either be the `initalValue` defined for the hook or the return value from the action that run before the current one.
 
 ### Define actions
 Actions are used in both projects and extensions.
