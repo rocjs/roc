@@ -69,7 +69,7 @@ export default function generateDocumentation({
                 name,
                 commandObject.context.extensionConfig,
                 commandObject.context.commands,
-                `${documentationDir}/Settings.md`,
+                `${directory}/Settings.md`,
                 mode
             ),
             path: `${documentationDir}/Commands.md`,
