@@ -40,33 +40,36 @@ export default function resolveRequest(exports, directory, dependencyContext) {
                 return request.substring(1);
             }
 
-            const rocContext = getContext(context, fallback);
-            if (rocContext) {
-                log(`(${identifier}) : Checking [${request}] for [${context}]`);
-
-                const matches = pattern.exec(request);
-                const module = matches[1].charAt(0) === '@' ?
-                    `${matches[1]}/${matches[2]}` :
-                    matches[1];
-
-                if (!module || !rocContext[module]) {
-                    return request;
-                }
-
-                const newRequest = rocContext[module].resolve ?
-                    rocContext[module].resolve({
-                        module,
-                        request,
-                        requestContext: context,
-                        extensionContext: rocContext[module].context,
-                    }) : resolve.sync(request, { basedir: rocContext[module].context });
-
-                log(`(${identifier}) : Found an alias for [${module}] => [${newRequest}]`);
-
-                return newRequest || request;
+            let rocContext = getContext(context, fallback);
+            if (!rocContext && !fallback) {
+                return request;
+            } else if (!rocContext) {
+                // If all other fails we will resolve in the projects context.
+                rocContext = exports;
             }
 
-            return request;
+            log(`(${identifier}) : ${fallback ? '<Fallback> ' : ' '}Checking [${request}] for [${context}]`);
+
+            const matches = pattern.exec(request);
+            const module = matches[1].charAt(0) === '@' ?
+                `${matches[1]}/${matches[2]}` :
+                matches[1];
+
+            if (!module || !rocContext[module]) {
+                return request;
+            }
+
+            const newRequest = rocContext[module].resolve ?
+                rocContext[module].resolve({
+                    module,
+                    request,
+                    requestContext: context,
+                    extensionContext: rocContext[module].context,
+                }) : resolve.sync(request, { basedir: rocContext[module].context });
+
+            log(`(${identifier}) : Found an alias for [${module}] => [${newRequest}]`);
+
+            return newRequest || request;
         };
 
         return (request, context, fallback = false) => {

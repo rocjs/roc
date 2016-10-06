@@ -1,5 +1,6 @@
 import getExtensions from './steps/getExtensions';
 import processDevExports from './steps/processDevExports';
+import processNormalExports from './steps/processNormalExports';
 import runPostInits from './steps/runPostInits';
 
 const log = require('debug')('roc:core:extensionBuilder');
@@ -19,6 +20,7 @@ export default function buildExtensionTree(context, packages, plugins, checkRequ
         getExtensions('package')(packages),
         getExtensions('plugin')(plugins),
         processDevExports,
+        processNormalExports,
         runPostInits,
         completed,
     ].reduce(
@@ -34,6 +36,7 @@ export default function buildExtensionTree(context, packages, plugins, checkRequ
             temp: {
                 postInits: [],
                 extensionsDevelopmentExports: {},
+                extensionsNormalExports: {},
                 startTime: process.hrtime(),
             },
 

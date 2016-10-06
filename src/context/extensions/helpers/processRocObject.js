@@ -72,6 +72,11 @@ export default function processRocObject(
                 state.temp.extensionsDevelopmentExports[roc.name] =
                     state.context.dependencies.exports;
             }
+
+            if (!/^.*-dev$/.test(roc.name)) {
+                state.temp.extensionsNormalExports[roc.name] =
+                    state.context.dependencies.exports;
+            }
         }
 
         // Get possible hooks
