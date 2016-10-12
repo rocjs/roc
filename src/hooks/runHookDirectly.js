@@ -35,16 +35,20 @@ export default function runHookDirectly({
     if (argumentsDefinitions) {
         const argumentsDefinitionsArray = objectToArray(argumentsDefinitions);
         args.forEach((value, i) => {
-            const validationResult = isValid(value, argumentsDefinitionsArray[i].validator);
-            if (validationResult !== true) {
-                try {
-                    throwValidationError(argumentsDefinitionsArray[i].name, validationResult, value, 'argument');
-                } catch (err) {
-                    log.large.error(
-                        `An argument was not valid in ${underline(name)} from ${underline(extension)}.` +
-                            `\n\n${err.message}`,
-                        'Hook problem'
-                    );
+            // If we have meta data for this argument, this means that we will allow
+            // for more arguments than we have validation for.
+            if (argumentsDefinitionsArray[i] && argumentsDefinitionsArray[i].validator) {
+                const validationResult = isValid(value, argumentsDefinitionsArray[i].validator);
+                if (validationResult !== true) {
+                    try {
+                        throwValidationError(argumentsDefinitionsArray[i].name, validationResult, value, 'argument');
+                    } catch (err) {
+                        log.large.error(
+                            `An argument was not valid in ${underline(name)} from ${underline(extension)}.` +
+                                `\n\n${err.message}`,
+                            'Hook problem'
+                        );
+                    }
                 }
             }
         });
