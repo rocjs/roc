@@ -148,7 +148,7 @@ async function showListOfTemplates() {
     const { option } = await inquirer.prompt([{
         type: 'rawlist',
         name: 'option',
-        message: 'Selected a template',
+        message: 'Select a template',
         choices,
     }]);
 
