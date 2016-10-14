@@ -9,7 +9,7 @@ export function getOfficialTemplates() {
 }
 
 /**
- * Fetches an array of all the tags for a Github repo, used as possible versions for a template.
+ * Fetches an array of all the tags for a GitHub repo, used as possible versions for a template.
  *
  * @param {string} packageName - A package name, expected to match "username/repo"
  *

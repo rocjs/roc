@@ -47,8 +47,8 @@ export default function fetchTemplate(template, directory, version, { clone }) {
         return cloneRepo(template, version);
     }
 
-    // Handle Github templates in first class way, for better support of versions
-    if (!clone && isGithub(template)) {
+    // Handle GitHub templates in first class way, for better support of versions
+    if (!clone && isGitHub(template)) {
         return github(template, version);
     }
 
@@ -196,6 +196,6 @@ function cloneRepo(template, version) {
 }
 
 
-export function isGithub(template) {
+export function isGitHub(template) {
     return template.indexOf(':') === -1 && (template.match(/\//g) || []).length === 1;
 }

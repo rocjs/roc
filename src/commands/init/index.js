@@ -15,7 +15,7 @@ import getPackageJSON from '../../helpers/getPackageJSON';
 import { getVersions, getOfficialTemplates } from './githubHelpers';
 import generateTemplate from './generateTemplate';
 import checkFolder from './checkFolder';
-import fetchTemplate, { isGithub, isLocal } from './fetchTemplate';
+import fetchTemplate, { isGitHub, isLocal } from './fetchTemplate';
 
 export default async function init({
     arguments: { managed: managedArguments },
@@ -34,7 +34,7 @@ export default async function init({
     if (listVersions) {
         if (isLocal(template, directory)) {
             return log.info('You can’t list versions for local templates');
-        } else if (template.indexOf('/') === -1 || isGithub(template)) {
+        } else if (template.indexOf('/') === -1 || isGitHub(template)) {
             try {
                 const templateVersions = await getVersions(template);
 
