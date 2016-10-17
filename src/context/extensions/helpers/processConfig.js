@@ -209,3 +209,42 @@ function updateStateMeta(name, state, extensionConfigPaths, extensionMetaPaths, 
 
     return newState.meta;
 }
+
+export function validateConfigAndCleanMetaData(name, extension, state) {
+    const {
+        extensionConfigPaths,
+        stateConfigPaths,
+    } = validateConfig(name, extension, state);
+
+    extensionConfigPaths.paths.forEach((path, index) => {
+        // Only process settings
+        if (/^settings/.test(path)) {
+            const changed = getGroup(stateConfigPaths, path) !== extensionConfigPaths.groups[index];
+            update(state.meta, path, (previous = {}) => {
+                if (changed) {
+                    return {
+                        __extensions: union(previous.__extensions || [], [name]),
+                    };
+                } else if (!previous.__extensions) {
+                    return undefined;
+                }
+
+                return previous;
+            });
+        }
+    });
+
+    return removeUndefined(state.meta);
+}
+
+function removeUndefined(meta) {
+    Object.keys(meta).forEach((key) => {
+        if (meta[key] === undefined) {
+            delete meta[key]; // eslint-disable-line
+        } else if (isPlainObject(meta[key])) {
+            removeUndefined(meta[key]);
+        }
+    });
+
+    return meta;
+}
