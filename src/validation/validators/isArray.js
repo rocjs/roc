@@ -16,7 +16,7 @@ export default function isArray(validator) {
             return createInfoObject({
                 validator,
                 converter: (converter) => toArray(converter),
-                wrapper: (wrap) => (`[${wrap}]`),
+                wrapper: (wrap) => `Array(${wrap})`,
                 canBeEmpty: true,
             });
         }
