@@ -12,6 +12,7 @@ describe('validators', () => {
                     required: false,
                     canBeEmpty: null,
                     converter: toInteger,
+                    unmanagedObject: false,
                 });
         });
 

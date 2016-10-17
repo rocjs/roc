@@ -11,6 +11,7 @@ describe('roc', () => {
                     canBeEmpty: undefined,
                     required: false,
                     converter: undefined,
+                    unmanagedObject: false,
                 });
             });
 
@@ -21,6 +22,7 @@ describe('roc', () => {
                     canBeEmpty: true,
                     required: true,
                     converter: stubConverter,
+                    unmanagedObject: false,
                 };
 
                 const validatorProvidingInfo = () => info;
