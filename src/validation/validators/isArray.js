@@ -1,4 +1,4 @@
-import { isArray as isArrayLodash } from 'lodash';
+import { isArray as isArrayLodash, isPlainObject } from 'lodash';
 
 import createInfoObject from '../helpers/createInfoObject';
 import isValid from '../helpers/isValid';
@@ -29,10 +29,21 @@ export default function isArray(validator) {
             return 'Was not an array!';
         }
 
-        for (const value of input) {
-            const result = isValid(value, validator);
+        for (const index in input) { // eslint-disable-line
+            const result = isValid(input[index], validator);
             if (result !== true) {
-                return result;
+                if (isPlainObject(result)) {
+                    return {
+                        key: `${result.key}[${index}]`,
+                        value: result.value,
+                        message: result.message,
+                    };
+                }
+                return {
+                    key: `[${index}]`,
+                    value: input[index],
+                    message: result,
+                };
             }
         }
 

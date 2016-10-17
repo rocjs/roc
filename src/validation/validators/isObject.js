@@ -38,7 +38,24 @@ export default function isObject(...args) {
             return true;
         }
 
-        return Object.keys(input).map((key) => isValid(input[key], validator))
-            .reduce((a, b) => a === true && b === true, true);
+        for (const key of Object.keys(input)) {
+            const result = isValid(input[key], validator);
+            if (result !== true) {
+                if (isPlainObject(result)) {
+                    return {
+                        key: `.${key}${result.key}`,
+                        value: result.value,
+                        message: result.message,
+                    };
+                }
+                return {
+                    key: `.${key}`,
+                    value: input[key],
+                    message: result,
+                };
+            }
+        }
+
+        return true;
     };
 }

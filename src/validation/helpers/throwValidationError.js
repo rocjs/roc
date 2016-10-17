@@ -12,7 +12,7 @@ import { underline } from 'chalk';
 export default function throwValidationError(name, message, value = '[Nothing]', type = 'field') {
     throw new Error(
         `Validation failed for ${type} ${underline(name)}\n` +
-        `Received: ${value}.` +
+        `Received: ${JSON.stringify(value)}.` +
         ` ${message || ''}`
     );
 }

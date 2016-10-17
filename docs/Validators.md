@@ -242,9 +242,18 @@ required(isString) => validator
 
 ## Custom Validators
 
-It’s of course also possible to define custom validators if one of the default ones does not cover the specific use case. A validator is a function that takes in a value and returns `true` if the value was valid and `false` / an error string if it was not. Custom validators can be combined with default validators for more complex behavior.
+It’s of course also possible to define custom validators if one of the default ones does not cover the specific use case. A validator is a function that takes in a value and returns `true` if the value was valid and `false` / an error string / an error object if it was not. Custom validators can be combined with default validators for more complex behavior.
 
 An important thing is to make sure that a validator always returns a value for it to function correctly. It’s also encouraged that custom validators have support for generating an `infoObject` that will be used for documentation purposes, error messages and in some cases converting values. [Read more below.](#infoObject)
+
+### Error object
+For more complex validators one might need to return an error object instead of `false` / error string. This error object can be used to provide better information to user of Roc about exectly where the error occurred. The object can contain 3 properties; `key`, `value` and `message`.
+
+```
+key         An additional key that should be added to where the error happened.
+value       The value that got the error.
+message     The error message, what another validator might have returned as an error string.
+```
 
 __Example__
 ```javascript
