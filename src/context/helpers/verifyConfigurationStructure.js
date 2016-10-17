@@ -1,10 +1,11 @@
-import { isPlainObject, difference } from 'lodash';
+import { isPlainObject, difference, get } from 'lodash';
 
 import { RAW } from '../../configuration/addRaw';
 import getSuggestions from '../../helpers/getSuggestions';
+import getUnmanagedObject from '../../helpers/getUnmanagedObject';
 import log from '../../log/default/large';
 
-export default function verifyConfigurationStructure(config, projectConfig) {
+export default function verifyConfigurationStructure(config, meta, projectConfig) {
     const getKeys = (obj, oldPath = '', allKeys = [], first = true) => {
         Object.keys(obj).forEach((key) => {
             const value = obj[key];
@@ -12,7 +13,14 @@ export default function verifyConfigurationStructure(config, projectConfig) {
 
             // We only want to check recursively if the key is settings or we already have
             // called the function recursively once
-            if (isPlainObject(value) && key !== RAW && (!first || key === 'settings')) {
+            const { validator } = get(meta, newPath, {});
+
+            if (
+                isPlainObject(value) &&
+                key !== RAW &&
+                (!first || key === 'settings') &&
+                getUnmanagedObject(validator)
+            ) {
                 getKeys(value, `${newPath}.`, allKeys, false);
             } else {
                 allKeys.push(newPath);

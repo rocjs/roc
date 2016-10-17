@@ -1,6 +1,7 @@
 import { isPlainObject, isFunction } from 'lodash';
 
 import onProperty from '../helpers/onProperty';
+import getUnmanagedObject from '../helpers/getUnmanagedObject';
 import automatic from '../converters/automatic';
 import { RAW } from '../configuration/addRaw';
 
@@ -70,9 +71,18 @@ export default function buildDocumentationObject(
             if ((filter.length === 0 || filter.indexOf(key) !== -1) && key !== RAW) {
                 const parents = [].concat(initalParents, key);
                 const value = object[key];
-                if (isPlainObject(value) && Object.keys(value).length > 0 && !leaves) {
+                if (
+                    isPlainObject(value) &&
+                    Object.keys(value).length > 0 &&
+                    !leaves &&
+                    getUnmanagedObject(meta[key].validator)
+                ) {
                     return manageGroup(value, key, meta[key], parents, level);
-                } else if ((!isPlainObject(value) || Object.keys(value).length === 0) && leaves) {
+                } else if ((
+                    !isPlainObject(value) ||
+                    Object.keys(value).length === 0 ||
+                    !getUnmanagedObject(meta[key].validator)) && leaves
+                ) {
                     return manageLeaf(value, key, meta[key], parents);
                 }
             }

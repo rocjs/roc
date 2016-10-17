@@ -8,9 +8,13 @@ import toObject from '../../converters/toObject';
  * Validates an object using a validator.
  *
  * @param {function|RegExp} validator - The validator to use on the elements in the object
+ * @param {Object} options - Uptions that should be used with the validator
  * @return {function} - A function that takes a value and that returns true or false if valid or not.
  */
-export default function isObject(validator) {
+export default function isObject(...args) {
+    const validator = isPlainObject(args[0]) ? undefined : args[0];
+    const { unmanaged = false } = (isPlainObject(args[0]) ? args[0] : args[1]) || {};
+
     return (input, info) => {
         if (info) {
             return createInfoObject({
@@ -18,6 +22,7 @@ export default function isObject(validator) {
                 converter: () => toObject,
                 wrapper: (wrap) => `{${wrap}}`,
                 canBeEmpty: true,
+                unmanagedObject: unmanaged,
             });
         }
 
