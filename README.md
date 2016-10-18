@@ -15,6 +15,9 @@ Maintained and used in production by teams within [Schibsted](http://schibsted.c
 [![Dependency Status](https://david-dm.org/rocjs/roc.svg)](https://david-dm.org/rocjs/roc)  
 _Currently supports Linux and OS X using Node4+ and npm3_
 
+## roc@next
+Use `npm install -g roc@next` to test the latest version.
+
 ## Roc provides
 - A way to eliminate boilerplate code within your projects
 - Command Line Interface (CLI) for creating and managing your project
