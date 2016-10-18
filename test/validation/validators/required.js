@@ -25,6 +25,7 @@ describe('validators', () => {
                     required: true,
                     canBeEmpty: null,
                     converter: undefined,
+                    unmanagedObject: false,
                 });
         });
 

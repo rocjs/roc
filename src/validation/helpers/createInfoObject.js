@@ -6,6 +6,7 @@ export default function createInfoObject({
     required = false,
     canBeEmpty,
     converter,
+    unmanagedObject = false,
 } = {}) {
     const info = isFunction(validator) ? validator(null, true) : { type: validator.toString(), canBeEmpty: null };
     const type = wrapper ? wrapper(info.type) : info.type;
@@ -15,5 +16,6 @@ export default function createInfoObject({
         canBeEmpty: canBeEmpty === undefined ? info.canBeEmpty : canBeEmpty,
         required: info.required || required,
         converter: convert,
+        unmanagedObject: info.unmanagedObject || unmanagedObject,
     };
 }

@@ -22,10 +22,11 @@ describe('validators', () => {
 
             expect(isObject(validator)(null, true))
                 .toEqual({
-                    type: '{Type}',
+                    type: 'Object(Type)',
                     required: false,
                     canBeEmpty: true,
                     converter: toObject,
+                    unmanagedObject: false,
                 });
         });
 

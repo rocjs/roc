@@ -110,7 +110,7 @@ export default function initContext({
         // Check for a mismatch between application configuration and extensions.
         if (verify) {
             if (Object.keys(projectConfig).length) {
-                verifyConfigurationStructure(context.config, projectConfig);
+                verifyConfigurationStructure(context.config, context.meta, projectConfig);
             }
         }
 

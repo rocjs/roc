@@ -27,7 +27,7 @@ export default function configurationToMarkdown(name, configuration, metaConfigu
             , '');
         }
 
-        rows.push(`__Extensions__: ${configMeta[group].__extensions.join(', ')}`);
+        rows.push(`__Extensions__: ${configMeta[group].__extensions.join(', ')}`, '');
     });
 
     return rows.join('\n');

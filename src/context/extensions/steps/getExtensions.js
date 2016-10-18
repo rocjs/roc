@@ -9,7 +9,7 @@ import semver from 'semver';
 import { fileExists } from '../../../helpers';
 import { registerActions } from '../../../hooks/manageActions';
 import { validateCommands } from '../helpers/processCommands';
-import { validateConfig } from '../helpers/processConfig';
+import { validateConfigAndCleanMetaData } from '../helpers/processConfig';
 import ExtensionError from '../helpers/ExtensionError';
 import log from '../../../log/default/large';
 import merge from '../../../helpers/merge';
@@ -116,7 +116,14 @@ function mergeState(name) {
             [].concat(previousState.context.projectExtensions, state.context.projectExtensions);
 
         // Validate configuration and check for possible collisions
-        validateConfig(name, state.context, previousState.context);
+        previousState.context.meta = validateConfigAndCleanMetaData(name, { // eslint-disable-line
+            config: state.context.config,
+            meta: state.context.meta,
+        }, {
+            config: previousState.context.config,
+            meta: previousState.context.meta,
+        });
+
         temp.context.meta = updateExtensions(
             merge(previousState.context.meta, state.context.meta),
             previousState.context.meta

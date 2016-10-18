@@ -1,5 +1,4 @@
 import { isString } from 'lodash';
-import minimist from 'minimist';
 import isPromise from 'is-promise';
 
 import { appendSettings, getSettings } from '../configuration/manageSettings';
@@ -23,6 +22,7 @@ import generateCommandsDocumentation from './commands/documentation/generateComm
 import getMappings from './commands/getMappings';
 import parseArguments from './commands/parseArguments';
 import parseOptions from './commands/parseOptions';
+import processArguments from './processArguments';
 
 /**
  * Invokes the Roc cli.
@@ -35,7 +35,7 @@ export default function runCli({
     argv = process.argv,
     invoke = true,
 }) {
-    const input = parseCliInput(minimist(argv.slice(2), { '--': true }));
+    const input = processArguments(argv);
 
     // If version is selected output that and stop
     if (input.coreOptions.version || input.coreOptions.v) {
@@ -181,68 +181,35 @@ export default function runCli({
                 cwd: dirPath,
             }).catch((error) => {
                 process.exitCode = error.getCode ? error.getCode() : 1;
-                log.small.error('A problem happened when running the Roc command');
+                log.small.error('An error occurred when running the command');
             });
         }
 
         const parsedArguments = parseArguments(commandData.commandName, commandData.commands, input.argsWithoutOptions);
 
         // Run the command
-        const commandResult = command.command({
-            info,
-            arguments: parsedArguments,
-            options: parsedOptions,
-            extraArguments: input.extraArguments,
-            // Roc Context
-            context,
-        });
+        try {
+            const commandResult = command.command({
+                info,
+                arguments: parsedArguments,
+                options: parsedOptions,
+                extraArguments: input.extraArguments,
+                // Roc Context
+                context,
+            });
 
-        if (isPromise(commandResult)) {
-            return commandResult
-                .catch((error) => {
-                    log.small.warn('A problem happened when running the Roc command', error);
-                });
+            if (isPromise(commandResult)) {
+                return commandResult
+                    .catch((error) => {
+                        log.small.warn('A problem occurred when running the command', error);
+                    });
+            }
+
+            return commandResult;
+        } catch (error) {
+            log.small.error('An error occurred when running the command', error);
         }
-
-        return commandResult;
     }
 
     return undefined;
-}
-
-/**
- * Wrap all relevant data from minimist with descriptive names
- */
-function parseCliInput(minimistData) {
-    /* eslint-disable object-property-newline */
-    const {
-        _,
-        h, help,
-        V, verbose,
-        v, version,
-        c, config,
-        d, directory,
-        b, 'better-feedback': betterFeedback,
-        '--': extraArguments,
-        ...extOptions,
-    } = minimistData;
-
-    // The first should be our command or commandgroup, if there is one
-    const [groupOrCommand, ...argsWithoutOptions] = _;
-
-    return {
-        groupOrCommand, // commandgroup or command
-        coreOptions: { // options managed and parsed by core
-            h, help,
-            V, verbose,
-            v, version,
-            c, config,
-            d, directory,
-            b, betterFeedback,
-        },
-        extOptions, // options that will be forwarded to commands from context
-        argsWithoutOptions, // remaining arguments with no associated options
-        extraArguments, // arguments after the ended argument list (--)
-    };
-    /* eslint-enable object-property-newline */
 }

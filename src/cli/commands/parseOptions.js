@@ -115,11 +115,11 @@ function parseCommandOptions(command, notManaged) {
             let name;
 
             // See if we can match the option against anything.
-            if (notManaged[option.name]) {
+            if (notManaged[option.name] !== undefined) {
                 value = notManaged[option.name];
                 delete notManaged[option.name];
                 name = option.name;
-            } else if (notManaged[option.alias]) {
+            } else if (notManaged[option.alias] !== undefined) {
                 value = notManaged[option.alias];
                 delete notManaged[option.alias];
                 name = option.alias;

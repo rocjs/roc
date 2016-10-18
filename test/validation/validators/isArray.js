@@ -18,10 +18,11 @@ describe('validators', () => {
 
             expect(isArray(validator)(null, true))
                 .toEqual({
-                    type: '[Type]',
+                    type: 'Array(Type)',
                     required: false,
                     canBeEmpty: true,
                     converter: toArray(),
+                    unmanagedObject: false,
                 });
         });
 
