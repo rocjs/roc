@@ -146,7 +146,7 @@ import { isObject } from 'roc/validators';
 isObject(/* possible validator */, options) => validator
 isObject(/* possible validator */, options) => validator
 ```
-Will validate the input to make sure it’s an object consisting of the possible validator for values. Possible to provide an options object, can be the first argument if no validator is used or the second if a validator is used.
+Will validate the input to make sure it’s an object consisting of the possible validator for values. Possible to provide an options object that can be the first argument if no validator is used or the second if a validator is used.
 
 `null` and `undefined` are valid.
 
@@ -155,7 +155,7 @@ __`options`__
 unmanaged       Defaults to false, Roc will not check for mismatches in projects when true.
 ```
 
-If `unmanaged` is set to `true` the object will be managed in an unmanaged way where the keys on the object will not be verified by Roc. This is useful if the value for the specific property should be treated as an object.
+If `unmanaged` is set to `true` the object will not be managed, meaning that Roc will not verify the object keys in this case. This is useful if the value for the specific property should be treated as an object.
 
 __Example__
 ```javascript
@@ -247,7 +247,7 @@ It’s of course also possible to define custom validators if one of the default
 An important thing is to make sure that a validator always returns a value for it to function correctly. It’s also encouraged that custom validators have support for generating an `infoObject` that will be used for documentation purposes, error messages and in some cases converting values. [Read more below.](#infoObject)
 
 ### Error object
-For more complex validators one might need to return an error object instead of `false` / error string. This error object can be used to provide better information to user of Roc about exectly where the error occurred. The object can contain 3 properties; `key`, `value` and `message`.
+For more complex validators one might need to return an error object instead of `false` / error string. This error object can be used to provide better information to user of Roc about exactly where the error occurred. The object can contain 3 properties; `key`, `value` and `message`.
 
 ```
 key         An additional key that should be added to where the error happened.

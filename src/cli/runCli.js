@@ -181,7 +181,7 @@ export default function runCli({
                 cwd: dirPath,
             }).catch((error) => {
                 process.exitCode = error.getCode ? error.getCode() : 1;
-                log.small.error('An error happened when running command');
+                log.small.error('An error occurred when running the command');
             });
         }
 
@@ -201,13 +201,13 @@ export default function runCli({
             if (isPromise(commandResult)) {
                 return commandResult
                     .catch((error) => {
-                        log.small.warn('A problem happened when running command', error);
+                        log.small.warn('A problem occurred when running the command', error);
                     });
             }
 
             return commandResult;
         } catch (error) {
-            log.small.error('An error happened when running command', error);
+            log.small.error('An error occurred when running the command', error);
         }
     }
 
