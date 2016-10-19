@@ -10,7 +10,7 @@ import getRocPackageDependencies from '../helpers/getRocPackageDependencies';
 import getRocPluginDependencies from '../helpers/getRocPluginDependencies';
 import log from '../log/default/large';
 import merge from '../helpers/merge';
-import patchRequire from '../require/patchRequire';
+import patchResolveFilename from '../require/patchResolveFilename';
 
 import { setContext } from './helpers/manageContext';
 import buildExtensionTree from './extensions/buildExtensionTree';
@@ -91,7 +91,7 @@ export default function initContext({
                 dependencyContext
             );
 
-            patchRequire(getResolveRequest('Node'));
+            patchResolveFilename(getResolveRequest('Node'));
         }
 
         if (context.projectExtensions.length && verbose) {
