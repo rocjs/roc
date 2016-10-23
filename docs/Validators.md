@@ -144,7 +144,7 @@ Will validate the input to make sure it’s an integer.
 import { isObject } from 'roc/validators';
 
 isObject(/* possible validator */, options) => validator
-isObject(/* possible validator */, options) => validator
+isObject(options) => validator
 ```
 Will validate the input to make sure it’s an object consisting of the possible validator for values. Possible to provide an options object that can be the first argument if no validator is used or the second if a validator is used.
 
