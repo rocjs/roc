@@ -2,14 +2,14 @@ const Module = require('module');
 
 const log = require('debug')('roc:core:require');
 
-const originalRequire = Module.prototype.require;
+const originalResolveFilename = Module._resolveFilename;
 
-export default function patchRequire(resolveRequest) {
+export default function patchResolveFilename(resolveRequest) {
     log('Initializing');
 
-    Module.prototype.require = function rocRequire(request) {
+    Module._resolveFilename = function rocResolveFilename(request, parent) {
         try {
-            return originalRequire.apply(this, [resolveRequest(request, this.id)]);
+            return originalResolveFilename.apply(this, [resolveRequest(request, parent.id), parent]);
         } catch (_error) {
             /* We try again with fallback enabled.
              * This emulates kinda how NODE_PATH works in that we try again with another scope.
@@ -18,7 +18,7 @@ export default function patchRequire(resolveRequest) {
              * if a dependency of an extension requires some peerDependency that some other
              * extension is providing.
              */
-            return originalRequire.apply(this, [resolveRequest(request, this.id, true)]);
+            return originalResolveFilename.apply(this, [resolveRequest(request, parent.id, true), parent]);
         }
     };
 }
