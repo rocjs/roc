@@ -155,6 +155,7 @@ The structure of the object is the same as the one used in the [Roc object](#con
   standalone: roc.standalone,
   type: 'package' / 'plugin',
   version: roc.version,
+  parents: [{ name, version }, { name, version }, ...], // The parents that the extension have
 }]
 ```
 
@@ -169,6 +170,7 @@ The structure of the object is the same as the one used in the [Roc object](#con
   standalone: roc.standalone,
   type: 'package' / 'plugin',
   version: roc.version,
+  parents: [{ name, version }, { name, version }, ...], // The parents that the extension have
 }]
 ```
 

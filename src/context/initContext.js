@@ -1,5 +1,6 @@
 import { isFunction, omit } from 'lodash';
 import { yellow, bold } from 'chalk';
+import archy from 'archy';
 
 import { registerActions } from '../hooks/manageActions';
 import { setResolveRequest, getResolveRequest } from '../require/manageResolveRequest';
@@ -48,8 +49,8 @@ export default function initContext({
         extensionConfig: {},
         hooks: {},
         meta: {},
-        projectExtensions: [],
         packageJSON: {},
+        projectExtensions: [],
         usedExtensions: [],
         verbose,
     };
@@ -100,6 +101,11 @@ export default function initContext({
                     (extension) => `${extension.name}${extension.version ? ` - ${extension.version}` : ''}`
                 ).join('\n'),
                 'Extensions Used'
+            );
+
+            log.info(
+                printTree(context.packageJSON, context.usedExtensions, context.projectExtensions),
+                'Extensions Tree'
             );
         }
         const configPath = projectConfigPath ||
@@ -189,4 +195,25 @@ ${yellow('======================================================================
     }
 
     return context;
+}
+
+function printTree(project, usedExtensions, projectExtensions) {
+    const getParents = (extensionName) =>
+        usedExtensions
+            .find(({ name }) => name === extensionName)
+            .parents
+            .map(({ name, version }) => ({
+                label: `${name}@${version}`,
+                nodes: getParents(name),
+            }));
+
+    const tree = projectExtensions.map(({ name, version }) => ({
+        label: `${name}@${version}`,
+        nodes: getParents(name),
+    }));
+
+    return archy({
+        label: `${project.name}@${project.version}`,
+        nodes: tree,
+    });
 }
