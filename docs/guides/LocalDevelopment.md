@@ -70,7 +70,7 @@ rm -rf node_modules
 We can now link the dependencies that we want to test, in this case `roc-package-web-app-react` and `roc-package-web-app-react-dev`.
 
 ```
-npm link roc-package-web-app-react roc-package-example
+npm link roc-package-web-app-react roc-package-web-app-react-dev
 npm install
 ```
 
