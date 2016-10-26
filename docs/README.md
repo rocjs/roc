@@ -15,9 +15,9 @@
 	* [Roc Object](/docs/RocObject.md)
 * [Projects](/docs/Projects.md)
 * [Templates](/docs/Templates.md)
-* [API](/docs/API.md) 
+* [API](/docs/API.md)
 	* [Converters](/docs/Converters.md)
-	* [Validation](/docs/Validation.md)
+	* [Validation](/docs/Validators.md)
 	* [Logging](/docs/Logging.md)
 * Guides
 	* [Create an extension](/docs/guides/CreateExtension.md)
