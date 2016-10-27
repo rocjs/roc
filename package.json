@@ -88,6 +88,7 @@
   },
   "dependencies": {
     "anchor-markdown-header": "0.5.5",
+    "archy": "1.0.0",
     "async": "2.0.1",
     "chalk": "~1.1.1",
     "colors": "~1.1.2",

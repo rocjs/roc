@@ -17,8 +17,8 @@ __Object structure__
   extensionConfig: {}, // The configuration before the user configuration is added
   hooks: {}, // All the registered hooks from the extensions
   meta: {}, // The meta configuration from the extensions
-  projectExtensions: [], // The extensions that the project directly depend on
   packageJSON: {}, // Content of the projects package.json
+  projectExtensions: [], // The extensions that the project directly depend on
   usedExtensions: [], // All the used extensions that are used, direct and indirect
   verbose: false/true // If the runtime is started in verbose mode or not
 }
@@ -144,6 +144,9 @@ An object with the merged meta configuration.
 
 The structure of the object is the same as the one used in the [Roc object](#config) with the exception for `__extensions` that Roc will add when building the context. This property is an array with strings that list all of the extensions that have modified it in some way. This is used in the core together with `override` to make sure that extensions knowingly override configuration defined by other extensions.
 
+### `packageJSON`
+The complete `package.json` for the extension.
+
 ### `projectExtensions`
 
 ```javascript
@@ -155,6 +158,7 @@ The structure of the object is the same as the one used in the [Roc object](#con
   standalone: roc.standalone,
   type: 'package' / 'plugin',
   version: roc.version,
+  parents: [{ name, version }, { name, version }, ...], // The parents that the extension have
 }]
 ```
 
@@ -169,6 +173,7 @@ The structure of the object is the same as the one used in the [Roc object](#con
   standalone: roc.standalone,
   type: 'package' / 'plugin',
   version: roc.version,
+  parents: [{ name, version }, { name, version }, ...], // The parents that the extension have
 }]
 ```
 

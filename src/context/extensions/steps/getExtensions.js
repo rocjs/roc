@@ -67,6 +67,7 @@ function getProjectExtension(type, extensionPath, state) {
                 standalone: roc.standalone,
                 type,
                 version: roc.version,
+                parents: getNearestParents(roc),
             });
 
             return nextState;
@@ -189,6 +190,19 @@ function getCompleteExtensionTree(type, roc, path, initialState) {
         (state, process) => process(roc, state),
         initialState
     );
+}
+
+function getNearestParents(roc) {
+    return [
+        ...(roc.packages || []),
+        ...(roc.plugins || []),
+    ].map((parent) => {
+        const { name, version } = getCompleteExtension(parent);
+        return {
+            name,
+            version,
+        };
+    });
 }
 
 function validateRocExtension(path) {
@@ -361,6 +375,7 @@ function registerExtension(type) {
                 standalone: roc.standalone,
                 type,
                 version: roc.version,
+                parents: roc.parents || getNearestParents(roc),
             });
         }
 
