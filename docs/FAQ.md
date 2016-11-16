@@ -52,13 +52,13 @@ With that said you could definitely use Yeoman together with Roc if you so wish.
 ### An extension is providing me with a dependency, I would like to you the local one in my project. How can I do this?
 There currently are two ways to disable exported dependencies from extensions.
 
-1. An easy way is to add a prefix, `_`, in front of the import to disable it from being managed by Roc.
+1. An easy way is to add a prefix, `#`, in front of the import to disable it from being managed by Roc.
 
 __Example__
 ```javascript
 import lodash from '_lodash';
 
-var lodash = require('_lodash');
+var lodash = require('#lodash');
 ```
 
 2. If a more permanent solution is desired it is possible to remove a dependecy all together through [the `init` function in `roc.config.js`](/docs/Configuration.md#init).
