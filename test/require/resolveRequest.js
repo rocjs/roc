@@ -34,7 +34,7 @@ describe('roc', () => {
             const resolver = resolveRequest(exports, __dirname, dependencyContext)('Test');
 
             it('should bail out of opt-out character is used', () => {
-                expect(resolver('_a', __dirname))
+                expect(resolver('#a', __dirname))
                     .toEqual('a');
             });
 

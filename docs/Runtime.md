@@ -39,8 +39,8 @@ It is possible to override the provided version if needed. Most of the time this
 ```javascript
 // Will use the react that has been installed in
 // the projects package.json and not the exported
-import React from '_react';
-var React = require('_react');
+import React from '#react';
+var React = require('#react');
 ```
 
 #### Uses
