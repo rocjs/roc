@@ -146,7 +146,7 @@ function download(template, version, clone = false) {
 
     return new Promise((resolve) => {
         try {
-            downloadGitRepo(`${template}${version && '#' + version}`, tmp, { clone }, (error) => {
+            downloadGitRepo(`${template}${version && '#' + encodeURIComponent(version)}`, tmp, { clone }, (error) => {
                 if (error) {
                     spinner.fail();
                     log.error(
