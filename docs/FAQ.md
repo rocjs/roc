@@ -8,7 +8,8 @@ A Roc project needs to depend on at least one package to be considered valid. On
 Let’s look at this with some real examples. `roc-package-web-app` is a package since it’s critical to be able to do anything in a project. `roc-plugin-style-sass` on the other hand fits great as a plugin since it enhances the package with support to use Sass. `roc-package-style-sass` would not make sense since that would not by itself be enough to do anything in a project.
 
 ### I have a feature that I would like to add to a package, should I make a PR that adds it or should it be a plugin?
-There is of course no clear answer to this question and every situation is different. However as a general rule it can be good to think about what the feature one wants to add does. Is it something that everyone that uses the package most likely would want? Then it should probably be added to the package directly. Is this feature something that only will beneficial to this package or potentially several different packages? If the later it should probably be a plugin so it can be reused across several packages.
+There is of course no clear answer to this question and every situation is different. However as a general rule it can be good to think about what the feature one wants to add does. Is it something that everyone that uses the package most likely would want? Then it should probably be added to the package directly. Is it something that will only be beneficial to this individual package or would it potentially be beneficial to more than one package? If the 
+later it should probably be a plugin so it can be reused across several packages.
 
 A good start when experimenting with something a bit more complex is to always start with it being a plugin. This allows for easy experimentation without having to change any packages and if the feature works as intended it can later be moved into a package directly.
 
@@ -36,7 +37,7 @@ You can use a “standalone” extension if there is something that you want to 
 ### What is the advantage to use this over a boilerplate?
 Boilerplates can be used to quickly get started but after the initial setup you as a developer are fully responsible for all the configuration. You have no easy way to update the code that was provided from the boilerplate if the maintainer for it fixes something.
 
-Roc on the other hand moves much of the code that would typically be provided from a boilerplate to versioned npm modules. This allows for the project to get the latest and greatest code without having to really on manual merges. This allows you to maintain a very clean separation of concerns as your projects evolve.
+Roc on the other hand moves much of the code that would typically be provided from a boilerplate to versioned npm modules. This allows for the project to get the latest and greatest code without having to rely on manual merges. This allows you to maintain a very clean separation of concerns as your projects evolve.
 
 Another advantage that this brings it that it makes it easy to share the setup across several projects and easily fix issues in all of them in a single place.
 
