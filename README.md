@@ -38,7 +38,7 @@ More will be possible in the future and creating your own extension is easy.
 ## Creating a React application with Roc
 [See here for an article that explains the following in more detail.](https://medium.com/@DZV/roc-one-solution-to-javascript-fatigue-b14ea07b9763#15c0)
 ```
-$ npm install -g roc
+$ npm install -g roc@next
 $ roc new react-app web-app-react
 $ cd react-app && roc dev
 ```
