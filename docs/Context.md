@@ -6,8 +6,10 @@ __Object structure__
 ```javascript
 {
   actions: [], // All registered actions, by the extensions and the project itself
+  cli: { name: 'roc', package: 'roc-cli', version: '1.0.0' } // Information about the CLI that created the context
   commands: {}, // All available commands from all the extensions
   config: {}, // The complete configuration from the extensions and the project
+  defaultPlugins: [], // The plugins that have been added by default
   dependencies: {
     exports: {}, // The dependencies that is exported from the dependencies and will be available in the project
     uses: {}, // The dependencies that are used in the different extensions
@@ -16,11 +18,13 @@ __Object structure__
   directory: '', // The path to the directory where the runtime is running inside
   extensionConfig: {}, // The configuration before the user configuration is added
   hooks: {}, // All the registered hooks from the extensions
+  inValidProject: true/false // If the context has been created inside a valid project, it has a package.json and at least one extension
   meta: {}, // The meta configuration from the extensions
   packageJSON: {}, // Content of the projects package.json
   projectExtensions: [], // The extensions that the project directly depend on
   usedExtensions: [], // All the used extensions that are used, direct and indirect
-  verbose: false/true // If the runtime is started in verbose mode or not
+  verbose: false/true, // If the runtime is started in verbose mode or not
+  version: '1.0.0' // Version of the roc-core that created the context
 }
 ```
 
@@ -61,6 +65,16 @@ actions             Action objects.
  */
 ```
 
+### `cli`
+An object with information about the the CLI that was used to create the context.
+
+```javascript
+{
+    package: 'roc-cli', // The name of the actual npm package
+    name: 'roc', // The name used for invoking the binary
+    version: '1.0.0' // The version of the npm package
+}
+```
 
 ### `commands`
 An object with the merged commands.
@@ -75,6 +89,22 @@ This is the path to the extension that registered the command. This is used inte
 
 ### `config`
 An object containing the final configuration. This means that the project configuration will have been merged with the configuration from the packages as well as the settings that was defined in the cli at runtime and the `__raw` values added to their properties in `settings`.
+
+### `defaultPlugins`
+Default plugins added by the CLI.
+
+```javascript
+[{
+  description: roc.description,
+  name: roc.name,
+  packageJSON: {} // The extensions packageJSON if one exists, or if provided on roc.packageJSON if standalone
+  path: '/some/path', // The location of the extension on the disc
+  standalone: roc.standalone,
+  type: 'package' / 'plugin',
+  version: roc.version,
+  parents: [{ name, version }, { name, version }, ...], // The parents that the extension have
+}]
+```
 
 ### `dependencies`
 
@@ -139,6 +169,11 @@ An object with objects with actions for each extension.
 
 Will be an object where the key is the extension that the hook belongs to and the value is an object with the hooks definitions, [see what it can contain here](/docs/Extensions.md#hooks).
 
+### `inValidProject`
+Bool that is either true or false depending if the context was built in a valid project directory.
+
+A valid project is a project that has a `package.json` and at least one Roc extension, either a package or a plugin.
+
 ### `meta`
 An object with the merged meta configuration.
 
@@ -148,6 +183,7 @@ The structure of the object is the same as the one used in the [Roc object](#con
 The complete `package.json` for the extension.
 
 ### `projectExtensions`
+Extensions that are added by the project directly.
 
 ```javascript
 [{
@@ -163,6 +199,7 @@ The complete `package.json` for the extension.
 ```
 
 ### `usedExtensions`
+All extensions.
 
 ```javascript
 [{
@@ -181,3 +218,6 @@ The complete `package.json` for the extension.
 A boolean that informs if we the runtime was started in verbose or not.
 
 Will be set to `true` if `-V, --verbose` was set. Should be used to print extra information.
+
+### `version`
+The version of `roc-core` used, as a string, when creating the context.

@@ -1,48 +1,40 @@
 # API Reference
 
-This document outlines all the named exports from the main file in Roc. This means that these functions can be considered part of the public API and can be consumed in the following way.
-
-```javscript
-// ES5
-var merge = require('roc').merge;
-
-// ES6
-import { merge } from 'roc';
-```
-
-* [Utilities](#utilities)
+* [`roc-utils`](#roc-utils)
     * [fileExists](#fileexists)
     * [folderExists](#folderexists)
     * [generateDependencies](#generatedependencies)
     * [getAbsolutePath](#getabsolutepath)
     * [lazyFunctionRequire](#lazyfunctionrequire)
     * [merge](#merge)
-* [Execute](#execute)
-    * [execute](#execute-1)
+* [`roc-execute`](#roc-execute)
+    * [execute](#execute)
     * [executeSync](#executesync)
     * [executeSyncExit](#executesyncexit)
-* [Configuration](#configuration)
-    * [appendConfig](#appendconfig)
-    * [appendSettings](#appendsettings)
-    * [getConfig](#getconfig)
-    * [getSettings](#getsettings)
-* [Runtime](#runtime)
-    * [getResolveRequest](#getresolverequest)
-    * [initRuntime](#initruntime)
-* [Hooks](#hooks)
-    * [removeActions](#removeactions)
-    * [runHook](#runhook)
-    * [runHookDirectly](#runhookdirectly)
-* [Others](#others)
+* [`roc-logger`](#roc-logger)
     * [initLog](#initlog)
-    * [runCli](#runcli)
+* [`roc-core`](#roc-core)
+    * [Configuration](#configuration)
+        * [appendConfig](#appendconfig)
+        * [appendSettings](#appendsettings)
+        * [getConfig](#getconfig)
+        * [getSettings](#getsettings)
+    * [Runtime](#runtime)
+        * [getResolveRequest](#getresolverequest)
+        * [initRuntime](#initruntime)
+    * [Hooks](#hooks)
+        * [removeActions](#removeactions)
+        * [runHook](#runhook)
+        * [runHookDirectly](#runhookdirectly)
+    * [Others](#others)
+        * [runCli](#runcli)
 
-## Utilities
+## `roc-utils`
 These are utility functions that might be useful in mainly extensions.
 
 ### `fileExists`
 ```javascript
-import { fileExists } from 'roc';
+import { fileExists } from 'roc-utils';
 
 if (fileExists(path, /* directory */)) {
     // file exist
@@ -54,7 +46,7 @@ Verifies if a file exists. Directory is optional and the path will be made absol
 
 ### `folderExists`
 ```javascript
-import { folderExists } from 'roc';
+import { folderExists } from 'roc-utils';
 
 if (folderExists(path, /* directory */) {
     // folder exist
@@ -66,7 +58,7 @@ Verifies if a folder exists. Directory is optional and the path will be made abs
 
 ### `generateDependencies`
 ```javascript
-import { generateDependencies } from 'roc';
+import { generateDependencies } from 'roc-utils';
 
 // To be used inside the Roc object for dependencies.exports and dependencies.uses
 export default {
@@ -85,7 +77,7 @@ To be used when defining dependencies that are either exported or used in an ext
 
 ### `getAbsolutePath`
 ```javascript
-import { getAbsolutePath } from 'roc';
+import { getAbsolutePath } from 'roc-utils';
 
 const absPath = getAbsolutePath('./some/path', /* directory */);
 ```
@@ -93,7 +85,7 @@ Makes a path absolute if not already. Takes in a optional directory and will fal
 
 ### `lazyFunctionRequire`
 ```javascript
-import { lazyFunctionRequire } from 'roc';
+import { lazyFunctionRequire } from 'roc-utils';
 
 const lazyRequire = lazyFunctionRequire(require);
 
@@ -107,15 +99,13 @@ Will delay the require of a file that exports a function until it is requested. 
 
 ### `merge`
 ```javascript
-import { merge } from 'roc';
+import { merge } from 'roc-utils';
 
 const newObject = merge(objA, objB);
 ```
 Will deeply merge two objects together and return a new object.
 
-## `Execute`
-__These functions should be seen as experimental and might change without a mayor version change to Roc.__
-
+## `roc-execute`
 Roc has a simple implementation of execute that makes it easy to invoke string commands as they would have been invoked through a npm script. Supports binding of  `node_modules` to the _$PATH_ using the options.
 
 __`options`__  
@@ -144,7 +134,7 @@ error.getStdout() - The result from stdout
 
 ### `execute`
 ```javascript
-import { execute } from 'roc';
+import { execute } from 'roc-execute';
 
 execute('git log', options).then(() => {
     // Completed
@@ -156,7 +146,7 @@ Runs a string in the shell asynchronous and returns a promise that resolves when
 
 ### `executeSync`
 ```javascript
-import { executeSync } from 'roc';
+import { executeSync } from 'roc-execute';
 
 const output = executeSync('git log', options);
 ```
@@ -166,7 +156,7 @@ The function will throw if an `ExecuteError` if an error happens.
 
 ### `executeSyncExit`
 ```javascript
-import { executeSyncExit } from 'roc';
+import { executeSyncExit } from 'roc-execute';
 
 const output = executeSyncExit('git log', options);
 ```
@@ -307,33 +297,6 @@ __callback__
 The callback that should be invoked after the action returns.
 
 ## Others
-
-### `initLog`
-```javascript
-import { initLog } from 'roc';
-
-// name and version should be for current extension
-const largeLog = initLog.large(name, version);
-const smallLog = initLog.small();
-
-largeLog.info(message, title);
-smallLog.warn(message);
-```
-Roc exports a logging function that prints to the stdout that can be used in extensions to normalise the output from them with additional benefits like supporting verbose mode.
-
-Can also be imported directly from `roc/log`.
-
-```javascript
-import initSmall from 'roc/log/small';
-import initLarge from 'roc/log/large';
-import initLog from 'roc/log';
-
-import smallDefault from 'roc/log/default/small';
-import largeDefault from 'roc/log/default/large';
-import initLogDefault from 'roc/log/default';
-```
-
-[See logging documentation for all the possible types of messages.](/docs/Logging.md)
 
 ### `runCli`
 ```javascript

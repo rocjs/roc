@@ -89,7 +89,7 @@ A RegExp is considered a valid validator and can be used both as it is and toget
 
 __Example__
 ```javascript
-import { isArray } from 'roc/validators';
+import { isArray } from 'roc-validators';
 
 // A validator that allows an array that contains either "node" or "web"
 const validator = isArray(/node|web/)
@@ -97,7 +97,7 @@ const validator = isArray(/node|web/)
 
 ### `isArray`
 ```javascript
-import { isArray } from 'roc/validators';
+import { isArray } from 'roc-validators';
 
 isArray(/* possible validator */) => validator
 ```
@@ -107,7 +107,7 @@ Will validate the input to make sure it’s an array consisting of the possible 
 
 __Example__
 ```javascript
-import { isArray, isBoolean } from 'roc/validators';
+import { isArray, isBoolean } from 'roc-validators';
 
 // Will validate that the input is an array of booleans
 // [true, true, true] : valid
@@ -117,7 +117,7 @@ isArray(isBoolean) => validator
 
 ### `isBoolean`
 ```javascript
-import { isBoolean } from 'roc/validators';
+import { isBoolean } from 'roc-validators';
 ```
 Will validate the input to make sure it’s a boolean.
 
@@ -125,7 +125,7 @@ Will validate the input to make sure it’s a boolean.
 
 ### `isFunction`
 ```javascript
-import { isFunction } from 'roc/validators';
+import { isFunction } from 'roc-validators';
 ```
 Will validate the input to make sure it’s a function.
 
@@ -133,7 +133,7 @@ Will validate the input to make sure it’s a function.
 
 ### `isInteger`
 ```javascript
-import { isInteger } from 'roc/validators';
+import { isInteger } from 'roc-validators';
 ```
 Will validate the input to make sure it’s an integer.
 
@@ -141,7 +141,7 @@ Will validate the input to make sure it’s an integer.
 
 ### `isObject`
 ```javascript
-import { isObject } from 'roc/validators';
+import { isObject } from 'roc-validators';
 
 isObject(/* possible validator */, options) => validator
 isObject(options) => validator
@@ -159,7 +159,7 @@ If `unmanaged` is set to `true` the object will not be managed, meaning that Roc
 
 __Example__
 ```javascript
-import { isObject, isBoolean } from 'roc/validators';
+import { isObject, isBoolean } from 'roc-validators';
 
 // Will validate that the input is an object with booleans as values
 // { a: true, b: true } : valid
@@ -169,7 +169,7 @@ isObject(isBoolean, { unmanaged: false }) => validator
 
 ### `isPath`
 ```javascript
-import { isPath } from 'roc/validators';
+import { isPath } from 'roc-validators';
 ```
 Will validate the input to make sure it’s a file path.
 
@@ -177,7 +177,7 @@ Will validate the input to make sure it’s a file path.
 
 ### `isPromise`
 ```javascript
-import { isPromise } from 'roc/validators';
+import { isPromise } from 'roc-validators';
 ```
 Will validate the input to make sure it’s a promise.
 
@@ -185,7 +185,7 @@ Will validate the input to make sure it’s a promise.
 
 ### `isRegExp`
 ```javascript
-import { isRegExp } from 'roc/validators';
+import { isRegExp } from 'roc-validators';
 ```
 Will validate the input to make sure it’s a regular expression.
 
@@ -193,7 +193,7 @@ Will validate the input to make sure it’s a regular expression.
 
 ### `isString`
 ```javascript
-import { toString } from 'roc/validators';
+import { toString } from 'roc-validators';
 ```
 Will validate the input to make sure it’s a string.
 
@@ -201,7 +201,7 @@ Will validate the input to make sure it’s a string.
 
 ### `notEmpty`
 ```javascript
-import { notEmpty } from 'roc/validators';
+import { notEmpty } from 'roc-validators';
 ```
 Will validate the input to make sure it’s not empty. The length of arrays and strings must be more than 0 and an object need to have at least one key.
 
@@ -209,7 +209,7 @@ Will validate the input to make sure it’s not empty. The length of arrays and 
 
 ### `oneOf`
 ```javascript
-import { oneOf } from 'roc/validators';
+import { oneOf } from 'roc-validators';
 
 oneOf(...validators) => validator
 ```
@@ -218,7 +218,7 @@ Will validate the input to be valid against on of the provided validators.
 
 __Example__
 ```javascript
-import { oneOf, isString, isArray } from 'roc/validators';
+import { oneOf, isString, isArray } from 'roc-validators';
 
 // Will validate that the input is either a string or an array of strings
 oneOf(isString, isArray(isString)) => validator
@@ -226,7 +226,7 @@ oneOf(isString, isArray(isString)) => validator
 
 ### `required`
 ```javascript
-import { required } from 'roc/validators';
+import { required } from 'roc-validators';
 
 required(/* possible validator */) => validator
 ```
@@ -234,7 +234,7 @@ Will validate that the input is __not__ `null` or `undefined` along with the add
 
 __Example__
 ```javascript
-import { required, isString } from 'roc/validators';
+import { required, isString } from 'roc-validators';
 
 // Will validate that the input is either a string and that it is defined, not null or undefined
 required(isString) => validator
@@ -257,7 +257,7 @@ message     The error message, what another validator might have returned as an 
 
 __Example__
 ```javascript
-import { oneOf, isBoolean, createInfoObject } from 'roc/validators';
+import { oneOf, isBoolean, createInfoObject } from 'roc-validators';
 
 const customValidator => (input, info) => {
     if (info) {
