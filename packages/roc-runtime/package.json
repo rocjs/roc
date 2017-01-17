@@ -1,0 +1,22 @@
+{
+  "name": "roc-runtime",
+  "version": "1.0.0-rc.1",
+  "description": "Runtime used in Roc",
+  "main": "lib/index.js",
+  "files": [
+    "lib",
+    "register.js"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rocjs/roc/tree/master/packages/roc-runtime"
+  },
+  "keywords": [
+    "roc"
+  ],
+  "author": "Verdens Gang AS",
+  "license": "MIT",
+  "dependencies": {
+    "roc-core": "^1.0.0-rc.1"
+  }
+}

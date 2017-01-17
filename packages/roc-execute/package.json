@@ -1,0 +1,28 @@
+{
+  "name": "roc-execute",
+  "version": "1.0.0-rc.1",
+  "description": "Cross platform way to execute commands",
+  "main": "lib/index.js",
+  "files": [
+    "lib"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rocjs/roc/tree/master/packages/roc-execute"
+  },
+  "keywords": [
+    "roc"
+  ],
+  "author": "Verdens Gang AS",
+  "license": "MIT",
+  "dependencies": {
+    "lodash.clone": "^4.5.0",
+    "manage-path": "^2.0.0",
+    "roc-utils": "^1.0.0-rc.1",
+    "shell-escape": "^0.2.0",
+    "spawn-command": "^0.0.2-1"
+  },
+  "devDependencies": {
+    "proxyquire": "^1.7.10"
+  }
+}

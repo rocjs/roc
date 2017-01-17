@@ -1,0 +1,31 @@
+{
+  "name": "roc-logger",
+  "version": "1.0.0-rc.1",
+  "description": "Hook system used in Roc",
+  "main": "lib/index.js",
+  "files": [
+    "default",
+    "large.js",
+    "lib",
+    "small.js"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rocjs/roc/tree/master/packages/roc-hooks"
+  },
+  "keywords": [
+    "roc"
+  ],
+  "author": "Verdens Gang AS",
+  "license": "MIT",
+  "dependencies": {
+    "chalk": "^1.1.3",
+    "lodash.isboolean": "^3.0.3",
+    "lodash.isfunction": "^3.0.8",
+    "lodash.isstring": "4.0.1",
+    "log-symbols": "^1.0.2",
+    "redent": "^2.0.0",
+    "roc-context": "^1.0.0-rc.1",
+    "trim-newlines": "1.0.0"
+  }
+}

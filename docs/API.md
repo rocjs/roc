@@ -10,30 +10,30 @@ var merge = require('roc').merge;
 import { merge } from 'roc';
 ```
 
-* Utilities
+* [Utilities](#utilities)
     * [fileExists](#fileexists)
     * [folderExists](#folderexists)
     * [generateDependencies](#generatedependencies)
     * [getAbsolutePath](#getabsolutepath)
     * [lazyFunctionRequire](#lazyfunctionrequire)
     * [merge](#merge)
-* Execute
-    * [execute](#execute)
+* [Execute](#execute)
+    * [execute](#execute-1)
     * [executeSync](#executesync)
     * [executeSyncExit](#executesyncexit)
-* Configuration
+* [Configuration](#configuration)
     * [appendConfig](#appendconfig)
     * [appendSettings](#appendsettings)
     * [getConfig](#getconfig)
     * [getSettings](#getsettings)
-* Runtime
+* [Runtime](#runtime)
     * [getResolveRequest](#getresolverequest)
     * [initRuntime](#initruntime)
-* Hooks
+* [Hooks](#hooks)
     * [removeActions](#removeactions)
     * [runHook](#runhook)
     * [runHookDirectly](#runhookdirectly)
-* Others
+* [Others](#others)
     * [initLog](#initlog)
     * [runCli](#runcli)
 

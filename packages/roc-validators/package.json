@@ -1,0 +1,24 @@
+{
+  "name": "roc-validators",
+  "version": "1.0.0-rc.1",
+  "description": "Validators used in Roc",
+  "main": "lib/index.js",
+  "files": [
+    "lib"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rocjs/roc/tree/master/packages/roc-valdiators"
+  },
+  "keywords": [
+    "roc"
+  ],
+  "author": "Verdens Gang AS",
+  "license": "MIT",
+  "dependencies": {
+    "chalk": "^1.1.3",
+    "is-promise": "^2.1.0",
+    "lodash": "^4.17.2",
+    "roc-converters": "^1.0.0-rc.1"
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "name": "roc",
+  "version": "1.0.0-rc.17",
+  "description": "Modern JavaScript Development Ecosystem",
+  "bin": "bin/index.js",
+  "engineStrict": true,
+  "engines": {
+    "node": ">=4.0.0",
+    "npm": ">=3.0.0"
+  },
+  "files": [
+    "bin",
+    "lib"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rocjs/roc/tree/master/packages/roc"
+  },
+  "keywords": [
+    "roc"
+  ],
+  "author": "Verdens Gang AS",
+  "license": "MIT",
+  "dependencies": {
+    "roc-cli": "^1.0.0-rc.1",
+    "roc-logger": "^1.0.0-rc.1",
+    "roc-plugin-create": "^1.0.0-rc.1",
+    "roc-plugin-documentation": "^1.0.0-rc.1"
+  },
+  "roc": {
+    "packages": [
+      "./forDocumentationGeneration.js"
+    ]
+  }
+}

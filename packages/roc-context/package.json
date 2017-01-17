@@ -1,0 +1,19 @@
+{
+  "name": "roc-context",
+  "version": "1.0.0-rc.1",
+  "description": "Context manager in Roc",
+  "main": "lib/index.js",
+  "files": [
+    "lib"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rocjs/roc/tree/master/packages/roc-context"
+  },
+  "keywords": [
+    "roc"
+  ],
+  "author": "Verdens Gang AS",
+  "license": "MIT",
+  "dependencies": {}
+}

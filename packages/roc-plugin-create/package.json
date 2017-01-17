@@ -1,0 +1,45 @@
+{
+  "name": "roc-plugin-create",
+  "version": "1.0.0-rc.1",
+  "description": "Adds create commands to Roc to quickly bootstrap new projects",
+  "main": "lib/index.js",
+  "files": [
+    "lib"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rocjs/roc/tree/master/packages/roc-plugin-create"
+  },
+  "keywords": [
+    "roc"
+  ],
+  "author": "Verdens Gang AS",
+  "license": "MIT",
+  "dependencies": {
+    "async": "^2.0.1",
+    "chalk": "^1.1.3",
+    "consolidate": "^0.14.1",
+    "cross-spawn": "^2.2.3",
+    "download-git-repo": "^0.1.2",
+    "extract-zip": "^1.5.0",
+    "fs-extra": "^0.26.4",
+    "git-clone": "^0.1.0",
+    "got": "^6.1.1",
+    "handlebars": "^4.0.5",
+    "inquirer": "^1.1.3",
+    "metalsmith": "^2.2.0",
+    "micromatch": "^2.3.11",
+    "ora": "^0.3.0",
+    "roc-logger": "^1.0.0-rc.1",
+    "roc-utils": "^1.0.0-rc.1",
+    "roc-validators": "^1.0.0-rc.1",
+    "semver": "^5.1.0",
+    "temp": "^0.8.3",
+    "validate-npm-package-name": "^2.2.2"
+  },
+  "roc": {
+    "packages": [
+      "./lib/index.js"
+    ]
+  }
+}

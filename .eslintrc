@@ -11,13 +11,14 @@
         "no-warning-comments": 1,
         "no-underscore-dangle": 0,
         "no-use-before-define": ["error", { "functions": false }],
-        "prefer-template": [1],
+        "prefer-template": [0],
         "consistent-return": [1],
+        "arrow-parens": [2, "always"],
+        "global-require": [0],
 
-        "generator-star-spacing": 0,
-        "babel/generator-star-spacing": [2, { before: false, after: true }],
+        "generator-star-spacing": [2, { before: false, after: true }],
 
-        "import/order": [2, { "groups": ["builtin", "external", "internal", "parent", "sibling", "index"], "newlines-between": "always"}],
-        "import/newline-after-import": [2]
+        "import/order": [1, { "groups": ["builtin", "external", "internal", "parent", "sibling", "index"], "newlines-between": "always"}],
+        "import/newline-after-import": [1]
     }
 }

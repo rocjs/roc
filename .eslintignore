@@ -1,3 +1,7 @@
 lib
 esdocs
 coverage
+packages/**/node_modules
+test
+package-old
+scripts
