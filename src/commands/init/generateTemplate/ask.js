@@ -26,6 +26,7 @@ async function askQuestion(data, key, prompt) {
         default: prompt.default,
         choices: prompt.choices || [],
         validate: prompt.validate || (() => true),
+        filter: prompt.filter,
     }]);
 
     /* eslint-disable no-param-reassign */
