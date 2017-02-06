@@ -193,7 +193,7 @@ Will validate the input to make sure it’s a regular expression.
 
 ### `isString`
 ```javascript
-import { toString } from 'roc/validators';
+import { isString } from 'roc/validators';
 ```
 Will validate the input to make sure it’s a string.
 
