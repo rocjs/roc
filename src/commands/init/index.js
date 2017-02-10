@@ -70,8 +70,10 @@ export default async function init({
 
     // 5. Process template
     generateTemplate(folderName, templateDir, dir, () => {
-        // Copy & Rename the template package.json for history/documentation purposes
-        copySync(path.join(templateDir, 'package.json'), path.join(dir, '.roc'));
+        // Copy & Rename the template package.json if it exists, for history/documentation purposes
+        if (fileExists('package.json', templateDir)) {
+            copySync(path.join(templateDir, 'package.json'), path.join(dir, '.roc'));
+        }
     });
 }
 
