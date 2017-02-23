@@ -8,6 +8,7 @@ import log from '../../../log/default/small';
 
 import getOptions from './options';
 import ask from './ask';
+import collect from './collect';
 import filter from './filter';
 
 const render = require('consolidate').handlebars.render;
@@ -43,6 +44,7 @@ export default function generateTemplate(name, src, dest, done) {
 
     metalsmith
         .use(askQuestions(opts.prompts))
+        .use(collectData(opts.data))
         .use(filterFiles(opts.filters))
         .use(renderTemplateFiles)
         .clean(false)
@@ -60,6 +62,10 @@ export default function generateTemplate(name, src, dest, done) {
 
 function askQuestions(prompts) {
     return (files, metalsmith, done) => ask(prompts, metalsmith.metadata(), done);
+}
+
+function collectData(data) {
+    return (files, metalsmith, done) => collect(data, metalsmith.metadata(), done);
 }
 
 function filterFiles(filters) {
