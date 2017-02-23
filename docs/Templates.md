@@ -161,6 +161,19 @@ The `prompts` property follows [Inquirer.js](https://github.com/SBoudrias/Inquir
 
 `name` and `author` are a bit special and will automatically default to the directory name and, if available, the name from the git config.
 
+#### `data`
+`data` property contains any arbitrary data you'd like to pass to templates. It supports both simple values and async functions / promises that eventually get resolved to values.
+Note that functions are supported only when using `.js` version of a config.
+
+```javascript
+{
+  "data": {
+    "version": "1.0.2",
+    "recentChanges": fetch("https://some-changelog.org/recent")
+  }
+}
+```
+
 ##### `when`
 It is possible to define conditional prompts that only will be shown in some instances.
 
