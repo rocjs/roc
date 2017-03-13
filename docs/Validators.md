@@ -259,7 +259,7 @@ __Example__
 ```javascript
 import { oneOf, isBoolean, createInfoObject } from 'roc/validators';
 
-const customValidator => (input, info) => {
+const customValidator = (input, info) => {
     if (info) {
         return {
             type: 'My custom type'
