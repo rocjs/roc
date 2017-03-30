@@ -139,6 +139,9 @@ The custom resolve function gets an object as a argument and is expected to retu
 __`extensionContext`__  
 A string that is the context of the extension, the location on disk for the extension.
 
+__`identifier`__  
+A string that is used to identify the resolver instance. Examples are `Node` and `Webpack`.
+
 __`module`__  
 A string, the module that Roc is trying to find. Will most often be the same as the property defined in the `exports` object.
 

@@ -224,24 +224,81 @@ Gets the settings, possible to specify the first group to select a slice.
 ```javascript
 import { getResolveRequest } from 'roc';
 
-// resolver: (module, context, fallback = false) => path
-const resolver = getResolveRequest('Identifier');
+const rocResolver = getResolveRequest('Identifier', async = false);
 ```
-When the runtime has been configured it is possible to get the resolver that Roc uses internally. Using this resolver will resolve in the same way Roc does. Node’s `require` will by default be patched and this function can be used to add support for other things like Webpack.
+When the runtime has been configured it is possible to get the resolver that Roc uses internally. This resolver will resolve requests in the same way that Roc does internally and it is used by default to patch Node’s `require` function. This resolver can also be used to add resolving support for other things like Webpack. `'Identifier'` is a string used to identify a specific instance of the resolver, like `'Node'` or `'Webpack'`.
 
-#### `resolver`
-The resolver that is returned from `getResolveRequest` has the following arguments.
+The resolver is __sync__ by default and an async version can be accessed by defining the second argument to `true`.
 
-__`module`__  
-The module that is requested, what typically would be X in `require(X)`.
+#### Sync `rocResolver`
+
+Sync resolver that is returned from `getResolveRequest`.
+
+```javascript
+const resolver = (request, context) => resolvedPath;
+const optionalOptions = { fallback = false, resolver };
+
+const resolvedRequest = rocResolver(request, context, optionalOptions);
+```
+
+__`request`__  
+The request, what typically would be X in `require(X)`.
 
 __`context`__  
-The context from where the request was done, the file that did the request.
+The context from where the request was done, the directory the request was performed from.
 
-__`fallback`__  
-An optional boolean that enables fallback mode, should only be used if the first request failed.
+__`options`__  
+Optional option object.
+
+_—`fallback`_  
+An optional boolean that enables fallback mode, should only be used if the first request failed. Defaults to `false`.
 
 This emulates kinda how `NODE_PATH` works in that we try again with another scope. What this does is that it uses the context of dependencies for the extension that a dependency is installed in to manage possible failures. This is needed if a dependency of an extension requires some peerDependency that some other extension is providing.
+
+_—`resolver`_  
+
+```javascript
+(request, context) => resolvedPath
+```
+An optional sync resolver function that given a `request` and a `context` returns the resolved path to the request. Defaults to using [`resolve.sync`](https://www.npmjs.com/package/resolve).
+
+#### Async `rocResolver`
+
+The async resolver that is returned from `getResolveRequest` when second argument is `true`.
+
+```javascript
+const asyncResolver = (request, context, callback) => callback(potentialError, resolvedPath);
+const asyncOptionalOptions = { fallback = false, resolver: asyncResolver };
+const callback = (potentialError, resolvedRequest) => { /* Process the arguments */ }
+
+asyncRocResolver(request, context, asyncOptionalOptions, callback);
+```
+
+__`request`__  
+The request, what typically would be X in `require(X)`.
+
+__`context`__  
+The context from where the request was done, the directory the request was performed from.
+
+__`options`__  
+Optional option object.
+
+_—`fallback`_  
+An optional boolean that enables fallback mode, should only be used if the first request failed. Defaults to `false`.
+
+This emulates kinda how `NODE_PATH` works in that we try again with another scope. What this does is that it uses the context of dependencies for the extension that a dependency is installed in to manage possible failures. This is needed if a dependency of an extension requires some peerDependency that some other extension is providing.
+
+_—`resolver`_  
+```javascript
+(request, context, callback) => callback(potentialError, resolvedPath)
+```
+An optional async resolver function that given a `request`, a `context` and a `callback` either call the callback with an error or the resolved path for the request. Defaults to using [`resolve`](https://www.npmjs.com/package/resolve).
+
+__`callback`__  
+```javascript
+(potentialError, resolvedRequest) => { /* Process the arguments */ }
+```
+A function that will be used when the request has been resolved. The first argument might be an error and the second will be the resolved request.
 
 ### `initRuntime`
 ```javascript
