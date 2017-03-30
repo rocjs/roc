@@ -96,6 +96,7 @@
     "cross-spawn": "2.2.3",
     "debug": "2.2.0",
     "download-git-repo": "0.1.2",
+    "escape-string-regexp": "^1.0.5",
     "extract-zip": "1.5.0",
     "fs-extra": "~0.26.4",
     "git-clone": "0.1.0",

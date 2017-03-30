@@ -1,6 +1,7 @@
 import { sep } from 'path';
 
 import resolve from 'resolve';
+import escapeStringRegexp from 'escape-string-regexp';
 
 import { initGetDependencies, initGetDependenciesFromPath } from './manageDependencies';
 import createPathRegExp from './createPathRegExp';
@@ -173,7 +174,7 @@ export default function createResolveRequest(exports, directory, dependencyConte
 }
 
 function initInProject(directory) {
-    const directoryPattern = createPathRegExp(`^${directory}(.*)$`);
+    const directoryPattern = createPathRegExp(`^${escapeStringRegexp(directory)}(.*)$`);
     return (path) => {
         const matches = directoryPattern.exec(path);
         if (matches) {
