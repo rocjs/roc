@@ -18,7 +18,10 @@ export default function patchResolveFilename(resolveRequest) {
              * if a dependency of an extension requires some peerDependency that some other
              * extension is providing.
              */
-            return originalResolveFilename.apply(this, [resolveRequest(request, parent.id, true), parent]);
+            return originalResolveFilename.apply(this, [
+                resolveRequest(request, parent.id, { fallback: true }),
+                parent,
+            ]);
         }
     };
 }
