@@ -10,7 +10,8 @@ export default function createResolveRequest(exports, directory, dependencyConte
     const log = require('debug')('roc:core:require'); // eslint-disable-line
 
     const contextCache = {};
-    const pattern = /^([^\/]*)\/?([^\/]*)/;
+    // Matches a module request, getting the module and a possible scope
+    const modulePattern = /^([^\/]*)\/?([^\/]*)/;
     const inProject = initInProject(directory);
     const getCurrentModule = initGetCurrentModule(
         initGetDependencies(dependencyContext),
@@ -49,7 +50,7 @@ export default function createResolveRequest(exports, directory, dependencyConte
 
         log(`(${identifier}) : ${fallback ? '<Fallback> ' : ''}Checking [${request}] for [${context}]`);
 
-        const matches = pattern.exec(request);
+        const matches = modulePattern.exec(request);
         const module = matches[1].charAt(0) === '@' ?
             `${matches[1]}/${matches[2]}` :
             matches[1];
