@@ -174,7 +174,7 @@ export default function createResolveRequest(exports, directory, dependencyConte
 }
 
 function initInProject(directory) {
-    const directoryPattern = createPathRegExp(`^${escapeStringRegexp(directory)}(.*)$`);
+    const directoryPattern = new RegExp(`^${escapeStringRegexp(directory)}(.*)$`);
     return (path) => {
         const matches = directoryPattern.exec(path);
         if (matches) {
