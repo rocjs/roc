@@ -189,13 +189,13 @@ The prompt for `testSetup` above will only be shown if the user answered yes to 
 
 #### `data`
 `data` property contains any arbitrary data you'd like to pass to templates. It supports both simple values and async functions / promises that eventually get resolved to values.
-Note that functions are supported only when using `.js` version of a config.
+Note that functions are supported only when using `.js` version of a config. If you use function there it will receive an object containing collected answers as a parameter.
 
 ```javascript
 {
   "data": {
     "version": "1.0.2",
-    "recentChanges": () => fetch("https://some-changelog.org/recent")
+    "recentChanges": (answers) => fetch("https://some-changelog.org/recent")
   }
 }
 ```

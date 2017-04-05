@@ -12,7 +12,7 @@ async function unwrap(metadata, key, dataProvider) {
     /* eslint-disable no-param-reassign */
     if (typeof dataProvider === 'function') {
         try {
-            metadata[key] = await dataProvider();
+            metadata[key] = await dataProvider(metadata);
         } catch (e) {
             // error in async function, leave this key
         }
