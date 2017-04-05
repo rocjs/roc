@@ -187,6 +187,19 @@ It is possible to define conditional prompts that only will be shown in some ins
 
 The prompt for `testSetup` above will only be shown if the user answered yes to the `test` question.
 
+#### `data`
+`data` property contains any arbitrary data you'd like to pass to templates. It supports both simple values and async functions / promises that eventually get resolved to values.
+Note that functions are supported only when using `.js` version of a config. If you use function there it will receive an object containing collected answers as a parameter.
+
+```javascript
+{
+  "data": {
+    "version": "1.0.2",
+    "recentChanges": (answers) => fetch("https://some-changelog.org/recent")
+  }
+}
+```
+
 #### `filters`
 Filters can be useful to conditionally include files for the project based on answers from the prompt.
 
