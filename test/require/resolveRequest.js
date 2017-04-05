@@ -2,14 +2,14 @@ import { join } from 'path';
 
 import expect, { createSpy } from 'expect';
 
-import resolveRequest from '../../src/require/resolveRequest';
+import createResolveRequest from '../../src/require/createResolveRequest';
 
 describe('roc', () => {
     describe('require', () => {
         describe('resolveRequest', () => {
             // Init resolveRequest
             const resolveSpy = createSpy().andReturn(
-                require.resolve(join(__dirname, 'fixtures', 'resolveRequest', 'node_modules', 'd'))
+                require.resolve(join(__dirname, 'fixtures', 'createResolveRequest', 'node_modules', 'd'))
             );
 
             // This is an object that holds all of the dependencies
@@ -17,7 +17,7 @@ describe('roc', () => {
             const exports = {
                 a: {
                     resolve: undefined,
-                    context: join(__dirname, 'fixtures', 'resolveRequest'),
+                    context: join(__dirname, 'fixtures', 'createResolveRequest'),
                 },
                 b: {
                     resolve: resolveSpy,
@@ -31,7 +31,7 @@ describe('roc', () => {
                 pathsToExtensions: {},
             };
 
-            const resolver = resolveRequest(exports, __dirname, dependencyContext)('Test');
+            const resolver = createResolveRequest(exports, __dirname, dependencyContext)('Test');
 
             it('should bail out of opt-out character is used', () => {
                 expect(resolver('#a', __dirname))
@@ -49,6 +49,7 @@ describe('roc', () => {
 
                 expect(resolveSpy.calls[0].arguments).toEqual([{
                     extensionContext: 'my_context',
+                    identifier: 'Test',
                     module: 'b',
                     request: 'b/test',
                     requestContext: __dirname,
