@@ -1,4 +1,4 @@
-export default async function(data, metadata, done) {
+export default async function(data = {}, metadata, done) {
     const keys = Object.getOwnPropertyNames(data);
 
     for (const key of keys) {
