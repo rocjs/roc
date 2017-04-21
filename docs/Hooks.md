@@ -130,6 +130,8 @@ This value can also be accessed from the third function in the chain and is the 
 
 3. The third function will be invoked and in some instances it might be expected that it returns a value, in others not. The previous value can be accessed here if one exists and it will either be the `initalValue` defined for the hook or the return value from the action that run before the current one.
 
+> Tip: to display the order of hooks being invoked, you can start roc in verbose mode by passing `-V` from the CLI.
+
 ### Define actions
 Actions are used in both projects and extensions.
 
