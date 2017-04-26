@@ -92,7 +92,6 @@
     "async": "2.0.1",
     "chalk": "~1.1.1",
     "colors": "~1.1.2",
-    "consolidate": "0.14.1",
     "cross-spawn": "2.2.3",
     "debug": "2.2.0",
     "download-git-repo": "0.1.2",

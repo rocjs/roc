@@ -11,8 +11,6 @@ import ask from './ask';
 import collect from './collect';
 import filter from './filter';
 
-const render = require('consolidate').handlebars.render;
-
 // Register default handlebars helper
 Handlebars.registerHelper('if_eq', (a, b, opts) => (
     a === b
@@ -70,6 +68,16 @@ function collectData(data) {
 
 function filterFiles(filters) {
     return (files, metalsmith, done) => filter(files, filters, metalsmith.metadata(), done);
+}
+
+function render(template, data, callback) {
+    let rendered;
+    try {
+        rendered = Handlebars.compile(template)(data);
+    } catch (e) {
+        return callback(e);
+    }
+    return callback(null, rendered);
 }
 
 function renderTemplateFiles(files, metalsmith, done) {
