@@ -149,7 +149,7 @@ __`request`__
 A string, the path that was requested.
 
 __`requestContext`__  
-A string, the location of the request. The path to the file that did the request.
+A string, the location of the request. The path to the directory from which the request was performed.
 
 #### `requires`
 Dependencies that are required and will be verified to exist by Roc.

@@ -30,8 +30,8 @@ export default function createResolveRequest(exports, directory, dependencyConte
     };
 
     const requestHelper = (request, context, fallback, identifier) => {
-        // If we got an empty request we want to let Node handle it
-        if (!request) {
+        // If we got an empty request or context we want to let Node handle it
+        if (!request || !context) {
             return { completedRequest: request };
         }
 
