@@ -53,7 +53,7 @@ export default function generateTemplate(name, src, dest, done) {
             }
             log.success('Project created');
             done();
-            logMessage(opts.completionMessage, { data, ...metalsmith.metadata() });
+            logMessage(opts.completionMessage, { ...data, ...metalsmith.metadata() });
         });
 }
 
