@@ -131,7 +131,7 @@ Optional file used by Roc when setting up the project. Can be either a JSON file
 #### `completionMessage`
 The `completionMessage` property is used to give feedback to a user `roc init` has successfully been completed. It could for instance be used to inform of what command to run next. The message will be processed through Handlebars and can use logic to show different things.
 
-Two useful variables are provided to make it easier to create smarter messages
+Alongside the answers, two useful variables are provided to make it easier to create smarter messages
 
 `destDirName`  
 The name of the directory that the project has been created in. Can be used to tell the user what folder to `cd` into.
