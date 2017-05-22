@@ -73,7 +73,7 @@ function filterFiles(filters) {
 function render(template, data, callback) {
     let rendered;
     try {
-        rendered = Handlebars.compile(template)(data);
+        rendered = Handlebars.compile(template, data)(data);
     } catch (e) {
         return callback(e);
     }
