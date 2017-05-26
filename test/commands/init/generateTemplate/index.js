@@ -60,7 +60,7 @@ describe('commands', () => {
                     .then(rendered => {
                         expect(rendered).toBe(
                             'something\n' +
-                            'test/commands/init/generateTemplate/_output/alwaysSet\n' +
+                            join('test', 'commands', 'init', 'generateTemplate', '_output', 'alwaysSet') + '\n' +
                             'false\n'
                         );
                     });
