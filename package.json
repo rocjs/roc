@@ -31,8 +31,7 @@
     "check": "ncu",
     "docs": "node scripts/generate-documentation.js",
     "esdocs": "esdoc -c esdoc.json",
-    "prepublish": "npm run clean && npm run build && npm test",
-    "postinstall": "node ./scripts/post-install.js"
+    "prepublish": "npm run clean && npm run build && npm test"
   },
   "repository": "https://github.com/rocjs/roc",
   "keywords": [
