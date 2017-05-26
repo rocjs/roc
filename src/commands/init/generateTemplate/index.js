@@ -31,7 +31,6 @@ export default function generateTemplate(name, src, dest, done) {
         ...metalsmith.metadata(),
         destDirName: path.relative(process.cwd(), dest),
         inPlace: dest === process.cwd(),
-        noEscape: true,
     };
 
     if (opts.helpers) {
@@ -73,7 +72,7 @@ function filterFiles(filters) {
 function render(template, data, callback) {
     let rendered;
     try {
-        rendered = Handlebars.compile(template)(data);
+        rendered = Handlebars.compile(template, { noEscape: true })(data);
     } catch (e) {
         return callback(e);
     }
