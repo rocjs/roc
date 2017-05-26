@@ -28,7 +28,6 @@ export default function generateTemplate(name, src, dest, done) {
     const opts = getOptions(name, src);
     const metalsmith = new Metalsmith(path.join(src, 'template'));
     const data = {
-        ...metalsmith.metadata(),
         destDirName: path.relative(process.cwd(), dest),
         inPlace: dest === process.cwd(),
     };
@@ -53,7 +52,7 @@ export default function generateTemplate(name, src, dest, done) {
             }
             log.success('Project created');
             done();
-            logMessage(opts.completionMessage, data);
+            logMessage(opts.completionMessage, { ...data, ...metalsmith.metadata() });
         });
 }
 
