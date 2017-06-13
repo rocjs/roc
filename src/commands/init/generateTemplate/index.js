@@ -27,11 +27,10 @@ Handlebars.registerHelper('unless_eq', (a, b, opts) => (
 export default function generateTemplate(name, src, dest, done) {
     const opts = getOptions(name, src);
     const metalsmith = new Metalsmith(path.join(src, 'template'));
-    const data = {
-        ...metalsmith.metadata(),
+    metalsmith.metadata({
         destDirName: path.relative(process.cwd(), dest),
         inPlace: dest === process.cwd(),
-    };
+    });
 
     if (opts.helpers) {
         Object.keys(opts.helpers).forEach((key) => {
@@ -53,7 +52,7 @@ export default function generateTemplate(name, src, dest, done) {
             }
             log.success('Project created');
             done();
-            logMessage(opts.completionMessage, data);
+            logMessage(opts.completionMessage, metalsmith.metadata());
         });
 }
 

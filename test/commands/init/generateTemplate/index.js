@@ -48,6 +48,23 @@ describe('commands', () => {
                         );
                     });
             });
+
+            it('should always supply destDirName and inPlace data to templates', () => {
+                const outputDir = join(__dirname, '_output', 'alwaysSet');
+                generateTemplate('hey', join(__dirname, 'fixtures', 'alwaysSet'), outputDir, () => {});
+
+                return answerPrompts([
+                    'something',
+                ])
+                    .then(() => readFile(join(outputDir, 'test-input')))
+                    .then(rendered => {
+                        expect(rendered).toBe(
+                            'something\n' +
+                            join('test', 'commands', 'init', 'generateTemplate', '_output', 'alwaysSet') + '\n' +
+                            'false\n'
+                        );
+                    });
+            });
         });
     });
 });
