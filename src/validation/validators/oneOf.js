@@ -1,5 +1,6 @@
 import convert from '../../converters/convert';
 import createInfoObject from '../helpers/createInfoObject';
+import getInfoObject from '../helpers/getInfoObject';
 import isValid from '../helpers/isValid';
 
 /**
@@ -36,7 +37,7 @@ export default function oneOf(...validators) {
             if (result === true) {
                 return true;
             }
-            invalid.push(validator(null, true).type || 'Unknown type');
+            invalid.push(getInfoObject(validator).type || 'Unknown type');
         }
 
         /* eslint-disable prefer-template */

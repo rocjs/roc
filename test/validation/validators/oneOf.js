@@ -29,8 +29,8 @@ describe('validators', () => {
         });
 
         it('should return error if value is invalid', () => {
-            expect(oneOf(isInteger, isBoolean)('true'))
-                .toEqual('Was not any of the possible types:\n\nInteger\nBoolean');
+            expect(oneOf(/a/, isInteger, isBoolean)('true'))
+                .toEqual('Was not any of the possible types:\n\n/a/\nInteger\nBoolean');
         });
 
         it('should validate correctly', () => {
