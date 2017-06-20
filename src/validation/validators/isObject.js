@@ -20,7 +20,7 @@ export default function isObject(...args) {
             return createInfoObject({
                 validator,
                 converter: () => toObject,
-                wrapper: (wrap) => `Object(${wrap})`,
+                wrapper: (...wrapperArgs) => `Object(${writeInfoInline(...wrapperArgs)})`,
                 canBeEmpty: true,
                 unmanagedObject: unmanaged,
             });

@@ -116,6 +116,11 @@ import { isArray, isBoolean } from 'roc/validators';
 isArray(isBoolean) => validator
 ```
 
+__Documentation__  
+Will use a syntax in the documentation generation when describing wrapped validators. `[TYPE]` means that the type is optional, `<TYPE>` means that it is required. A question mark in front of the type, `?TYPE`, means that it can be empty.
+
+`Array(<String>)` means that `null` and `undefined` are allowed as values but not empty strings as an example.
+
 ### `isBoolean`
 ```javascript
 import { isBoolean } from 'roc/validators';
@@ -167,6 +172,11 @@ import { isObject, isBoolean } from 'roc/validators';
 // { a: true, b: 1 } : not valid
 isObject(isBoolean, { unmanaged: false }) => validator
 ```
+
+__Documentation__  
+Will use a syntax in the documentation generation when describing wrapped validators. `[TYPE]` means that the type is optional, `<TYPE>` means that it is required. A question mark in front of the type, `?TYPE`, means that it can be empty.
+
+`Object(<String>)` means that null and undefined are allowed as values but not empty strings as an example.
 
 ### `isPath`
 ```javascript
@@ -220,6 +230,11 @@ isShape({ a: isBoolean }) => validator
 isShape({ a: isBoolean }, { strict: false }) => validator
 ```
 
+__Documentation__  
+Will use a syntax in the documentation generation when describing wrapped validators. `[TYPE]` means that the type is optional, `<TYPE>` means that it is required. A question mark infront of the type, `?TYPE`, means that it can be empty.
+
+`{ a: <String> }` means that `null` and `undefined` are allowed on a, but not empty strings as an example.
+
 ### `isString`
 ```javascript
 import { isString } from 'roc/validators';
@@ -252,6 +267,11 @@ import { oneOf, isString, isArray } from 'roc/validators';
 // Will validate that the input is either a string or an array of strings
 oneOf(isString, isArray(isString)) => validator
 ```
+
+__Documentation__  
+Will use a syntax in the documentation generation when describing wrapped validators. `[TYPE]` means that the type is optional, `<TYPE>` means that it is required. A question mark in front of the type, `?TYPE`, means that it can be empty.
+
+`<?String> / <Boolean>` means that the value can either be a empty string or a boolean as an example.
 
 ### `required`
 ```javascript

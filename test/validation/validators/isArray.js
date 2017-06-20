@@ -18,7 +18,7 @@ describe('validators', () => {
 
             expect(isArray(validator)(null, true))
                 .toEqual({
-                    type: 'Array(Type)',
+                    type: 'Array([Type])',
                     required: false,
                     canBeEmpty: true,
                     converter: toArray(),

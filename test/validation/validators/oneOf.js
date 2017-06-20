@@ -13,14 +13,15 @@ describe('validators', () => {
         });
 
         it('should return info object if requested', () => {
-            const validator = () => ({
+            const validator = (required = false, canBeEmpty = true) => () => ({
                 type: 'Type',
-                required: false,
+                required,
+                canBeEmpty,
             });
 
-            expect(oneOf(validator, validator, validator)(null, true))
+            expect(oneOf(validator(), validator(true), validator(true, false))(null, true))
                 .toEqual({
-                    type: 'Type / Type / Type',
+                    type: '[?Type] / <?Type> / <Type>',
                     required: false,
                     canBeEmpty: null,
                     converter: undefined,

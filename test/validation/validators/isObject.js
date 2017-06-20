@@ -22,7 +22,7 @@ describe('validators', () => {
 
             expect(isObject(validator)(null, true))
                 .toEqual({
-                    type: 'Object(Type)',
+                    type: 'Object([?Type])',
                     required: false,
                     canBeEmpty: true,
                     converter: toObject,
