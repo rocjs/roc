@@ -17,6 +17,7 @@ Roc offers validators that can be used to make sure values have the correct valu
   * [isPath](#ispath)
   * [isPromise](#ispromise)
   * [isRegExp](#isregexp)
+  * [isShape](#isshape)
   * [isString](#isstring)
   * [notEmpty](#notempty)
   * [oneOf](#oneof)
@@ -190,6 +191,34 @@ import { isRegExp } from 'roc/validators';
 Will validate the input to make sure it’s a regular expression.
 
 `null` and `undefined` are valid.
+
+### `isShape`
+```javascript
+import { isShape } from 'roc/validators';
+
+isShape(validator, options) => validator
+```
+Will validate the input to make sure it’s an object matching the defined shape. Possible to provide an optional options object.
+
+`null` and `undefined` are valid.
+
+__`options`__  
+```
+strict       Defaults to true, set to false to allow non-validated properties.
+```
+
+__Example__
+```javascript
+import { isShape, isBoolean } from 'roc/validators';
+
+// { a: true } : valid
+// { a: true, b: 1 } : not valid
+isShape({ a: isBoolean }) => validator
+
+// { a: true } : valid
+// { a: true, b: 1 } : valid
+isShape({ a: isBoolean }, { strict: false }) => validator
+```
 
 ### `isString`
 ```javascript
