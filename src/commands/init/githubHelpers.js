@@ -1,7 +1,8 @@
 import got from 'got';
 
 export function getOfficialTemplates() {
-    return got('https://api.github.com/users/rocjs/repos', {
+    // TODO Implement pagination support before we reach over 100 repositories
+    return got('https://api.github.com/users/rocjs/repos?per_page=100', {
         json: true,
     })
     .then(response => response.body)
