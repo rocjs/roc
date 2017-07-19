@@ -65,6 +65,23 @@ describe('commands', () => {
                         );
                     });
             });
+
+            it('should allow to use previous answers when building prompts', () => {
+                const outputDir = join(__dirname, '_output', 'previousAnswers');
+                generateTemplate('hey', join(__dirname, 'fixtures', 'previousAnswers'), outputDir, () => {});
+
+                return answerPrompts([
+                    'something',
+                    '',
+                ])
+                    .then(() => readFile(join(outputDir, 'test-input')))
+                    .then(rendered => {
+                        expect(rendered).toBe(
+                            'something\n' +
+                            'this should be a default\n'
+                        );
+                    });
+            });
         });
     });
 });
