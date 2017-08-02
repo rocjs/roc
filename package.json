@@ -1,6 +1,6 @@
 {
   "name": "roc",
-  "version": "1.0.0-rc.21",
+  "version": "1.0.0-rc.22",
   "description": "Modern JavasScript Development Ecosystem",
   "license": "MIT",
   "main": "lib/index.js",
