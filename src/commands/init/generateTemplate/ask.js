@@ -19,12 +19,19 @@ async function askQuestion(data, key, prompt) {
         return;
     }
 
+    function withAnswers(entry) {
+        if (typeof entry === 'function') {
+            return entry(data);
+        }
+        return entry;
+    }
+
     const answers = await inquirer.prompt([{
         type: prompt.type,
         name: key,
-        message: prompt.message || key,
-        default: prompt.default,
-        choices: prompt.choices || [],
+        message: withAnswers(prompt.message) || key,
+        default: withAnswers(prompt.default),
+        choices: withAnswers(prompt.choices) || [],
         validate: prompt.validate || (() => true),
         filter: prompt.filter,
     }]);
@@ -38,3 +45,4 @@ async function askQuestion(data, key, prompt) {
     }
     /* eslint-enable */
 }
+
