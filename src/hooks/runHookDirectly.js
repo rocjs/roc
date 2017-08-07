@@ -1,4 +1,5 @@
 import { magenta, underline } from 'chalk';
+import { isPlainObject } from 'lodash';
 
 import log from '../log/default';
 import isValid from '../validation/helpers/isValid';
@@ -97,8 +98,7 @@ export default function runHookDirectly({
                                         try {
                                             throwValidationError(
                                                 `action in ${actionExtensionName} for ${name}`,
-                                                validationResult,
-                                                previousValue,
+                                                ...manageResult(validationResult, previousValue),
                                                 'return value of'
                                             );
                                         } catch (err) {
@@ -143,4 +143,18 @@ export default function runHookDirectly({
     postActions.forEach((runAction) => runAction(true));
 
     return previousValue;
+}
+
+function manageResult(validationResult, previousValue) {
+    if (isPlainObject(validationResult)) {
+        return [
+            `${validationResult.message}${validationResult.key ? ` [In property ${validationResult.key}]` : ''}`,
+            validationResult.value || previousValue,
+        ];
+    }
+
+    return [
+        validationResult,
+        previousValue,
+    ];
 }

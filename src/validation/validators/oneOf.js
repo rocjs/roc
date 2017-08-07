@@ -2,6 +2,7 @@ import convert from '../../converters/convert';
 import createInfoObject from '../helpers/createInfoObject';
 import getInfoObject from '../helpers/getInfoObject';
 import isValid from '../helpers/isValid';
+import writeInfoInline from '../helpers/writeInfoInline';
 
 /**
  * Validates against a list of validators.
@@ -19,7 +20,10 @@ export default function oneOf(...validators) {
             const types = [];
             const converters = [];
             for (const validator of validators) {
-                const result = createInfoObject({ validator });
+                const result = createInfoObject({
+                    validator,
+                    wrapper: writeInfoInline,
+                });
                 types.push(result.type);
                 if (result.converter) {
                     converters.push(result.converter);

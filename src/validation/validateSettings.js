@@ -39,7 +39,7 @@ function assertValid(value, key, validator, allowRequiredFailure = false) {
 function processResult(key, result, value) {
     if (isPlainObject(result)) {
         return [
-            `${key}${result.key}`,
+            `${key}.${result.key}`,
             result.message,
             result.value,
         ];

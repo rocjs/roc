@@ -9,7 +9,7 @@ export default function createInfoObject({
     unmanagedObject = false,
 } = {}) {
     const info = isFunction(validator) ? validator(null, true) : { type: validator.toString(), canBeEmpty: null };
-    const type = wrapper ? wrapper(info.type) : info.type;
+    const type = wrapper ? wrapper(info.type, info.canBeEmpty, info.required || false) : info.type;
     const convert = converter ? converter(info.converter) : info.converter;
     return {
         type,

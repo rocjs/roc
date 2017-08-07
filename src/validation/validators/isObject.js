@@ -3,6 +3,7 @@ import { isPlainObject } from 'lodash';
 import createInfoObject from '../helpers/createInfoObject';
 import isValid from '../helpers/isValid';
 import toObject from '../../converters/toObject';
+import writeInfoInline from '../helpers/writeInfoInline';
 
 /**
  * Validates an object using a validator.
@@ -20,7 +21,7 @@ export default function isObject(...args) {
             return createInfoObject({
                 validator,
                 converter: () => toObject,
-                wrapper: (wrap) => `Object(${wrap})`,
+                wrapper: (...wrapperArgs) => `Object(${writeInfoInline(...wrapperArgs)})`,
                 canBeEmpty: true,
                 unmanagedObject: unmanaged,
             });
@@ -43,13 +44,13 @@ export default function isObject(...args) {
             if (result !== true) {
                 if (isPlainObject(result)) {
                     return {
-                        key: `.${key}${result.key}`,
+                        key: `${key}.${result.key}`,
                         value: result.value,
                         message: result.message,
                     };
                 }
                 return {
-                    key: `.${key}`,
+                    key: `${key}`,
                     value: input[key],
                     message: result,
                 };

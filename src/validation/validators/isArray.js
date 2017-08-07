@@ -3,6 +3,7 @@ import { isArray as isArrayLodash, isPlainObject } from 'lodash';
 import createInfoObject from '../helpers/createInfoObject';
 import isValid from '../helpers/isValid';
 import toArray from '../../converters/toArray';
+import writeInfoInline from '../helpers/writeInfoInline';
 
 /**
  * Validates an array using a validator.
@@ -16,7 +17,7 @@ export default function isArray(validator) {
             return createInfoObject({
                 validator,
                 converter: (converter) => toArray(converter),
-                wrapper: (wrap) => `Array(${wrap})`,
+                wrapper: (...args) => `Array(${writeInfoInline(...args)})`,
                 canBeEmpty: true,
             });
         }

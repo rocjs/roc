@@ -6,6 +6,7 @@ export isObject from './isObject';
 export isPath from './isPath';
 export isPromise from './isPromise';
 export isRegExp from './isRegExp';
+export isShape from './isShape';
 export isString from './isString';
 export notEmpty from './notEmpty';
 export oneOf from './oneOf';
