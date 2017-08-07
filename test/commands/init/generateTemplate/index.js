@@ -82,6 +82,21 @@ describe('commands', () => {
                         );
                     });
             });
+
+            it('should print values inside condition blocks', () => {
+                const outputDir = join(__dirname, '_output', 'inCondition');
+                generateTemplate('hey', join(__dirname, 'fixtures', 'inCondition'), outputDir, () => {});
+
+                return answerPrompts([
+                    'welcome',
+                ])
+                    .then(() => readFile(join(outputDir, 'test-input')))
+                    .then(rendered => {
+                        expect(rendered).toBe(
+                            'welcome\n'
+                        );
+                    });
+            });
         });
     });
 });

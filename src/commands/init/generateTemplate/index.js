@@ -12,17 +12,17 @@ import collect from './collect';
 import filter from './filter';
 
 // Register default handlebars helper
-Handlebars.registerHelper('if_eq', (a, b, opts) => (
-    a === b
-    ? opts.fn(this)
-    : opts.inverse(this)
-));
+Handlebars.registerHelper('if_eq', function (a, b, opts) {
+    return a === b
+        ? opts.fn(this)
+        : opts.inverse(this);
+});
 
-Handlebars.registerHelper('unless_eq', (a, b, opts) => (
-    a === b
-    ? opts.inverse(this)
-    : opts.fn(this)
-));
+Handlebars.registerHelper('unless_eq', function (a, b, opts) {
+    return a === b
+        ? opts.inverse(this)
+        : opts.fn(this);
+});
 
 export default function generateTemplate(name, src, dest, done) {
     const opts = getOptions(name, src);

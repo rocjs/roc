@@ -1,0 +1,1 @@
+{{#if_eq hello 'welcome'}}{{{ hello }}}{{/if_eq}}
