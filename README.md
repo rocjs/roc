@@ -1,4 +1,4 @@
-# [Roc](http://www.getroc.org)
+# [Roc]
 ![logo](roc.png)
 
 Build JavaScript projects easily using modern libraries.
